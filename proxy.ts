@@ -1,5 +1,6 @@
 import createMiddleware from "next-intl/middleware";
 import { routing } from "@/i18n/routing";
+import { updateSession } from "@/lib/supabase/middleware";
 import type { NextRequest } from "next/server";
 
 // Países donde el inglés es el idioma esperado — todo lo demás cae en español (LATAM/España,
@@ -18,7 +19,7 @@ const ENGLISH_SPEAKING_COUNTRIES = new Set([
 
 const handleI18nRouting = createMiddleware(routing);
 
-export default function middleware(request: NextRequest) {
+export default async function middleware(request: NextRequest) {
   // Si el visitante ya eligió idioma a mano (o next-intl ya lo detectó antes), no lo pisamos.
   if (!request.cookies.get("NEXT_LOCALE")) {
     const country = request.headers.get("x-vercel-ip-country");
@@ -28,7 +29,8 @@ export default function middleware(request: NextRequest) {
       request.headers.set("accept-language", detected);
     }
   }
-  return handleI18nRouting(request);
+  const intlResponse = handleI18nRouting(request);
+  return updateSession(request, intlResponse);
 }
 
 export const config = {

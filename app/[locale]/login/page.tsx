@@ -9,6 +9,7 @@ import { motion } from "motion/react";
 import { User, Mail, Phone, Lock, Eye, EyeOff, Check, ShieldCheck, Smartphone } from "lucide-react";
 import { saveOnboarding } from "@/lib/onboarding";
 import { Turnstile } from "@/components/app/Turnstile";
+import { createClient } from "@/lib/supabase/client";
 
 const COUNTRIES = [
   { flag: "🇪🇸", code: "+34", name: "España" },
@@ -34,6 +35,9 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [accepted, setAccepted] = useState(false);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
 
   const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const phoneValid = phone.replace(/\D/g, "").length >= 7;
@@ -41,7 +45,7 @@ export default function LoginPage() {
   const hasNumber = /\d/.test(password);
   const passwordsMatch = confirm.length > 0 && password === confirm;
 
-  function handleRegister(e: React.FormEvent) {
+  async function handleRegister(e: React.FormEvent) {
     e.preventDefault();
     if (!name || !emailValid || !has8 || !hasNumber) {
       setError(t("errorFixFields"));
@@ -56,13 +60,40 @@ export default function LoginPage() {
       return;
     }
     setError("");
+    setLoading(true);
+    const supabase = createClient();
+    const { data, error: signUpError } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { data: { name } },
+    });
+    if (signUpError) {
+      setLoading(false);
+      setError(signUpError.message === "User already registered" ? t("errorEmailTaken") : t("errorGeneric"));
+      return;
+    }
+    if (data.user) {
+      await supabase.from("profiles").update({ phone_code: phoneCode, phone }).eq("id", data.user.id);
+    }
     saveOnboarding({ name, email, phoneCode, phone });
+    setLoading(false);
     router.push("/onboarding");
   }
 
-  function handleLogin(e: React.FormEvent) {
+  async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
-    // Sin base de datos real todavía (Sesión 6): un usuario existente entra directo a la app.
+    setError("");
+    setLoading(true);
+    const supabase = createClient();
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+      email: loginEmail,
+      password: loginPassword,
+    });
+    setLoading(false);
+    if (signInError) {
+      setError(t("errorInvalidCredentials"));
+      return;
+    }
     router.push("/app");
   }
 
@@ -225,24 +256,44 @@ export default function LoginPage() {
 
             <button
               type="submit"
-              className="h-12 w-full rounded-lg bg-primary text-base font-semibold text-primary-foreground transition-transform active:scale-97"
+              disabled={loading}
+              className="h-12 w-full rounded-lg bg-primary text-base font-semibold text-primary-foreground transition-transform active:scale-97 disabled:opacity-60"
             >
-              {t("createAccount")}
+              {loading ? t("loading") : t("createAccount")}
             </button>
           </form>
         ) : (
           <form onSubmit={handleLogin} className="space-y-4">
             <Field label={t("emailLabel")} htmlFor="login-email" icon={Mail}>
-              <input id="login-email" type="email" placeholder={t("emailPlaceholder")} className={inputClass} />
+              <input
+                id="login-email"
+                type="email"
+                value={loginEmail}
+                onChange={(e) => setLoginEmail(e.target.value)}
+                placeholder={t("emailPlaceholder")}
+                className={inputClass}
+              />
             </Field>
             <Field label={t("passwordLabel")} htmlFor="login-password" icon={Lock}>
-              <input id="login-password" type="password" className={inputClass} />
+              <input
+                id="login-password"
+                type="password"
+                value={loginPassword}
+                onChange={(e) => setLoginPassword(e.target.value)}
+                className={inputClass}
+              />
             </Field>
+            {error && (
+              <p role="alert" className="text-sm text-destructive">
+                {error}
+              </p>
+            )}
             <button
               type="submit"
-              className="h-12 w-full rounded-lg bg-primary text-base font-semibold text-primary-foreground transition-transform active:scale-97"
+              disabled={loading}
+              className="h-12 w-full rounded-lg bg-primary text-base font-semibold text-primary-foreground transition-transform active:scale-97 disabled:opacity-60"
             >
-              {t("loginCta")}
+              {loading ? t("loading") : t("loginCta")}
             </button>
           </form>
         )}

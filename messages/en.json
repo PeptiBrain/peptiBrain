@@ -173,7 +173,11 @@
     "createAccount": "Create account",
     "loginCta": "Sign in",
     "encryptedData": "Encrypted data",
-    "multiDevice": "Multi-device"
+    "multiDevice": "Multi-device",
+    "errorEmailTaken": "That email already has an account. Try signing in instead.",
+    "errorGeneric": "Something went wrong. Please try again in a moment.",
+    "errorInvalidCredentials": "Incorrect email or password.",
+    "loading": "One moment…"
   },
   "Onboarding": {
     "back": "Back",
@@ -243,7 +247,8 @@
     "tabHome": "Home",
     "tabPeptides": "Peptides",
     "tabHealth": "Health",
-    "tabFamily": "Family"
+    "tabFamily": "Family",
+    "signOut": "Sign out"
   },
   "Inicio": {
     "greeting": "Good morning",

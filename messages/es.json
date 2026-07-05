@@ -173,7 +173,11 @@
     "createAccount": "Crear cuenta",
     "loginCta": "Ingresar",
     "encryptedData": "Datos cifrados",
-    "multiDevice": "Multi-dispositivo"
+    "multiDevice": "Multi-dispositivo",
+    "errorEmailTaken": "Ese correo ya tiene una cuenta. Intenta iniciar sesión.",
+    "errorGeneric": "Algo salió mal. Intenta de nuevo en un momento.",
+    "errorInvalidCredentials": "Correo o contraseña incorrectos.",
+    "loading": "Un momento…"
   },
   "Onboarding": {
     "back": "Atrás",
@@ -243,7 +247,8 @@
     "tabHome": "Inicio",
     "tabPeptides": "Péptidos",
     "tabHealth": "Salud",
-    "tabFamily": "Familia"
+    "tabFamily": "Familia",
+    "signOut": "Cerrar sesión"
   },
   "Inicio": {
     "greeting": "Buen día",
