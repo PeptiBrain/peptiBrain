@@ -1,5 +1,17 @@
 # ESTADO — PeptiBrain
-Última actualización: 2026-07-06 | Sesión actual: 6 (servicios externos) — GitHub ✅ Supabase (auth real) ✅ Vercel ✅ Mixpanel ✅ PWA ✅ Dominio comprado (peptibrain.com, DNS ya propagado, esperando certificado SSL de Vercel) — Hotmart: 4 planes creados y checkout real conectado
+Última actualización: 2026-07-06 | Sesión actual: 6 (servicios externos) — GitHub ✅ Supabase (auth real, ⚠️ ver bug crítico abajo) Vercel ✅ Mixpanel ✅ PWA ✅ Dominio peptibrain.com ✅ (HTTPS confirmado funcionando) — Hotmart: 4 planes + checkout real + webhook construido (⚠️ aún sin confirmar 200 en la prueba)
+
+## 🔴 BUG CRÍTICO ABIERTO — el registro real puede estar roto ahora mismo
+Verificado directo contra la API de Supabase: el `signUp` NO devuelve sesión activa — sigue pidiendo confirmación de correo. Como no hay Resend conectado (y el envío de correos de Supabase por defecto tiene un límite muy bajo, ya lo golpeamos varias veces), **cualquier persona que se registre en la app real hoy probablemente no puede iniciar sesión después de registrarse**. Se le pidió al usuario re-verificar en Supabase → Authentication → Providers → Email que "Confirm email" esté REALMENTE apagado (puede que no se haya guardado la vez anterior) — respuesta pendiente. Esto es más urgente que cualquier feature nueva; revisar apenas se retome la sesión.
+
+## Sesión del 2026-07-06 — resumen de lo construido
+- **PWA instalable**: `/descargar` con instrucciones paso a paso iOS(Safari)/Android(Chrome) para agregar a pantalla de inicio.
+- **`/app/cuenta`**: pantalla nueva que lee el plan REAL desde Supabase (`profiles.plan`/`plan_status`, ya no localStorage) y muestra botón "Cancelar suscripción".
+- **Oferta de retención (win-back)**: `components/app/cuenta/CancelOfferModal.tsx` — antes de dejar cancelar, ofrece 40% de descuento 3 meses. Si igual quiere cancelar, hoy solo le decimos que lo haga desde el correo de Hotmart o soporte — **no cancelamos de verdad vía API de Hotmart todavía** (no tenemos esa integración), es una limitación conocida a futuro.
+- **Tour de bienvenida dentro de la app** (`components/app/shell/AppTour.tsx`): modal de 4 pasos (Inicio/Péptidos/Salud/Familia) que aparece la primera vez que se entra a `/app` (flag en localStorage `peptibrain_tour_seen`), con puntos indicadores y botones Omitir/Siguiente/Empezar. Inspirado en el patrón de bienvenida de Confirmadísimo pero adaptado a tour-dentro-de-la-app en vez de página aparte.
+- Eventos de Mixpanel nuevos: `app_tour_started`, `app_tour_completed`, `cancel_subscription_clicked`, `retention_offer_accepted`, `retention_offer_declined`.
+- Verificado: tsc ✓ build ✓ · el tour se probó visualmente de verdad (con una ruta temporal ya borrada) confirmando que los 4 pasos y los puntos indicadores cambian correctamente.
+- Hotmart: los 4 planes (Premium/Family × mensual/anual) creados, checkout conectado al paywall, webhook construido y desplegado (`/api/webhooks/hotmart`) con `HOTMART_HOTTOK` y `SUPABASE_SECRET_KEY` ya puestos en Vercel — pero la prueba de Hotmart seguía devolviendo 401 en el último chequeo, hay que reconfirmar con una prueba fresca.
 
 ## Hotmart — 4 planes creados, checkout real conectado al paywall (2026-07-06)
 - Dominio `peptibrain.com` comprado en Piensa Solutions. Registro DNS tipo A (@ y www → 216.198.79.1) agregado y YA PROPAGADO (`dig` confirma). Vercel sirve la app por HTTP en el dominio real; HTTPS todavía sin certificado emitido (normal, se resuelve solo en minutos/horas tras la propagación) — pendiente de reconfirmar que ya cargue con candado.
