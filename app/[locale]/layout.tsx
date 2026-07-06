@@ -5,6 +5,7 @@ import { getMessages, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { MixpanelProvider } from "@/components/app/MixpanelProvider";
+import { ServiceWorkerRegister } from "@/components/app/ServiceWorkerRegister";
 import "../globals.css";
 
 const poppins = Poppins({
@@ -23,6 +24,12 @@ export const metadata: Metadata = {
   title: "PeptiBrain — Tu diario de péptidos y bienestar",
   description:
     "Registra tus dosis, viales y bienestar en un solo lugar. Nunca pierdas el hilo de tu protocolo, y compártelo con quien tú elijas.",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "PeptiBrain",
+  },
 };
 
 export function generateStaticParams() {
@@ -49,6 +56,7 @@ export default async function LocaleLayout({
         <meta name="theme-color" content="#FAFBFA" />
       </head>
       <body className="min-h-dvh flex flex-col bg-background text-foreground">
+        <ServiceWorkerRegister />
         <NextIntlClientProvider messages={messages}>
           <MixpanelProvider>{children}</MixpanelProvider>
         </NextIntlClientProvider>

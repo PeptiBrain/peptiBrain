@@ -1,6 +1,15 @@
 # ESTADO — PeptiBrain
 Última actualización: 2026-07-05 | Sesión actual: 6 (servicios externos) — GitHub ✅ Supabase (auth real) ✅ Vercel ✅ Mixpanel ✅
 
+## Hoja de ruta acordada con el usuario (2026-07-05) — NO reordenar sin que lo pida
+1. Terminar y pulir la web (dominio propio, migrar datos de localStorage a Supabase, Términos/Privacidad reales)
+2. Configurar PWA (instalable desde el navegador, sin tienda, sin comisión) — próximo paso técnico pedido explícitamente
+3. Definir estrategia de adquisición con micro-influencers / contenido viral corto (usar `34-ADQUISICION-Y-TRAFICO.md`)
+4. Construir versión nativa con React Native/Expo — publicar PRIMERO en Google Play (más barato, más rápido, sin esperar cuenta Apple), Apple después sin prisa. Pago (RevenueCat) en vez de Hotmart para las apps nativas.
+5. Con el aprendizaje de este proceso, repetir la secuencia para el próximo proyecto del usuario: **Confirmadísimo** (su otra app, confirmación de citas por WhatsApp para barberos)
+- Decisión de negocio del usuario: PeptiBrain será su PRIMERA app publicada en Google Play y Apple — quiere aprender el proceso completo con esta antes de repetirlo.
+- Nota de costos ya explicada al usuario: cuenta Google Play Developer = $25 pago único (sirve para subir apps ilimitadas, incluida Confirmadísimo después); Apple Developer = $99/año.
+
 ⏸️ CHECKPOINT — Última acción completada: **App en producción funcionando de punta a punta** en `https://pepti-brain.vercel.app`. Se resolvió la cadena completa de bloqueos de despliegue: (1) autor de commit inválido → corregido con email noreply de GitHub; (2) repo privado + plan Hobby de Vercel no permite colaboración → repo puesto en público (ver nota de abajo); (3) faltaban `NEXT_PUBLIC_SUPABASE_URL`/`NEXT_PUBLIC_SUPABASE_ANON_KEY` en Vercel → Environment Variables (agregadas por el usuario). Verificado en vivo: home 200 ✓, `/app` redirige a `/login` sin sesión (ES y EN) ✓. / Siguiente acción exacta: (1) comprar el dominio `peptibrain.com` (bloquea Resend/Hotmart/Cloudflare); (2) migrar los datos de la app interna (péptidos/viales/dosis/salud/familia) de localStorage a Supabase; (3) escribir Términos/Privacidad reales antes de vender.
 
 ⚠️ **PENDIENTE — Volver a poner el repo de GitHub en PRIVADO cuando la app esté terminada.** El usuario pidió explícitamente anotar esto: `github.com/PeptiBrain/peptiBrain` está PÚBLICO ahora mismo (decisión tomada el 2026-07-05) porque el plan gratis de Vercel (Hobby) bloqueaba los despliegues al no permitir "colaboración" en repos privados con más de una identidad de Git autora de commits. No hay secretos reales expuestos (verificado: `.env.local` nunca se subió, ninguna clave secreta de Supabase está en el código). Cuando el usuario termine de construir la app y quiera volver a privado, la única forma de hacerlo sin romper los despliegues es pasar a **Vercel Pro ($20/mes)** — avisarle esto explícitamente cuando pida volver a privado, no solo cambiar la visibilidad sin más.
