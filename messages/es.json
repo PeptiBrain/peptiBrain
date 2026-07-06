@@ -329,5 +329,53 @@
     "privacyTitle": "Política de Privacidad",
     "privacyBody": "Estamos redactando la política definitiva. Vuelve pronto.",
     "backHome": "Volver al inicio"
+  },
+  "Descargar": {
+    "title": "Instala PeptiBrain en tu celular",
+    "subtitle": "Sin tiendas, sin descargas pesadas — se instala directo desde el navegador en 10 segundos.",
+    "iosTitle": "En iPhone (Safari)",
+    "iosStep1": "Abre peptibrain.com en Safari",
+    "iosStep2": "Toca el ícono de Compartir (el cuadrado con la flecha hacia arriba)",
+    "iosStep3": "Elige \"Agregar a pantalla de inicio\"",
+    "iosStep4": "Confirma el nombre y toca \"Agregar\"",
+    "androidTitle": "En Android (Chrome)",
+    "androidStep1": "Abre peptibrain.com en Chrome",
+    "androidStep2": "Toca los tres puntos (⋮) arriba a la derecha",
+    "androidStep3": "Elige \"Instalar app\" o \"Agregar a pantalla de inicio\"",
+    "androidStep4": "Confirma — listo, ya tienes el ícono",
+    "cta": "Ir a PeptiBrain"
+  },
+  "Cuenta": {
+    "title": "Mi cuenta",
+    "subtitle": "Tu plan y suscripción",
+    "currentPlan": "Plan actual",
+    "planFree": "Gratis",
+    "planPremium": "Premium",
+    "planFamily": "Family",
+    "statusActive": "Activo",
+    "statusCanceled": "Cancelado",
+    "statusPastDue": "Pago pendiente",
+    "manageBilling": "Tu pago se gestiona de forma segura en Hotmart.",
+    "cancelButton": "Cancelar suscripción",
+    "freeNote": "Estás en el plan Gratis — no hay nada que cancelar.",
+    "offerTitle": "¡Espera! Antes de irte…",
+    "offerBody": "Quédate y te damos 40% de descuento en tus próximos 3 meses. Sin compromiso, cancela cuando quieras.",
+    "offerAccept": "Sí, quiero el 40% de descuento",
+    "offerDecline": "No gracias, quiero cancelar de todas formas",
+    "cancelInstructions": "Para completar la cancelación, hazlo desde el correo de confirmación de compra que Hotmart te envió, o contacta a soporte de Hotmart.",
+    "close": "Cerrar"
+  },
+  "Tour": {
+    "step1Title": "Tu día en un vistazo",
+    "step1Body": "Ve tu racha, tu próxima dosis, y márcala como aplicada con un toque.",
+    "step2Title": "La calculadora hace las cuentas por ti",
+    "step2Body": "Registra tu vial y PeptiBrain te dice exactamente cuántas unidades sacar de la jeringa.",
+    "step3Title": "Sigue tu progreso de salud",
+    "step3Body": "Anota tu peso, hidratación y ejercicio — todo junto a tus dosis, para ver cómo te va de verdad.",
+    "step4Title": "Comparte con quien tú quieras",
+    "step4Body": "Invita a tu pareja o familia y decide tú mismo qué tanto pueden ver.",
+    "skip": "Omitir",
+    "next": "Siguiente",
+    "start": "Empezar"
   }
 }
