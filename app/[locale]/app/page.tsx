@@ -7,6 +7,7 @@ import { Check, Flame, Package } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { loadOnboarding } from "@/lib/onboarding";
 import { loadAppData, markDoseDone, type AppData } from "@/lib/app-data";
+import { track } from "@/lib/mixpanel";
 
 export default function InicioPage() {
   const t = useTranslations("Inicio");
@@ -29,6 +30,7 @@ export default function InicioPage() {
   function handleMarkDone() {
     if (!pendingDose || !data) return;
     setData(markDoseDone(data, pendingDose.id));
+    track("dose_logged", { peptide: donePeptide?.name });
   }
 
   return (

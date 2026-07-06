@@ -8,6 +8,7 @@ import { motion } from "motion/react";
 import { useTranslations } from "next-intl";
 import { Check, X } from "lucide-react";
 import { loadOnboarding, saveOnboarding, type OnboardingData } from "@/lib/onboarding";
+import { track } from "@/lib/mixpanel";
 
 export default function PaywallPage() {
   const router = useRouter();
@@ -42,12 +43,14 @@ export default function PaywallPage() {
 
   useEffect(() => {
     setData(loadOnboarding());
+    track("paywall_viewed");
   }, []);
 
   if (!data) return null;
 
   function choose(planId: "gratis" | "premium" | "family") {
     saveOnboarding({ plan: planId });
+    track("plan_selected", { plan: planId });
     router.push("/app");
   }
 

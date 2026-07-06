@@ -10,6 +10,7 @@ import { User, Mail, Phone, Lock, Eye, EyeOff, Check, ShieldCheck, Smartphone } 
 import { saveOnboarding } from "@/lib/onboarding";
 import { Turnstile } from "@/components/app/Turnstile";
 import { createClient } from "@/lib/supabase/client";
+import { track, identifyUser } from "@/lib/mixpanel";
 
 const COUNTRIES = [
   { flag: "🇪🇸", code: "+34", name: "España" },
@@ -74,6 +75,8 @@ export default function LoginPage() {
     }
     if (data.user) {
       await supabase.from("profiles").update({ phone_code: phoneCode, phone }).eq("id", data.user.id);
+      identifyUser(data.user.id, { email, name, plan: "free" });
+      track("sign_up_completed", { method: "email" });
     }
     saveOnboarding({ name, email, phoneCode, phone });
     setLoading(false);
@@ -85,7 +88,7 @@ export default function LoginPage() {
     setError("");
     setLoading(true);
     const supabase = createClient();
-    const { error: signInError } = await supabase.auth.signInWithPassword({
+    const { data, error: signInError } = await supabase.auth.signInWithPassword({
       email: loginEmail,
       password: loginPassword,
     });
@@ -93,6 +96,10 @@ export default function LoginPage() {
     if (signInError) {
       setError(t("errorInvalidCredentials"));
       return;
+    }
+    if (data.user) {
+      identifyUser(data.user.id, { email: loginEmail });
+      track("login_completed", { method: "email" });
     }
     router.push("/app");
   }

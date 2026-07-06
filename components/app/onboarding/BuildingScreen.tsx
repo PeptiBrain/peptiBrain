@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { useTranslations } from "next-intl";
 import { Check } from "lucide-react";
+import { track } from "@/lib/mixpanel";
 
 export function BuildingScreen({
   peptideName,
@@ -35,6 +36,7 @@ export function BuildingScreen({
         }, stepMs * (i + 1))
       );
     });
+    track("onboarding_completed", { peptide: peptideName || undefined });
     timers.push(setTimeout(onDone, stepMs * lines.length + 500));
     return () => timers.forEach(clearTimeout);
     // eslint-disable-next-line react-hooks/exhaustive-deps

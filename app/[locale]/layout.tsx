@@ -4,6 +4,7 @@ import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
+import { MixpanelProvider } from "@/components/app/MixpanelProvider";
 import "../globals.css";
 
 const poppins = Poppins({
@@ -48,7 +49,9 @@ export default async function LocaleLayout({
         <meta name="theme-color" content="#FAFBFA" />
       </head>
       <body className="min-h-dvh flex flex-col bg-background text-foreground">
-        <NextIntlClientProvider messages={messages}>{children}</NextIntlClientProvider>
+        <NextIntlClientProvider messages={messages}>
+          <MixpanelProvider>{children}</MixpanelProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

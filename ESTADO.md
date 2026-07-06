@@ -1,7 +1,16 @@
 # ESTADO — PeptiBrain
-Última actualización: 2026-07-05 | Sesión actual: 6 (servicios externos) recién arrancada — GitHub conectado
+Última actualización: 2026-07-05 | Sesión actual: 6 (servicios externos) — GitHub ✅ Supabase (auth real) ✅ Vercel ✅ Mixpanel ✅
 
-⏸️ CHECKPOINT — Última acción completada: Código subido a GitHub (`https://github.com/PeptiBrain/peptiBrain`, rama `main`). / Siguiente acción exacta: continuar Sesión 6 con Supabase — el usuario ya compartió la URL del proyecto (`https://myxgacuijwhcergdeqoz.supabase.co`); falta diseñar el esquema de datos real (25-BASE-DE-DATOS.md) y migrar de localStorage a Supabase con RLS.
+⏸️ CHECKPOINT — Última acción completada: Mixpanel conectado (analítica de producto). / Siguiente acción exacta: (1) el usuario debe agregar `NEXT_PUBLIC_MIXPANEL_TOKEN` en Vercel → Environment Variables para que funcione en producción (hoy solo está en `.env.local`); (2) comprar el dominio `peptibrain.com` (paso que bloquea Resend/Hotmart/Cloudflare); (3) migrar los datos de la app interna (péptidos/viales/dosis/salud/familia) de localStorage a Supabase.
+
+## Mixpanel — analítica de producto conectada
+- Token del proyecto guardado en `.env.local` (`NEXT_PUBLIC_MIXPANEL_TOKEN`) — es público por diseño, no es secreto (a diferencia de las claves de Supabase que sí distinguen pública/secreta).
+- `lib/mixpanel.ts`: wrapper con `initMixpanel()`, `track()`, `identifyUser()`, `resetMixpanel()`, `trackPageview()`.
+- `components/app/MixpanelProvider.tsx`: inicializa una sola vez y registra vista de página en cada cambio de ruta (necesario porque el App Router es SPA — `track_pageview` automático de Mixpanel solo dispara en la carga inicial). Conectado en `app/[locale]/layout.tsx`.
+- Eventos del embudo ya instrumentados: `sign_up_completed` (registro) con `identify()`+`people.set()`, `login_completed` (login) con `identify()`, `mixpanel.reset()` al cerrar sesión, `paywall_viewed` + `plan_selected` (paywall), `onboarding_completed` (pantalla de carga), `dose_logged` (marcar dosis aplicada en Inicio).
+- Verificado: tsc ✓ build ✓ dev ✓ — confirmado con `preview_network` que el evento de pageview llega a `api-js.mixpanel.com/track` con `200 OK`.
+- ⚠️ Pendiente real: NO hay gate de consentimiento (GDPR/CCPA) todavía — hoy Mixpanel trackea desde el primer segundo sin pedir permiso. Aceptable para desarrollo/validación, pero antes de vender de verdad en España/EU hay que añadir un banner de cookies/consentimiento (se conecta con la doctrina de 47-LEGAL-FISCAL-Y-SOPORTE.md) y usar `mixpanel.opt_out_tracking_by_default` hasta que el usuario acepte.
+- Backlog: eventos adicionales razonables si se quiere más profundidad — `peptide_added`, `vial_added`, `health_log_added`, `family_member_invited` (no instrumentados todavía, son de menor prioridad que el embudo principal).
 
 ## Sesión 6 — Servicios externos (en progreso)
 - ⚠️ Hallazgo de seguridad importante al conectar GitHub: el `git` del sistema estaba inicializado a nivel de TODA la carpeta de usuario (`/Users/josepoveda`, con "No commits yet" — nunca se había subido nada), no solo del proyecto. Si se hubiera subido desde ahí se habría expuesto contenido personal ajeno a la app (otras carpetas del usuario, configuración de Claude, etc.). Se resolvió creando un repositorio git NUEVO Y SEPARADO específicamente dentro de `Peptibrain/` (git anidado, válido y aislado) — el git de la carpeta de usuario se dejó intacto sin tocar, fuera de este proyecto.
