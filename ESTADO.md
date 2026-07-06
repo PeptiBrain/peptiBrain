@@ -1,5 +1,19 @@
 # ESTADO — PeptiBrain
-Última actualización: 2026-07-05 | Sesión actual: 6 (servicios externos) — GitHub ✅ Supabase (auth real) ✅ Vercel ✅ Mixpanel ✅
+Última actualización: 2026-07-06 | Sesión actual: 6 (servicios externos) — GitHub ✅ Supabase (auth real) ✅ Vercel ✅ Mixpanel ✅ PWA ✅ Dominio comprado (peptibrain.com, DNS ya propagado, esperando certificado SSL de Vercel) — Hotmart: 4 planes creados y checkout real conectado
+
+## Hotmart — 4 planes creados, checkout real conectado al paywall (2026-07-06)
+- Dominio `peptibrain.com` comprado en Piensa Solutions. Registro DNS tipo A (@ y www → 216.198.79.1) agregado y YA PROPAGADO (`dig` confirma). Vercel sirve la app por HTTP en el dominio real; HTTPS todavía sin certificado emitido (normal, se resuelve solo en minutos/horas tras la propagación) — pendiente de reconfirmar que ya cargue con candado.
+- Los 4 planes de Hotmart YA ESTÁN CREADOS: Premium mensual ($9), Premium anual ($84), Family mensual ($19), Family anual ($180) — todos en USD, con impuesto incluido en el precio mostrado, trial de 7 días gratis activado en los 4.
+- Links reales de checkout guardados en `lib/hotmart-links.ts`:
+  - Premium mensual: `https://pay.hotmart.com/Q106628596T?off=m7yz3mfb`
+  - Premium anual: `https://pay.hotmart.com/Q106628596T?off=wca2xckm`
+  - Family mensual: `https://pay.hotmart.com/Q106628596T?off=iucld0wb`
+  - Family anual: `https://pay.hotmart.com/Q106628596T?off=lgn3ozqy`
+- `app/[locale]/paywall/page.tsx` ya NO simula el pago — el botón de elegir Premium/Family redirige de verdad a Hotmart (plan mensual, con el email del usuario precargado en la URL de checkout). El plan Gratis sigue yendo directo a `/app` sin pasar por Hotmart.
+- Imagen de producto (600x600, con el isotipo real de la marca) generada y guardada en `Diseños/hotmart/peptibrain-hotmart-600x600.png`.
+- Kit de afiliado completo (5 ángulos de venta, copys, guion UGC, stories, emails, FAQ, reglas de qué no decir) entregado al usuario en el chat — pendiente de guardarlo en un archivo si se quiere reutilizar formalmente.
+- ⚠️ **Pendiente crítico — el pago hoy NO activa el plan solo**: falta crear el webhook de Hotmart (con verificación de `hottok`) que, cuando alguien paga de verdad, actualice `profiles.plan` en Supabase automáticamente. Sin esto, alguien puede pagar en Hotmart pero seguir viendo "Gratis" dentro de la app — hay que resolverlo antes de anunciar el lanzamiento real. Requiere: (a) el `hottok` del producto en Hotmart (Configuración → Webhook), (b) la `SUPABASE_SECRET_KEY` (service_role) puesta DIRECTO en Vercel → Environment Variables, nunca pegada en el chat — con ambas se puede escribir el endpoint `app/api/webhooks/hotmart/route.ts`.
+- Pendiente inmediato aparte: activar programa de afiliados en Hotmart (35% recurrente, aprobación manual).
 
 ## Hoja de ruta acordada con el usuario (2026-07-05) — NO reordenar sin que lo pida
 1. Terminar y pulir la web (dominio propio, migrar datos de localStorage a Supabase, Términos/Privacidad reales)
