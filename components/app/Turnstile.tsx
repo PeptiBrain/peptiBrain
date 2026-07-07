@@ -3,9 +3,9 @@
 import { useEffect, useRef } from "react";
 import Script from "next/script";
 
-// Clave de PRUEBA oficial de Cloudflare (siempre pasa, visible). En la Sesión 6 se
-// reemplaza por la clave real del sitio (Cloudflare Turnstile → tu cuenta).
-const TEST_SITE_KEY = "1x00000000000000000000AA";
+// Site Key pública de Cloudflare Turnstile — segura de exponer en el navegador.
+// Si no está configurada (dev local sin .env), cae a la clave de prueba oficial de Cloudflare.
+const SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "1x00000000000000000000AA";
 
 type TurnstileApi = {
   render: (
@@ -29,7 +29,7 @@ export function Turnstile({ onVerify }: { onVerify?: (token: string) => void }) 
       if (rendered.current || !window.turnstile || !ref.current) return;
       rendered.current = true;
       window.turnstile.render(ref.current, {
-        sitekey: TEST_SITE_KEY,
+        sitekey: SITE_KEY,
         theme: "light",
         callback: (token: string) => onVerify?.(token),
       });

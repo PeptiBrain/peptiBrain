@@ -173,6 +173,7 @@
     "errorFixFields": "Revisa tu nombre, correo y que la contraseña tenga 8 caracteres y un número.",
     "errorPasswordsNoMatch": "Las contraseñas no coinciden.",
     "errorAcceptTerms": "Necesitas aceptar los términos para continuar.",
+    "errorCaptcha": "Confirma que no eres un robot para continuar.",
     "createAccount": "Crear cuenta",
     "loginCta": "Ingresar",
     "encryptedData": "Datos cifrados",

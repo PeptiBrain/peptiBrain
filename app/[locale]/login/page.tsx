@@ -39,6 +39,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
+  const [captchaToken, setCaptchaToken] = useState("");
 
   const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const phoneValid = phone.replace(/\D/g, "").length >= 7;
@@ -60,13 +61,17 @@ export default function LoginPage() {
       setError(t("errorAcceptTerms"));
       return;
     }
+    if (!captchaToken) {
+      setError(t("errorCaptcha"));
+      return;
+    }
     setError("");
     setLoading(true);
     const supabase = createClient();
     const { data, error: signUpError } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { name } },
+      options: { data: { name }, captchaToken },
     });
     if (signUpError) {
       setLoading(false);
@@ -253,7 +258,7 @@ export default function LoginPage() {
               </span>
             </label>
 
-            <Turnstile />
+            <Turnstile onVerify={setCaptchaToken} />
 
             {error && (
               <p role="alert" className="text-sm text-destructive">

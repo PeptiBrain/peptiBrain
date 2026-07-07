@@ -173,6 +173,7 @@
     "errorFixFields": "Check your name, email, and that your password has 8 characters and a number.",
     "errorPasswordsNoMatch": "Passwords don’t match.",
     "errorAcceptTerms": "You need to accept the terms to continue.",
+    "errorCaptcha": "Please confirm you're not a robot to continue.",
     "createAccount": "Create account",
     "loginCta": "Sign in",
     "encryptedData": "Encrypted data",
