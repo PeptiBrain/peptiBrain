@@ -24,12 +24,24 @@ export function Footer() {
             <Image src="/peptibrain-isotipo.svg" alt="" width={22} height={22} />
             <span className="font-display text-sm font-bold text-foreground">PeptiBrain</span>
           </Link>
-          <nav aria-label="Legal" className="flex items-center gap-4 text-sm text-muted-foreground">
+          <nav
+            aria-label="Legal"
+            className="flex flex-wrap items-center justify-end gap-x-4 gap-y-1 text-sm text-muted-foreground"
+          >
             <Link href="/terminos" className="hover:text-foreground hover:underline">
               {t("terms")}
             </Link>
             <Link href="/privacidad" className="hover:text-foreground hover:underline">
               {t("privacy")}
+            </Link>
+            <Link href="/cookies" className="hover:text-foreground hover:underline">
+              {t("cookies")}
+            </Link>
+            <Link href="/reembolsos" className="hover:text-foreground hover:underline">
+              {t("refunds")}
+            </Link>
+            <Link href="/aviso-legal" className="hover:text-foreground hover:underline">
+              {t("legalEntity")}
             </Link>
           </nav>
           <a

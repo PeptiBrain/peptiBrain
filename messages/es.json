@@ -29,7 +29,10 @@
     "legalNotice": "PeptiBrain es un diario personal de seguimiento. No es consejo médico ni reemplaza a un profesional de la salud, y no recomienda dosis: registra lo que tú decides. Consulta siempre a un profesional antes de tomar decisiones sobre tu salud.",
     "terms": "Términos",
     "privacy": "Privacidad",
-    "instagram": "PeptiBrain en Instagram"
+    "instagram": "PeptiBrain en Instagram",
+    "cookies": "Cookies",
+    "refunds": "Reembolsos",
+    "legalEntity": "Aviso Legal"
   },
   "Hero": {
     "eyebrow": "Tu diario de péptidos y bienestar",
@@ -328,7 +331,7 @@
   "Legal": {
     "termsTitle": "Términos de Servicio",
     "termsUpdated": "Última actualización: 6 de julio de 2026",
-    "termsIntro": "Estos Términos de Servicio (\"Términos\") regulan el uso de PeptiBrain (\"la App\", \"el Servicio\"), operado desde España. Al crear una cuenta o usar la App, aceptas estos Términos.",
+    "termsIntro": "Estos Términos de Servicio (\"Términos\") regulan el uso de PeptiBrain (\"la App\", \"el Servicio\"), operado por Digital Dreams World LLC. Al crear una cuenta o usar la App, aceptas estos Términos.",
     "termsSections": [
       {
         "title": "1. Qué es PeptiBrain",
@@ -457,5 +460,93 @@
     "skip": "Omitir",
     "next": "Siguiente",
     "start": "Empezar"
+  },
+  "AvisoLegal": {
+    "title": "Aviso Legal",
+    "updated": "Última actualización: 7 de julio de 2026",
+    "intro": "En cumplimiento del deber de información, se detallan a continuación los datos identificativos de la empresa responsable de PeptiBrain.",
+    "sections": [
+      {
+        "title": "Titular",
+        "body": "Digital Dreams World LLC"
+      },
+      {
+        "title": "Domicilio registrado",
+        "body": "2105 Vista Oeste NW Suite E 3564, Albuquerque, NM 87120, Estados Unidos"
+      },
+      {
+        "title": "EIN (identificación fiscal)",
+        "body": "32-0757894"
+      },
+      {
+        "title": "Contacto",
+        "body": "soporte@peptibrain.com"
+      },
+      {
+        "title": "Objeto",
+        "body": "PeptiBrain es una aplicación web (peptibrain.com) que ofrece un diario personal de seguimiento de protocolos de péptidos. No es un servicio médico ni sustituye la consulta con un profesional de la salud."
+      },
+      {
+        "title": "Legislación aplicable",
+        "body": "El uso de este sitio y los Términos de Servicio se rigen por las leyes del Estado de Nuevo México, Estados Unidos, sin perjuicio de los derechos que la legislación de protección al consumidor de tu país de residencia te reconozca."
+      }
+    ],
+    "backHome": "Volver al inicio"
+  },
+  "Cookies": {
+    "title": "Política de Cookies",
+    "updated": "Última actualización: 7 de julio de 2026",
+    "intro": "Esta política explica qué cookies y tecnologías similares usa PeptiBrain, para qué sirven, y cómo puedes controlarlas.",
+    "sections": [
+      {
+        "title": "1. Qué es una cookie",
+        "body": "Es un pequeño archivo que se guarda en tu navegador para recordar información entre visitas, como tu idioma preferido o tu sesión iniciada."
+      },
+      {
+        "title": "2. Cookies que usamos",
+        "body": "Necesarias: para mantener tu sesión iniciada (Supabase) y recordar tu idioma (NEXT_LOCALE) — sin estas, la App no funciona. Analíticas: Mixpanel, para entender de forma agregada cómo se usa la App (qué pantallas se visitan, qué botones se usan) y mejorarla. No usamos cookies de publicidad ni de rastreo entre sitios."
+      },
+      {
+        "title": "3. Cómo controlarlas",
+        "body": "Puedes borrar o bloquear las cookies desde la configuración de tu navegador en cualquier momento. Ten en cuenta que bloquear las cookies necesarias puede impedir que puedas iniciar sesión o usar la App con normalidad."
+      },
+      {
+        "title": "4. Cambios en esta Política",
+        "body": "Si cambiamos qué cookies usamos, actualizaremos esta página y, si el cambio es importante, te avisaremos dentro de la App."
+      },
+      {
+        "title": "5. Contacto",
+        "body": "Para cualquier duda sobre esta política, escríbenos a soporte@peptibrain.com."
+      }
+    ],
+    "backHome": "Volver al inicio"
+  },
+  "Reembolsos": {
+    "title": "Política de Reembolsos",
+    "updated": "Última actualización: 7 de julio de 2026",
+    "intro": "Esta política explica cómo funcionan los cobros y reembolsos de los planes de pago de PeptiBrain, procesados a través de Hotmart.",
+    "sections": [
+      {
+        "title": "1. Período de prueba gratuito",
+        "body": "Los planes Premium y Family incluyen 7 días de prueba gratis. Durante ese tiempo no se realiza ningún cobro. Si cancelas antes de que termine el período de prueba, no se te cobrará nada."
+      },
+      {
+        "title": "2. Cobro automático",
+        "body": "Si no cancelas antes de que termine el período de prueba, se te cobrará automáticamente el precio del plan elegido (mensual o anual), y la suscripción se renovará en cada ciclo hasta que la canceles."
+      },
+      {
+        "title": "3. Cómo cancelar",
+        "body": "Puedes cancelar en cualquier momento desde la sección \"Mi cuenta\" dentro de la App, o directamente desde el correo de confirmación de compra que te envía Hotmart. La cancelación evita cobros futuros, pero no genera un reembolso automático del período ya pagado."
+      },
+      {
+        "title": "4. Solicitudes de reembolso",
+        "body": "Si crees que se te cobró por error, o quieres solicitar un reembolso, escríbenos a soporte@peptibrain.com o contacta directamente al soporte de Hotmart (quien procesa el pago) — evaluamos cada caso de forma individual, respetando siempre los derechos que la ley de protección al consumidor de tu país te reconozca."
+      },
+      {
+        "title": "5. Contacto",
+        "body": "soporte@peptibrain.com"
+      }
+    ],
+    "backHome": "Volver al inicio"
   }
 }
