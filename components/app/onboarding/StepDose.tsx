@@ -2,8 +2,26 @@
 
 import { useState } from "react";
 import { motion } from "motion/react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { CalendarClock } from "lucide-react";
+import type { Locale } from "@/i18n/routing";
+
+function toLocalInputValue(d: Date) {
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+function formatLabel(value: string, locale: string) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  return new Intl.DateTimeFormat(locale, {
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(date);
+}
 
 export function StepDose({
   peptideName,
@@ -17,10 +35,27 @@ export function StepDose({
   onFinish: (when: string, amount: string, unit: string) => void;
 }) {
   const t = useTranslations("Onboarding");
-  const QUICK = [t("in1Hour"), t("tomorrow8am"), t("tomorrow8pm")];
-  const [when, setWhen] = useState("");
+  const locale = useLocale() as Locale;
+  const [whenInput, setWhenInput] = useState("");
   const [amount, setAmount] = useState(initialAmount);
   const [unit, setUnit] = useState(initialUnit || "mg");
+
+  function setQuick(minutesFromNow?: number, atHour?: number) {
+    const d = new Date();
+    if (minutesFromNow !== undefined) {
+      d.setMinutes(d.getMinutes() + minutesFromNow);
+    } else if (atHour !== undefined) {
+      d.setDate(d.getDate() + 1);
+      d.setHours(atHour, 0, 0, 0);
+    }
+    setWhenInput(toLocalInputValue(d));
+  }
+
+  const QUICK = [
+    { label: t("in1Hour"), action: () => setQuick(60) },
+    { label: t("tomorrow8am"), action: () => setQuick(undefined, 8) },
+    { label: t("tomorrow8pm"), action: () => setQuick(undefined, 20) },
+  ];
 
   return (
     <motion.div
@@ -44,28 +79,24 @@ export function StepDose({
       </div>
 
       <label className="mb-1.5 block text-sm font-medium text-foreground">{t("whenLabel")}</label>
-      <div className="mb-3 flex flex-wrap gap-2">
+      <input
+        type="datetime-local"
+        value={whenInput}
+        onChange={(e) => setWhenInput(e.target.value)}
+        className="mb-3 h-12 w-full rounded-lg border border-input bg-background px-4 text-base text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      />
+      <div className="mb-4 flex flex-wrap gap-2">
         {QUICK.map((q) => (
           <button
-            key={q}
+            key={q.label}
             type="button"
-            onClick={() => setWhen(q)}
-            className={`h-9 rounded-full border px-3 text-sm font-medium transition-colors active:scale-97 ${
-              when === q
-                ? "border-primary bg-accent text-accent-foreground"
-                : "border-border bg-card text-foreground"
-            }`}
+            onClick={q.action}
+            className="h-9 rounded-full border border-border bg-card px-3 text-sm font-medium text-foreground transition-colors active:scale-97"
           >
-            {q}
+            {q.label}
           </button>
         ))}
       </div>
-      <input
-        value={when}
-        onChange={(e) => setWhen(e.target.value)}
-        placeholder={t("whenPlaceholder")}
-        className="mb-4 h-12 w-full rounded-lg border border-input bg-background px-4 text-base text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
-      />
 
       <label className="mb-1.5 block text-sm font-medium text-foreground">{t("doseLabel")}</label>
       <div className="mb-6 flex gap-2">
@@ -90,8 +121,8 @@ export function StepDose({
 
       <button
         type="button"
-        disabled={!when.trim() || !amount.trim()}
-        onClick={() => onFinish(when.trim(), amount.trim(), unit)}
+        disabled={!whenInput.trim() || !amount.trim()}
+        onClick={() => onFinish(formatLabel(whenInput, locale), amount.trim(), unit)}
         className="h-12 w-full rounded-lg bg-primary text-base font-semibold text-primary-foreground transition-transform active:scale-97 disabled:opacity-50"
       >
         {t("finish")}
