@@ -1,25 +1,48 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "motion/react";
-import { useTranslations } from "next-intl";
-import { Check, Flame, Package } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
+import { Check, Flame, Package, Syringe, AlertTriangle, Scale, Droplets, Lock } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { loadOnboarding } from "@/lib/onboarding";
 import { loadAppData, markDoseDone, type AppData } from "@/lib/app-data";
 import { track } from "@/lib/mixpanel";
+import { DateRangeTabs } from "@/components/app/shell/DateRangeTabs";
+import { isWithinRange, type DateRangeKey } from "@/lib/date-range";
 
 export default function InicioPage() {
   const t = useTranslations("Inicio");
+  const locale = useLocale();
   const [data, setData] = useState<AppData | null>(null);
   const [name, setName] = useState("");
+  const [range, setRange] = useState<DateRangeKey>("7d");
 
   useEffect(() => {
     loadAppData().then(setData);
     setName(loadOnboarding().name);
   }, []);
 
-  if (!data) return null;
+  const stats = useMemo(() => {
+    if (!data) return null;
+    const dosesInRange = data.doses.filter((d) => isWithinRange(d.createdAt, range));
+    const doneInRange = dosesInRange.filter((d) => d.done);
+    const logsInRange = data.healthLogs.filter((h) => isWithinRange(h.date, range));
+    const weights = logsInRange.filter((h) => h.weightKg).map((h) => parseFloat(h.weightKg!));
+    const hydrations = logsInRange.filter((h) => h.hydrationMl).map((h) => parseFloat(h.hydrationMl!));
+    const sideEffects = logsInRange.filter((h) => h.sideEffect);
+
+    return {
+      dosesInRange,
+      doneInRange,
+      completionPercent: dosesInRange.length ? Math.round((doneInRange.length / dosesInRange.length) * 100) : 0,
+      avgWeight: weights.length ? (weights.reduce((a, b) => a + b, 0) / weights.length).toFixed(1) : null,
+      avgHydration: hydrations.length ? Math.round(hydrations.reduce((a, b) => a + b, 0) / hydrations.length) : null,
+      sideEffects,
+    };
+  }, [data, range]);
+
+  if (!data || !stats) return null;
 
   const pendingDose = data.doses.find((d) => !d.done);
   const donePeptide = pendingDose
@@ -33,8 +56,24 @@ export default function InicioPage() {
     track("dose_logged", { peptide: donePeptide?.name });
   }
 
+  function peptideName(peptideId: string) {
+    return data!.peptides.find((p) => p.id === peptideId)?.name || t("peptideFallback");
+  }
+
+  function formatLogDate(iso: string) {
+    return new Date(`${iso}T00:00:00`).toLocaleDateString(locale, { day: "numeric", month: "short" });
+  }
+
   return (
-    <div className="mx-auto max-w-sm px-4 py-5">
+    <div className="mx-auto max-w-3xl px-4 py-5">
+      <div className="mb-2 flex justify-end">
+        <Link
+          href="/paywall"
+          className="flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground hover:border-primary hover:text-primary"
+        >
+          <Lock className="size-3.5" aria-hidden /> {t("assistant")}
+        </Link>
+      </div>
       <motion.p
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
@@ -120,6 +159,82 @@ export default function InicioPage() {
           </p>
         </div>
       </motion.div>
+
+      <div className="mt-6">
+        <DateRangeTabs value={range} onChange={setRange} />
+      </div>
+
+      <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div className="rounded-xl border border-border bg-card p-3">
+          <Syringe className="mb-2 size-4 text-primary" aria-hidden />
+          <p className="tabular font-display text-xl font-bold text-foreground">
+            {stats.dosesInRange.length ? `${stats.completionPercent}%` : "—"}
+          </p>
+          <p className="text-xs font-medium text-foreground">{t("doseCompletion")}</p>
+          <p className="text-xs text-muted-foreground">
+            {t("ofScheduled", { done: stats.doneInRange.length, total: stats.dosesInRange.length })}
+          </p>
+        </div>
+        <div className="rounded-xl border border-border bg-card p-3">
+          <Scale className="mb-2 size-4 text-primary" aria-hidden />
+          <p className="tabular font-display text-xl font-bold text-foreground">
+            {stats.avgWeight ? `${stats.avgWeight} kg` : "—"}
+          </p>
+          <p className="text-xs font-medium text-foreground">{t("avgWeight")}</p>
+          <p className="text-xs text-muted-foreground">{!stats.avgWeight && t("noWeightInRange")}</p>
+        </div>
+        <div className="rounded-xl border border-border bg-card p-3">
+          <Droplets className="mb-2 size-4 text-primary" aria-hidden />
+          <p className="tabular font-display text-xl font-bold text-foreground">
+            {stats.avgHydration ? `${stats.avgHydration} ml` : "—"}
+          </p>
+          <p className="text-xs font-medium text-foreground">{t("avgHydration")}</p>
+          <p className="text-xs text-muted-foreground">{!stats.avgHydration && t("noHydrationInRange")}</p>
+        </div>
+        <div className="rounded-xl border border-border bg-card p-3">
+          <AlertTriangle className="mb-2 size-4 text-[var(--notice-icon)]" aria-hidden />
+          <p className="tabular font-display text-xl font-bold text-foreground">{stats.sideEffects.length}</p>
+          <p className="text-xs font-medium text-foreground">{t("sideEffectsCount")}</p>
+          <p className="text-xs text-muted-foreground">
+            {stats.sideEffects.length === 0 && t("noSideEffectsInRange")}
+          </p>
+        </div>
+      </div>
+
+      <div className="mt-4 grid gap-3 sm:grid-cols-2">
+        <div className="rounded-xl border border-border bg-card p-4">
+          <p className="mb-2 text-sm font-semibold text-foreground">{t("usesInRangeTitle")}</p>
+          {stats.dosesInRange.length === 0 ? (
+            <p className="py-4 text-center text-sm text-muted-foreground">{t("noUsesInRange")}</p>
+          ) : (
+            <ul className="space-y-2">
+              {stats.dosesInRange.slice(0, 5).map((d) => (
+                <li key={d.id} className="flex items-center justify-between text-sm">
+                  <span className="text-foreground">{peptideName(d.peptideId)}</span>
+                  <span className="text-xs text-muted-foreground">
+                    {d.amount} {d.unit}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+        <div className="rounded-xl border border-border bg-card p-4">
+          <p className="mb-2 text-sm font-semibold text-foreground">{t("sideEffectsPanelTitle")}</p>
+          {stats.sideEffects.length === 0 ? (
+            <p className="py-4 text-center text-sm text-muted-foreground">{t("noSideEffectsPanel")}</p>
+          ) : (
+            <ul className="space-y-2">
+              {stats.sideEffects.slice(0, 5).map((h) => (
+                <li key={h.id} className="text-sm">
+                  <span className="text-xs text-muted-foreground">{formatLogDate(h.date)}</span>{" "}
+                  <span className="text-foreground">{h.sideEffect}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

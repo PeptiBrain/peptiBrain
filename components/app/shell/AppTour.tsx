@@ -3,11 +3,22 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { motion, AnimatePresence } from "motion/react";
-import { Flame, Beaker, HeartPulse, Users, ArrowRight } from "lucide-react";
+import {
+  Home,
+  Calendar,
+  Package,
+  Syringe,
+  Beaker,
+  Calculator,
+  HeartPulse,
+  Users,
+  UserCircle,
+  ArrowRight,
+} from "lucide-react";
 import { track } from "@/lib/mixpanel";
 
 const SEEN_KEY = "peptibrain_tour_seen";
-const ICONS = [Flame, Beaker, HeartPulse, Users];
+const ICONS = [Home, Calendar, Package, Syringe, Beaker, Calculator, HeartPulse, Users, UserCircle];
 
 export function AppTour() {
   const t = useTranslations("Tour");
@@ -27,6 +38,11 @@ export function AppTour() {
     { title: t("step2Title"), body: t("step2Body") },
     { title: t("step3Title"), body: t("step3Body") },
     { title: t("step4Title"), body: t("step4Body") },
+    { title: t("step5Title"), body: t("step5Body") },
+    { title: t("step6Title"), body: t("step6Body") },
+    { title: t("step7Title"), body: t("step7Body") },
+    { title: t("step8Title"), body: t("step8Body") },
+    { title: t("step9Title"), body: t("step9Body") },
   ];
 
   function finish() {

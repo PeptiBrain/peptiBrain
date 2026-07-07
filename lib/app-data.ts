@@ -29,6 +29,7 @@ export type Dose = {
   when: string;
   done: boolean;
   injectionSite?: string;
+  createdAt: string;
 };
 
 export type HealthLog = {
@@ -133,6 +134,7 @@ export async function loadAppData(): Promise<AppData> {
       when: d.when_label,
       done: d.done,
       injectionSite: d.injection_site || undefined,
+      createdAt: d.created_at,
     })),
     healthLogs: (healthLogs || []).map((h) => ({
       id: h.id,
@@ -233,7 +235,7 @@ export async function addVial(
 
 export async function addDose(
   data: AppData,
-  dose: Omit<Dose, "id" | "done">
+  dose: Omit<Dose, "id" | "done" | "createdAt">
 ): Promise<AppData> {
   const { supabase, user } = await requireUser();
   const { error } = await supabase.from("doses").insert({
