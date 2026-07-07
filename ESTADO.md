@@ -1,5 +1,17 @@
 # ESTADO — PeptiBrain
-Última actualización: 2026-07-07 | Sesión actual: 6 (servicios externos) — TODO el bloque de prioridad MUY ALTA completado ✅
+Última actualización: 2026-07-07 | Sesión actual: 6 (servicios externos) — bloque de prioridad MUY ALTA completado ✅ + páginas legales completas
+
+## Datos legales reales de la empresa (NO inventar, ya confirmados por el usuario)
+- Entidad: **Digital Dreams World LLC**
+- Domicilio: 2105 Vista Oeste NW Suite E 3564, Albuquerque, NM 87120, Estados Unidos
+- EIN: 32-0757894
+- ⚠️ Esto corrige un error anterior: los Términos de Servicio originales decían "operado desde España" — era una suposición mía incorrecta (por el dominio comprado en un proveedor español). Ya corregido a la LLC real de EE.UU. en `messages/es.json`/`en.json` → `Legal.termsIntro`.
+
+## Páginas legales — completas (2026-07-07)
+- Nuevo componente compartido `components/app/legal/LegalPage.tsx` (título+fecha+intro+secciones+volver) — reutilizado por las 5 páginas legales para no repetir código.
+- **Nuevas**: `/cookies` (qué cookies usa: Supabase sesión, NEXT_LOCALE, Mixpanel analítica — ninguna de publicidad), `/aviso-legal` (datos de Digital Dreams World LLC), `/reembolsos` (explica el trial de 7 días, cobro automático, cómo cancelar, cómo pedir reembolso vía Hotmart).
+- Footer actualizado con los 5 links legales (Términos/Privacidad/Cookies/Reembolsos/Aviso Legal), envueltos en 2 líneas en mobile sin desbordar.
+- Verificado: tsc ✓ build ✓ · probado visualmente a 375px real en ES.
 
 ## ✅ Bloque de PRIORIDAD MUY ALTA — completado el 2026-07-07
 1. **Confirmación de correo arreglada**: el interruptor real estaba en Supabase → Authentication → Sign In/Providers → sección "User Signups" → "Confirm email" (NO donde se buscó primero, dentro del modal "Email"). Ya apagado y verificado con una prueba real de `signUp` → devuelve sesión activa de inmediato.
