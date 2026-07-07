@@ -6,7 +6,7 @@
    - Nota técnica: Hotmart trata el producto como si fuera un "curso" (pide configurar "Área de Miembros"/"Contenido"), aunque PeptiBrain es una app web, no un curso. Se resolvió creando una única lección de bienvenida dentro de Hotmart que redirige al comprador a https://peptibrain.com para iniciar sesión con el mismo correo de compra.
 2. ⬜ Cloudflare Turnstile real (hoy sigue con la sitekey de prueba)
 3. ⬜ Conectar Resend (correos transaccionales reales)
-4. ⬜ Banner de consentimiento de cookies (GDPR) antes de que Mixpanel trackee
+4. ✅ **Banner de consentimiento de cookies**: `components/app/CookieConsentBanner.tsx` + `lib/mixpanel.ts` con `opt_out_tracking_by_default: true` — Mixpanel ya NO manda ningún evento hasta que el usuario acepte el banner ("Aceptar todas" llama `mixpanel.opt_in_tracking()`, "Solo necesarias" llama `opt_out_tracking()`). Verificado con `preview_network`: antes de aceptar, cero peticiones a `api-js.mixpanel.com`; después de aceptar, `200 OK`.
 5. ⬜ Probar un pago real completo de punta a punta
 
 ## Datos legales reales de la empresa (NO inventar, ya confirmados por el usuario)
