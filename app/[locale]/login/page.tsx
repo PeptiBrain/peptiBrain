@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { Link } from "@/i18n/navigation";
@@ -24,9 +25,22 @@ const COUNTRIES = [
 ];
 
 export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginPageContent />
+    </Suspense>
+  );
+}
+
+function LoginPageContent() {
   const t = useTranslations("Login");
   const router = useRouter();
-  const [tab, setTab] = useState<"ingresar" | "registrarte" | "olvide">("registrarte");
+  const searchParams = useSearchParams();
+  const cameFromEmailConfirmation = searchParams.has("code");
+  const [tab, setTab] = useState<"ingresar" | "registrarte" | "olvide">(
+    cameFromEmailConfirmation ? "ingresar" : "registrarte"
+  );
+  const [confirmedNotice, setConfirmedNotice] = useState(cameFromEmailConfirmation);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phoneCode, setPhoneCode] = useState("+34");
@@ -40,6 +54,8 @@ export default function LoginPage() {
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [captchaToken, setCaptchaToken] = useState("");
+  const [loginCaptchaToken, setLoginCaptchaToken] = useState("");
+  const [forgotCaptchaToken, setForgotCaptchaToken] = useState("");
   const [justRegistered, setJustRegistered] = useState(false);
   const [forgotEmail, setForgotEmail] = useState("");
   const [resetLinkSent, setResetLinkSent] = useState(false);
@@ -97,15 +113,20 @@ export default function LoginPage() {
 
   async function handleForgotPassword(e: React.FormEvent) {
     e.preventDefault();
+    if (!forgotCaptchaToken) {
+      setError(t("errorCaptcha"));
+      return;
+    }
     setError("");
     setLoading(true);
     const supabase = createClient();
     const { error: resetError } = await supabase.auth.resetPasswordForEmail(forgotEmail, {
       redirectTo: `${window.location.origin}/restablecer-password`,
+      captchaToken: forgotCaptchaToken,
     });
     setLoading(false);
     if (resetError) {
-      setError(t("errorGeneric"));
+      setError(resetError.message.includes("captcha") ? t("errorCaptcha") : t("errorGeneric"));
       return;
     }
     setResetLinkSent(true);
@@ -113,16 +134,23 @@ export default function LoginPage() {
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
+    if (!loginCaptchaToken) {
+      setError(t("errorCaptcha"));
+      return;
+    }
     setError("");
     setLoading(true);
     const supabase = createClient();
     const { data, error: signInError } = await supabase.auth.signInWithPassword({
       email: loginEmail,
       password: loginPassword,
+      options: { captchaToken: loginCaptchaToken },
     });
     setLoading(false);
     if (signInError) {
-      setError(t("errorInvalidCredentials"));
+      setError(
+        signInError.message.includes("captcha") ? t("errorCaptcha") : t("errorInvalidCredentials")
+      );
       return;
     }
     if (data.user) {
@@ -216,6 +244,9 @@ export default function LoginPage() {
                     className={inputClass}
                   />
                 </Field>
+
+                <Turnstile onVerify={setForgotCaptchaToken} />
+
                 {error && (
                   <p role="alert" className="text-sm text-destructive">
                     {error}
@@ -385,6 +416,12 @@ export default function LoginPage() {
           </form>
         ) : (
           <form onSubmit={handleLogin} className="space-y-4">
+            {confirmedNotice && (
+              <div className="flex items-center gap-2 rounded-lg bg-accent px-3 py-2.5 text-sm text-accent-foreground">
+                <Check className="size-4 shrink-0" aria-hidden />
+                {t("emailConfirmedNotice")}
+              </div>
+            )}
             <Field label={t("emailLabel")} htmlFor="login-email" icon={Mail}>
               <input
                 id="login-email"
@@ -414,6 +451,9 @@ export default function LoginPage() {
             >
               {t("forgotPasswordLink")}
             </button>
+
+            <Turnstile onVerify={setLoginCaptchaToken} />
+
             {error && (
               <p role="alert" className="text-sm text-destructive">
                 {error}

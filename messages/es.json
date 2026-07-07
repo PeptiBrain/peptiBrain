@@ -178,6 +178,7 @@
     "errorPasswordsNoMatch": "Las contraseñas no coinciden.",
     "errorAcceptTerms": "Necesitas aceptar los términos para continuar.",
     "errorCaptcha": "Confirma que no eres un robot para continuar.",
+    "emailConfirmedNotice": "¡Correo confirmado! Ya puedes ingresar con tu contraseña.",
     "createAccount": "Crear cuenta",
     "loginCta": "Ingresar",
     "encryptedData": "Datos cifrados",

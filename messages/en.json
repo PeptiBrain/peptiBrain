@@ -178,6 +178,7 @@
     "errorPasswordsNoMatch": "Passwords don’t match.",
     "errorAcceptTerms": "You need to accept the terms to continue.",
     "errorCaptcha": "Please confirm you're not a robot to continue.",
+    "emailConfirmedNotice": "Email confirmed! You can now sign in with your password.",
     "createAccount": "Create account",
     "loginCta": "Sign in",
     "encryptedData": "Encrypted data",
