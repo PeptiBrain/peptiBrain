@@ -597,6 +597,14 @@
     "message": "We use necessary cookies for the app to work, and analytics cookies (Mixpanel) to understand how to improve it. We don't use advertising cookies.",
     "accept": "Accept all",
     "reject": "Necessary only",
-    "link": "View Cookie Policy"
+    "link": "View Cookie Policy",
+    "customize": "Customize",
+    "customizeTitle": "Cookie preferences",
+    "necessaryTitle": "Necessary",
+    "necessaryDesc": "Always on — make the app work (session, language).",
+    "analyticsTitle": "Analytics (Mixpanel)",
+    "analyticsDesc": "Helps us understand how to improve the app.",
+    "back": "Back",
+    "savePreferences": "Save preferences"
   }
 }
