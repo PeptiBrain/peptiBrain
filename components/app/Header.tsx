@@ -1,10 +1,15 @@
 import Image from "next/image";
-import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { LocaleSwitcher } from "@/components/app/LocaleSwitcher";
+import { createClient } from "@/lib/supabase/server";
 
-export function Header() {
-  const t = useTranslations("Header");
+export async function Header() {
+  const t = await getTranslations("Header");
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   return (
     <header
@@ -20,18 +25,29 @@ export function Header() {
         </Link>
         <nav aria-label="Navegación principal" className="flex shrink-0 items-center gap-2 sm:gap-3">
           <LocaleSwitcher />
-          <Link
-            href="/login"
-            className="hidden text-sm font-medium text-muted-foreground hover:text-foreground sm:inline"
-          >
-            {t("login")}
-          </Link>
-          <Link
-            href="/login"
-            className="inline-flex h-11 items-center justify-center rounded-lg bg-primary px-3 text-sm font-semibold text-primary-foreground transition-transform active:scale-97 sm:px-4"
-          >
-            {t("cta")}
-          </Link>
+          {user ? (
+            <Link
+              href="/app"
+              className="inline-flex h-11 items-center justify-center rounded-lg bg-primary px-3 text-sm font-semibold text-primary-foreground transition-transform active:scale-97 sm:px-4"
+            >
+              {t("goToApp")}
+            </Link>
+          ) : (
+            <>
+              <Link
+                href="/login"
+                className="hidden text-sm font-medium text-muted-foreground hover:text-foreground sm:inline"
+              >
+                {t("login")}
+              </Link>
+              <Link
+                href="/login"
+                className="inline-flex h-11 items-center justify-center rounded-lg bg-primary px-3 text-sm font-semibold text-primary-foreground transition-transform active:scale-97 sm:px-4"
+              >
+                {t("cta")}
+              </Link>
+            </>
+          )}
         </nav>
       </div>
     </header>

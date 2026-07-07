@@ -23,7 +23,8 @@
   },
   "Header": {
     "login": "Ingresar",
-    "cta": "Empezar gratis"
+    "cta": "Empezar gratis",
+    "goToApp": "Ir a mi app"
   },
   "Footer": {
     "legalNotice": "PeptiBrain es un diario personal de seguimiento. No es consejo médico ni reemplaza a un profesional de la salud, y no recomienda dosis: registra lo que tú decides. Consulta siempre a un profesional antes de tomar decisiones sobre tu salud.",
@@ -184,7 +185,38 @@
     "errorEmailTaken": "Ese correo ya tiene una cuenta. Intenta iniciar sesión.",
     "errorGeneric": "Algo salió mal. Intenta de nuevo en un momento.",
     "errorInvalidCredentials": "Correo o contraseña incorrectos.",
-    "loading": "Un momento…"
+    "loading": "Un momento…",
+    "almostThereTitle": "¡Ya casi está!",
+    "almostThereBody": "Te enviamos un correo a {email}. Abre el enlace para activar tu cuenta y luego inicia sesión.",
+    "goToLogin": "Ir a iniciar sesión",
+    "forgotPasswordLink": "¿Olvidaste tu contraseña?",
+    "backToLogin": "← Volver a ingresar",
+    "forgotPasswordTitle": "Recupera tu contraseña",
+    "forgotPasswordBody": "Escribe tu correo y te enviamos un enlace para crear una nueva contraseña.",
+    "sendResetLink": "Enviar enlace",
+    "resetLinkSentTitle": "Revisa tu correo",
+    "resetLinkSentBody": "Te enviamos un enlace a {email} para crear una nueva contraseña."
+  },
+  "ResetPassword": {
+    "title": "Crea tu nueva contraseña",
+    "newPasswordLabel": "Nueva contraseña",
+    "confirmPasswordLabel": "Confirmar contraseña",
+    "showPassword": "Mostrar contraseña",
+    "hidePassword": "Ocultar contraseña",
+    "req8chars": "Al menos 8 caracteres",
+    "reqNumber": "Al menos un número",
+    "passwordsMatch": "Las contraseñas coinciden",
+    "errorWeakPassword": "La contraseña debe tener 8 caracteres y un número.",
+    "errorPasswordsNoMatch": "Las contraseñas no coinciden.",
+    "errorGeneric": "Algo salió mal. Intenta de nuevo en un momento.",
+    "loading": "Un momento…",
+    "submit": "Guardar contraseña",
+    "successTitle": "¡Contraseña actualizada!",
+    "successBody": "Ya puedes seguir usando tu cuenta con la nueva contraseña.",
+    "goToApp": "Ir a la app",
+    "expiredTitle": "Este enlace ya no es válido",
+    "expiredBody": "Puede haber expirado o ya haberse usado. Pide un enlace nuevo desde la pantalla de ingreso.",
+    "goToLogin": "Ir a iniciar sesión"
   },
   "Onboarding": {
     "back": "Atrás",

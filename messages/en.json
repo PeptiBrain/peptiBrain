@@ -23,7 +23,8 @@
   },
   "Header": {
     "login": "Sign in",
-    "cta": "Start for free"
+    "cta": "Start for free",
+    "goToApp": "Go to my app"
   },
   "Footer": {
     "legalNotice": "PeptiBrain is a personal tracking diary. It is not medical advice and does not replace a healthcare professional, and it does not recommend doses: it records what you decide. Always consult a professional before making decisions about your health.",
@@ -184,7 +185,38 @@
     "errorEmailTaken": "That email already has an account. Try signing in instead.",
     "errorGeneric": "Something went wrong. Please try again in a moment.",
     "errorInvalidCredentials": "Incorrect email or password.",
-    "loading": "One moment…"
+    "loading": "One moment…",
+    "almostThereTitle": "Almost there!",
+    "almostThereBody": "We sent an email to {email}. Open the link to activate your account, then sign in.",
+    "goToLogin": "Go to sign in",
+    "forgotPasswordLink": "Forgot your password?",
+    "backToLogin": "← Back to sign in",
+    "forgotPasswordTitle": "Recover your password",
+    "forgotPasswordBody": "Enter your email and we'll send you a link to create a new password.",
+    "sendResetLink": "Send link",
+    "resetLinkSentTitle": "Check your email",
+    "resetLinkSentBody": "We sent a link to {email} to create a new password."
+  },
+  "ResetPassword": {
+    "title": "Create your new password",
+    "newPasswordLabel": "New password",
+    "confirmPasswordLabel": "Confirm password",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "req8chars": "At least 8 characters",
+    "reqNumber": "At least one number",
+    "passwordsMatch": "Passwords match",
+    "errorWeakPassword": "Password must have 8 characters and a number.",
+    "errorPasswordsNoMatch": "Passwords don't match.",
+    "errorGeneric": "Something went wrong. Please try again in a moment.",
+    "loading": "One moment…",
+    "submit": "Save password",
+    "successTitle": "Password updated!",
+    "successBody": "You can now keep using your account with the new password.",
+    "goToApp": "Go to the app",
+    "expiredTitle": "This link is no longer valid",
+    "expiredBody": "It may have expired or already been used. Request a new link from the sign-in screen.",
+    "goToLogin": "Go to sign in"
   },
   "Onboarding": {
     "back": "Back",

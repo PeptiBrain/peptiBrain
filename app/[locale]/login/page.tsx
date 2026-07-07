@@ -26,7 +26,7 @@ const COUNTRIES = [
 export default function LoginPage() {
   const t = useTranslations("Login");
   const router = useRouter();
-  const [tab, setTab] = useState<"ingresar" | "registrarte">("registrarte");
+  const [tab, setTab] = useState<"ingresar" | "registrarte" | "olvide">("registrarte");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phoneCode, setPhoneCode] = useState("+34");
@@ -40,6 +40,9 @@ export default function LoginPage() {
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [captchaToken, setCaptchaToken] = useState("");
+  const [justRegistered, setJustRegistered] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [resetLinkSent, setResetLinkSent] = useState(false);
 
   const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const phoneValid = phone.replace(/\D/g, "").length >= 7;
@@ -85,7 +88,27 @@ export default function LoginPage() {
     }
     saveOnboarding({ name, email, phoneCode, phone });
     setLoading(false);
+    if (!data.session) {
+      setJustRegistered(true);
+      return;
+    }
     router.push("/onboarding");
+  }
+
+  async function handleForgotPassword(e: React.FormEvent) {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+    const supabase = createClient();
+    const { error: resetError } = await supabase.auth.resetPasswordForEmail(forgotEmail, {
+      redirectTo: `${window.location.origin}/restablecer-password`,
+    });
+    setLoading(false);
+    if (resetError) {
+      setError(t("errorGeneric"));
+      return;
+    }
+    setResetLinkSent(true);
   }
 
   async function handleLogin(e: React.FormEvent) {
@@ -127,6 +150,78 @@ export default function LoginPage() {
         transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
         className="w-full max-w-sm rounded-2xl border border-border bg-card p-6 shadow-md"
       >
+        {justRegistered ? (
+          <div className="flex flex-col items-center py-2 text-center">
+            <div className="mb-4 flex size-14 items-center justify-center rounded-full bg-accent">
+              <Check className="size-7 text-primary" aria-hidden />
+            </div>
+            <h1 className="font-display text-xl font-bold text-foreground">{t("almostThereTitle")}</h1>
+            <p className="mt-2 text-sm text-muted-foreground">{t("almostThereBody", { email })}</p>
+            <button
+              type="button"
+              onClick={() => {
+                setJustRegistered(false);
+                setTab("ingresar");
+              }}
+              className="mt-5 h-12 w-full rounded-lg bg-primary text-base font-semibold text-primary-foreground transition-transform active:scale-97"
+            >
+              {t("goToLogin")}
+            </button>
+          </div>
+        ) : tab === "olvide" ? (
+          <div>
+            <button
+              type="button"
+              onClick={() => {
+                setTab("ingresar");
+                setResetLinkSent(false);
+                setError("");
+              }}
+              className="mb-4 text-sm font-medium text-muted-foreground hover:text-foreground"
+            >
+              {t("backToLogin")}
+            </button>
+            {resetLinkSent ? (
+              <div className="flex flex-col items-center py-2 text-center">
+                <div className="mb-4 flex size-14 items-center justify-center rounded-full bg-accent">
+                  <Check className="size-7 text-primary" aria-hidden />
+                </div>
+                <h1 className="font-display text-xl font-bold text-foreground">{t("resetLinkSentTitle")}</h1>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  {t("resetLinkSentBody", { email: forgotEmail })}
+                </p>
+              </div>
+            ) : (
+              <form onSubmit={handleForgotPassword} className="space-y-4">
+                <h1 className="font-display text-lg font-bold text-foreground">{t("forgotPasswordTitle")}</h1>
+                <p className="-mt-2 text-sm text-muted-foreground">{t("forgotPasswordBody")}</p>
+                <Field label={t("emailLabel")} htmlFor="forgot-email" icon={Mail}>
+                  <input
+                    id="forgot-email"
+                    type="email"
+                    value={forgotEmail}
+                    onChange={(e) => setForgotEmail(e.target.value)}
+                    placeholder={t("emailPlaceholder")}
+                    className={inputClass}
+                  />
+                </Field>
+                {error && (
+                  <p role="alert" className="text-sm text-destructive">
+                    {error}
+                  </p>
+                )}
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="h-12 w-full rounded-lg bg-primary text-base font-semibold text-primary-foreground transition-transform active:scale-97 disabled:opacity-60"
+                >
+                  {loading ? t("loading") : t("sendResetLink")}
+                </button>
+              </form>
+            )}
+          </div>
+        ) : (
+          <>
         <div className="mb-5 flex rounded-lg bg-secondary p-1">
           <button
             type="button"
@@ -295,6 +390,16 @@ export default function LoginPage() {
                 className={inputClass}
               />
             </Field>
+            <button
+              type="button"
+              onClick={() => {
+                setTab("olvide");
+                setError("");
+              }}
+              className="text-sm font-medium text-primary underline-offset-2 hover:underline"
+            >
+              {t("forgotPasswordLink")}
+            </button>
             {error && (
               <p role="alert" className="text-sm text-destructive">
                 {error}
@@ -308,6 +413,8 @@ export default function LoginPage() {
               {loading ? t("loading") : t("loginCta")}
             </button>
           </form>
+        )}
+        </>
         )}
       </motion.div>
 
