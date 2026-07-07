@@ -548,7 +548,11 @@
     "offerAccept": "Yes, give me 40% off",
     "offerDecline": "No thanks, cancel anyway",
     "cancelInstructions": "To complete the cancellation, use the purchase confirmation email Hotmart sent you, or contact Hotmart support.",
-    "close": "Close"
+    "close": "Close",
+    "upgradeButton": "Upgrade to Premium",
+    "languageLabel": "Language",
+    "installAppLabel": "Install the app",
+    "installAppDesc": "Add it to your phone's home screen"
   },
   "Tour": {
     "step1Title": "Home — your starting point",

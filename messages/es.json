@@ -548,7 +548,11 @@
     "offerAccept": "Sí, quiero el 40% de descuento",
     "offerDecline": "No gracias, quiero cancelar de todas formas",
     "cancelInstructions": "Para completar la cancelación, hazlo desde el correo de confirmación de compra que Hotmart te envió, o contacta a soporte de Hotmart.",
-    "close": "Cerrar"
+    "close": "Cerrar",
+    "upgradeButton": "Subir a Premium",
+    "languageLabel": "Idioma",
+    "installAppLabel": "Instalar la app",
+    "installAppDesc": "Agrégala a la pantalla de inicio de tu teléfono"
   },
   "Tour": {
     "step1Title": "Inicio — tu punto de partida",

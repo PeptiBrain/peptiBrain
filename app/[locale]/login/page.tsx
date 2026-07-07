@@ -128,6 +128,15 @@ export default function LoginPage() {
     if (data.user) {
       identifyUser(data.user.id, { email: loginEmail });
       track("login_completed", { method: "email" });
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("onboarding_completed_at")
+        .eq("id", data.user.id)
+        .single();
+      if (!profile?.onboarding_completed_at) {
+        router.push("/onboarding");
+        return;
+      }
     }
     router.push("/app");
   }
