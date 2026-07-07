@@ -290,7 +290,10 @@ export default function LoginPage() {
                   type="tel"
                   inputMode="numeric"
                   value={phone}
-                  onChange={(e) => setPhone(e.target.value.replace(/[^\d\s]/g, ""))}
+                  onChange={(e) => {
+                    const digitsOnly = e.target.value.replace(/[^\d\s]/g, "");
+                    if (digitsOnly.replace(/\s/g, "").length <= 15) setPhone(digitsOnly);
+                  }}
                   placeholder={t("phonePlaceholder")}
                   className={`${inputClass} flex-1`}
                 />
