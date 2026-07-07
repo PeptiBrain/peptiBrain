@@ -1,8 +1,19 @@
 # ESTADO — PeptiBrain
-Última actualización: 2026-07-06 | Sesión actual: 6 (servicios externos) — GitHub ✅ Supabase (auth real, ⚠️ ver bug crítico abajo) Vercel ✅ Mixpanel ✅ PWA ✅ Dominio peptibrain.com ✅ (HTTPS confirmado funcionando) — Hotmart: 4 planes + checkout real + webhook construido (⚠️ aún sin confirmar 200 en la prueba)
+Última actualización: 2026-07-07 | Sesión actual: 6 (servicios externos) — TODO el bloque de prioridad MUY ALTA completado ✅
 
-## 🔴 BUG CRÍTICO ABIERTO — el registro real puede estar roto ahora mismo
-Verificado directo contra la API de Supabase: el `signUp` NO devuelve sesión activa — sigue pidiendo confirmación de correo. Como no hay Resend conectado (y el envío de correos de Supabase por defecto tiene un límite muy bajo, ya lo golpeamos varias veces), **cualquier persona que se registre en la app real hoy probablemente no puede iniciar sesión después de registrarse**. Se le pidió al usuario re-verificar en Supabase → Authentication → Providers → Email que "Confirm email" esté REALMENTE apagado (puede que no se haya guardado la vez anterior) — respuesta pendiente. Esto es más urgente que cualquier feature nueva; revisar apenas se retome la sesión.
+## ✅ Bloque de PRIORIDAD MUY ALTA — completado el 2026-07-07
+1. **Confirmación de correo arreglada**: el interruptor real estaba en Supabase → Authentication → Sign In/Providers → sección "User Signups" → "Confirm email" (NO donde se buscó primero, dentro del modal "Email"). Ya apagado y verificado con una prueba real de `signUp` → devuelve sesión activa de inmediato.
+2. **Webhook de Hotmart funcionando de verdad**: causa raíz encontrada — Hotmart webhook v2.0.0 manda el `hottok` en el **header HTTP `X-HOTMART-HOTTOK`**, NO dentro del JSON como asumí al principio. Corregido en `app/api/webhooks/hotmart/route.ts` (ahora lee `request.headers.get("x-hotmart-hottok")`). Confirmado con la prueba de Hotmart: casi todos los eventos devuelven "200 - Procesado" (Compra aprobada/completa/reembolsada/cancelada, etc.). ⚠️ Único caso pendiente sin bloquear: el evento sintético "Cancelación de Suscripción" en la prueba de Hotmart no trae email de comprador (por eso da 400 en ESA prueba específica) — no afecta a los eventos de compra real, revisar con calma más adelante si aplica en producción real.
+3. **Datos de la app migrados de verdad a Supabase**: `lib/app-data.ts` reescrito completo (era localStorage, ahora son llamadas reales a Supabase con RLS). Incluye:
+   - Límite del plan Gratis (1 péptido, 1 vial) validado en el SERVIDOR con `PlanLimitError` — ya no se puede saltar editando el navegador.
+   - Sembrado inicial desde el onboarding ahora se guarda en Supabase (usa `profiles.onboarding_completed_at` para saber si ya se sembró).
+   - Migración de esquema necesaria: `supabase/migrations/0002_doses_when_text.sql` (la columna `when_at timestamptz` se cambió a `when_label text`, porque la app guarda texto libre como "Mañana 8am", no una fecha exacta parseable).
+   - Salud: la fecha ahora se guarda en formato ISO real (`log_date`), la pantalla la formatea al idioma actual al mostrarla (antes se guardaba ya formateada, mezclando datos con presentación).
+   - Probado de punta a punta con una cuenta real: registro → onboarding → péptido/vial/dosis sembrados correctamente en Supabase → racha y "próxima dosis" mostrando datos reales.
+4. **Términos de Servicio y Política de Privacidad reales** (ES/EN), reemplazando el placeholder "estamos redactando esto".
+5. **Revisión de seguridad**: RLS probado en las 7 tablas (sin sesión no se puede leer nada), sin secretos en el código, `.env.local` nunca subido a git. Hallazgo menor aceptado (no corregido): el mensaje de "correo ya registrado" permite enumeración de cuentas — riesgo bajo, se dejó así por UX.
+
+⚠️ Nota de aprendizaje para futuras sesiones: **dos veces el usuario corrió SQL/comandos en el proyecto de Supabase equivocado** (confirmadisimo en vez de PeptiBrain) — siempre confirmar el nombre del proyecto visible arriba a la izquierda del dashboard antes de dar instrucciones de "pega esto y dale Run".
 
 ## Sesión del 2026-07-06 — resumen de lo construido
 - **PWA instalable**: `/descargar` con instrucciones paso a paso iOS(Safari)/Android(Chrome) para agregar a pantalla de inicio.
