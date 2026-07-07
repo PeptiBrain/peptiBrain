@@ -295,7 +295,11 @@
     "tabPeptides": "Peptides",
     "tabHealth": "Health",
     "tabFamily": "Family",
-    "signOut": "Sign out"
+    "signOut": "Sign out",
+    "lightMode": "Light mode",
+    "darkMode": "Dark mode",
+    "profileMenu": "Profile menu",
+    "myAccount": "My account"
   },
   "Inicio": {
     "greeting": "Good morning",

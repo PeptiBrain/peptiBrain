@@ -52,9 +52,19 @@ export default async function LocaleLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale} className={`${poppins.variable} ${inter.variable} h-full antialiased`}>
+    <html
+      lang={locale}
+      className={`${poppins.variable} ${inter.variable} h-full antialiased`}
+      suppressHydrationWarning
+    >
       <head>
         <meta name="theme-color" content="#FAFBFA" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "try{if(localStorage.getItem('peptibrain_theme')==='dark'){document.documentElement.classList.add('dark')}}catch(e){}",
+          }}
+        />
       </head>
       <body className="min-h-dvh flex flex-col bg-background text-foreground">
         <ServiceWorkerRegister />

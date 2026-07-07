@@ -105,8 +105,54 @@
   --notice-text: #6B4A28;
 }
 
-/* PeptiBrain v1 es solo modo claro (ver ESTADO.md → Dirección de Arte). Sin bloque .dark por ahora:
-   los tokens semánticos ya están listos para agregarlo después sin reescribir componentes. */
+html.dark {
+  color-scheme: dark;
+  /* ====== PALETA PEPTIBRAIN — modo oscuro ====== */
+  --background: #0B0F17;           /* casi-negro con tinte navy, no #000 puro */
+  --foreground: #F2F4F2;           /* casi-blanco cálido */
+  --card: #121826;                 /* superficie elevada */
+  --card-foreground: #F2F4F2;
+  --popover: #121826;
+  --popover-foreground: #F2F4F2;
+  --primary: #00E0A8;              /* Menta, un poco más brillante para contraste en oscuro */
+  --primary-foreground: #FFFFFF;
+  --brand-hover: #00B88F;
+  --secondary: #1B2333;
+  --secondary-foreground: #F2F4F2;
+  --surface-secondary: #1B2333;
+  --surface-tertiary: #232C40;
+  --muted: #1B2333;
+  --muted-foreground: #9AA3B2;
+  --txt-secondary: #9AA3B2;
+  --accent: #0E2E27;
+  --accent-foreground: #4FE3BE;
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: #232C40;
+  --input: #232C40;
+  --ring: #00E0A8;
+  --chart-1: #00E0A8;
+  --chart-2: #00B88F;
+  --chart-3: #9AA3B2;
+  --chart-4: #232C40;
+  --chart-5: #F2F4F2;
+  --sidebar: #121826;
+  --sidebar-foreground: #F2F4F2;
+  --sidebar-primary: #00E0A8;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #1B2333;
+  --sidebar-accent-foreground: #F2F4F2;
+  --sidebar-border: #232C40;
+  --sidebar-ring: #00E0A8;
+
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.25);
+  --shadow-md: 0 2px 4px rgba(0,0,0,0.25), 0 6px 16px rgba(0,0,0,0.35);
+  --shadow-lg: 0 4px 8px rgba(0,0,0,0.3), 0 12px 32px rgba(0,0,0,0.45);
+
+  --notice-bg: #2A2114;
+  --notice-border: #4A3A1F;
+  --notice-icon: #E0A959;
+  --notice-text: #F0C98A;
+}
 
 @layer base {
   * {
