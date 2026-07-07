@@ -20,7 +20,9 @@ const REVOKE_EVENTS = new Set([
 export async function POST(request: NextRequest) {
   const body = await request.json();
 
-  if (!process.env.HOTMART_HOTTOK || body.hottok !== process.env.HOTMART_HOTTOK) {
+  // Hotmart v2.0.0 manda el hottok en el header, no en el cuerpo del mensaje.
+  const receivedHottok = request.headers.get("x-hotmart-hottok");
+  if (!process.env.HOTMART_HOTTOK || receivedHottok !== process.env.HOTMART_HOTTOK) {
     return NextResponse.json({ error: "invalid hottok" }, { status: 401 });
   }
 

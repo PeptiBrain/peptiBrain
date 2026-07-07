@@ -15,7 +15,7 @@ export default function InicioPage() {
   const [name, setName] = useState("");
 
   useEffect(() => {
-    setData(loadAppData());
+    loadAppData().then(setData);
     setName(loadOnboarding().name);
   }, []);
 
@@ -27,9 +27,9 @@ export default function InicioPage() {
     : null;
   const streak = data.doses.filter((d) => d.done).length;
 
-  function handleMarkDone() {
+  async function handleMarkDone() {
     if (!pendingDose || !data) return;
-    setData(markDoseDone(data, pendingDose.id));
+    setData(await markDoseDone(data, pendingDose.id));
     track("dose_logged", { peptide: donePeptide?.name });
   }
 

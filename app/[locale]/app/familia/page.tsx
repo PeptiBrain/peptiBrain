@@ -19,7 +19,7 @@ export default function FamiliaPage() {
   const [email, setEmail] = useState("");
 
   useEffect(() => {
-    setData(loadAppData());
+    loadAppData().then(setData);
   }, []);
 
   if (!data) return null;
@@ -34,9 +34,9 @@ export default function FamiliaPage() {
     URL.revokeObjectURL(url);
   }
 
-  function handleInvite() {
+  async function handleInvite() {
     if (!name.trim() || !email.trim() || !data) return;
-    const next = addFamilyMember(data, { name: name.trim(), email: email.trim(), visibility: "resumen" });
+    const next = await addFamilyMember(data, { name: name.trim(), email: email.trim(), visibility: "resumen" });
     setData(next);
     setName("");
     setEmail("");
@@ -109,9 +109,9 @@ export default function FamiliaPage() {
                 </div>
                 <button
                   type="button"
-                  onClick={() => {
+                  onClick={async () => {
                     if (window.confirm(t("confirmRemove", { name: member.name }))) {
-                      setData(removeFamilyMember(data, member.id));
+                      setData(await removeFamilyMember(data, member.id));
                     }
                   }}
                   aria-label={t("removeAria", { name: member.name })}
@@ -123,7 +123,7 @@ export default function FamiliaPage() {
               <div className="mt-2 flex gap-2">
                 <button
                   type="button"
-                  onClick={() => setData(updateFamilyVisibility(data, member.id, "resumen"))}
+                  onClick={async () => setData(await updateFamilyVisibility(data, member.id, "resumen"))}
                   className={`h-8 flex-1 rounded-full text-xs font-medium ${
                     member.visibility === "resumen"
                       ? "bg-primary text-primary-foreground"
@@ -134,7 +134,7 @@ export default function FamiliaPage() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => setData(updateFamilyVisibility(data, member.id, "completo"))}
+                  onClick={async () => setData(await updateFamilyVisibility(data, member.id, "completo"))}
                   className={`h-8 flex-1 rounded-full text-xs font-medium ${
                     member.visibility === "completo"
                       ? "bg-primary text-primary-foreground"

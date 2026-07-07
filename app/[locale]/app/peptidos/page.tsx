@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Plus, Package } from "lucide-react";
-import { addPeptide, loadAppData, type AppData } from "@/lib/app-data";
+import { Link } from "@/i18n/navigation";
+import { addPeptide, loadAppData, PlanLimitError, type AppData } from "@/lib/app-data";
 import { PeptideCard } from "@/components/app/peptidos/PeptideCard";
 
 const ROUTES = ["Subcutánea", "Intramuscular", "Oral", "Nasal"];
@@ -14,19 +15,29 @@ export default function PeptidosPage() {
   const [showForm, setShowForm] = useState(false);
   const [name, setName] = useState("");
   const [route, setRoute] = useState("Subcutánea");
+  const [limitReached, setLimitReached] = useState(false);
 
   useEffect(() => {
-    setData(loadAppData());
+    loadAppData().then(setData);
   }, []);
 
   if (!data) return null;
 
-  function handleAdd() {
+  async function handleAdd() {
     if (!name.trim() || !data) return;
-    const next = addPeptide(data, { name: name.trim(), route, typicalDose: "", typicalUnit: "mg" });
-    setData(next);
-    setName("");
-    setShowForm(false);
+    try {
+      const next = await addPeptide(data, { name: name.trim(), route, typicalDose: "", typicalUnit: "mg" });
+      setData(next);
+      setName("");
+      setShowForm(false);
+      setLimitReached(false);
+    } catch (err) {
+      if (err instanceof PlanLimitError) {
+        setLimitReached(true);
+      } else {
+        throw err;
+      }
+    }
   }
 
   return (
@@ -76,6 +87,14 @@ export default function PeptidosPage() {
               </button>
             ))}
           </div>
+          {limitReached && (
+            <div className="mb-3 rounded-lg bg-accent px-3 py-2 text-xs text-accent-foreground">
+              {t("planLimitReached")}{" "}
+              <Link href="/paywall" className="font-semibold underline underline-offset-2">
+                {t("planLimitCta")}
+              </Link>
+            </div>
+          )}
           <button
             type="button"
             disabled={!name.trim()}

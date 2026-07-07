@@ -1,3 +1,4 @@
+import { createClient } from "@/lib/supabase/client";
 import { loadOnboarding } from "@/lib/onboarding";
 
 export type Peptide = {
@@ -32,7 +33,7 @@ export type Dose = {
 
 export type HealthLog = {
   id: string;
-  date: string;
+  date: string; // ISO yyyy-mm-dd
   weightKg?: string;
   hydrationMl?: string;
   exerciseMin?: string;
@@ -52,10 +53,8 @@ export type AppData = {
   doses: Dose[];
   healthLogs: HealthLog[];
   familyMembers: FamilyMember[];
-  seeded: boolean;
+  plan: "free" | "premium" | "family";
 };
-
-const KEY = "peptibrain_app_data";
 
 const EMPTY: AppData = {
   peptides: [],
@@ -63,134 +62,255 @@ const EMPTY: AppData = {
   doses: [],
   healthLogs: [],
   familyMembers: [],
-  seeded: false,
+  plan: "free",
 };
 
-function uid() {
-  return Math.random().toString(36).slice(2, 10);
-}
-
-export function loadAppData(): AppData {
-  if (typeof window === "undefined") return EMPTY;
-  try {
-    const raw = window.localStorage.getItem(KEY);
-    const data: AppData = raw ? { ...EMPTY, ...JSON.parse(raw) } : { ...EMPTY };
-    if (!data.seeded) return seedFromOnboarding(data);
-    return data;
-  } catch {
-    return EMPTY;
+export class PlanLimitError extends Error {
+  constructor(message = "PLAN_LIMIT_REACHED") {
+    super(message);
+    this.name = "PlanLimitError";
   }
 }
 
-export function saveAppData(data: AppData): AppData {
-  if (typeof window !== "undefined") {
-    window.localStorage.setItem(KEY, JSON.stringify(data));
-  }
-  return data;
+async function requireUser() {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw new Error("NOT_AUTHENTICATED");
+  return { supabase, user };
 }
 
-function seedFromOnboarding(base: AppData): AppData {
-  const onboarding = loadOnboarding();
-  if (!onboarding.peptideName) {
-    return saveAppData({ ...base, seeded: true });
+export async function loadAppData(): Promise<AppData> {
+  const { supabase, user } = await requireUser();
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("plan, onboarding_completed_at")
+    .eq("id", user.id)
+    .single();
+
+  if (profile && !profile.onboarding_completed_at) {
+    await seedFromOnboarding(user.id);
+    await supabase
+      .from("profiles")
+      .update({ onboarding_completed_at: new Date().toISOString() })
+      .eq("id", user.id);
   }
 
-  const peptideId = uid();
-  const peptide: Peptide = {
-    id: peptideId,
-    name: onboarding.peptideName,
-    route: onboarding.peptideRoute || "Subcutánea",
-    typicalDose: onboarding.doseAmount || "",
-    typicalUnit: onboarding.doseUnit || "mg",
+  const [{ data: peptides }, { data: vials }, { data: doses }, { data: healthLogs }, { data: family }] =
+    await Promise.all([
+      supabase.from("peptides").select("*").order("created_at", { ascending: true }),
+      supabase.from("vials").select("*").order("created_at", { ascending: true }),
+      supabase.from("doses").select("*").order("created_at", { ascending: true }),
+      supabase.from("health_logs").select("*").order("log_date", { ascending: false }),
+      supabase.from("family_members").select("*").order("created_at", { ascending: true }),
+    ]);
+
+  return {
+    plan: (profile?.plan as AppData["plan"]) || "free",
+    peptides: (peptides || []).map((p) => ({
+      id: p.id,
+      name: p.name,
+      route: p.route,
+      typicalDose: p.typical_dose != null ? String(p.typical_dose) : "",
+      typicalUnit: p.typical_unit,
+    })),
+    vials: (vials || []).map((v) => ({
+      id: v.id,
+      peptideId: v.peptide_id,
+      amount: String(v.amount),
+      unit: v.unit,
+      bacWater: v.bac_water != null ? String(v.bac_water) : "",
+      syringeType: v.syringe_type || undefined,
+      createdAt: v.created_at,
+    })),
+    doses: (doses || []).map((d) => ({
+      id: d.id,
+      peptideId: d.peptide_id,
+      amount: String(d.amount),
+      unit: d.unit,
+      when: d.when_label,
+      done: d.done,
+      injectionSite: d.injection_site || undefined,
+    })),
+    healthLogs: (healthLogs || []).map((h) => ({
+      id: h.id,
+      date: h.log_date,
+      weightKg: h.weight_kg != null ? String(h.weight_kg) : undefined,
+      hydrationMl: h.hydration_ml != null ? String(h.hydration_ml) : undefined,
+      exerciseMin: h.exercise_min != null ? String(h.exercise_min) : undefined,
+      sideEffect: h.side_effect || undefined,
+    })),
+    familyMembers: (family || []).map((f) => ({
+      id: f.id,
+      name: f.name,
+      email: f.email,
+      visibility: f.visibility,
+    })),
   };
+}
 
-  const vials: Vial[] = onboarding.vialAmount
-    ? [
-        {
-          id: uid(),
-          peptideId,
-          amount: onboarding.vialAmount,
-          unit: onboarding.vialUnit,
-          bacWater: onboarding.bacWater,
-          createdAt: new Date().toISOString(),
-        },
-      ]
-    : [];
+async function seedFromOnboarding(userId: string) {
+  const onboarding = loadOnboarding();
+  if (!onboarding.peptideName) return;
 
-  const doses: Dose[] = onboarding.doseAmount
-    ? [
-        {
-          id: uid(),
-          peptideId,
-          amount: onboarding.doseAmount,
-          unit: onboarding.doseUnit,
-          when: onboarding.doseWhen || "Hoy",
-          done: false,
-        },
-      ]
-    : [];
+  const supabase = createClient();
+  const { data: peptide } = await supabase
+    .from("peptides")
+    .insert({
+      user_id: userId,
+      name: onboarding.peptideName,
+      route: onboarding.peptideRoute || "Subcutánea",
+      typical_dose: onboarding.doseAmount ? Number(onboarding.doseAmount) : null,
+      typical_unit: onboarding.doseUnit || "mg",
+    })
+    .select()
+    .single();
 
-  return saveAppData({
-    ...base,
-    peptides: [peptide],
-    vials,
-    doses,
-    seeded: true,
+  if (!peptide) return;
+
+  if (onboarding.vialAmount) {
+    await supabase.from("vials").insert({
+      user_id: userId,
+      peptide_id: peptide.id,
+      amount: Number(onboarding.vialAmount),
+      unit: onboarding.vialUnit,
+      bac_water: onboarding.bacWater ? Number(onboarding.bacWater) : null,
+    });
+  }
+
+  if (onboarding.doseAmount) {
+    await supabase.from("doses").insert({
+      user_id: userId,
+      peptide_id: peptide.id,
+      amount: Number(onboarding.doseAmount),
+      unit: onboarding.doseUnit,
+      when_label: onboarding.doseWhen || "Hoy",
+      done: false,
+    });
+  }
+}
+
+export async function addPeptide(
+  data: AppData,
+  peptide: Omit<Peptide, "id">
+): Promise<AppData> {
+  const { supabase, user } = await requireUser();
+  if (data.plan === "free" && data.peptides.length >= 1) {
+    throw new PlanLimitError();
+  }
+  const { error } = await supabase.from("peptides").insert({
+    user_id: user.id,
+    name: peptide.name,
+    route: peptide.route,
+    typical_dose: peptide.typicalDose ? Number(peptide.typicalDose) : null,
+    typical_unit: peptide.typicalUnit,
   });
+  if (error) throw error;
+  return loadAppData();
 }
 
-export function addPeptide(data: AppData, peptide: Omit<Peptide, "id">): AppData {
-  return saveAppData({ ...data, peptides: [...data.peptides, { ...peptide, id: uid() }] });
-}
-
-export function addVial(data: AppData, vial: Omit<Vial, "id" | "createdAt">): AppData {
-  return saveAppData({
-    ...data,
-    vials: [...data.vials, { ...vial, id: uid(), createdAt: new Date().toISOString() }],
+export async function addVial(
+  data: AppData,
+  vial: Omit<Vial, "id" | "createdAt">
+): Promise<AppData> {
+  const { supabase, user } = await requireUser();
+  if (data.plan === "free" && data.vials.length >= 1) {
+    throw new PlanLimitError();
+  }
+  const { error } = await supabase.from("vials").insert({
+    user_id: user.id,
+    peptide_id: vial.peptideId,
+    amount: Number(vial.amount),
+    unit: vial.unit,
+    bac_water: vial.bacWater ? Number(vial.bacWater) : null,
+    syringe_type: vial.syringeType || null,
   });
+  if (error) throw error;
+  return loadAppData();
 }
 
-export function addDose(data: AppData, dose: Omit<Dose, "id" | "done">): AppData {
-  return saveAppData({ ...data, doses: [...data.doses, { ...dose, id: uid(), done: false }] });
-}
-
-export function markDoseDone(data: AppData, doseId: string): AppData {
-  return saveAppData({
-    ...data,
-    doses: data.doses.map((d) => (d.id === doseId ? { ...d, done: true } : d)),
+export async function addDose(
+  data: AppData,
+  dose: Omit<Dose, "id" | "done">
+): Promise<AppData> {
+  const { supabase, user } = await requireUser();
+  const { error } = await supabase.from("doses").insert({
+    user_id: user.id,
+    peptide_id: dose.peptideId,
+    amount: Number(dose.amount),
+    unit: dose.unit,
+    when_label: dose.when,
+    done: false,
   });
+  if (error) throw error;
+  return loadAppData();
 }
 
-export function addHealthLog(data: AppData, log: Omit<HealthLog, "id">): AppData {
-  return saveAppData({ ...data, healthLogs: [{ ...log, id: uid() }, ...data.healthLogs] });
+export async function markDoseDone(data: AppData, doseId: string): Promise<AppData> {
+  const { supabase } = await requireUser();
+  const { error } = await supabase.from("doses").update({ done: true }).eq("id", doseId);
+  if (error) throw error;
+  return loadAppData();
 }
 
-export function addFamilyMember(data: AppData, member: Omit<FamilyMember, "id">): AppData {
-  return saveAppData({
-    ...data,
-    familyMembers: [...data.familyMembers, { ...member, id: uid() }],
+export async function addHealthLog(
+  data: AppData,
+  log: Omit<HealthLog, "id">
+): Promise<AppData> {
+  const { supabase, user } = await requireUser();
+  const { error } = await supabase.from("health_logs").upsert(
+    {
+      user_id: user.id,
+      log_date: log.date,
+      weight_kg: log.weightKg ? Number(log.weightKg) : null,
+      hydration_ml: log.hydrationMl ? Number(log.hydrationMl) : null,
+      exercise_min: log.exerciseMin ? Number(log.exerciseMin) : null,
+      side_effect: log.sideEffect || null,
+    },
+    { onConflict: "user_id,log_date" }
+  );
+  if (error) throw error;
+  return loadAppData();
+}
+
+export async function addFamilyMember(
+  data: AppData,
+  member: Omit<FamilyMember, "id">
+): Promise<AppData> {
+  const { supabase, user } = await requireUser();
+  const { error } = await supabase.from("family_members").insert({
+    owner_id: user.id,
+    name: member.name,
+    email: member.email,
+    visibility: member.visibility,
   });
+  if (error) throw error;
+  return loadAppData();
 }
 
-export function updateFamilyVisibility(
+export async function updateFamilyVisibility(
   data: AppData,
   memberId: string,
   visibility: FamilyMember["visibility"]
-): AppData {
-  return saveAppData({
-    ...data,
-    familyMembers: data.familyMembers.map((m) => (m.id === memberId ? { ...m, visibility } : m)),
-  });
+): Promise<AppData> {
+  const { supabase } = await requireUser();
+  const { error } = await supabase
+    .from("family_members")
+    .update({ visibility })
+    .eq("id", memberId);
+  if (error) throw error;
+  return loadAppData();
 }
 
-export function removeFamilyMember(data: AppData, memberId: string): AppData {
-  return saveAppData({
-    ...data,
-    familyMembers: data.familyMembers.filter((m) => m.id !== memberId),
-  });
+export async function removeFamilyMember(data: AppData, memberId: string): Promise<AppData> {
+  const { supabase } = await requireUser();
+  const { error } = await supabase.from("family_members").delete().eq("id", memberId);
+  if (error) throw error;
+  return loadAppData();
 }
 
 export function computeStreak(doses: Dose[]): number {
-  const doneCount = doses.filter((d) => d.done).length;
-  return doneCount;
+  return doses.filter((d) => d.done).length;
 }

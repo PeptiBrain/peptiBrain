@@ -291,7 +291,9 @@
     "cancel": "Cancelar",
     "pdf": "PDF",
     "saveVial": "Guardar vial",
-    "addVial": "Agregar vial"
+    "addVial": "Agregar vial",
+    "planLimitReached": "Llegaste al límite del plan Gratis.",
+    "planLimitCta": "Sube a Premium para agregar más"
   },
   "Salud": {
     "title": "Salud",

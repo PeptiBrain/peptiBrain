@@ -16,16 +16,16 @@ export default function SaludPage() {
   const [sideEffect, setSideEffect] = useState("");
 
   useEffect(() => {
-    setData(loadAppData());
+    loadAppData().then(setData);
   }, []);
 
   if (!data) return null;
 
-  function handleSave() {
+  async function handleSave() {
     if (!data) return;
     if (!weightKg.trim() && !hydrationMl.trim() && !exerciseMin.trim() && !sideEffect.trim()) return;
-    const next = addHealthLog(data, {
-      date: new Date().toLocaleDateString(locale, { day: "numeric", month: "short" }),
+    const next = await addHealthLog(data, {
+      date: new Date().toISOString().slice(0, 10),
       weightKg: weightKg.trim() || undefined,
       hydrationMl: hydrationMl.trim() || undefined,
       exerciseMin: exerciseMin.trim() || undefined,
@@ -37,6 +37,10 @@ export default function SaludPage() {
     setExerciseMin("");
     setSideEffect("");
     setShowForm(false);
+  }
+
+  function formatLogDate(iso: string) {
+    return new Date(`${iso}T00:00:00`).toLocaleDateString(locale, { day: "numeric", month: "short" });
   }
 
   return (
@@ -119,7 +123,7 @@ export default function SaludPage() {
           {data.healthLogs.map((log) => (
             <div key={log.id} className="rounded-xl border border-border bg-card p-3">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-medium text-muted-foreground">{log.date}</span>
+                <span className="text-xs font-medium text-muted-foreground">{formatLogDate(log.date)}</span>
               </div>
               <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-sm text-foreground">
                 {log.weightKg && (

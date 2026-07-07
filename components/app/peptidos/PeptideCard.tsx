@@ -3,7 +3,8 @@
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Beaker, ChevronDown, Plus, Printer } from "lucide-react";
-import { addVial, type AppData, type Peptide, type SyringeType } from "@/lib/app-data";
+import { addVial, PlanLimitError, type AppData, type Peptide, type SyringeType } from "@/lib/app-data";
+import { Link } from "@/i18n/navigation";
 import { PEPTIDE_PROFILES } from "@/lib/peptide-profiles";
 import { unitsToDraw } from "@/lib/dose-math";
 import { SyringeVisual, SYRINGE_CAPACITY } from "@/components/app/calculator/SyringeVisual";
@@ -32,6 +33,7 @@ export function PeptideCard({
   const [syringeType, setSyringeType] = useState<SyringeType>("u100");
   const [doseAmount, setDoseAmount] = useState("");
   const [doseUnit, setDoseUnit] = useState("mcg");
+  const [limitReached, setLimitReached] = useState(false);
 
   const vials = data.vials.filter((v) => v.peptideId === peptide.id);
   const profile = PEPTIDE_PROFILES.find(
@@ -68,13 +70,22 @@ export function PeptideCard({
     setDoseUnit(profile.doseUnit);
   }
 
-  function handleAddVial() {
+  async function handleAddVial() {
     if (!amount.trim()) return;
-    const next = addVial(data, { peptideId: peptide.id, amount, unit, bacWater, syringeType });
-    onChange(next);
-    setAmount("");
-    setBacWater("");
-    setShowForm(false);
+    try {
+      const next = await addVial(data, { peptideId: peptide.id, amount, unit, bacWater, syringeType });
+      onChange(next);
+      setAmount("");
+      setBacWater("");
+      setShowForm(false);
+      setLimitReached(false);
+    } catch (err) {
+      if (err instanceof PlanLimitError) {
+        setLimitReached(true);
+      } else {
+        throw err;
+      }
+    }
   }
 
   return (
@@ -224,6 +235,15 @@ export function PeptideCard({
                   {draw > SYRINGE_CAPACITY[syringeType] && (
                     <p className="mt-1 text-center text-xs text-destructive">{t("overCapacity")}</p>
                   )}
+                </div>
+              )}
+
+              {limitReached && (
+                <div className="mt-3 rounded-lg bg-accent px-3 py-2 text-xs text-accent-foreground">
+                  {t("planLimitReached")}{" "}
+                  <Link href="/paywall" className="font-semibold underline underline-offset-2">
+                    {t("planLimitCta")}
+                  </Link>
                 </div>
               )}
 

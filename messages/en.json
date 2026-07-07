@@ -291,7 +291,9 @@
     "cancel": "Cancel",
     "pdf": "PDF",
     "saveVial": "Save vial",
-    "addVial": "Add vial"
+    "addVial": "Add vial",
+    "planLimitReached": "You reached the Free plan limit.",
+    "planLimitCta": "Upgrade to Premium to add more"
   },
   "Salud": {
     "title": "Health",
