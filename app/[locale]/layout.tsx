@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { MixpanelProvider } from "@/components/app/MixpanelProvider";
 import { ServiceWorkerRegister } from "@/components/app/ServiceWorkerRegister";
+import { CookieConsentBanner } from "@/components/app/CookieConsentBanner";
 import "../globals.css";
 
 const poppins = Poppins({
@@ -59,6 +60,7 @@ export default async function LocaleLayout({
         <ServiceWorkerRegister />
         <NextIntlClientProvider messages={messages}>
           <MixpanelProvider>{children}</MixpanelProvider>
+          <CookieConsentBanner />
         </NextIntlClientProvider>
       </body>
     </html>

@@ -548,5 +548,11 @@
       }
     ],
     "backHome": "Back to home"
+  },
+  "CookieBanner": {
+    "message": "We use necessary cookies for the app to work, and analytics cookies (Mixpanel) to understand how to improve it. We don't use advertising cookies.",
+    "accept": "Accept all",
+    "reject": "Necessary only",
+    "link": "View Cookie Policy"
   }
 }

@@ -9,8 +9,22 @@ export function initMixpanel() {
     debug: process.env.NODE_ENV !== "production",
     persistence: "localStorage",
     track_pageview: false, // lo hacemos a mano en cada cambio de ruta (App Router es SPA)
+    opt_out_tracking_by_default: true, // no trackea nada hasta que el usuario acepte el banner de cookies
   });
   initialized = true;
+  if (window.localStorage.getItem("peptibrain_cookie_consent") === "accepted") {
+    mixpanel.opt_in_tracking();
+  }
+}
+
+export function grantTrackingConsent() {
+  if (!initialized) return;
+  mixpanel.opt_in_tracking();
+}
+
+export function denyTrackingConsent() {
+  if (!initialized) return;
+  mixpanel.opt_out_tracking();
 }
 
 export function trackPageview(path: string) {
