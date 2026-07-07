@@ -15,6 +15,10 @@ const PRICES: Record<(typeof PLAN_KEYS)[number], { monthly: number; yearly: numb
 };
 const FEATURE_COUNTS: Record<(typeof PLAN_KEYS)[number], number> = { free: 4, premium: 6, family: 4 };
 
+function formatMoney(n: number) {
+  return Number.isInteger(n) ? `${n}` : n.toFixed(2);
+}
+
 export function Pricing() {
   const t = useTranslations("Pricing");
   const locale = useLocale() as Locale;
@@ -23,15 +27,32 @@ export function Pricing() {
 
   const plans = PLAN_KEYS.map((key) => {
     const price = PRICES[key];
+    const monthlyEquivalent = price.yearly !== null ? price.yearly / 12 : null;
+    const showYearly = period === "anual" && monthlyEquivalent !== null;
+    const displayMonthly = showYearly ? monthlyEquivalent! : price.monthly;
+    const dailyPrice = displayMonthly / 30;
+    const discountPercent =
+      showYearly && price.monthly > 0
+        ? Math.round((1 - monthlyEquivalent! / price.monthly) * 100)
+        : null;
+
     return {
       key,
       name: t(`${key}Name`),
       tagline: t(`${key}Tagline`),
       cta: t(`${key}Cta`),
-      priceLabel: key === "free" ? `${symbol}0` : `${symbol}${price.monthly}`,
+      priceLabel: key === "free" ? `${symbol}0` : `${symbol}${formatMoney(displayMonthly)}`,
       period: key === "free" ? t("always") : t("perMonth"),
-      yearlyNote:
-        price.yearly !== null ? t("yearlyNote", { price: `${symbol}${price.yearly}` }) : null,
+      dailyLabel:
+        key === "free" ? null : t("perDay", { price: `${symbol}${dailyPrice.toFixed(2)}` }),
+      savingsLabel:
+        discountPercent !== null && discountPercent > 0
+          ? t("yearlySavings", { percent: discountPercent })
+          : null,
+      billedYearlyLabel:
+        showYearly && price.yearly !== null
+          ? t("billedYearly", { price: `${symbol}${price.yearly}` })
+          : null,
       features: Array.from({ length: FEATURE_COUNTS[key] }, (_, i) => t(`${key}Feature${i + 1}`)),
       featured: key === "premium",
     };
@@ -91,8 +112,16 @@ export function Pricing() {
                   </span>
                   <span className="text-sm text-muted-foreground"> {plan.period}</span>
                 </p>
-                {period === "anual" && plan.yearlyNote && (
-                  <p className="text-xs text-muted-foreground">{plan.yearlyNote}</p>
+                {plan.dailyLabel && (
+                  <p className="tabular text-xs text-muted-foreground">{plan.dailyLabel}</p>
+                )}
+                {plan.savingsLabel && (
+                  <p className="mt-1 w-fit rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-semibold text-primary">
+                    {plan.savingsLabel}
+                  </p>
+                )}
+                {plan.billedYearlyLabel && (
+                  <p className="text-xs text-muted-foreground">{plan.billedYearlyLabel}</p>
                 )}
                 <ul className="mt-4 flex-1 space-y-2">
                   {plan.features.map((f) => (

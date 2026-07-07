@@ -45,7 +45,7 @@ export function Footer() {
             </Link>
           </nav>
           <a
-            href="https://instagram.com"
+            href="https://www.instagram.com/peptibrain/"
             target="_blank"
             rel="noopener noreferrer"
             aria-label={t("instagram")}
