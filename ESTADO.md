@@ -1,5 +1,13 @@
 # ESTADO — PeptiBrain
-Última actualización: 2026-07-07 | Sesión actual: 6 (servicios externos) — bloque de prioridad MUY ALTA completado ✅ + páginas legales completas
+Última actualización: 2026-07-07 | Sesión actual: 6 (servicios externos) — bloque de prioridad MUY ALTA ✅ + páginas legales ✅ + producto de Hotmart PUBLICADO (ya se puede vender de verdad)
+
+## Bloque de prioridad ALTA — progreso
+1. ✅ **Programa de afiliados activado en Hotmart**: 35% de comisión (inicial y recurrente) aplicado a los 4 planes. Descripción del programa escrita y publicada. Producto de Hotmart pasó de "Borrador" a publicado — **ya se puede vender de verdad**.
+   - Nota técnica: Hotmart trata el producto como si fuera un "curso" (pide configurar "Área de Miembros"/"Contenido"), aunque PeptiBrain es una app web, no un curso. Se resolvió creando una única lección de bienvenida dentro de Hotmart que redirige al comprador a https://peptibrain.com para iniciar sesión con el mismo correo de compra.
+2. ⬜ Cloudflare Turnstile real (hoy sigue con la sitekey de prueba)
+3. ⬜ Conectar Resend (correos transaccionales reales)
+4. ⬜ Banner de consentimiento de cookies (GDPR) antes de que Mixpanel trackee
+5. ⬜ Probar un pago real completo de punta a punta
 
 ## Datos legales reales de la empresa (NO inventar, ya confirmados por el usuario)
 - Entidad: **Digital Dreams World LLC**
