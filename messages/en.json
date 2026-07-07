@@ -325,9 +325,87 @@
   },
   "Legal": {
     "termsTitle": "Terms of Service",
-    "termsBody": "We’re drafting the final terms. Check back soon.",
+    "termsUpdated": "Last updated: July 6, 2026",
+    "termsIntro": "These Terms of Service (\"Terms\") govern your use of PeptiBrain (\"the App\", \"the Service\"), operated from Spain. By creating an account or using the App, you agree to these Terms.",
+    "termsSections": [
+      {
+        "title": "1. What PeptiBrain is",
+        "body": "PeptiBrain is a personal tracking diary to help you log your doses, vials, weight, hydration, and other peptide-protocol-related data. PeptiBrain is NOT a medical device, does NOT provide diagnosis, treatment, or medical advice of any kind, and does NOT replace consultation with a qualified healthcare professional. The reconstitution profiles and calculations included are informational reference values, not personalized medical recommendations."
+      },
+      {
+        "title": "2. Who can use the Service",
+        "body": "You must be at least 18 years old to create an account. By registering, you confirm that the information you provide (name, email, phone) is accurate and that you meet this age requirement."
+      },
+      {
+        "title": "3. Your account",
+        "body": "You're responsible for keeping your password confidential and for all activity on your account. Let us know right away if you notice any unauthorized use."
+      },
+      {
+        "title": "4. Plans, pricing and subscription",
+        "body": "PeptiBrain offers a Free plan and paid plans (Premium and Family), billed monthly or annually through Hotmart, our payment processor. Paid plans may include a free trial period; if you don't cancel before it ends, you'll be automatically charged the price of your chosen plan. You can cancel anytime from your account or directly in Hotmart; cancellation takes effect at the end of the period already paid for, with no partial refunds unless required by applicable law."
+      },
+      {
+        "title": "5. Family sharing",
+        "body": "If you enable sharing, you decide — person by person — whether a family member or partner sees a \"summary\" or the \"full detail\" of your information. You can revoke that access at any time. Invited members cannot edit or delete your data."
+      },
+      {
+        "title": "6. Acceptable use",
+        "body": "You may not use PeptiBrain for illegal activities, to impersonate someone else, to attempt to breach the security of the Service, or to resell or redistribute access to your account."
+      },
+      {
+        "title": "7. Limitation of liability",
+        "body": "PeptiBrain is provided \"as is\". To the extent permitted by law, we're not liable for health decisions you make based on data you yourself logged in the App. Always consult a healthcare professional before starting, changing, or stopping any protocol."
+      },
+      {
+        "title": "8. Changes to these Terms",
+        "body": "We may update these Terms from time to time. If changes are material, we'll notify you by email or within the App."
+      },
+      {
+        "title": "9. Contact",
+        "body": "For any questions about these Terms, write to us at soporte@peptibrain.com."
+      }
+    ],
     "privacyTitle": "Privacy Policy",
-    "privacyBody": "We’re drafting the final policy. Check back soon.",
+    "privacyUpdated": "Last updated: July 6, 2026",
+    "privacyIntro": "This Privacy Policy explains what data we collect on PeptiBrain, what we use it for, and what rights you have over it.",
+    "privacySections": [
+      {
+        "title": "1. What data we collect",
+        "body": "Account data: name, email address, WhatsApp number. App usage data: peptides, vials, doses, weight/hydration/exercise/side-effect logs, and your family group settings. Basic technical browsing data for analytics purposes (pages visited, usage events)."
+      },
+      {
+        "title": "2. What we use your data for",
+        "body": "To provide the service (storing and showing you your history), to process your payment if you choose a Premium/Family plan, to communicate with you about your account, and to understand — in aggregate — how the App is used so we can improve it. We NEVER sell your health data to third parties for advertising purposes."
+      },
+      {
+        "title": "3. Who we share data with",
+        "body": "We use trusted providers to operate the Service: Supabase (database and authentication), Vercel (hosting), Hotmart (payment processing), and Mixpanel (product analytics). Each only receives the data strictly necessary for its function. We don't share your health data with advertisers."
+      },
+      {
+        "title": "4. Sharing with your family",
+        "body": "If you choose to invite a family member or partner, that person will only see the level of detail (\"summary\" or \"full\") you assign them. This decision is yours and you can change or revoke it at any time."
+      },
+      {
+        "title": "5. Security",
+        "body": "Your data travels encrypted (HTTPS) and is stored with row-level access controls (RLS), so only you — and whoever you explicitly authorize — can read your information."
+      },
+      {
+        "title": "6. Your rights",
+        "body": "You can access, correct, export, or delete your data at any time from the \"Family\" section of the App (export) or by writing to soporte@peptibrain.com to request full account deletion."
+      },
+      {
+        "title": "7. Children",
+        "body": "PeptiBrain is not directed at anyone under 18 and we don't knowingly collect data from minors."
+      },
+      {
+        "title": "8. Changes to this Policy",
+        "body": "If we make significant changes, we'll notify you by email or within the App before they take effect."
+      },
+      {
+        "title": "9. Contact",
+        "body": "For any request related to your data, write to us at soporte@peptibrain.com."
+      }
+    ],
     "backHome": "Back to home"
   },
   "Descargar": {
