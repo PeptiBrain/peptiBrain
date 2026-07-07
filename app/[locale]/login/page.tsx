@@ -156,7 +156,9 @@ export default function LoginPage() {
               <Check className="size-7 text-primary" aria-hidden />
             </div>
             <h1 className="font-display text-xl font-bold text-foreground">{t("almostThereTitle")}</h1>
-            <p className="mt-2 text-sm text-muted-foreground">{t("almostThereBody", { email })}</p>
+            <p className="mt-2 w-full text-sm break-words text-muted-foreground">
+              {t("almostThereBody", { email })}
+            </p>
             <button
               type="button"
               onClick={() => {
@@ -187,7 +189,7 @@ export default function LoginPage() {
                   <Check className="size-7 text-primary" aria-hidden />
                 </div>
                 <h1 className="font-display text-xl font-bold text-foreground">{t("resetLinkSentTitle")}</h1>
-                <p className="mt-2 text-sm text-muted-foreground">
+                <p className="mt-2 w-full text-sm break-words text-muted-foreground">
                   {t("resetLinkSentBody", { email: forgotEmail })}
                 </p>
               </div>
