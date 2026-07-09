@@ -3,10 +3,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "motion/react";
 import { useLocale, useTranslations } from "next-intl";
-import { Check, Flame, Syringe, AlertTriangle, Scale, Droplets, Lock, Apple, CalendarDays, Sparkles } from "lucide-react";
+import { Check, Flame, Syringe, AlertTriangle, Scale, Droplets, Lock, Apple, CalendarDays, Sparkles, Wallet, Trophy, ArrowRight } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { loadOnboarding } from "@/lib/onboarding";
 import { computeStreak, loadAppData, markDoseDone, type AppData } from "@/lib/app-data";
+import { computeStats } from "@/lib/stats";
+import { CURRENCY, type Locale } from "@/i18n/routing";
 import { track } from "@/lib/mixpanel";
 import { DateRangeTabs } from "@/components/app/shell/DateRangeTabs";
 import { CalendarModal } from "@/components/app/shell/CalendarModal";
@@ -60,6 +62,8 @@ export default function InicioPage() {
     ? data.peptides.find((p) => p.id === pendingDose.peptideId)
     : null;
   const streak = computeStreak(data.doses);
+  const allStats = computeStats(data, new Date());
+  const { symbol } = CURRENCY[locale as Locale];
 
   async function handleMarkDone() {
     if (!pendingDose || !data) return;
@@ -194,6 +198,49 @@ export default function InicioPage() {
           </p>
         </div>
       </motion.div>
+
+      {(allStats.totalDosesDone > 0 || allStats.totalInvested > 0) && (
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.18 }}
+          className="mt-3 rounded-xl border border-border bg-card p-4"
+        >
+          <div className="mb-3 flex items-center justify-between">
+            <p className="text-sm font-semibold text-foreground">{t("statsPreviewTitle")}</p>
+            <Link
+              href="/app/estadisticas"
+              className="flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
+            >
+              {t("viewMoreStats")} <ArrowRight className="size-3.5" aria-hidden />
+            </Link>
+          </div>
+          <div className="grid grid-cols-3 gap-2">
+            <div className="rounded-lg bg-secondary/60 p-3 text-center">
+              <Wallet className="mx-auto mb-1 size-4 text-primary" aria-hidden />
+              <p className="tabular font-display text-base font-bold text-foreground">
+                {symbol}
+                {allStats.totalInvested.toFixed(0)}
+              </p>
+              <p className="text-[11px] text-muted-foreground">{t("statInvested")}</p>
+            </div>
+            <div className="rounded-lg bg-secondary/60 p-3 text-center">
+              <Syringe className="mx-auto mb-1 size-4 text-primary" aria-hidden />
+              <p className="tabular font-display text-base font-bold text-foreground">
+                {allStats.totalDosesDone}
+              </p>
+              <p className="text-[11px] text-muted-foreground">{t("statDoses")}</p>
+            </div>
+            <div className="rounded-lg bg-secondary/60 p-3 text-center">
+              <Trophy className="mx-auto mb-1 size-4 text-primary" aria-hidden />
+              <p className="tabular truncate font-display text-base font-bold text-foreground">
+                {allStats.mostUsed ? allStats.mostUsed.peptide.name : "—"}
+              </p>
+              <p className="text-[11px] text-muted-foreground">{t("statTop")}</p>
+            </div>
+          </div>
+        </motion.div>
+      )}
 
       <div className="mt-6">
         <DateRangeTabs
