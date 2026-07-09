@@ -66,10 +66,19 @@ export async function GET(req: Request) {
       skippedTrip++;
       continue;
     }
+    const name = peptideName.get(dose.peptide_id) || "tu péptido";
+
+    await admin.from("notifications").insert({
+      user_id: dose.user_id,
+      type: "dose_due",
+      title: "Es hora de tu dosis",
+      body: `${name} · ${dose.amount} ${dose.unit}`,
+      link: "/app",
+    });
+
     const userSubs = subsByUser.get(dose.user_id) || [];
     if (userSubs.length === 0) continue;
 
-    const name = peptideName.get(dose.peptide_id) || "tu péptido";
     for (const sub of userSubs) {
       const result = await sendPush(sub, {
         title: "Es hora de tu dosis",

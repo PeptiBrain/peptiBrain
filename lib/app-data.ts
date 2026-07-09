@@ -52,18 +52,34 @@ export type Meal = {
   createdAt: string;
 };
 
+export type FamilyRelationship =
+  | "pareja"
+  | "hermano"
+  | "hijo"
+  | "padre_madre"
+  | "primo"
+  | "tio"
+  | "sobrino"
+  | "cunado"
+  | "amigo"
+  | "vecino"
+  | "otro";
+
 export type FamilyMember = {
   id: string;
   name: string;
   email: string;
-  visibility: "resumen" | "completo";
+  relationship?: FamilyRelationship;
+  photoUrl?: string;
+  sharePeptides: boolean;
+  shareDoses: boolean;
+  shareHealth: boolean;
 };
 
 export type ReceivedInvitation = {
   id: string;
   ownerId: string;
   ownerName: string;
-  visibility: "resumen" | "completo";
   inviteStatus: "pending" | "accepted" | "revoked";
 };
 
@@ -242,7 +258,11 @@ export async function loadAppData(): Promise<AppData> {
       id: f.id,
       name: f.name,
       email: f.email,
-      visibility: f.visibility,
+      relationship: f.relationship || undefined,
+      photoUrl: f.photo_url || undefined,
+      sharePeptides: f.share_peptides,
+      shareDoses: f.share_doses,
+      shareHealth: f.share_health,
     })),
   };
 }
@@ -518,7 +538,7 @@ export async function removeMeal(data: AppData, mealId: string): Promise<AppData
 
 export async function addFamilyMember(
   data: AppData,
-  member: Omit<FamilyMember, "id">
+  member: Omit<FamilyMember, "id" | "photoUrl">
 ): Promise<AppData> {
   const { supabase, user } = await requireUser();
   const { data: myProfile } = await supabase.from("profiles").select("name").eq("id", user.id).single();
@@ -526,9 +546,25 @@ export async function addFamilyMember(
     owner_id: user.id,
     name: member.name,
     email: member.email,
-    visibility: member.visibility,
+    relationship: member.relationship || null,
+    share_peptides: member.sharePeptides,
+    share_doses: member.shareDoses,
+    share_health: member.shareHealth,
     owner_name: myProfile?.name || "",
   });
+  if (error) throw error;
+  return loadAppData();
+}
+
+export async function uploadFamilyPhoto(data: AppData, memberId: string, file: File): Promise<AppData> {
+  const { supabase, user } = await requireUser();
+  const ext = (file.name.split(".").pop() || "png").toLowerCase();
+  const path = `${user.id}/family-${memberId}.${ext}`;
+  const { error: upErr } = await supabase.storage.from("avatars").upload(path, file, { upsert: true });
+  if (upErr) throw upErr;
+  const { data: pub } = supabase.storage.from("avatars").getPublicUrl(path);
+  const url = `${pub.publicUrl}?v=${Date.now()}`;
+  const { error } = await supabase.from("family_members").update({ photo_url: url }).eq("id", memberId);
   if (error) throw error;
   return loadAppData();
 }
@@ -537,15 +573,32 @@ export async function loadReceivedInvitations(): Promise<ReceivedInvitation[]> {
   const { supabase, user } = await requireUser();
   const { data: rows } = await supabase
     .from("family_members")
-    .select("id, owner_id, owner_name, visibility, invite_status")
+    .select("id, owner_id, owner_name, invite_status")
     .neq("owner_id", user.id);
   return (rows || []).map((r) => ({
     id: r.id,
     ownerId: r.owner_id,
     ownerName: r.owner_name || "—",
-    visibility: r.visibility,
     inviteStatus: r.invite_status,
   }));
+}
+
+export async function updateFamilySharing(
+  data: AppData,
+  memberId: string,
+  sharing: { sharePeptides: boolean; shareDoses: boolean; shareHealth: boolean }
+): Promise<AppData> {
+  const { supabase } = await requireUser();
+  const { error } = await supabase
+    .from("family_members")
+    .update({
+      share_peptides: sharing.sharePeptides,
+      share_doses: sharing.shareDoses,
+      share_health: sharing.shareHealth,
+    })
+    .eq("id", memberId);
+  if (error) throw error;
+  return loadAppData();
 }
 
 export async function respondToInvitation(
@@ -561,19 +614,38 @@ export async function respondToInvitation(
 }
 
 export async function loadSharedOwnerData(ownerId: string): Promise<SharedOwnerData> {
-  const { supabase } = await requireUser();
+  const { supabase, user } = await requireUser();
+  const { data: myProfile } = await supabase.from("profiles").select("email").eq("id", user.id).single();
+  const { data: shareRow } = await supabase
+    .from("family_members")
+    .select("share_peptides, share_doses, share_health")
+    .eq("owner_id", ownerId)
+    .ilike("email", myProfile?.email || "")
+    .maybeSingle();
+  const sharePeptides = shareRow?.share_peptides ?? false;
+  const shareDoses = shareRow?.share_doses ?? false;
+  const shareHealth = shareRow?.share_health ?? false;
+
   const [{ data: ownerProfile }, { data: peptides }, { data: vials }, { data: doses }, { data: healthLogs }] =
     await Promise.all([
       supabase.from("profiles").select("name").eq("id", ownerId).single(),
-      supabase.from("peptides").select("*").eq("user_id", ownerId).order("created_at", { ascending: true }),
-      supabase.from("vials").select("*").eq("user_id", ownerId).order("created_at", { ascending: true }),
-      supabase.from("doses").select("*").eq("user_id", ownerId).order("scheduled_at", { ascending: false }),
-      supabase
-        .from("health_logs")
-        .select("*")
-        .eq("user_id", ownerId)
-        .order("log_date", { ascending: false })
-        .limit(10),
+      sharePeptides
+        ? supabase.from("peptides").select("*").eq("user_id", ownerId).order("created_at", { ascending: true })
+        : Promise.resolve({ data: [] as never[] }),
+      sharePeptides
+        ? supabase.from("vials").select("*").eq("user_id", ownerId).order("created_at", { ascending: true })
+        : Promise.resolve({ data: [] as never[] }),
+      shareDoses
+        ? supabase.from("doses").select("*").eq("user_id", ownerId).order("scheduled_at", { ascending: false })
+        : Promise.resolve({ data: [] as never[] }),
+      shareHealth
+        ? supabase
+            .from("health_logs")
+            .select("*")
+            .eq("user_id", ownerId)
+            .order("log_date", { ascending: false })
+            .limit(10)
+        : Promise.resolve({ data: [] as never[] }),
     ]);
 
   return {
@@ -615,20 +687,6 @@ export async function loadSharedOwnerData(ownerId: string): Promise<SharedOwnerD
       notes: h.notes || undefined,
     })),
   };
-}
-
-export async function updateFamilyVisibility(
-  data: AppData,
-  memberId: string,
-  visibility: FamilyMember["visibility"]
-): Promise<AppData> {
-  const { supabase } = await requireUser();
-  const { error } = await supabase
-    .from("family_members")
-    .update({ visibility })
-    .eq("id", memberId);
-  if (error) throw error;
-  return loadAppData();
 }
 
 export async function removeFamilyMember(data: AppData, memberId: string): Promise<AppData> {

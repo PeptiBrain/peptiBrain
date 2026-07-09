@@ -7,6 +7,7 @@ import { ThemeToggle } from "@/components/app/shell/ThemeToggle";
 import { RefreshButton } from "@/components/app/shell/RefreshButton";
 import { AppTour } from "@/components/app/shell/AppTour";
 import { NextDosesWidget } from "@/components/app/shell/NextDosesWidget";
+import { NotificationBell } from "@/components/app/shell/NotificationBell";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
@@ -53,6 +54,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         </Link>
         <div className="flex items-center gap-1">
           <RefreshButton />
+          <NotificationBell />
           <ThemeToggle />
           <ProfileMenu
             name={name}
