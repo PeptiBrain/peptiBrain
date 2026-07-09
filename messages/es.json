@@ -480,6 +480,14 @@
     "noSideEffectsTitle": "Sin efectos secundarios",
     "noSideEffectsPanel": "Sin efectos en este rango. ¡Sigue así!"
   },
+  "NextDoses": {
+    "title": "Próximas dosis",
+    "close": "Cerrar",
+    "markDone": "Marcar como aplicada",
+    "viewAll": "Ver todas en Péptidos",
+    "peptideFallback": "Tu péptido",
+    "overdueBy": "Vencida hace {days, plural, one {# día} other {# días}}"
+  },
   "Providers": {
     "modalTitle": "Nuevo proveedor",
     "close": "Cerrar",

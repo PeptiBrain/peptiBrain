@@ -480,6 +480,14 @@
     "noSideEffectsTitle": "No side effects",
     "noSideEffectsPanel": "No effects in this range. Keep it up!"
   },
+  "NextDoses": {
+    "title": "Upcoming doses",
+    "close": "Close",
+    "markDone": "Mark as taken",
+    "viewAll": "See all in Peptides",
+    "peptideFallback": "Your peptide",
+    "overdueBy": "Overdue by {days, plural, one {# day} other {# days}}"
+  },
   "Providers": {
     "modalTitle": "New supplier",
     "close": "Close",

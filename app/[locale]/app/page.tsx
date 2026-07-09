@@ -105,33 +105,29 @@ export default function InicioPage() {
         >
           <CalendarDays className="size-3.5" aria-hidden /> {tCal("openCalendar")}
         </button>
-        <Link
-          href={streak > 0 ? "/app/estadisticas" : "/app/peptidos"}
-          className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-colors ${
-            streak > 0
-              ? "bg-accent text-primary hover:bg-accent/80"
-              : "border border-border bg-card text-muted-foreground hover:border-primary hover:text-primary"
-          }`}
-        >
-          <Flame className="size-3.5" aria-hidden />{" "}
-          {streak > 0 ? t("streakChip", { count: streak }) : t("startStreak")}
-        </Link>
         {data.plan === "free" ? (
           <Link
             href="/paywall"
-            className="flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground hover:border-primary hover:text-primary"
+            className="flex items-center gap-1.5 rounded-full bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground transition-transform active:scale-97"
           >
-            <Lock className="size-3.5" aria-hidden /> {t("assistant")}
+            <Sparkles className="size-3.5" aria-hidden /> {t("assistant")} <Lock className="size-3" aria-hidden />
           </Link>
         ) : (
           <button
             type="button"
             onClick={() => setShowAssistant(true)}
-            className="flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground hover:border-primary hover:text-primary"
+            className="flex items-center gap-1.5 rounded-full bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground transition-transform active:scale-97"
           >
             <Sparkles className="size-3.5" aria-hidden /> {t("assistant")}
           </button>
         )}
+        <Link
+          href={streak > 0 ? "/app/estadisticas" : "/app/peptidos"}
+          className="flex items-center gap-1.5 rounded-full border border-border bg-secondary px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground"
+        >
+          <Flame className="size-3.5" aria-hidden />{" "}
+          {streak > 0 ? t("streakChip", { count: streak }) : t("startStreak")}
+        </Link>
       </div>
       <motion.p
         initial={{ opacity: 0, y: 8 }}

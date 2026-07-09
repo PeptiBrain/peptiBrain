@@ -6,6 +6,7 @@ import { ProfileMenu } from "@/components/app/shell/ProfileMenu";
 import { ThemeToggle } from "@/components/app/shell/ThemeToggle";
 import { RefreshButton } from "@/components/app/shell/RefreshButton";
 import { AppTour } from "@/components/app/shell/AppTour";
+import { NextDosesWidget } from "@/components/app/shell/NextDosesWidget";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
@@ -45,6 +46,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       <TopNav />
       <main className="flex-1">{children}</main>
       <AppTour />
+      <NextDosesWidget />
     </div>
   );
 }
