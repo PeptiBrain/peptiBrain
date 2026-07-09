@@ -26,26 +26,57 @@ import { getStoredPref, setThemePref, type ThemePref } from "@/lib/theme";
 import { RESTART_EVENT } from "@/components/app/shell/AppTour";
 import { HelpCenter } from "@/components/app/shell/HelpCenter";
 import { LocaleSwitcher } from "@/components/app/LocaleSwitcher";
+import { pushSupported, enablePushReminders, disablePushReminders } from "@/lib/push-client";
 
 export function ProfileMenu({
   name,
   email,
   plan,
+  remindersEnabled,
+  travelModeActive,
 }: {
   name: string;
   email: string;
   plan: "free" | "premium" | "family";
+  remindersEnabled: boolean;
+  travelModeActive: boolean;
 }) {
   const t = useTranslations("AppShell");
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
   const [pref, setPref] = useState<ThemePref>("system");
+  const [reminders, setReminders] = useState(remindersEnabled);
+  const [reminderBusy, setReminderBusy] = useState(false);
+  const [reminderError, setReminderError] = useState("");
   const ref = useRef<HTMLDivElement>(null);
   const initial = name.trim().charAt(0).toUpperCase() || "?";
   const isPremium = plan !== "free";
 
   useEffect(() => setPref(getStoredPref()), []);
+
+  async function toggleReminders() {
+    if (reminderBusy) return;
+    setReminderBusy(true);
+    setReminderError("");
+    try {
+      if (reminders) {
+        await disablePushReminders();
+        setReminders(false);
+      } else {
+        const result = await enablePushReminders();
+        if (result.ok) {
+          setReminders(true);
+        } else {
+          setReminderError(
+            result.reason === "denied" ? t("remindersDenied") : t("remindersError")
+          );
+        }
+      }
+    } finally {
+      setReminderBusy(false);
+    }
+  }
 
   useEffect(() => {
     if (!open) return;
@@ -175,9 +206,44 @@ export function ProfileMenu({
             />
             <MenuItem icon={Smartphone} label={t("installApp")} onClick={() => go("/descargar")} />
 
-            {/* Próximamente (honesto: aún no construidas) */}
-            <ComingSoonItem icon={Bell} label={t("reminders")} tag={t("soon")} />
-            <ComingSoonItem icon={Plane} label={t("travelMode")} tag={t("soon")} />
+            {pushSupported() ? (
+              <button
+                type="button"
+                onClick={toggleReminders}
+                disabled={reminderBusy}
+                aria-pressed={reminders}
+                className="flex w-full items-center gap-3 rounded-lg px-2.5 py-2.5 text-left text-sm font-medium text-foreground transition-colors hover:bg-secondary disabled:opacity-60"
+              >
+                <Bell className="size-4 shrink-0" aria-hidden />
+                <span className="min-w-0 flex-1 truncate">{t("reminders")}</span>
+                <span
+                  className={`relative h-5 w-9 shrink-0 rounded-full transition-colors ${
+                    reminders ? "bg-primary" : "bg-secondary"
+                  }`}
+                >
+                  <span
+                    className={`absolute top-0.5 size-4 rounded-full bg-card shadow transition-transform ${
+                      reminders ? "translate-x-4.5" : "translate-x-0.5"
+                    }`}
+                  />
+                </span>
+              </button>
+            ) : (
+              <ComingSoonItem icon={Bell} label={t("reminders")} tag={t("unsupportedDevice")} />
+            )}
+            {reminderError && <p className="px-2.5 pb-1 text-xs text-destructive">{reminderError}</p>}
+
+            <div className="flex w-full items-center gap-3 rounded-lg px-2.5 py-2.5 text-sm font-medium text-muted-foreground">
+              <Plane className="size-4 shrink-0" aria-hidden />
+              <span className="min-w-0 flex-1 truncate">{t("travelMode")}</span>
+              <span
+                className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold ${
+                  travelModeActive ? "bg-primary/15 text-primary" : "bg-secondary text-muted-foreground"
+                }`}
+              >
+                {travelModeActive ? t("travelModeActive") : t("travelModeInactive")}
+              </span>
+            </div>
 
             <div className="my-1 border-t border-border" />
             <MenuItem icon={LogOut} label={t("signOut")} onClick={handleSignOut} destructive />

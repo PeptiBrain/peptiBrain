@@ -342,8 +342,12 @@
     "guidedTour": "Guided tour",
     "helpCenter": "Help center",
     "reminders": "Dose reminders",
+    "remindersDenied": "You blocked notifications in your browser. Enable them in the site settings to use reminders.",
+    "remindersError": "Couldn't turn it on. Try again.",
+    "unsupportedDevice": "Not available on this browser",
     "travelMode": "Travel mode",
-    "soon": "Soon",
+    "travelModeActive": "Active today",
+    "travelModeInactive": "Inactive",
     "upgradeCta": "Upgrade to Premium",
     "language": "Language",
     "installApp": "Install the app"

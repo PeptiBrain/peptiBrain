@@ -342,8 +342,12 @@
     "guidedTour": "Tour guiado",
     "helpCenter": "Centro de ayuda",
     "reminders": "Recordatorios de dosis",
+    "remindersDenied": "Bloqueaste las notificaciones en tu navegador. Actívalas en los ajustes del sitio para usar los recordatorios.",
+    "remindersError": "No se pudo activar. Intenta de nuevo.",
+    "unsupportedDevice": "No disponible en este navegador",
     "travelMode": "Modo viaje",
-    "soon": "Pronto",
+    "travelModeActive": "Activo hoy",
+    "travelModeInactive": "Inactivo",
     "upgradeCta": "Mejorar a Premium",
     "language": "Idioma",
     "installApp": "Instalar la app"

@@ -16,15 +16,29 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   let name = "";
   let email = "";
   let plan: "free" | "premium" | "family" = "free";
+  let remindersEnabled = false;
+  let travelModeActive = false;
   if (user) {
     const { data: profile } = await supabase
       .from("profiles")
-      .select("name, email, plan")
+      .select("name, email, plan, reminders_enabled")
       .eq("id", user.id)
       .single();
     name = profile?.name ?? "";
     email = profile?.email ?? user.email ?? "";
     plan = (profile?.plan as "free" | "premium" | "family") ?? "free";
+    remindersEnabled = profile?.reminders_enabled ?? false;
+
+    const today = new Date().toISOString().slice(0, 10);
+    const { data: activeTrip } = await supabase
+      .from("trips")
+      .select("id")
+      .eq("user_id", user.id)
+      .lte("start_date", today)
+      .gte("end_date", today)
+      .limit(1)
+      .maybeSingle();
+    travelModeActive = !!activeTrip;
   }
 
   return (
@@ -40,7 +54,13 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         <div className="flex items-center gap-1">
           <RefreshButton />
           <ThemeToggle />
-          <ProfileMenu name={name} email={email} plan={plan} />
+          <ProfileMenu
+            name={name}
+            email={email}
+            plan={plan}
+            remindersEnabled={remindersEnabled}
+            travelModeActive={travelModeActive}
+          />
         </div>
       </header>
       <div className="print:hidden">
