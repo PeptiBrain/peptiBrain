@@ -97,7 +97,7 @@ export default function FamiliaPage() {
   }
 
   return (
-    <div className="mx-auto max-w-sm px-4 py-5">
+    <div className="mx-auto max-w-3xl px-4 py-5">
       <div className="mb-1 flex items-center justify-between">
         <div>
           <h1 className="text-balance font-display text-xl font-bold text-foreground">{t("title")}</h1>
@@ -127,27 +127,29 @@ export default function FamiliaPage() {
       )}
 
       {canShare && showForm && (
-        <div className="mt-4 space-y-3 rounded-xl border border-border bg-card p-4">
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-foreground">{t("nameLabel")}</label>
-            <input
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder={t("namePlaceholder")}
-              className="h-11 w-full rounded-lg border border-input bg-background px-3 text-base text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            />
+        <div className="mt-4 space-y-3 rounded-xl border border-border bg-card p-5">
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-foreground">{t("nameLabel")}</label>
+              <input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder={t("namePlaceholder")}
+                className="h-11 w-full rounded-lg border border-input bg-background px-3 text-base text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              />
+            </div>
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-foreground">{t("emailLabel")}</label>
+              <input
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                type="email"
+                placeholder={t("emailPlaceholder")}
+                className="h-11 w-full rounded-lg border border-input bg-background px-3 text-base text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              />
+            </div>
           </div>
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-foreground">{t("emailLabel")}</label>
-            <input
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              type="email"
-              placeholder={t("emailPlaceholder")}
-              className="h-11 w-full rounded-lg border border-input bg-background px-3 text-base text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            />
-          </div>
-          <div>
+          <div className="sm:max-w-xs">
             <label className="mb-1.5 block text-sm font-medium text-foreground">{t("relationshipLabel")}</label>
             <select
               value={relationship}
@@ -166,7 +168,7 @@ export default function FamiliaPage() {
             type="button"
             disabled={!name.trim() || !email.trim()}
             onClick={handleInvite}
-            className="h-11 w-full rounded-lg bg-primary text-sm font-semibold text-primary-foreground disabled:opacity-50"
+            className="h-11 w-full rounded-lg bg-primary text-sm font-semibold text-primary-foreground disabled:opacity-50 sm:w-auto sm:px-8"
           >
             {t("sendInvite")}
           </button>
@@ -176,7 +178,7 @@ export default function FamiliaPage() {
       {invitations && invitations.length > 0 && (
         <div className="mt-5">
           <p className="mb-2 text-sm font-semibold text-foreground">{t("sharedWithMeTitle")}</p>
-          <div className="space-y-2">
+          <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
             {invitations.map((inv) => (
               <div key={inv.id} className="rounded-xl border border-border bg-card p-3">
                 <div className="flex items-center justify-between gap-2">
@@ -221,14 +223,14 @@ export default function FamiliaPage() {
       )}
 
       {data.familyMembers.length === 0 ? (
-        <div className="mt-4 rounded-xl border border-dashed border-border p-8 text-center">
+        <div className="mt-4 rounded-xl border border-dashed border-border bg-card/60 p-10 text-center">
           <Users className="mx-auto mb-2 size-8 text-muted-foreground" aria-hidden />
-          <p className="text-sm text-muted-foreground">{t("emptyState")}</p>
+          <p className="mx-auto max-w-xs text-sm text-muted-foreground">{t("emptyState")}</p>
         </div>
       ) : (
-        <div className="mt-4 space-y-2">
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">
           {data.familyMembers.map((member) => (
-            <div key={member.id} className="rounded-xl border border-border bg-card p-3">
+            <div key={member.id} className="rounded-xl border border-border bg-card p-4">
               <div className="flex items-center justify-between gap-2">
                 <div className="flex min-w-0 items-center gap-2.5">
                   <div className="relative shrink-0">
@@ -349,7 +351,7 @@ export default function FamiliaPage() {
       <button
         type="button"
         onClick={handleExport}
-        className="mt-6 flex h-11 w-full items-center justify-center gap-2 rounded-lg border border-dashed border-border text-sm font-medium text-muted-foreground hover:border-primary hover:text-primary"
+        className="mt-6 flex h-11 w-full items-center justify-center gap-2 rounded-lg border border-dashed border-border text-sm font-medium text-muted-foreground hover:border-primary hover:text-primary sm:w-auto sm:px-6"
       >
         <Download className="size-4" aria-hidden /> {t("exportData")}
       </button>
