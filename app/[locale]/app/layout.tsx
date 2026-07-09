@@ -31,7 +31,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     <div className="flex min-h-dvh flex-col">
       <header
         role="banner"
-        className="sticky top-0 z-20 flex h-[57px] items-center justify-between border-b border-border bg-background/95 px-4 backdrop-blur"
+        className="sticky top-0 z-20 flex h-[57px] items-center justify-between border-b border-border bg-background/95 px-4 backdrop-blur print:hidden"
       >
         <Link href="/app" className="flex items-center gap-2">
           <Image src="/peptibrain-isotipo.svg" alt="" width={26} height={26} />
@@ -43,10 +43,14 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           <ProfileMenu name={name} email={email} plan={plan} />
         </div>
       </header>
-      <TopNav />
+      <div className="print:hidden">
+        <TopNav />
+      </div>
       <main className="flex-1">{children}</main>
-      <AppTour />
-      <NextDosesWidget />
+      <div className="print:hidden">
+        <AppTour />
+        <NextDosesWidget />
+      </div>
     </div>
   );
 }

@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Users, Plus, Trash2, Download, Check, X, Eye } from "lucide-react";
+import { Users, Plus, Trash2, Download, Check, X, Eye, Lock } from "lucide-react";
+import { Link } from "@/i18n/navigation";
 import {
   addFamilyMember,
   loadAppData,
@@ -32,6 +33,8 @@ export default function FamiliaPage() {
 
   if (!data) return null;
 
+  const canShare = data.plan === "family";
+
   function handleExport() {
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
@@ -43,7 +46,7 @@ export default function FamiliaPage() {
   }
 
   async function handleInvite() {
-    if (!name.trim() || !email.trim() || !data) return;
+    if (!canShare || !name.trim() || !email.trim() || !data) return;
     const next = await addFamilyMember(data, { name: name.trim(), email: email.trim(), visibility: "resumen" });
     setData(next);
     setName("");
@@ -63,17 +66,30 @@ export default function FamiliaPage() {
           <h1 className="text-balance font-display text-xl font-bold text-foreground">{t("title")}</h1>
           <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
         </div>
-        <button
-          type="button"
-          onClick={() => setShowForm((s) => !s)}
-          aria-label={t("inviteAria")}
-          className="flex size-10 items-center justify-center rounded-full bg-primary text-primary-foreground transition-transform active:scale-97"
-        >
-          <Plus className="size-5" aria-hidden />
-        </button>
+        {canShare && (
+          <button
+            type="button"
+            onClick={() => setShowForm((s) => !s)}
+            aria-label={t("inviteAria")}
+            className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground transition-transform active:scale-97"
+          >
+            <Plus className="size-5" aria-hidden />
+          </button>
+        )}
       </div>
 
-      {showForm && (
+      {!canShare && (
+        <div className="mt-4 flex items-center justify-between gap-3 rounded-xl border border-dashed border-border bg-secondary/40 p-3">
+          <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <Lock className="size-3.5 shrink-0" aria-hidden /> {t("planRequired")}
+          </p>
+          <Link href="/paywall" className="shrink-0 rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground">
+            {t("planRequiredCta")}
+          </Link>
+        </div>
+      )}
+
+      {canShare && showForm && (
         <div className="mt-4 space-y-3 rounded-xl border border-border bg-card p-4">
           <div>
             <label className="mb-1.5 block text-sm font-medium text-foreground">{t("nameLabel")}</label>

@@ -344,7 +344,36 @@
     "reminders": "Recordatorios de dosis",
     "travelMode": "Modo viaje",
     "soon": "Pronto",
-    "upgradeCta": "Mejorar a Premium"
+    "upgradeCta": "Mejorar a Premium",
+    "language": "Idioma",
+    "installApp": "Instalar la app"
+  },
+  "Informe": {
+    "title": "Informe de PeptiBrain",
+    "generatedOn": "Generado el {date}",
+    "print": "Imprimir / Guardar PDF",
+    "back": "Volver",
+    "plan": "Plan",
+    "invested": "Invertido",
+    "dosesDone": "Dosis aplicadas",
+    "adherence": "Adherencia",
+    "streak": "Racha actual",
+    "streakDays": "{days} días",
+    "mostUsed": "Péptido más usado",
+    "weightChange": "Cambio de peso",
+    "sideEffects": "Efectos secundarios registrados",
+    "noData": "Sin datos suficientes",
+    "peptidesTitle": "Tus péptidos",
+    "peptidesEmpty": "Aún no registraste ningún péptido.",
+    "dosesTitle": "Últimas dosis aplicadas",
+    "dosesEmpty": "Aún no registraste ninguna dosis.",
+    "colPeptide": "Péptido",
+    "colRoute": "Vía",
+    "colDose": "Dosis típica",
+    "colDate": "Fecha",
+    "colAmount": "Cantidad",
+    "footerNote": "Este informe es un resumen de tu diario personal en PeptiBrain. No constituye consejo médico.",
+    "confidential": "Documento personal — no compartir con terceros sin tu consentimiento."
   },
   "Help": {
     "title": "Centro de ayuda",
@@ -720,7 +749,9 @@
     "vialsCount": "{count, plural, one {# vial} other {# viales}}",
     "noSharedData": "Sin datos todavía.",
     "done": "Aplicada",
-    "pending": "Pendiente"
+    "pending": "Pendiente",
+    "planRequired": "Compartir con familia es parte del plan Family.",
+    "planRequiredCta": "Subir a Family"
   },
   "Legal": {
     "termsTitle": "Términos de Servicio",
@@ -881,12 +912,7 @@
     "deleteAccountError": "No se pudo eliminar la cuenta. Intenta de nuevo o contacta a soporte.",
     "deleting": "Eliminando...",
     "close": "Cerrar",
-    "upgradeButton": "Subir a Premium",
-    "languageLabel": "Idioma",
-    "installAppLabel": "Instalar la app",
-    "installAppDesc": "Agrégala a la pantalla de inicio de tu teléfono",
-    "restartTourLabel": "Ver el recorrido guiado de nuevo",
-    "restartTourDesc": "Repite la introducción de 9 pasos a la app"
+    "upgradeButton": "Subir a Premium"
   },
   "Tour": {
     "step1Title": "Inicio — tu punto de partida",
@@ -894,11 +920,11 @@
     "step2Title": "Filtros de fecha",
     "step2Body": "Cambia el rango (hoy, 7 días, 30 días o histórico) para ver tus tarjetas de progreso en distintos períodos.",
     "step3Title": "Péptidos — el corazón de la app",
-    "step3Body": "Esta pestaña reúne cuatro secciones: tus usos, tus péptidos, tus viales y la calculadora. Vamos a verlas una por una.",
-    "step4Title": "Usos",
+    "step3Body": "Esta pestaña reúne cuatro secciones: resumen, inventario, proveedores y la calculadora. Vamos a verlas una por una.",
+    "step4Title": "Resumen",
     "step4Body": "Aquí registras una dosis ya aplicada o programas la siguiente. Cada uso cuenta para tu racha.",
-    "step5Title": "Viales",
-    "step5Body": "Controla cuánto péptido te queda en cada vial, con su reconstitución y agua bacteriostática.",
+    "step5Title": "Inventario y proveedores",
+    "step5Body": "Controla cuánto péptido te queda en cada vial (reconstitución y agua bacteriostática) y guarda los datos de tus proveedores de confianza.",
     "step6Title": "Calculadora",
     "step6Body": "Con Premium, calcula exactamente cuántas unidades extraer de la jeringa para cada dosis.",
     "step7Title": "Salud",

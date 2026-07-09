@@ -17,12 +17,15 @@ import {
   Bell,
   Plane,
   Lock,
+  Globe,
+  Smartphone,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { resetMixpanel } from "@/lib/mixpanel";
 import { getStoredPref, setThemePref, type ThemePref } from "@/lib/theme";
 import { RESTART_EVENT } from "@/components/app/shell/AppTour";
 import { HelpCenter } from "@/components/app/shell/HelpCenter";
+import { LocaleSwitcher } from "@/components/app/LocaleSwitcher";
 
 export function ProfileMenu({
   name,
@@ -141,6 +144,14 @@ export function ProfileMenu({
             </div>
           </div>
 
+          {/* Idioma */}
+          <div className="flex items-center justify-between border-b border-border px-4 py-3">
+            <span className="flex items-center gap-3 text-sm font-medium text-foreground">
+              <Globe className="size-4 text-muted-foreground" aria-hidden /> {t("language")}
+            </span>
+            <LocaleSwitcher />
+          </div>
+
           {/* Acciones */}
           <div className="p-1.5">
             <MenuItem icon={Pencil} label={t("editProfile")} onClick={() => go("/app/cuenta")} />
@@ -150,7 +161,7 @@ export function ProfileMenu({
               label={t("downloadReport")}
               onClick={() => {
                 setOpen(false);
-                window.print();
+                router.push("/app/informe");
               }}
             />
             <MenuItem icon={Compass} label={t("guidedTour")} onClick={restartTour} />
@@ -162,6 +173,7 @@ export function ProfileMenu({
                 setShowHelp(true);
               }}
             />
+            <MenuItem icon={Smartphone} label={t("installApp")} onClick={() => go("/descargar")} />
 
             {/* Próximamente (honesto: aún no construidas) */}
             <ComingSoonItem icon={Bell} label={t("reminders")} tag={t("soon")} />

@@ -4,12 +4,10 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { Link } from "@/i18n/navigation";
-import { Sparkles, Camera, Check, Eye, EyeOff, Download, Trash2, Mail, Globe, Smartphone, Compass } from "lucide-react";
+import { Sparkles, Camera, Check, Eye, EyeOff, Download, Trash2, Mail } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { CancelOfferModal } from "@/components/app/cuenta/CancelOfferModal";
-import { LocaleSwitcher } from "@/components/app/LocaleSwitcher";
 import { ModalShell } from "@/components/app/shell/ModalShell";
-import { RESTART_EVENT } from "@/components/app/shell/AppTour";
 import { track } from "@/lib/mixpanel";
 import { loadAppData } from "@/lib/app-data";
 
@@ -345,38 +343,6 @@ export default function CuentaPage() {
 
       {/* Extras */}
       <div className="mt-6 space-y-3">
-        <div className="flex items-center gap-3 rounded-xl border border-border bg-card p-4">
-          <div className="flex size-11 items-center justify-center rounded-full bg-primary/15">
-            <Globe className="size-5 text-primary" aria-hidden />
-          </div>
-          <p className="flex-1 text-sm font-medium text-foreground">{t("languageLabel")}</p>
-          <LocaleSwitcher />
-        </div>
-
-        <Link href="/descargar" className="flex items-center gap-3 rounded-xl border border-border bg-card p-4 hover:bg-secondary">
-          <div className="flex size-11 items-center justify-center rounded-full bg-primary/15">
-            <Smartphone className="size-5 text-primary" aria-hidden />
-          </div>
-          <div>
-            <p className="text-sm font-medium text-foreground">{t("installAppLabel")}</p>
-            <p className="text-xs text-muted-foreground">{t("installAppDesc")}</p>
-          </div>
-        </Link>
-
-        <button
-          type="button"
-          onClick={() => window.dispatchEvent(new Event(RESTART_EVENT))}
-          className="flex w-full items-center gap-3 rounded-xl border border-border bg-card p-4 text-left hover:bg-secondary"
-        >
-          <div className="flex size-11 items-center justify-center rounded-full bg-primary/15">
-            <Compass className="size-5 text-primary" aria-hidden />
-          </div>
-          <div>
-            <p className="text-sm font-medium text-foreground">{t("restartTourLabel")}</p>
-            <p className="text-xs text-muted-foreground">{t("restartTourDesc")}</p>
-          </div>
-        </button>
-
         {profile.plan !== "free" && !offerAccepted && (
           <button
             type="button"

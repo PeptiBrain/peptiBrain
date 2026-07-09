@@ -344,7 +344,36 @@
     "reminders": "Dose reminders",
     "travelMode": "Travel mode",
     "soon": "Soon",
-    "upgradeCta": "Upgrade to Premium"
+    "upgradeCta": "Upgrade to Premium",
+    "language": "Language",
+    "installApp": "Install the app"
+  },
+  "Informe": {
+    "title": "PeptiBrain report",
+    "generatedOn": "Generated on {date}",
+    "print": "Print / Save as PDF",
+    "back": "Back",
+    "plan": "Plan",
+    "invested": "Invested",
+    "dosesDone": "Doses applied",
+    "adherence": "Adherence",
+    "streak": "Current streak",
+    "streakDays": "{days} days",
+    "mostUsed": "Most used peptide",
+    "weightChange": "Weight change",
+    "sideEffects": "Side effects logged",
+    "noData": "Not enough data",
+    "peptidesTitle": "Your peptides",
+    "peptidesEmpty": "You haven't logged any peptide yet.",
+    "dosesTitle": "Latest doses applied",
+    "dosesEmpty": "You haven't logged any dose yet.",
+    "colPeptide": "Peptide",
+    "colRoute": "Route",
+    "colDose": "Typical dose",
+    "colDate": "Date",
+    "colAmount": "Amount",
+    "footerNote": "This report is a summary of your personal PeptiBrain journal. It is not medical advice.",
+    "confidential": "Personal document — do not share with third parties without your consent."
   },
   "Help": {
     "title": "Help center",
@@ -720,7 +749,9 @@
     "vialsCount": "{count, plural, one {# vial} other {# vials}}",
     "noSharedData": "No data yet.",
     "done": "Taken",
-    "pending": "Pending"
+    "pending": "Pending",
+    "planRequired": "Sharing with family is part of the Family plan.",
+    "planRequiredCta": "Upgrade to Family"
   },
   "Legal": {
     "termsTitle": "Terms of Service",
@@ -881,12 +912,7 @@
     "deleteAccountError": "Couldn't delete the account. Try again or contact support.",
     "deleting": "Deleting...",
     "close": "Close",
-    "upgradeButton": "Upgrade to Premium",
-    "languageLabel": "Language",
-    "installAppLabel": "Install the app",
-    "installAppDesc": "Add it to your phone's home screen",
-    "restartTourLabel": "Watch the guided tour again",
-    "restartTourDesc": "Replay the 9-step app introduction"
+    "upgradeButton": "Upgrade to Premium"
   },
   "Tour": {
     "step1Title": "Home — your starting point",
@@ -894,11 +920,11 @@
     "step2Title": "Date filters",
     "step2Body": "Switch the range (today, 7 days, 30 days, or all time) to see your progress cards over different periods.",
     "step3Title": "Peptides — the heart of the app",
-    "step3Body": "This tab brings together four sections: your uses, your peptides, your vials, and the calculator. Let's look at each one.",
-    "step4Title": "Uses",
+    "step3Body": "This tab brings together four sections: summary, inventory, providers, and the calculator. Let's look at each one.",
+    "step4Title": "Summary",
     "step4Body": "Log a dose you already took or schedule the next one. Every use counts toward your streak.",
-    "step5Title": "Vials",
-    "step5Body": "Track how much peptide is left in each vial, along with its reconstitution and bacteriostatic water.",
+    "step5Title": "Inventory and providers",
+    "step5Body": "Track how much peptide is left in each vial (reconstitution and bacteriostatic water) and keep your trusted providers' info.",
     "step6Title": "Calculator",
     "step6Body": "With Premium, calculate exactly how many units to draw for each dose.",
     "step7Title": "Health",
