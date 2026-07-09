@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { Plus, Package, Syringe, Beaker, Calculator, Check, Lock, Droplet, Trash2, CalendarClock, Zap, Pill, Wind } from "lucide-react";
+import { Plus, Package, Syringe, Beaker, Calculator, Check, Lock, Droplet, Trash2, CalendarClock, Zap, Pill, Wind, ArrowRightLeft } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import {
   addDose,
@@ -20,6 +20,7 @@ import { PeptideCard } from "@/components/app/peptidos/PeptideCard";
 import { PeptideIcon } from "@/components/app/peptidos/PeptideIcon";
 import { ProtocolModal } from "@/components/app/peptidos/ProtocolModal";
 import { ReconstitutionCalculator } from "@/components/app/peptidos/ReconstitutionCalculator";
+import { UnitConverter } from "@/components/app/peptidos/UnitConverter";
 import { SubTabs, type SubTabItem } from "@/components/app/shell/SubTabs";
 import { PremiumLocked } from "@/components/app/shell/PremiumLocked";
 import { DateRangeTabs } from "@/components/app/shell/DateRangeTabs";
@@ -203,11 +204,52 @@ export default function PeptidosPage() {
 
         {tab === "calculadora" &&
           (isPremium ? (
-            <ReconstitutionCalculator data={data} />
+            <CalculadoraTab data={data} t={t} />
           ) : (
             <PremiumLocked description={t("calculatorLockedDesc")} />
           ))}
       </div>
+    </div>
+  );
+}
+
+function CalculadoraTab({
+  data,
+  t,
+}: {
+  data: AppData;
+  t: (key: string, values?: Record<string, string | number>) => string;
+}) {
+  const [tool, setTool] = useState<"recon" | "converter">("recon");
+  return (
+    <div>
+      <div className="mb-3 grid grid-cols-2 gap-2">
+        <button
+          type="button"
+          onClick={() => setTool("recon")}
+          className={`flex h-10 min-w-0 items-center justify-center gap-1.5 rounded-lg border text-sm font-medium ${
+            tool === "recon"
+              ? "border-primary bg-accent text-accent-foreground"
+              : "border-border bg-card text-foreground"
+          }`}
+        >
+          <Calculator className="size-4 shrink-0" aria-hidden />
+          <span className="truncate">{t("calculatorToolRecon")}</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => setTool("converter")}
+          className={`flex h-10 min-w-0 items-center justify-center gap-1.5 rounded-lg border text-sm font-medium ${
+            tool === "converter"
+              ? "border-primary bg-accent text-accent-foreground"
+              : "border-border bg-card text-foreground"
+          }`}
+        >
+          <ArrowRightLeft className="size-4 shrink-0" aria-hidden />
+          <span className="truncate">{t("calculatorToolConverter")}</span>
+        </button>
+      </div>
+      {tool === "recon" ? <ReconstitutionCalculator data={data} /> : <UnitConverter />}
     </div>
   );
 }
