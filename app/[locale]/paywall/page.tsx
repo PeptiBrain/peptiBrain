@@ -48,7 +48,7 @@ export default function PaywallPage() {
     return {
       id,
       name: t(`${key}Name`),
-      price: id === "gratis" ? "$0" : `${symbol}${formatMoney(displayMonthly)}`,
+      price: id === "gratis" ? `${symbol}0` : `${symbol}${formatMoney(displayMonthly)}`,
       period: id === "gratis" ? t("freePeriod") : t("perMonthLabel"),
       dailyLabel: id === "gratis" ? null : t("perDayLabel", { price: `${symbol}${dailyPrice.toFixed(2)}` }),
       savingsLabel:

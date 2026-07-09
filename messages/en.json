@@ -284,7 +284,7 @@
     "madeWithAnswers": "Made with your answers from a moment ago. Choose how you want to continue.",
     "madeWithAnswersGoal": "Built for your goal: {goal}. Choose how you want to continue.",
     "lifetimeOfferBadge": "Founders offer",
-    "lifetimeOfferTitle": "${price} one-time payment · Lifetime",
+    "lifetimeOfferTitle": "{price} one-time payment · Lifetime",
     "lifetimeOfferBody": "Pay once and keep Premium forever — never a subscription again.",
     "lifetimeSlotsRemaining": "{remaining} of {total} spots left",
     "lifetimeOfferCta": "Claim my spot",

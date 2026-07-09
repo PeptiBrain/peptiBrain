@@ -284,7 +284,7 @@
     "madeWithAnswers": "Hecho con tus respuestas de recién. Elige cómo quieres seguir.",
     "madeWithAnswersGoal": "Armado para tu objetivo: {goal}. Elige cómo quieres seguir.",
     "lifetimeOfferBadge": "Oferta de fundadores",
-    "lifetimeOfferTitle": "${price} pago único · De por vida",
+    "lifetimeOfferTitle": "{price} pago único · De por vida",
     "lifetimeOfferBody": "Pagas una sola vez y tienes Premium para siempre — nunca más una suscripción.",
     "lifetimeSlotsRemaining": "Quedan {remaining} de {total} cupos",
     "lifetimeOfferCta": "Reclamar mi cupo",

@@ -1,15 +1,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Sparkles } from "lucide-react";
 import { track } from "@/lib/mixpanel";
 import { hotmartLifetimeCheckoutUrl } from "@/lib/hotmart-links";
+import { CURRENCY, type Locale } from "@/i18n/routing";
 
 const LIFETIME_PRICE = process.env.NEXT_PUBLIC_LIFETIME_PRICE || "99";
 
 export function LifetimeOfferCard({ email }: { email?: string }) {
   const t = useTranslations("Paywall");
+  const locale = useLocale() as Locale;
+  const { symbol } = CURRENCY[locale];
   const [slots, setSlots] = useState<{ remaining: number; total: number } | null>(null);
 
   useEffect(() => {
@@ -36,7 +39,7 @@ export function LifetimeOfferCard({ email }: { email?: string }) {
         </span>
       </div>
       <p className="mt-1.5 font-display text-lg font-bold text-foreground">
-        {t("lifetimeOfferTitle", { price: LIFETIME_PRICE })}
+        {t("lifetimeOfferTitle", { price: `${symbol}${LIFETIME_PRICE}` })}
       </p>
       <p className="mt-0.5 text-sm text-accent-foreground">{t("lifetimeOfferBody")}</p>
       {slots && (
