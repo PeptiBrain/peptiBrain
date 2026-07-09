@@ -88,6 +88,14 @@ export type Provider = {
   createdAt: string;
 };
 
+export type Trip = {
+  id: string;
+  startDate: string; // ISO yyyy-mm-dd
+  endDate: string; // ISO yyyy-mm-dd
+  destination?: string;
+  createdAt: string;
+};
+
 export type AppData = {
   peptides: Peptide[];
   vials: Vial[];
@@ -95,12 +103,14 @@ export type AppData = {
   healthLogs: HealthLog[];
   meals: Meal[];
   providers: Provider[];
+  trips: Trip[];
   familyMembers: FamilyMember[];
   plan: "free" | "premium" | "family";
 };
 
 const EMPTY: AppData = {
   peptides: [],
+  trips: [],
   vials: [],
   doses: [],
   healthLogs: [],
@@ -150,6 +160,7 @@ export async function loadAppData(): Promise<AppData> {
     { data: healthLogs },
     { data: meals },
     { data: providers },
+    { data: trips },
     { data: family },
   ] = await Promise.all([
     supabase.from("peptides").select("*").order("created_at", { ascending: true }),
@@ -158,6 +169,7 @@ export async function loadAppData(): Promise<AppData> {
     supabase.from("health_logs").select("*").order("log_date", { ascending: false }),
     supabase.from("meals").select("*").order("log_date", { ascending: false }),
     supabase.from("providers").select("*").order("created_at", { ascending: true }),
+    supabase.from("trips").select("*").order("start_date", { ascending: false }),
     supabase.from("family_members").select("*").order("created_at", { ascending: true }),
   ]);
 
@@ -218,6 +230,13 @@ export async function loadAppData(): Promise<AppData> {
       brands: Array.isArray(p.brands) ? p.brands : [],
       notes: p.notes || undefined,
       createdAt: p.created_at,
+    })),
+    trips: (trips || []).map((tr) => ({
+      id: tr.id,
+      startDate: tr.start_date,
+      endDate: tr.end_date,
+      destination: tr.destination || undefined,
+      createdAt: tr.created_at,
     })),
     familyMembers: (family || []).map((f) => ({
       id: f.id,
@@ -355,6 +374,28 @@ export async function addProvider(
 export async function removeProvider(data: AppData, providerId: string): Promise<AppData> {
   const { supabase } = await requireUser();
   const { error } = await supabase.from("providers").delete().eq("id", providerId);
+  if (error) throw error;
+  return loadAppData();
+}
+
+export async function addTrip(
+  data: AppData,
+  trip: { startDate: string; endDate: string; destination?: string }
+): Promise<AppData> {
+  const { supabase, user } = await requireUser();
+  const { error } = await supabase.from("trips").insert({
+    user_id: user.id,
+    start_date: trip.startDate,
+    end_date: trip.endDate,
+    destination: trip.destination?.trim() || null,
+  });
+  if (error) throw error;
+  return loadAppData();
+}
+
+export async function removeTrip(data: AppData, tripId: string): Promise<AppData> {
+  const { supabase } = await requireUser();
+  const { error } = await supabase.from("trips").delete().eq("id", tripId);
   if (error) throw error;
   return loadAppData();
 }

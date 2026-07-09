@@ -407,6 +407,7 @@ export default function InicioPage() {
         onClose={() => setShowCalendar(false)}
         data={data}
         peptideName={peptideName}
+        onDataChange={setData}
       />
 
       <AssistantModal open={showAssistant} onClose={() => setShowAssistant(false)} data={data} />
