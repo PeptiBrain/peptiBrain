@@ -389,7 +389,7 @@
     "install1Q": "How do I install the app on my iPhone or Android?",
     "install1A": "PeptiBrain works in any browser. To install it as an app: on iPhone (Safari) tap Share → 'Add to Home Screen'; on Android (Chrome) tap the ⋮ menu → 'Install app'.",
     "contact1Q": "I can't find what I'm looking for, how do I contact you?",
-    "contact1A": "Email us at soporte@peptibrain.com with your question and your account email. We'll reply as soon as possible."
+    "contact1A": "Email us at hello@peptibrain.com with your question and your account email. We'll reply as soon as possible."
   },
   "DateRange": {
     "today": "Today",
@@ -439,6 +439,9 @@
     "greeting": "Good morning",
     "streakLine": "you’re on a streak",
     "goodDayFallback": "Let’s have a great day",
+    "weekProgress": "{done} of {total} doses this week,",
+    "weekTagPerfect": "PERFECT RUN!",
+    "weekTagCatchUp": "TIME TO CATCH UP!",
     "nextDose": "Next dose",
     "peptideFallback": "Your peptide",
     "markDone": "Mark as taken",
@@ -464,8 +467,11 @@
     "sideEffectsCount": "Effects logged",
     "noSideEffectsInRange": "No effects in this range. Keep it up!",
     "usesInRangeTitle": "Uses in date range",
-    "noUsesInRange": "No doses in this date range.",
+    "noUsesInRange": "No doses in this date range. Log your first use to get started.",
+    "noUsesTitle": "No uses logged",
+    "registerUseCta": "Log use",
     "sideEffectsPanelTitle": "Side effects",
+    "noSideEffectsTitle": "No side effects",
     "noSideEffectsPanel": "No effects in this range. Keep it up!"
   },
   "Stats": {

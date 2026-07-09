@@ -65,6 +65,16 @@ export default function InicioPage() {
   const allStats = computeStats(data, new Date());
   const { symbol } = CURRENCY[locale as Locale];
 
+  // Progreso de la semana (para el saludo gamificado)
+  const weekAgo = new Date();
+  weekAgo.setDate(weekAgo.getDate() - 7);
+  const weekDoses = data.doses.filter((d) => new Date(d.scheduledAt) >= weekAgo);
+  const weekDone = weekDoses.filter((d) => d.done).length;
+  const weekTag =
+    weekDoses.length > 0 && weekDone >= weekDoses.length
+      ? t("weekTagPerfect")
+      : t("weekTagCatchUp");
+
   async function handleMarkDone() {
     if (!pendingDose || !data) return;
     setData(await markDoseDone(data, pendingDose.id));
@@ -128,6 +138,17 @@ export default function InicioPage() {
           t("goodDayFallback")
         )}
       </motion.p>
+      {weekDoses.length > 0 && (
+        <motion.p
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.08 }}
+          className="text-sm text-muted-foreground"
+        >
+          {t("weekProgress", { done: weekDone, total: weekDoses.length })}{" "}
+          <span className="font-bold text-primary">{weekTag}</span>
+        </motion.p>
+      )}
 
       {pendingDose ? (
         <motion.div
@@ -252,55 +273,67 @@ export default function InicioPage() {
       </div>
 
       <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-        <div className="rounded-xl border border-border bg-card p-3">
-          <Syringe className="mb-2 size-4 text-primary" aria-hidden />
-          <p className="tabular font-display text-xl font-bold text-foreground">
-            {stats.dosesInRange.length ? `${stats.completionPercent}%` : "—"}
-          </p>
-          <p className="text-xs font-medium text-foreground">{t("doseCompletion")}</p>
-          <p className="text-xs text-muted-foreground">
-            {t("ofScheduled", { done: stats.doneInRange.length, total: stats.dosesInRange.length })}
-          </p>
-        </div>
-        <div className="rounded-xl border border-border bg-card p-3">
-          <Scale className="mb-2 size-4 text-primary" aria-hidden />
-          <p className="tabular font-display text-xl font-bold text-foreground">
-            {stats.avgWeight ? `${stats.avgWeight} kg` : "—"}
-          </p>
-          <p className="text-xs font-medium text-foreground">{t("avgWeight")}</p>
-          <p className="text-xs text-muted-foreground">{!stats.avgWeight && t("noWeightInRange")}</p>
-        </div>
-        <div className="rounded-xl border border-border bg-card p-3">
-          <Apple className="mb-2 size-4 text-primary" aria-hidden />
-          <p className="tabular font-display text-xl font-bold text-foreground">
-            {stats.avgCalories ? `${stats.avgCalories} kcal` : "—"}
-          </p>
-          <p className="text-xs font-medium text-foreground">{t("avgCalories")}</p>
-          <p className="text-xs text-muted-foreground">{!stats.avgCalories && t("noMealsInRange")}</p>
-        </div>
-        <div className="rounded-xl border border-border bg-card p-3">
-          <Droplets className="mb-2 size-4 text-primary" aria-hidden />
-          <p className="tabular font-display text-xl font-bold text-foreground">
-            {stats.avgHydration ? `${stats.avgHydration} ml` : "—"}
-          </p>
-          <p className="text-xs font-medium text-foreground">{t("avgHydration")}</p>
-          <p className="text-xs text-muted-foreground">{!stats.avgHydration && t("noHydrationInRange")}</p>
-        </div>
-        <div className="rounded-xl border border-border bg-card p-3">
-          <AlertTriangle className="mb-2 size-4 text-[var(--notice-icon)]" aria-hidden />
-          <p className="tabular font-display text-xl font-bold text-foreground">{stats.sideEffects.length}</p>
-          <p className="text-xs font-medium text-foreground">{t("sideEffectsCount")}</p>
-          <p className="text-xs text-muted-foreground">
-            {stats.sideEffects.length === 0 && t("noSideEffectsInRange")}
-          </p>
-        </div>
+        <HomeStatCard
+          icon={Syringe}
+          accent="16 185 129"
+          value={stats.dosesInRange.length ? `${stats.completionPercent}%` : "—"}
+          label={t("doseCompletion")}
+          sub={t("ofScheduled", { done: stats.doneInRange.length, total: stats.dosesInRange.length })}
+        />
+        <HomeStatCard
+          icon={Scale}
+          accent="139 92 246"
+          value={stats.avgWeight ? `${stats.avgWeight} kg` : "—"}
+          label={t("avgWeight")}
+          sub={!stats.avgWeight ? t("noWeightInRange") : ""}
+        />
+        <HomeStatCard
+          icon={Apple}
+          accent="249 115 22"
+          value={stats.avgCalories ? `${stats.avgCalories} kcal` : "—"}
+          label={t("avgCalories")}
+          sub={!stats.avgCalories ? t("noMealsInRange") : ""}
+        />
+        <HomeStatCard
+          icon={Droplets}
+          accent="14 165 233"
+          value={stats.avgHydration ? `${stats.avgHydration} ml` : "—"}
+          label={t("avgHydration")}
+          sub={!stats.avgHydration ? t("noHydrationInRange") : ""}
+        />
+        <HomeStatCard
+          icon={AlertTriangle}
+          accent="245 158 11"
+          value={String(stats.sideEffects.length)}
+          label={t("sideEffectsCount")}
+          sub={stats.sideEffects.length === 0 ? t("noSideEffectsInRange") : ""}
+        />
       </div>
 
       <div className="mt-4 grid gap-3 sm:grid-cols-2">
         <div className="rounded-xl border border-border bg-card p-4">
-          <p className="mb-2 text-sm font-semibold text-foreground">{t("usesInRangeTitle")}</p>
+          <div className="mb-3 flex items-center justify-between">
+            <p className="flex items-center gap-1.5 text-sm font-semibold text-foreground">
+              <Syringe className="size-4 text-primary" aria-hidden /> {t("usesInRangeTitle")}
+            </p>
+            <span className="rounded-full bg-secondary px-2 py-0.5 text-xs font-medium text-muted-foreground">
+              {stats.dosesInRange.length}
+            </span>
+          </div>
           {stats.dosesInRange.length === 0 ? (
-            <p className="py-4 text-center text-sm text-muted-foreground">{t("noUsesInRange")}</p>
+            <div className="rounded-lg border border-dashed border-border py-8 text-center">
+              <div className="mx-auto mb-2 flex size-12 items-center justify-center rounded-full bg-primary/10">
+                <Syringe className="size-5 text-primary" aria-hidden />
+              </div>
+              <p className="text-sm font-medium text-foreground">{t("noUsesTitle")}</p>
+              <p className="mx-auto mt-1 max-w-[16rem] text-xs text-muted-foreground">{t("noUsesInRange")}</p>
+              <Link
+                href="/app/peptidos"
+                className="mt-3 inline-flex h-9 items-center gap-1.5 rounded-full bg-primary px-4 text-xs font-semibold text-primary-foreground transition-transform active:scale-97"
+              >
+                <Check className="size-3.5" aria-hidden /> {t("registerUseCta")}
+              </Link>
+            </div>
           ) : (
             <ul className="space-y-2">
               {stats.dosesInRange.slice(0, 5).map((d) => (
@@ -315,9 +348,23 @@ export default function InicioPage() {
           )}
         </div>
         <div className="rounded-xl border border-border bg-card p-4">
-          <p className="mb-2 text-sm font-semibold text-foreground">{t("sideEffectsPanelTitle")}</p>
+          <div className="mb-3 flex items-center justify-between">
+            <p className="flex items-center gap-1.5 text-sm font-semibold text-foreground">
+              <AlertTriangle className="size-4 text-[var(--notice-icon)]" aria-hidden />{" "}
+              {t("sideEffectsPanelTitle")}
+            </p>
+            <span className="rounded-full bg-secondary px-2 py-0.5 text-xs font-medium text-muted-foreground">
+              {stats.sideEffects.length}
+            </span>
+          </div>
           {stats.sideEffects.length === 0 ? (
-            <p className="py-4 text-center text-sm text-muted-foreground">{t("noSideEffectsPanel")}</p>
+            <div className="rounded-lg border border-dashed border-border py-8 text-center">
+              <div className="mx-auto mb-2 flex size-12 items-center justify-center rounded-full bg-primary/10">
+                <Sparkles className="size-5 text-primary" aria-hidden />
+              </div>
+              <p className="text-sm font-medium text-foreground">{t("noSideEffectsTitle")}</p>
+              <p className="mt-1 text-xs text-muted-foreground">{t("noSideEffectsPanel")}</p>
+            </div>
           ) : (
             <ul className="space-y-2">
               {stats.sideEffects.slice(0, 5).map((h) => (
@@ -339,6 +386,40 @@ export default function InicioPage() {
       />
 
       <AssistantModal open={showAssistant} onClose={() => setShowAssistant(false)} data={data} />
+    </div>
+  );
+}
+
+// Tarjeta de estadística con esquina de color semántico (accent = "r g b").
+function HomeStatCard({
+  icon: Icon,
+  accent,
+  value,
+  label,
+  sub,
+}: {
+  icon: typeof Syringe;
+  accent: string;
+  value: string;
+  label: string;
+  sub?: string;
+}) {
+  return (
+    <div className="relative overflow-hidden rounded-xl border border-border bg-card p-3">
+      <div
+        className="pointer-events-none absolute -right-6 -top-6 size-20 rounded-full blur-xl"
+        style={{ background: `rgb(${accent} / 0.18)` }}
+        aria-hidden
+      />
+      <div
+        className="relative mb-2 flex size-8 items-center justify-center rounded-lg"
+        style={{ background: `rgb(${accent} / 0.14)` }}
+      >
+        <Icon className="size-4" style={{ color: `rgb(${accent})` }} aria-hidden />
+      </div>
+      <p className="relative tabular-nums font-display text-xl font-bold text-foreground">{value}</p>
+      <p className="relative text-xs font-medium text-foreground">{label}</p>
+      {sub && <p className="relative text-xs text-muted-foreground">{sub}</p>}
     </div>
   );
 }

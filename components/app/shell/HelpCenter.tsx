@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 import { LifeBuoy, Search, ChevronDown, X } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 
-const SUPPORT_EMAIL = "soporte@peptibrain.com";
+const SUPPORT_EMAIL = "hello@peptibrain.com";
 
 // Cada artículo: categoría + claves de pregunta/respuesta en el namespace "Help".
 const ARTICLES: { cat: string; q: string; a: string }[] = [
