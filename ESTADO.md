@@ -16,8 +16,17 @@
 - **Resumen de estadísticas en Inicio**: tarjeta compacta (invertido + dosis + péptido estrella) con botón "Ver más" → /app/estadisticas.
 - **Landing sin promesas falsas**: quitado "Recordatorios/notificaciones a tiempo" (Beneficios item5 + HowItWorks step3 — función no construida). Reemplazado por 2 features reales: "Calculadora y conversor" y "Estadísticas y finanzas". Reformulado "Sabe cuánto te queda" (sin prometer avisos).
 
-## 🔜 PLAN APROBADO (queda): (3) BACKOFFICE completo dividido en FINANZAS (ingresos/cashflow/margen/MRR/cupos, estilo "Bola 2026"), MARKETING (origen tráfico vía UTM, conversión visita→registro→pago), USUARIOS (lista/DAU/sesiones). VISIÓN FUTURA (anotada, no ahora): integraciones (Oura/Apple Watch/wellness) + portal developers/API. Mantener Familia.
-## ⚠️ Pendiente usuario: rotar la API key de OpenRouter; poner SUPABASE_SECRET_KEY (ya guardada local) + las 3 env vars de lifetime en Vercel. Verificación VISUAL de páginas con login (Estadísticas, Inicio, perfil) quedó pendiente en preview (el server perdió la sesión); verificadas por tsc+build y por página de prueba pública de las gráficas — el usuario las ve en vivo logueado.
+## ✅ BACKOFFICE COMPLETO (2026-07-09) — desplegado
+`/admin` reorganizado en secciones con tarjetas de número grande (estilo "Bola 2026"): **FINANZAS** (MRR estimado desde planes activos, ingreso de por vida, clientes pagando, ARPU, cupos de por vida X/100, conversión registro→pago — todo ESTIMADO desde `profiles`, el real exacto está en Hotmart; precios en env `NEXT_PUBLIC_PRICE_PREMIUM/FAMILY/LIFETIME_PRICE`), **CRECIMIENTO** (altas 7d/30d, churn, gratis, past_due, reembolsos), **MARKETING** ("de dónde vienen" por `utm_source`, barras con %), **OPERACIÓN** (webhook Hotmart, Asistente IA + kill-switch), **USUARIOS** (tabla con edición manual). `lib/admin-data.ts` ampliado.
+- **Captura de origen del tráfico**: `lib/utm.ts` (lee `?utm_source`/`?ref`/`?source` o detecta el sitio de origen: instagram/tiktok/youtube/google/… o "directo") + `components/app/UtmCapture.tsx` (corre en la landing) + se guarda en el registro (login/page.tsx post-signup update). **Migración 0014 añade `profiles.utm_source`** — SIN ella el /admin da 500 (el select la incluye).
+
+## ⚠️ Pendiente usuario (bloquea prod): 
+1. Correr **migración 0014** (`alter table public.profiles add column if not exists utm_source text;`) — si no, el panel /admin da error.
+2. En Vercel: `SUPABASE_SECRET_KEY` + las 3 env vars de lifetime (`NEXT_PUBLIC_HOTMART_OFFER_LIFETIME=bu3n2ggt`, `NEXT_PUBLIC_LIFETIME_PRICE=99`, `NEXT_PUBLIC_LIFETIME_TOTAL_SLOTS=100`). Sin la secret key, /admin, /api/lifetime-slots y la oferta de €99 no funcionan en prod.
+3. Rotar la API key de OpenRouter que se pegó en el chat.
+
+## 🔜 QUEDA / VISIÓN FUTURA (anotada, no construida): integraciones (Oura/Apple Watch/wellness) + portal developers/API. COGS reales en el cashflow del backoffice (ahora solo se ve el ingreso estimado, no el gasto — el modelo de IA es gratis, infra es coste fijo). Mantener Familia.
+## Nota verificación: páginas tras login (Estadísticas, Inicio, perfil, /admin) no se pudieron ver en preview (server perdió sesión / admin necesita datos reales); verificadas por tsc+build y las gráficas por página de prueba pública. El usuario las ve en vivo.
 
 ## ✅ Oferta de fundadores: pago único de por vida, 100 cupos (2026-07-08) — REEMPLAZA el 20% recurrente
 Decisión del usuario: quitar la oferta de 20% recurrente, reemplazarla por $99 pago único "de por vida", solo para los primeros 100 compradores (cupo global, para siempre — una vez vendidos los 100, desaparece del paywall). Objetivo explícito: caja rápida (~$9,900) para reinvertir en la app.
