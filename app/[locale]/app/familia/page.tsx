@@ -19,6 +19,17 @@ import {
 } from "@/lib/app-data";
 import { SharedDataModal } from "@/components/app/familia/SharedDataModal";
 
+const COUNTRIES = [
+  { flag: "🇪🇸", code: "+34" },
+  { flag: "🇨🇴", code: "+57" },
+  { flag: "🇲🇽", code: "+52" },
+  { flag: "🇦🇷", code: "+54" },
+  { flag: "🇵🇪", code: "+51" },
+  { flag: "🇨🇱", code: "+56" },
+  { flag: "🇪🇨", code: "+593" },
+  { flag: "🇺🇸", code: "+1" },
+];
+
 const RELATIONSHIPS: FamilyRelationship[] = [
   "pareja",
   "hermano",
@@ -40,6 +51,8 @@ export default function FamiliaPage() {
   const [showForm, setShowForm] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [phoneCode, setPhoneCode] = useState("+34");
+  const [phone, setPhone] = useState("");
   const [relationship, setRelationship] = useState<FamilyRelationship>("otro");
   const [confirmRemoveId, setConfirmRemoveId] = useState<string | null>(null);
   const [viewingOwnerId, setViewingOwnerId] = useState<string | null>(null);
@@ -86,6 +99,8 @@ export default function FamiliaPage() {
     const next = await addFamilyMember(data, {
       name: name.trim(),
       email: email.trim(),
+      phone: phone.trim() || undefined,
+      phoneCode: phone.trim() ? phoneCode : undefined,
       relationship,
       sharePeptides: true,
       shareDoses: true,
@@ -94,6 +109,7 @@ export default function FamiliaPage() {
     setData(next);
     setName("");
     setEmail("");
+    setPhone("");
     setRelationship("otro");
     setShowForm(false);
   }
@@ -163,6 +179,30 @@ export default function FamiliaPage() {
                 type="email"
                 placeholder={t("emailPlaceholder")}
                 className="h-11 w-full rounded-lg border border-input bg-background px-3 text-base text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              />
+              <p className="mt-1 text-[11px] text-muted-foreground">{t("emailWhyNote")}</p>
+            </div>
+          </div>
+          <div>
+            <label className="mb-1.5 block text-sm font-medium text-foreground">{t("phoneLabel")}</label>
+            <div className="flex gap-2">
+              <select
+                value={phoneCode}
+                onChange={(e) => setPhoneCode(e.target.value)}
+                className="h-11 w-24 shrink-0 rounded-lg border border-input bg-background px-2 text-base text-foreground"
+              >
+                {COUNTRIES.map((c) => (
+                  <option key={c.code} value={c.code}>
+                    {c.flag} {c.code}
+                  </option>
+                ))}
+              </select>
+              <input
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                inputMode="tel"
+                placeholder={t("phonePlaceholder")}
+                className="h-11 flex-1 rounded-lg border border-input bg-background px-3 text-base text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
               />
             </div>
           </div>
@@ -299,6 +339,25 @@ export default function FamiliaPage() {
                   <Trash2 className="size-4" aria-hidden />
                 </button>
               </div>
+
+              {member.phone && (
+                <div className="mt-2 flex gap-2">
+                  <a
+                    href={`https://wa.me/${(member.phoneCode || "").replace("+", "")}${member.phone.replace(/\D/g, "")}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex h-8 flex-1 items-center justify-center gap-1.5 rounded-full bg-secondary text-xs font-medium text-foreground hover:bg-accent"
+                  >
+                    {t("contactWhatsApp")}
+                  </a>
+                  <a
+                    href={`tel:${member.phoneCode || ""}${member.phone}`}
+                    className="flex h-8 flex-1 items-center justify-center gap-1.5 rounded-full bg-secondary text-xs font-medium text-foreground hover:bg-accent"
+                  >
+                    {t("contactCall")}
+                  </a>
+                </div>
+              )}
 
               {confirmRemoveId === member.id && (
                 <div className="mt-2 flex items-center justify-between gap-2 rounded-lg bg-secondary/60 px-3 py-2">

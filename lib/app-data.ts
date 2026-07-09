@@ -72,6 +72,8 @@ export type FamilyMember = {
   id: string;
   name: string;
   email: string;
+  phone?: string;
+  phoneCode?: string;
   relationship?: FamilyRelationship;
   photoUrl?: string;
   sharePeptides: boolean;
@@ -265,6 +267,8 @@ export async function loadAppData(): Promise<AppData> {
       id: f.id,
       name: f.name,
       email: f.email,
+      phone: f.phone || undefined,
+      phoneCode: f.phone_code || undefined,
       relationship: f.relationship || undefined,
       photoUrl: f.photo_url || undefined,
       sharePeptides: f.share_peptides,
@@ -574,6 +578,8 @@ export async function addFamilyMember(
     owner_id: user.id,
     name: member.name,
     email: member.email,
+    phone: member.phone?.trim() || null,
+    phone_code: member.phone?.trim() ? member.phoneCode || null : null,
     relationship: member.relationship || null,
     share_peptides: member.sharePeptides,
     share_doses: member.shareDoses,
