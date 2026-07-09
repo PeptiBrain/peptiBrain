@@ -1,5 +1,17 @@
 # ESTADO — PeptiBrain
-Última actualización: 2026-07-08 | Sesión actual: 6 (servicios externos) — EN PAUSA para clonar PeptiBuddy exacto (ver bloque siguiente) — bloque de prioridad MUY ALTA ✅ + páginas legales ✅ + producto de Hotmart PUBLICADO (ya se puede vender de verdad)
+Última actualización: 2026-07-09 | Sesión 7 (pulido + estadísticas + plan backoffice ampliado). TODO el trabajo de sesiones 6-7 YA está commiteado y desplegado a producción. Migraciones 0003-0013 corridas en Supabase por el usuario.
+
+## ✅ Sesión 7 (2026-07-09) — desplegado a producción
+- **BUG CRÍTICO corregido (migración 0012)**: recursión infinita en RLS (`profiles` ↔ `family_members` en ciclo → error 42P17) rompía TODAS las lecturas (péptidos/viales/dosis/salud/comidas) para cualquier usuario logueado. Resuelto con funciones SECURITY DEFINER `private.current_user_email()` y `private.has_shared_access()`. Corrido en prod.
+- **Oferta de por vida**: código Hotmart `bu3n2ggt` en `NEXT_PUBLIC_HOTMART_OFFER_LIFETIME` (.env.local), €99. La oferta se creó en Hotmart como pago único (periodicidad "Anual" + Recurrencias=1, porque el producto es suscripción y no deja pago único puro — efecto idéntico). PENDIENTE usuario: poner las 3 env vars de lifetime también en Vercel.
+- **Moneda del paywall corregida**: oferta y plan Gratis mostraban "$" fijo; ahora € (es) / $ (en) coherente.
+- **Rediseño visual**: pestañas Péptidos/Salud como tarjetas ícono+subtítulo (paridad PeptiBuddy); tarjeta de vial enriquecida; subtítulos blindados para no salirse en móvil/tablet.
+- **Conversor de unidades** (`UnitConverter.tsx`) en pestaña Calculadora (sub-selector Reconstitución/Conversor): mg↔mcg y dosis→mL→unidades insulina U-100.
+- **Sección ESTADÍSTICAS** (`/app/estadisticas`, `lib/stats.ts`, `AnimatedNumber.tsx`): dinero invertido (coste por vial — migración 0013 añade `vials.cost` + campo precio opcional al crear vial), gasto del mes, coste/dosis, adherencia, dosis totales, péptido más usado, ranking de uso, cambio de peso, efectos secundarios. Añadida a la nav.
+- **Cuentas Premium máximas** (Family de por vida): josepovedaedinar@gmail.com y +33, vía service-role.
+
+## 🔜 PLAN APROBADO por el usuario (orden): (1) ✅ Estadísticas+finanzas usuario → (2) subir Inicio al nivel PeptiBuddy (4 tarjetas con esquina de color + gamificación "¡A remontar!") → (3) BACKOFFICE completo dividido en FINANZAS (ingresos/cashflow/margen/MRR/cupos, estilo dashboard "Bola 2026"), MARKETING (origen del tráfico vía UTM, conversión visita→registro→pago), USUARIOS (lista/DAU/sesiones) → (4) perfil (ya casi idéntico). Mantener Familia.
+## ⚠️ Pendiente usuario: rotar la API key de OpenRouter que pegó en el chat; poner SUPABASE_SECRET_KEY (ya guardada local) + las 3 env vars de lifetime en Vercel.
 
 ## ✅ Oferta de fundadores: pago único de por vida, 100 cupos (2026-07-08) — REEMPLAZA el 20% recurrente
 Decisión del usuario: quitar la oferta de 20% recurrente, reemplazarla por $99 pago único "de por vida", solo para los primeros 100 compradores (cupo global, para siempre — una vez vendidos los 100, desaparece del paywall). Objetivo explícito: caja rápida (~$9,900) para reinvertir en la app.
