@@ -57,7 +57,7 @@ export function SubTabs({
             key={item.key}
             type="button"
             onClick={() => onChange(item.key)}
-            className={`flex flex-col items-start gap-2 rounded-xl border p-3 text-left transition-colors ${
+            className={`flex min-w-0 flex-col items-start gap-2 overflow-hidden rounded-xl border p-3 text-left transition-colors ${
               active
                 ? "border-primary bg-accent"
                 : "border-border bg-card hover:border-primary/50"
@@ -65,7 +65,7 @@ export function SubTabs({
           >
             <div className="flex w-full items-center justify-between">
               <div
-                className={`flex size-9 items-center justify-center rounded-lg ${
+                className={`flex size-9 shrink-0 items-center justify-center rounded-lg ${
                   active ? "bg-primary/20 text-primary" : "bg-secondary text-muted-foreground"
                 }`}
               >
@@ -73,7 +73,7 @@ export function SubTabs({
               </div>
               {item.locked && <Lock className="size-3.5 shrink-0 text-muted-foreground" aria-hidden />}
             </div>
-            <div className="min-w-0">
+            <div className="w-full min-w-0">
               <p
                 className={`truncate text-sm font-semibold ${
                   active ? "text-accent-foreground" : "text-foreground"
@@ -82,7 +82,9 @@ export function SubTabs({
                 {item.label}
               </p>
               {item.subtitle && (
-                <p className="line-clamp-2 text-xs leading-snug text-muted-foreground">{item.subtitle}</p>
+                <p className="line-clamp-2 break-words text-xs leading-snug text-muted-foreground">
+                  {item.subtitle}
+                </p>
               )}
             </div>
           </button>
