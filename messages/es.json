@@ -825,8 +825,11 @@
   "Cuenta": {
     "editTitle": "Editar perfil",
     "myPlan": "Mi plan",
-    "planSummary": "Tu plan actual y lo que incluye. Sube a Premium o Family cuando lo necesites.",
+    "planSummaryFree": "Estás en el plan gratis. Sube a Premium o Family para desbloquear la calculadora, el asistente y más.",
+    "planSummaryPremium": "Tienes todas las funciones Premium. Sube a Family si quieres compartir tu cuenta con tu familia.",
+    "planSummaryFamily": "Tienes el plan más completo: todas las funciones Premium, compartidas con tu familia.",
     "viewPlans": "Ver planes Premium y Family",
+    "viewPlansFamily": "Subir a Family",
     "boughtOtherEmail": "¿Compraste en Hotmart con otro correo? Actívalo con tu código",
     "changePhoto": "Cambiar foto",
     "avatarError": "No se pudo subir la foto. Vuelve a intentarlo.",

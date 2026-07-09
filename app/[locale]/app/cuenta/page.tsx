@@ -214,10 +214,20 @@ export default function CuentaPage() {
             <Sparkles className="size-3.5 text-primary" aria-hidden /> {planLabel}
           </span>
         </div>
-        <p className="mt-2 text-sm text-muted-foreground">{t("planSummary")}</p>
-        <Link href="/paywall" className="mt-2 inline-block text-sm font-semibold text-primary hover:underline">
-          {t("viewPlans")}
-        </Link>
+        <p className="mt-2 text-sm text-muted-foreground">
+          {t(
+            profile.plan === "family"
+              ? "planSummaryFamily"
+              : profile.plan === "premium"
+                ? "planSummaryPremium"
+                : "planSummaryFree",
+          )}
+        </p>
+        {profile.plan !== "family" && (
+          <Link href="/paywall" className="mt-2 inline-block text-sm font-semibold text-primary hover:underline">
+            {t(profile.plan === "premium" ? "viewPlansFamily" : "viewPlans")}
+          </Link>
+        )}
         <p className="mt-2 text-center text-xs text-muted-foreground">{t("boughtOtherEmail")}</p>
       </div>
 

@@ -825,8 +825,11 @@
   "Cuenta": {
     "editTitle": "Edit profile",
     "myPlan": "My plan",
-    "planSummary": "Your current plan and what it includes. Upgrade to Premium or Family when you need to.",
+    "planSummaryFree": "You're on the free plan. Upgrade to Premium or Family to unlock the calculator, the assistant, and more.",
+    "planSummaryPremium": "You have all the Premium features. Upgrade to Family if you want to share your account with your family.",
+    "planSummaryFamily": "You have the most complete plan: every Premium feature, shared with your family.",
     "viewPlans": "See Premium and Family plans",
+    "viewPlansFamily": "Upgrade to Family",
     "boughtOtherEmail": "Bought on Hotmart with another email? Activate it with your code",
     "changePhoto": "Change photo",
     "avatarError": "Couldn't upload the photo. Please try again.",
