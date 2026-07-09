@@ -35,11 +35,11 @@ const ROUTES = [
   { name: "Nasal", icon: Wind },
 ];
 
-type Tab = "usos" | "peptidos" | "viales" | "calculadora";
+type Tab = "resumen" | "inventario" | "proveedores" | "calculadora";
 
 export default function PeptidosPage() {
   const t = useTranslations("Peptidos");
-  const [tab, setTab] = useState<Tab>("usos");
+  const [tab, setTab] = useState<Tab>("resumen");
   const [data, setData] = useState<AppData | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [name, setName] = useState("");
@@ -57,9 +57,9 @@ export default function PeptidosPage() {
   const isPremium = data.plan !== "free";
 
   const TABS: SubTabItem[] = [
-    { key: "usos", label: t("tabUses"), subtitle: t("tabUsesDesc"), icon: Syringe },
-    { key: "peptidos", label: t("title"), subtitle: t("tabPeptidesDesc"), icon: Package },
-    { key: "viales", label: t("tabVials"), subtitle: t("tabVialsDesc"), icon: Beaker },
+    { key: "resumen", label: t("tabSummary"), subtitle: t("tabSummaryDesc"), icon: Syringe },
+    { key: "inventario", label: t("tabInventory"), subtitle: t("tabInventoryDesc"), icon: Package },
+    { key: "proveedores", label: t("tabProvidersTab"), subtitle: t("tabProvidersDesc"), icon: Building2 },
     {
       key: "calculadora",
       label: t("tabCalculator"),
@@ -97,7 +97,7 @@ export default function PeptidosPage() {
 
       <SubTabs items={TABS} value={tab} onChange={(k) => setTab(k as Tab)} />
 
-      {tab === "usos" && (
+      {tab === "resumen" && (
         <div className="mt-3">
           <DateRangeTabs
             value={range}
@@ -109,9 +109,9 @@ export default function PeptidosPage() {
       )}
 
       <div className="mt-4">
-        {tab === "usos" && <UsosTab data={data} onChange={setData} range={range} customRange={customRange} />}
+        {tab === "resumen" && <UsosTab data={data} onChange={setData} range={range} customRange={customRange} />}
 
-        {tab === "peptidos" && (
+        {tab === "inventario" && (
           <>
             {data.plan === "free" && data.peptides.length >= 1 ? (
               <div className="mb-3 flex items-center justify-between gap-3 rounded-xl border border-dashed border-border bg-secondary/40 p-3">
@@ -198,10 +198,15 @@ export default function PeptidosPage() {
                 ))}
               </div>
             )}
+
+            {/* Viales dentro del Inventario */}
+            <div className="mt-4 border-t border-border pt-4">
+              <ViatesTab data={data} onChange={setData} t={t} />
+            </div>
           </>
         )}
 
-        {tab === "viales" && <ViatesTab data={data} onChange={setData} t={t} />}
+        {tab === "proveedores" && <ProvidersSection data={data} onChange={setData} t={t} />}
 
         {tab === "calculadora" &&
           (isPremium ? (
@@ -384,8 +389,6 @@ function ViatesTab({
           </ul>
         )}
       </CollapsibleSection>
-
-      <ProvidersSection data={data} onChange={onChange} t={t} />
     </div>
   );
 }
