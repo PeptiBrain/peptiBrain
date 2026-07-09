@@ -18,6 +18,7 @@ export type Vial = {
   unit: string;
   bacWater: string;
   syringeType?: SyringeType;
+  cost?: string;
   createdAt: string;
 };
 
@@ -170,6 +171,7 @@ export async function loadAppData(): Promise<AppData> {
       unit: v.unit,
       bacWater: v.bac_water != null ? String(v.bac_water) : "",
       syringeType: v.syringe_type || undefined,
+      cost: v.cost != null ? String(v.cost) : undefined,
       createdAt: v.created_at,
     })),
     doses: (doses || []).map((d) => ({
@@ -293,6 +295,7 @@ export async function addVial(
     unit: vial.unit,
     bac_water: vial.bacWater ? Number(vial.bacWater) : null,
     syringe_type: vial.syringeType || null,
+    cost: vial.cost ? Number(vial.cost) : null,
   });
   if (error) {
     if (error.message.includes("PLAN_LIMIT_REACHED")) throw new PlanLimitError();

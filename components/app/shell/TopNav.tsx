@@ -2,7 +2,7 @@
 
 import { Link, usePathname } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
-import { Home, Package, HeartPulse, Users } from "lucide-react";
+import { Home, Package, HeartPulse, Users, BarChart3 } from "lucide-react";
 
 export function TopNav() {
   const t = useTranslations("AppShell");
@@ -12,6 +12,7 @@ export function TopNav() {
     { href: "/app", label: t("tabHome"), icon: Home },
     { href: "/app/peptidos", label: t("tabPeptides"), icon: Package },
     { href: "/app/salud", label: t("tabHealth"), icon: HeartPulse },
+    { href: "/app/estadisticas", label: t("tabStats"), icon: BarChart3 },
     { href: "/app/familia", label: t("tabFamily"), icon: Users },
   ];
 
