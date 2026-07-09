@@ -480,6 +480,24 @@
     "noSideEffectsTitle": "No side effects",
     "noSideEffectsPanel": "No effects in this range. Keep it up!"
   },
+  "Providers": {
+    "modalTitle": "New supplier",
+    "close": "Close",
+    "name": "Name",
+    "namePlaceholder": "e.g. PeptideSciences, Amino Asylum, local pharmacy",
+    "website": "Website (optional)",
+    "social": "Social media (optional)",
+    "socialPlaceholder": "@handle or link",
+    "phone": "Phone / WhatsApp (optional)",
+    "email": "Email (optional)",
+    "brands": "Brands (optional) — the ones this supplier carries",
+    "brandsPlaceholder": "e.g. BioHacking, Nordic, Pharma-grade",
+    "add": "Add",
+    "notes": "Notes (optional)",
+    "notesPlaceholder": "Observations, contact, usual batch...",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
   "Stats": {
     "title": "Statistics",
     "subtitle": "Your progress, adherence and investment",
@@ -591,8 +609,9 @@
     "bacWaterSectionEmpty": "No reconstituted vials yet.",
     "providersSectionTitle": "Suppliers",
     "providersSectionCount": "{count, plural, one {# registered} other {# registered}}",
-    "providersSectionEmpty": "You haven't added any suppliers yet.",
-    "addProviderCta": "Add supplier",
+    "providersSectionEmpty": "Create one with \"Register supplier\" above to assign it to your vials and injections.",
+    "providersEmptyTitle": "No suppliers",
+    "addProviderCta": "Register supplier",
     "providerNamePlaceholder": "Supplier name",
     "calculatorUseVialLabel": "Use one of your vials",
     "calculatorManualEntry": "Enter manually"

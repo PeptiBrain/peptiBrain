@@ -78,6 +78,12 @@ export type SharedOwnerData = {
 export type Provider = {
   id: string;
   name: string;
+  website?: string;
+  socialNetwork?: string;
+  socialHandle?: string;
+  phone?: string;
+  email?: string;
+  brands: string[];
   notes?: string;
   createdAt: string;
 };
@@ -204,6 +210,12 @@ export async function loadAppData(): Promise<AppData> {
     providers: (providers || []).map((p) => ({
       id: p.id,
       name: p.name,
+      website: p.website || undefined,
+      socialNetwork: p.social_network || undefined,
+      socialHandle: p.social_handle || undefined,
+      phone: p.phone || undefined,
+      email: p.email || undefined,
+      brands: Array.isArray(p.brands) ? p.brands : [],
       notes: p.notes || undefined,
       createdAt: p.created_at,
     })),
@@ -313,13 +325,28 @@ export async function removeVial(data: AppData, vialId: string): Promise<AppData
 
 export async function addProvider(
   data: AppData,
-  provider: { name: string; notes?: string }
+  provider: {
+    name: string;
+    website?: string;
+    socialNetwork?: string;
+    socialHandle?: string;
+    phone?: string;
+    email?: string;
+    brands?: string[];
+    notes?: string;
+  }
 ): Promise<AppData> {
   const { supabase, user } = await requireUser();
   const { error } = await supabase.from("providers").insert({
     user_id: user.id,
     name: provider.name,
-    notes: provider.notes || null,
+    website: provider.website?.trim() || null,
+    social_network: provider.socialNetwork?.trim() || null,
+    social_handle: provider.socialHandle?.trim() || null,
+    phone: provider.phone?.trim() || null,
+    email: provider.email?.trim() || null,
+    brands: provider.brands && provider.brands.length ? provider.brands : [],
+    notes: provider.notes?.trim() || null,
   });
   if (error) throw error;
   return loadAppData();

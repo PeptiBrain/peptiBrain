@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { Plus, Package, Syringe, Beaker, Calculator, Check, Lock, Droplet, Trash2, CalendarClock, Zap, Pill, Wind, ArrowRightLeft } from "lucide-react";
+import { Plus, Package, Syringe, Beaker, Calculator, Check, Lock, Droplet, Trash2, CalendarClock, Zap, Pill, Wind, ArrowRightLeft, Building2 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import {
   addDose,
@@ -21,6 +21,7 @@ import { PeptideIcon } from "@/components/app/peptidos/PeptideIcon";
 import { ProtocolModal } from "@/components/app/peptidos/ProtocolModal";
 import { ReconstitutionCalculator } from "@/components/app/peptidos/ReconstitutionCalculator";
 import { UnitConverter } from "@/components/app/peptidos/UnitConverter";
+import { ProviderModal } from "@/components/app/peptidos/ProviderModal";
 import { SubTabs, type SubTabItem } from "@/components/app/shell/SubTabs";
 import { PremiumLocked } from "@/components/app/shell/PremiumLocked";
 import { DateRangeTabs } from "@/components/app/shell/DateRangeTabs";
@@ -427,74 +428,111 @@ function ProvidersSection({
   onChange: (next: AppData) => void;
   t: (key: string, values?: Record<string, string | number>) => string;
 }) {
-  const [showForm, setShowForm] = useState(false);
-  const [name, setName] = useState("");
-
-  async function handleAdd() {
-    if (!name.trim()) return;
-    const next = await addProvider(data, { name: name.trim() });
-    onChange(next);
-    setName("");
-    setShowForm(false);
-  }
+  const [showModal, setShowModal] = useState(false);
+  const [confirmId, setConfirmId] = useState<string | null>(null);
 
   async function handleRemove(id: string) {
     onChange(await removeProvider(data, id));
+    setConfirmId(null);
   }
 
   return (
-    <CollapsibleSection
-      icon={<Package className="size-4 text-primary" aria-hidden />}
-      title={t("providersSectionTitle")}
-      count={t("providersSectionCount", { count: data.providers.length })}
-    >
+    <div className="rounded-xl border border-border bg-card p-4">
+      <div className="mb-3 flex items-center justify-between gap-2">
+        <p className="flex items-center gap-2 text-sm font-semibold text-foreground">
+          <Building2 className="size-4 text-primary" aria-hidden /> {t("providersSectionTitle")}
+          <span className="text-xs font-normal text-muted-foreground">
+            {t("providersSectionCount", { count: data.providers.length })}
+          </span>
+        </p>
+        <button
+          type="button"
+          onClick={() => setShowModal(true)}
+          className="flex h-9 items-center gap-1.5 rounded-full bg-primary px-3.5 text-xs font-semibold text-primary-foreground transition-transform active:scale-97"
+        >
+          <Plus className="size-3.5" aria-hidden /> {t("addProviderCta")}
+        </button>
+      </div>
+
       {data.providers.length === 0 ? (
-        <p className="py-2 text-sm text-muted-foreground">{t("providersSectionEmpty")}</p>
+        <div className="rounded-lg border border-dashed border-border py-8 text-center">
+          <div className="mx-auto mb-2 flex size-12 items-center justify-center rounded-full bg-primary/10">
+            <Building2 className="size-5 text-primary" aria-hidden />
+          </div>
+          <p className="text-sm font-medium text-foreground">{t("providersEmptyTitle")}</p>
+          <p className="mx-auto mt-1 max-w-[18rem] text-xs text-muted-foreground">{t("providersSectionEmpty")}</p>
+        </div>
       ) : (
-        <ul className="space-y-1.5">
+        <ul className="space-y-2">
           {data.providers.map((p) => (
-            <li key={p.id} className="flex items-center justify-between gap-2 text-sm">
-              <span className="min-w-0 truncate text-foreground">{p.name}</span>
-              <button
-                type="button"
-                onClick={() => handleRemove(p.id)}
-                aria-label={t("deleteConfirm")}
-                className="flex size-7 shrink-0 items-center justify-center rounded-full text-muted-foreground hover:bg-secondary hover:text-destructive"
-              >
-                <Trash2 className="size-3.5" aria-hidden />
-              </button>
+            <li key={p.id} className="rounded-xl border border-border p-3">
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-semibold text-foreground">{p.name}</p>
+                  <div className="mt-0.5 flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-muted-foreground">
+                    {p.website && <span className="truncate">🌐 {p.website}</span>}
+                    {p.socialHandle && (
+                      <span className="truncate">
+                        {p.socialNetwork}: {p.socialHandle}
+                      </span>
+                    )}
+                    {p.phone && <span>📞 {p.phone}</span>}
+                    {p.email && <span className="truncate">✉️ {p.email}</span>}
+                  </div>
+                  {p.brands.length > 0 && (
+                    <div className="mt-1.5 flex flex-wrap gap-1">
+                      {p.brands.map((b) => (
+                        <span key={b} className="rounded-full bg-secondary px-2 py-0.5 text-[11px] text-foreground">
+                          {b}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  {p.notes && <p className="mt-1.5 text-xs text-muted-foreground">{p.notes}</p>}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setConfirmId(p.id)}
+                  aria-label={t("deleteConfirm")}
+                  className="flex size-8 shrink-0 items-center justify-center rounded-full text-muted-foreground hover:bg-secondary hover:text-destructive"
+                >
+                  <Trash2 className="size-4" aria-hidden />
+                </button>
+              </div>
+              {confirmId === p.id && (
+                <div className="mt-2 flex items-center justify-between gap-2 rounded-lg bg-secondary/60 px-3 py-2">
+                  <p className="text-xs text-foreground">{t("confirmDeleteVial")}</p>
+                  <div className="flex shrink-0 gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => setConfirmId(null)}
+                      className="rounded-md px-2 py-1 text-xs font-medium text-muted-foreground hover:bg-secondary"
+                    >
+                      {t("cancel")}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleRemove(p.id)}
+                      className="rounded-md bg-destructive/10 px-2 py-1 text-xs font-semibold text-destructive hover:bg-destructive/20"
+                    >
+                      {t("deleteConfirm")}
+                    </button>
+                  </div>
+                </div>
+              )}
             </li>
           ))}
         </ul>
       )}
 
-      {showForm ? (
-        <div className="mt-2 flex gap-2">
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder={t("providerNamePlaceholder")}
-            className="h-10 flex-1 rounded-lg border border-input bg-background px-3 text-sm text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          />
-          <button
-            type="button"
-            disabled={!name.trim()}
-            onClick={handleAdd}
-            className="h-10 rounded-lg bg-primary px-3 text-xs font-semibold text-primary-foreground disabled:opacity-50"
-          >
-            {t("saveVial")}
-          </button>
-        </div>
-      ) : (
-        <button
-          type="button"
-          onClick={() => setShowForm(true)}
-          className="mt-2 flex items-center gap-1.5 text-sm font-medium text-primary"
-        >
-          <Plus className="size-3.5" aria-hidden /> {t("addProviderCta")}
-        </button>
-      )}
-    </CollapsibleSection>
+      <ProviderModal
+        open={showModal}
+        onClose={() => setShowModal(false)}
+        onSave={async (draft) => {
+          onChange(await addProvider(data, draft));
+        }}
+      />
+    </div>
   );
 }
 

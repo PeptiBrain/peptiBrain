@@ -480,6 +480,24 @@
     "noSideEffectsTitle": "Sin efectos secundarios",
     "noSideEffectsPanel": "Sin efectos en este rango. ¡Sigue así!"
   },
+  "Providers": {
+    "modalTitle": "Nuevo proveedor",
+    "close": "Cerrar",
+    "name": "Nombre",
+    "namePlaceholder": "ej: PeptideSciences, Amino Asylum, farmacia local",
+    "website": "Página web (opcional)",
+    "social": "Red social (opcional)",
+    "socialPlaceholder": "@usuario o link",
+    "phone": "Teléfono / WhatsApp (opcional)",
+    "email": "Email (opcional)",
+    "brands": "Marcas (opcional) — las que maneja este proveedor",
+    "brandsPlaceholder": "ej: BioHacking, Nordic, Pharma-grade",
+    "add": "Añadir",
+    "notes": "Notas (opcional)",
+    "notesPlaceholder": "Observaciones, contacto, lote habitual...",
+    "save": "Guardar",
+    "cancel": "Cancelar"
+  },
   "Stats": {
     "title": "Estadísticas",
     "subtitle": "Tu progreso, tu adherencia y tu inversión",
@@ -591,8 +609,9 @@
     "bacWaterSectionEmpty": "Ningún vial reconstituido todavía.",
     "providersSectionTitle": "Proveedores",
     "providersSectionCount": "{count, plural, one {# registrado} other {# registrados}}",
-    "providersSectionEmpty": "Aún no registraste ningún proveedor.",
-    "addProviderCta": "Agregar proveedor",
+    "providersSectionEmpty": "Créalo con \"Registrar proveedor\" arriba para poder asignarlo a tus viales e inyecciones.",
+    "providersEmptyTitle": "Sin proveedores",
+    "addProviderCta": "Registrar proveedor",
     "providerNamePlaceholder": "Nombre del proveedor",
     "calculatorUseVialLabel": "Usar uno de tus viales",
     "calculatorManualEntry": "Ingresar datos manualmente"
