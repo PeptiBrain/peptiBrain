@@ -10,6 +10,7 @@ import { Check, X } from "lucide-react";
 import { loadOnboarding, saveOnboarding, type OnboardingData } from "@/lib/onboarding";
 import { track } from "@/lib/mixpanel";
 import { hotmartCheckoutUrl } from "@/lib/hotmart-links";
+import { LifetimeOfferCard } from "@/components/app/paywall/LifetimeOfferCard";
 import { useLocale } from "next-intl";
 import { CURRENCY, type Locale } from "@/i18n/routing";
 
@@ -22,6 +23,7 @@ function formatMoney(n: number) {
 export default function PaywallPage() {
   const router = useRouter();
   const t = useTranslations("Paywall");
+  const tCat = useTranslations("PeptideCategories");
   const locale = useLocale() as Locale;
   const { symbol } = CURRENCY[locale];
   const [data, setData] = useState<OnboardingData | null>(null);
@@ -99,7 +101,13 @@ export default function PaywallPage() {
         <h1 className="text-balance font-display text-2xl font-bold leading-tight text-foreground">
           {t("protocolReady", { peptide: data.peptideName || t("peptidesFallback") })}
         </h1>
-        <p className="mt-1 text-sm text-muted-foreground">{t("madeWithAnswers")}</p>
+        <p className="mt-1 text-sm text-muted-foreground">
+          {data.goal ? t("madeWithAnswersGoal", { goal: tCat(data.goal) }) : t("madeWithAnswers")}
+        </p>
+
+        <div className="mt-4">
+          <LifetimeOfferCard email={data.email} />
+        </div>
 
         <div className="mt-5 rounded-xl border border-border bg-card p-4">
           {[t("value1"), t("value2"), t("value3")].map((f) => (

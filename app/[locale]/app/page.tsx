@@ -3,20 +3,28 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "motion/react";
 import { useLocale, useTranslations } from "next-intl";
-import { Check, Flame, Package, Syringe, AlertTriangle, Scale, Droplets, Lock } from "lucide-react";
+import { Check, Flame, Syringe, AlertTriangle, Scale, Droplets, Lock, Apple, CalendarDays, Sparkles } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { loadOnboarding } from "@/lib/onboarding";
-import { loadAppData, markDoseDone, type AppData } from "@/lib/app-data";
+import { computeStreak, loadAppData, markDoseDone, type AppData } from "@/lib/app-data";
 import { track } from "@/lib/mixpanel";
 import { DateRangeTabs } from "@/components/app/shell/DateRangeTabs";
-import { isWithinRange, type DateRangeKey } from "@/lib/date-range";
+import { CalendarModal } from "@/components/app/shell/CalendarModal";
+import { AssistantModal } from "@/components/app/assistant/AssistantModal";
+import { PeptideIcon } from "@/components/app/peptidos/PeptideIcon";
+import { Mascot } from "@/components/app/shell/Mascot";
+import { isWithinRange, type CustomRange, type DateRangeKey } from "@/lib/date-range";
 
 export default function InicioPage() {
   const t = useTranslations("Inicio");
+  const tCal = useTranslations("Calendar");
   const locale = useLocale();
   const [data, setData] = useState<AppData | null>(null);
   const [name, setName] = useState("");
   const [range, setRange] = useState<DateRangeKey>("7d");
+  const [customRange, setCustomRange] = useState<CustomRange | null>(null);
+  const [showCalendar, setShowCalendar] = useState(false);
+  const [showAssistant, setShowAssistant] = useState(false);
 
   useEffect(() => {
     loadAppData().then(setData);
@@ -25,12 +33,14 @@ export default function InicioPage() {
 
   const stats = useMemo(() => {
     if (!data) return null;
-    const dosesInRange = data.doses.filter((d) => isWithinRange(d.createdAt, range));
+    const dosesInRange = data.doses.filter((d) => isWithinRange(d.scheduledAt, range, customRange));
     const doneInRange = dosesInRange.filter((d) => d.done);
-    const logsInRange = data.healthLogs.filter((h) => isWithinRange(h.date, range));
+    const logsInRange = data.healthLogs.filter((h) => isWithinRange(h.date, range, customRange));
     const weights = logsInRange.filter((h) => h.weightKg).map((h) => parseFloat(h.weightKg!));
     const hydrations = logsInRange.filter((h) => h.hydrationMl).map((h) => parseFloat(h.hydrationMl!));
     const sideEffects = logsInRange.filter((h) => h.sideEffect);
+    const mealsInRange = data.meals.filter((m) => isWithinRange(m.date, range, customRange) && m.calories);
+    const calories = mealsInRange.map((m) => parseFloat(m.calories!));
 
     return {
       dosesInRange,
@@ -38,9 +48,10 @@ export default function InicioPage() {
       completionPercent: dosesInRange.length ? Math.round((doneInRange.length / dosesInRange.length) * 100) : 0,
       avgWeight: weights.length ? (weights.reduce((a, b) => a + b, 0) / weights.length).toFixed(1) : null,
       avgHydration: hydrations.length ? Math.round(hydrations.reduce((a, b) => a + b, 0) / hydrations.length) : null,
+      avgCalories: calories.length ? Math.round(calories.reduce((a, b) => a + b, 0) / calories.length) : null,
       sideEffects,
     };
-  }, [data, range]);
+  }, [data, range, customRange]);
 
   if (!data || !stats) return null;
 
@@ -48,7 +59,7 @@ export default function InicioPage() {
   const donePeptide = pendingDose
     ? data.peptides.find((p) => p.id === pendingDose.peptideId)
     : null;
-  const streak = data.doses.filter((d) => d.done).length;
+  const streak = computeStreak(data.doses);
 
   async function handleMarkDone() {
     if (!pendingDose || !data) return;
@@ -66,13 +77,30 @@ export default function InicioPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-5">
-      <div className="mb-2 flex justify-end">
-        <Link
-          href="/paywall"
-          className="flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground hover:border-primary hover:text-primary"
+      <div className="mb-2 flex justify-end gap-2">
+        <button
+          type="button"
+          onClick={() => setShowCalendar(true)}
+          className="flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground hover:border-primary hover:text-primary"
         >
-          <Lock className="size-3.5" aria-hidden /> {t("assistant")}
-        </Link>
+          <CalendarDays className="size-3.5" aria-hidden /> {tCal("openCalendar")}
+        </button>
+        {data.plan === "free" ? (
+          <Link
+            href="/paywall"
+            className="flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground hover:border-primary hover:text-primary"
+          >
+            <Lock className="size-3.5" aria-hidden /> {t("assistant")}
+          </Link>
+        ) : (
+          <button
+            type="button"
+            onClick={() => setShowAssistant(true)}
+            className="flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground hover:border-primary hover:text-primary"
+          >
+            <Sparkles className="size-3.5" aria-hidden /> {t("assistant")}
+          </button>
+        )}
       </div>
       <motion.p
         initial={{ opacity: 0, y: 8 }}
@@ -108,12 +136,17 @@ export default function InicioPage() {
             <p className="text-xs font-medium text-accent-foreground">{t("nextDose")}</p>
             <span className="text-xs text-muted-foreground">{pendingDose.when}</span>
           </div>
-          <p className="mt-1 font-display text-lg font-bold text-foreground">
-            {donePeptide?.name || t("peptideFallback")}
-          </p>
-          <p className="text-sm text-muted-foreground">
-            {pendingDose.amount} {pendingDose.unit}
-          </p>
+          <div className="mt-2 flex items-center gap-3">
+            <PeptideIcon peptideName={donePeptide?.name || ""} />
+            <div>
+              <p className="font-display text-lg font-bold text-foreground">
+                {donePeptide?.name || t("peptideFallback")}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                {pendingDose.amount} {pendingDose.unit}
+              </p>
+            </div>
+          </div>
           <button
             type="button"
             onClick={handleMarkDone}
@@ -129,7 +162,9 @@ export default function InicioPage() {
           transition={{ delay: 0.1 }}
           className="mt-4 rounded-xl border border-dashed border-border p-6 text-center"
         >
-          <Package className="mx-auto mb-2 size-8 text-muted-foreground" aria-hidden />
+          <div className="mx-auto mb-1 flex justify-center">
+            <Mascot state="pointing" size={72} />
+          </div>
           <p className="text-sm text-muted-foreground">{t("noDosesPending")}</p>
           <Link
             href="/app/peptidos"
@@ -161,10 +196,15 @@ export default function InicioPage() {
       </motion.div>
 
       <div className="mt-6">
-        <DateRangeTabs value={range} onChange={setRange} />
+        <DateRangeTabs
+          value={range}
+          onChange={setRange}
+          customRange={customRange}
+          onCustomRangeChange={setCustomRange}
+        />
       </div>
 
-      <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
         <div className="rounded-xl border border-border bg-card p-3">
           <Syringe className="mb-2 size-4 text-primary" aria-hidden />
           <p className="tabular font-display text-xl font-bold text-foreground">
@@ -182,6 +222,14 @@ export default function InicioPage() {
           </p>
           <p className="text-xs font-medium text-foreground">{t("avgWeight")}</p>
           <p className="text-xs text-muted-foreground">{!stats.avgWeight && t("noWeightInRange")}</p>
+        </div>
+        <div className="rounded-xl border border-border bg-card p-3">
+          <Apple className="mb-2 size-4 text-primary" aria-hidden />
+          <p className="tabular font-display text-xl font-bold text-foreground">
+            {stats.avgCalories ? `${stats.avgCalories} kcal` : "—"}
+          </p>
+          <p className="text-xs font-medium text-foreground">{t("avgCalories")}</p>
+          <p className="text-xs text-muted-foreground">{!stats.avgCalories && t("noMealsInRange")}</p>
         </div>
         <div className="rounded-xl border border-border bg-card p-3">
           <Droplets className="mb-2 size-4 text-primary" aria-hidden />
@@ -235,6 +283,15 @@ export default function InicioPage() {
           )}
         </div>
       </div>
+
+      <CalendarModal
+        open={showCalendar}
+        onClose={() => setShowCalendar(false)}
+        data={data}
+        peptideName={peptideName}
+      />
+
+      <AssistantModal open={showAssistant} onClose={() => setShowAssistant(false)} data={data} />
     </div>
   );
 }

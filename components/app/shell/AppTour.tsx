@@ -18,6 +18,7 @@ import {
 import { track } from "@/lib/mixpanel";
 
 const SEEN_KEY = "peptibrain_tour_seen";
+export const RESTART_EVENT = "peptibrain:tour:restart";
 const ICONS = [Home, Calendar, Package, Syringe, Beaker, Calculator, HeartPulse, Users, UserCircle];
 
 export function AppTour() {
@@ -31,6 +32,13 @@ export function AppTour() {
       setOpen(true);
       track("app_tour_started");
     }
+    function handleRestart() {
+      setStep(0);
+      setOpen(true);
+      track("app_tour_started", { restarted: true });
+    }
+    window.addEventListener(RESTART_EVENT, handleRestart);
+    return () => window.removeEventListener(RESTART_EVENT, handleRestart);
   }, []);
 
   const steps = [

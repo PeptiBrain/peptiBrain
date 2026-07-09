@@ -1,3 +1,22 @@
+// Categorías de referencia usadas por la comunidad de péptidos. Un péptido puede
+// pertenecer a más de una (ej. BPC-157 es recuperación Y salud digestiva).
+// Las etiquetas visibles viven en messages/*.json bajo "PeptideCategories", con
+// una clave por cada id de aquí abajo.
+export const PEPTIDE_CATEGORY_IDS = [
+  "peso",
+  "musculo_gh",
+  "recuperacion",
+  "longevidad",
+  "sueno",
+  "piel_belleza",
+  "cognicion",
+  "libido",
+  "intestinal",
+  "inmunidad",
+] as const;
+
+export type PeptideCategoryId = (typeof PEPTIDE_CATEGORY_IDS)[number];
+
 export type PeptideProfile = {
   name: string;
   route: string;
@@ -7,6 +26,7 @@ export type PeptideProfile = {
   vialUnit: string;
   bacWater: string;
   frequency: string;
+  categories: PeptideCategoryId[];
   tags: string[];
   description: string;
 };
@@ -23,6 +43,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     vialUnit: "mg",
     bacWater: "3",
     frequency: "1-2x al día",
+    categories: ["recuperacion", "intestinal"],
     tags: ["Reparación tisular", "Salud digestiva"],
     description:
       "Pentadecapéptido derivado de una proteína gástrica. Conocido por sus propiedades de reparación tisular y salud digestiva.",
@@ -36,6 +57,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     vialUnit: "mg",
     bacWater: "2",
     frequency: "2x por semana",
+    categories: ["recuperacion"],
     tags: ["Recuperación", "Movilidad"],
     description:
       "Fragmento sintético de la timosina beta-4. Promueve la cicatrización, regeneración celular y movilidad.",
@@ -49,6 +71,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     vialUnit: "mg",
     bacWater: "2",
     frequency: "1x por semana",
+    categories: ["peso"],
     tags: ["Control de peso"],
     description:
       "Agonista del receptor GLP-1. Reduce el apetito, retrasa el vaciamiento gástrico y mejora la sensibilidad a la insulina.",
@@ -62,35 +85,10 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     vialUnit: "mg",
     bacWater: "2",
     frequency: "1x por semana",
+    categories: ["peso"],
     tags: ["Control de peso"],
     description:
       "Agonista dual GIP/GLP-1. Apoya el control de peso y mejora la sensibilidad a la insulina.",
-  },
-  {
-    name: "Ipamorelina",
-    route: "Subcutánea",
-    commonDose: "200",
-    doseUnit: "mcg",
-    vialAmount: "5",
-    vialUnit: "mg",
-    bacWater: "2.5",
-    frequency: "1-2x al día",
-    tags: ["Hormona de crecimiento"],
-    description:
-      "Secretagogo selectivo de hormona de crecimiento, con un perfil de efectos secundarios más suave que otros análogos.",
-  },
-  {
-    name: "CJC-1295",
-    route: "Subcutánea",
-    commonDose: "100",
-    doseUnit: "mcg",
-    vialAmount: "5",
-    vialUnit: "mg",
-    bacWater: "2",
-    frequency: "1x al día",
-    tags: ["Hormona de crecimiento"],
-    description:
-      "Análogo de acción prolongada de la hormona liberadora de GH. Suele combinarse con Ipamorelina.",
   },
   {
     name: "Retatrutida",
@@ -101,22 +99,9 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     vialUnit: "mg",
     bacWater: "2",
     frequency: "1x por semana",
+    categories: ["peso"],
     tags: ["Control de peso"],
-    description:
-      "Agonista triple GIP/GLP-1/glucagón, en investigación para control de peso.",
-  },
-  {
-    name: "AOD-9604",
-    route: "Subcutánea",
-    commonDose: "300",
-    doseUnit: "mcg",
-    vialAmount: "5",
-    vialUnit: "mg",
-    bacWater: "2",
-    frequency: "1x al día",
-    tags: ["Metabolismo"],
-    description:
-      "Fragmento de la hormona de crecimiento asociado al metabolismo de las grasas.",
+    description: "Agonista triple GIP/GLP-1/glucagón, en investigación para control de peso.",
   },
   {
     name: "Cagrilintide",
@@ -127,9 +112,23 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     vialUnit: "mg",
     bacWater: "2",
     frequency: "1x por semana",
+    categories: ["peso"],
     tags: ["Control de peso"],
     description:
       "Análogo de la amilina de acción prolongada. Suele combinarse con un GLP-1 para el control de peso.",
+  },
+  {
+    name: "AOD-9604",
+    route: "Subcutánea",
+    commonDose: "300",
+    doseUnit: "mcg",
+    vialAmount: "5",
+    vialUnit: "mg",
+    bacWater: "2",
+    frequency: "1x al día",
+    categories: ["peso"],
+    tags: ["Metabolismo"],
+    description: "Fragmento de la hormona de crecimiento asociado al metabolismo de las grasas.",
   },
   {
     name: "Adipotide (FTPP)",
@@ -140,6 +139,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     vialUnit: "mg",
     bacWater: "2",
     frequency: "3x por semana",
+    categories: ["peso"],
     tags: ["Control de peso"],
     description:
       "Péptido pro-apoptótico dirigido a los vasos sanguíneos del tejido adiposo blanco. Reduce grasa abdominal.",
@@ -153,9 +153,37 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     vialUnit: "mg",
     bacWater: "0",
     frequency: "1x al día",
+    categories: ["peso"],
     tags: ["Metabolismo"],
     description:
       "Inhibidor de la enzima NNMT (nicotinamida N-metiltransferasa). Aumenta los niveles celulares de NAD+.",
+  },
+  {
+    name: "Ipamorelina",
+    route: "Subcutánea",
+    commonDose: "200",
+    doseUnit: "mcg",
+    vialAmount: "5",
+    vialUnit: "mg",
+    bacWater: "2.5",
+    frequency: "1-2x al día",
+    categories: ["musculo_gh"],
+    tags: ["Hormona de crecimiento"],
+    description:
+      "Secretagogo selectivo de hormona de crecimiento, con un perfil de efectos secundarios más suave que otros análogos.",
+  },
+  {
+    name: "CJC-1295",
+    route: "Subcutánea",
+    commonDose: "100",
+    doseUnit: "mcg",
+    vialAmount: "5",
+    vialUnit: "mg",
+    bacWater: "2",
+    frequency: "1x al día",
+    categories: ["musculo_gh"],
+    tags: ["Hormona de crecimiento"],
+    description: "Análogo de acción prolongada de la hormona liberadora de GH. Suele combinarse con Ipamorelina.",
   },
   {
     name: "MK-677 (Ibutamoren)",
@@ -166,8 +194,171 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     vialUnit: "mg",
     bacWater: "0",
     frequency: "1x al día",
+    categories: ["musculo_gh"],
     tags: ["Hormona de crecimiento"],
     description:
       "Secretagogo no peptídico de GH activo por vía oral. Imita la acción de la grelina sobre los receptores de GH.",
+  },
+  {
+    name: "Sermorelina",
+    route: "Subcutánea",
+    commonDose: "200",
+    doseUnit: "mcg",
+    vialAmount: "5",
+    vialUnit: "mg",
+    bacWater: "2",
+    frequency: "1x al día",
+    categories: ["musculo_gh", "sueno"],
+    tags: ["Hormona de crecimiento"],
+    description:
+      "Análogo de la hormona liberadora de GH. Suele usarse antes de dormir por su efecto sobre el sueño profundo.",
+  },
+  {
+    name: "Tesamorelina",
+    route: "Subcutánea",
+    commonDose: "1",
+    doseUnit: "mg",
+    vialAmount: "5",
+    vialUnit: "mg",
+    bacWater: "2",
+    frequency: "1x al día",
+    categories: ["musculo_gh", "peso"],
+    tags: ["Hormona de crecimiento"],
+    description:
+      "Análogo de la hormona liberadora de GH, estudiado especialmente para la reducción de grasa visceral.",
+  },
+  {
+    name: "GHK-Cu",
+    route: "Subcutánea",
+    commonDose: "1",
+    doseUnit: "mg",
+    vialAmount: "50",
+    vialUnit: "mg",
+    bacWater: "10",
+    frequency: "1x al día",
+    categories: ["piel_belleza", "longevidad", "recuperacion"],
+    tags: ["Piel", "Antienvejecimiento"],
+    description:
+      "Complejo péptido-cobre presente naturalmente en el cuerpo. Muy usado en cosmética por su efecto en colágeno y cicatrización; también tópico.",
+  },
+  {
+    name: "MOTS-c",
+    route: "Subcutánea",
+    commonDose: "5",
+    doseUnit: "mg",
+    vialAmount: "10",
+    vialUnit: "mg",
+    bacWater: "2",
+    frequency: "3x por semana",
+    categories: ["longevidad", "peso"],
+    tags: ["Metabolismo", "Longevidad"],
+    description:
+      "Péptido derivado de la mitocondria. En tendencia por su posible rol en el metabolismo de la glucosa y la respuesta al estrés celular.",
+  },
+  {
+    name: "Epitalon",
+    route: "Subcutánea",
+    commonDose: "5",
+    doseUnit: "mg",
+    vialAmount: "50",
+    vialUnit: "mg",
+    bacWater: "5",
+    frequency: "1x al día (en ciclos)",
+    categories: ["longevidad", "sueno"],
+    tags: ["Longevidad"],
+    description:
+      "Péptido sintético derivado de la glándula pineal. Estudiado por su posible relación con la regulación del reloj biológico y la telomerasa.",
+  },
+  {
+    name: "DSIP",
+    route: "Subcutánea",
+    commonDose: "100",
+    doseUnit: "mcg",
+    vialAmount: "5",
+    vialUnit: "mg",
+    bacWater: "2",
+    frequency: "1x antes de dormir",
+    categories: ["sueno"],
+    tags: ["Sueño"],
+    description: "Péptido inductor del sueño delta (Delta Sleep-Inducing Peptide). Se usa antes de dormir.",
+  },
+  {
+    name: "Selank",
+    route: "Intranasal",
+    commonDose: "300",
+    doseUnit: "mcg",
+    vialAmount: "-",
+    vialUnit: "mg",
+    bacWater: "0",
+    frequency: "1-2x al día",
+    categories: ["cognicion", "sueno"],
+    tags: ["Ansiolítico", "Enfoque"],
+    description:
+      "Péptido ansiolítico de origen ruso. Se asocia con calma mental y enfoque sin sedación.",
+  },
+  {
+    name: "Semax",
+    route: "Intranasal",
+    commonDose: "300",
+    doseUnit: "mcg",
+    vialAmount: "-",
+    vialUnit: "mg",
+    bacWater: "0",
+    frequency: "1-2x al día",
+    categories: ["cognicion"],
+    tags: ["Nootrópico"],
+    description: "Péptido nootrópico derivado de la ACTH. Estudiado por su efecto en memoria y concentración.",
+  },
+  {
+    name: "PT-141 (Bremelanotida)",
+    route: "Subcutánea",
+    commonDose: "1",
+    doseUnit: "mg",
+    vialAmount: "10",
+    vialUnit: "mg",
+    bacWater: "2",
+    frequency: "Según necesidad",
+    categories: ["libido"],
+    tags: ["Libido"],
+    description: "Activador de receptores de melanocortina. Usado para la libido y función sexual.",
+  },
+  {
+    name: "Melanotan II",
+    route: "Subcutánea",
+    commonDose: "250",
+    doseUnit: "mcg",
+    vialAmount: "10",
+    vialUnit: "mg",
+    bacWater: "2",
+    frequency: "3x por semana",
+    categories: ["piel_belleza", "libido"],
+    tags: ["Bronceado"],
+    description: "Análogo de la hormona estimulante de melanocitos. Conocido por su efecto bronceador.",
+  },
+  {
+    name: "Timosina Alfa-1",
+    route: "Subcutánea",
+    commonDose: "1.6",
+    doseUnit: "mg",
+    vialAmount: "10",
+    vialUnit: "mg",
+    bacWater: "2",
+    frequency: "2x por semana",
+    categories: ["inmunidad"],
+    tags: ["Inmunidad"],
+    description: "Péptido inmunomodulador natural del timo. Estudiado para el soporte del sistema inmune.",
+  },
+  {
+    name: "KPV",
+    route: "Subcutánea",
+    commonDose: "500",
+    doseUnit: "mcg",
+    vialAmount: "5",
+    vialUnit: "mg",
+    bacWater: "2",
+    frequency: "1x al día",
+    categories: ["intestinal", "piel_belleza"],
+    tags: ["Antiinflamatorio"],
+    description: "Fragmento de la alfa-MSH con propiedades antiinflamatorias. Usado en salud intestinal y de piel.",
   },
 ];

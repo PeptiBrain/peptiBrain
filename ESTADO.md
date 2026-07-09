@@ -1,5 +1,73 @@
 # ESTADO — PeptiBrain
-Última actualización: 2026-07-07 | Sesión actual: 6 (servicios externos) — EN PAUSA para clonar PeptiBuddy exacto (ver bloque siguiente) — bloque de prioridad MUY ALTA ✅ + páginas legales ✅ + producto de Hotmart PUBLICADO (ya se puede vender de verdad)
+Última actualización: 2026-07-08 | Sesión actual: 6 (servicios externos) — EN PAUSA para clonar PeptiBuddy exacto (ver bloque siguiente) — bloque de prioridad MUY ALTA ✅ + páginas legales ✅ + producto de Hotmart PUBLICADO (ya se puede vender de verdad)
+
+## ✅ Oferta de fundadores: pago único de por vida, 100 cupos (2026-07-08) — REEMPLAZA el 20% recurrente
+Decisión del usuario: quitar la oferta de 20% recurrente, reemplazarla por $99 pago único "de por vida", solo para los primeros 100 compradores (cupo global, para siempre — una vez vendidos los 100, desaparece del paywall). Objetivo explícito: caja rápida (~$9,900) para reinvertir en la app.
+- `profiles.is_lifetime` (migración 0011) + `pending_purchases.is_lifetime` (para compras antes de registrarse).
+- Webhook: reconoce el código de oferta de `NEXT_PUBLIC_HOTMART_OFFER_LIFETIME`, marca `is_lifetime=true` en compra aprobada; reembolso/contracargo SÍ quita el acceso de por vida (correcto).
+- `/api/lifetime-slots` (público, solo lectura): cuenta real de cupos usados/restantes.
+- `LifetimeOfferCard.tsx` en el paywall: se oculta sola si no hay oferta configurada o si ya no quedan cupos.
+- **Pendiente del usuario**: crear en Hotmart un producto/oferta de **pago único** (NO suscripción) a $99, y configurar `NEXT_PUBLIC_HOTMART_OFFER_LIFETIME` + `NEXT_PUBLIC_LIFETIME_PRICE`/`NEXT_PUBLIC_LIFETIME_TOTAL_SLOTS` si el precio/cupo cambian del default.
+- Nota de doctrina (`02B-ONBOARDING-MONETIZACION.md`): los lifetime deals se recomiendan "con pinzas" porque el costo de servir (IA vía Asistente) sigue corriendo contra un pago único — mitigado porque el Asistente ya tiene su propio límite diario por usuario y el kill-switch global, independiente del plan.
+Bugs encontrados y corregidos de paso: filtro "Todas" en el paso de péptido del onboarding no mostraba sugerencias (bug real); vías de administración (Subcutánea/Intramuscular/Oral/Nasal) ahora tienen ícono propio en onboarding y en Péptidos.
+
+## ✅ Mascota virtual integrada (2026-07-08)
+Usuario generó la imagen (`Diseños/Mascota PeptiBrain/Mascota PeptiBrain.png`, sheet de 4 estados). Se recortó y se le quitó el fondo (flood-fill desde los bordes, sin herramientas externas — script en el scratchpad de la sesión) → `public/mascota/{waving,celebrating,pointing,sleeping}.png`, componente `components/app/shell/Mascot.tsx`. Conectada en: `WelcomeStep` (waving), `BuildingScreen` al terminar el onboarding (celebrating, junto al confeti), Inicio "sin dosis pendiente" (pointing). `sleeping` queda disponible para el próximo estado vacío que se use (ej. Salud/Péptidos sin registros).
+
+## ✅ Oferta de bienvenida con urgencia real (2026-07-08)
+`lib/onboarding.ts` guarda `startedAt` (hora real de inicio del wizard). En el paywall, `WelcomeOfferBanner.tsx` muestra cuenta regresiva real de 48h con el % de descuento (env var `NEXT_PUBLIC_WELCOME_DISCOUNT_PERCENT`, default 20). Al comprar dentro de la ventana, usa un código de oferta con descuento de Hotmart (env vars `NEXT_PUBLIC_HOTMART_OFFER_PREMIUM_DISCOUNT`/`..._FAMILY_DISCOUNT`) en vez del precio normal. **Pendiente del usuario**: crear esa oferta con precio rebajado en el dashboard de Hotmart y pegar su código — sin eso, el banner simplemente no aparece (no rompe nada).
+No se construyó "oferta pre-primera-victoria" aparte: el paywall ya aparece justo después del wizard de onboarding (primer péptido/vial/dosis), que ES el momento post-primera-victoria — coincide de forma natural con la secuencia ya existente.
+Mascota virtual: se le dio al usuario un prompt de generación de imagen listo para usar (4 estados: neutral, celebrando, alentando, durmiendo) — pendiente de que él genere las imágenes para integrarlas.
+
+## ✅ Confeti + íconos por péptido + onboarding personalizado (2026-07-08)
+- **Confeti** (`canvas-confetti`, `lib/celebrate.ts`, respeta `prefers-reduced-motion`): al terminar el onboarding (BuildingScreen) y al agregar el primer péptido manualmente.
+- **Íconos distintos por categoría de péptido** (`lib/peptide-visual.ts` + `PeptideIcon.tsx`): antes todo usaba el mismo ícono genérico Beaker/Syringe. Ahora cada péptido muestra un ícono según su categoría (Dumbbell=músculo, Moon=sueño, Brain=cognición, etc.) en PeptideCard, Viales e Inicio. Deliberadamente NO se agregaron colores nuevos por categoría (para no romper la disciplina cromática 60-30-10 del sistema) — la variedad viene del ícono, no del color.
+- **Onboarding personalizado por objetivo**: nuevo paso 0 (`GoalStep.tsx`) pregunta el objetivo (reutiliza las 10 categorías de péptidos) antes de "¿qué péptido usas?" — la respuesta preselecciona el filtro de categoría en las sugerencias, y personaliza la primera línea del paywall ("Armado para tu objetivo: X").
+
+## ✅ BACKOFFICE v1 (2026-07-08) — solo Secciones 1+2 (etapa MVP, sin clientes reales aún)
+`/admin` (protegido, solo `role='admin'` verificado en servidor — migración 0010, dueño = josepovedaedinar@gmail.com): ventas (usuarios por plan, altas 7d/30d, churn voluntario/involuntario separado, reembolsos/chargebacks), tabla de usuarios con búsqueda + edición manual de plan/estado (por si el webhook falla), salud del webhook de Hotmart, uso del Asistente IA + su kill-switch. Avisos automáticos arriba (o "✅ Todo en orden"). Deliberadamente NO incluye: error_log/event_log (no existen), LTV/CAC/atribución por canal (prematuro sin datos reales) — quedan para cuando haya clientes de verdad, según la doctrina de 21-BACKOFFICE.md.
+
+## ✅ PUERTA DE RIGOR DE ENTREGA (48) — revisada 2026-07-08
+- **Dinero**: gating de plan atómico vía trigger de Postgres ✓, webhook con firma timing-safe + idempotencia + distingue refund/chargeback/cancelación ✓
+- **Datos**: exportar datos (JSON) en Familia ✓, migraciones no destructivas ✓. **Falta**: no existe "borrar mi cuenta" (derecho al olvido) — solo manual vía Supabase (ver MANUAL-DEL-DUEÑO.md)
+- **Seguridad**: RLS activo en TODAS las tablas ✓. **Falta probar en vivo**: IDOR (leer recurso de otro usuario por ID) nunca se probó activamente con 2 cuentas reales
+- **IA — circuit-breaker**: agregado tope GLOBAL diario (`ASSISTANT_GLOBAL_DAILY_LIMIT`, migración 0009) + aviso por correo al dueño (opcional, vía Resend) cuando se activa — antes solo había límite por-usuario
+- **IA — calidad de output**: NUNCA evaluado con preguntas reales (requiere key de OpenRouter funcionando en un ambiente probado)
+- **Manual del dueño**: creado en `MANUAL-DEL-DUEÑO.md` (cuentas, deploy, runbook, mantenimiento)
+- **Auto-QA end-to-end + primer arranque vacío**: NO pude probarlo yo — sin credenciales de una cuenta real. Pendiente de que el usuario lo recorra.
+- **Backups de Supabase**: pendiente de que el usuario confirme en su plan que están activos y son restaurables.
+
+## ✅ AUDITORÍA EXHAUSTIVA 2026-07-08 — TODAS las tareas completadas
+Además de todo el bloque de "Clonar PeptiBuddy" (ver más abajo), se corrieron y cerraron TODAS las tareas de la auditoría `/auditoria --exhaustivo`:
+- Familia: vista real del invitado ("Compartido conmigo", aceptar/rechazar, modal de datos compartidos) — migración 0008 (`owner_name`)
+- Paywall/landing: corregidas 3 funciones inventadas que no existían (Recordatorios de dosis, Proyección de stock, Modo viaje) — reemplazadas por funciones reales (Calculadora, Asistente IA, Salud completa, Protocolos, Exportar PDF)
+- Familia: copy corregido — decía "te enviaremos invitación" pero no se envía correo real; ahora explica que se ve al entrar a la app
+- Cuenta: `alert()` nativo de instrucciones de cancelación reemplazado por modal propio
+- Onboarding: los 3 pasos (Péptido/Vial/Dosis) ahora centran verticalmente su contenido (antes quedaba espacio vacío en pantallas altas)
+- SEO técnico: `app/sitemap.ts` y `app/robots.ts` agregados (multi-idioma es/en, excluyen `/app/*` y páginas funcionales)
+
+**Migraciones pendientes de correr por el usuario** (si no las corrió ya): 0006 (proveedores), 0007 (assistant_usage), 0008 (owner_name en family_members).
+
+## 🔴 ACTUALIZACIÓN 2026-07-08 — CORRIGE decisiones de más abajo (líneas ~20, 26, 27, 30)
+
+Las siguientes decisiones descritas más abajo como "definitivas" **fueron revertidas hoy** porque el usuario pidió explícitamente igualar TODO PeptiBuddy, sin recortes por evitar migraciones:
+
+- **Dosis SÍ tienen fecha real ahora** (`doses.scheduled_at`, migración 0005). Ya no es solo texto libre. Calendario real construido (`CalendarModal.tsx`) usando esta fecha.
+- **Salud SÍ tiene Comidas/calorías** (tabla `meals`, migración 0004), además de Peso (con notas), Ejercicio, Hidratación y Efectos secundarios — las 5, no 4.
+- **Hidratación y Efectos secundarios YA NO están permanentemente bloqueados** — se corrigió un bug real: aunque el usuario pagara Premium, esas secciones (y la Calculadora) SIEMPRE mostraban el candado porque el código nunca revisaba `data.plan`. Ya revisan el plan real y muestran contenido funcional a usuarios Premium/Family.
+- **Calculadora de reconstitución construida de verdad** (`ReconstitutionCalculator.tsx`), ya no es un placeholder.
+- **"Crear protocolo"** construido: genera automáticamente N dosis programadas (frecuencia + duración en semanas) — `addProtocol()` en `lib/app-data.ts`.
+- **Viales** ahora con badge Reconstituido/No reconstituido, fecha de apertura, eliminar, y dos secciones nuevas: **Agua bacteriostática** (viales reconstituidos) y **Proveedores** (tabla `providers`, migración 0006, CRUD simple).
+- **Base de péptidos** ampliada a 23 con categorías (`PEPTIDE_CATEGORY_IDS` en `lib/peptide-profiles.ts`) y filtro de categorías conectado en el onboarding.
+- **Racha real**: `computeStreak()` ahora cuenta días consecutivos de verdad (antes contaba el total histórico de dosis aplicadas).
+- **Rangos de fecha**: se agregó "Últimos 6 meses" y "Personalizado" (selector de 2 fechas) en `lib/date-range.ts` — ya conectado en Inicio y en Péptidos > Usos.
+- **Onboarding**: se agregó la pantalla de bienvenida inicial ("¡Bienvenido a PeptiBrain!" + Empezar/Explorar por mi cuenta) y el link "Saltar" en cada paso — antes el wizard arrancaba directo en el paso 1 sin esa intro.
+- **Asistente IA construido de verdad** (antes solo un botón bloqueado sin funcionalidad real): BFF en `app/api/assistant/route.ts`, vía **OpenRouter** (no Anthropic directo — decisión explícita del usuario), modelo por defecto `openai/gpt-oss-20b:free` (gratis, env var `ASSISTANT_AI_MODEL` para cambiarlo por cualquier modelo de openrouter.ai/models sin tocar código), circuit-breaker de 20 mensajes/día por usuario (tabla `assistant_usage`, migración 0007), gate a Premium real, chat con contexto de los propios datos del usuario, disclaimer "no es consejo médico". **Requiere que el usuario configure `OPENROUTER_API_KEY` en `.env.local`/Vercel — no puedo crear esa cuenta ni la key por él.** Free tier de OpenRouter: 50 msj/día sin tarjeta, 1000/día si carga $10 de saldo (no se gasta, solo desbloquea el límite). Sin la key, el Asistente responde error "no disponible" pero el resto de la app sigue funcionando normal.
+- Se corrigió además un bug de pérdida de datos en `addHealthLog`: guardar hidratación en un día que ya tenía peso registrado borraba el peso (el upsert no fusionaba con lo existente). Ya fusiona correctamente.
+
+**Migraciones pendientes de correr por el usuario (en orden, si no las corrió ya):** 0003 (hardening+familia), 0004 (comidas), 0005 (scheduled_at), 0006 (proveedores), 0007 (assistant_usage). Todas están en `supabase/migrations/`.
+
+**Pendiente real del usuario:** conseguir una API key de Anthropic (console.anthropic.com) y ponerla en `ANTHROPIC_API_KEY` para que el Asistente funcione de verdad — esto tiene costo real por cada mensaje (mitigado por el límite diario de 20).
 
 ## ⚠️ BUGS CRÍTICOS DE AUTH ENCONTRADOS Y CORREGIDOS (2026-07-07, tras activar Resend + Confirm Email)
 Al activar "Confirm email" y probar el flujo completo con una cuenta real, aparecieron 3 bugs graves en cadena — todos corregidos y verificados:

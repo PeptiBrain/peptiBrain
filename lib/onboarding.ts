@@ -3,6 +3,8 @@ export type OnboardingData = {
   email: string;
   phoneCode: string;
   phone: string;
+  goal: string;
+  startedAt: string;
   peptideName: string;
   peptideRoute: string;
   vialAmount: string;
@@ -11,6 +13,7 @@ export type OnboardingData = {
   doseAmount: string;
   doseUnit: string;
   doseWhen: string;
+  doseScheduledAt: string;
   plan: "gratis" | "premium" | "family" | null;
 };
 
@@ -19,6 +22,8 @@ export const EMPTY_ONBOARDING: OnboardingData = {
   email: "",
   phoneCode: "+34",
   phone: "",
+  goal: "",
+  startedAt: "",
   peptideName: "",
   peptideRoute: "Subcutánea",
   vialAmount: "",
@@ -27,6 +32,7 @@ export const EMPTY_ONBOARDING: OnboardingData = {
   doseAmount: "",
   doseUnit: "mg",
   doseWhen: "",
+  doseScheduledAt: "",
   plan: null,
 };
 

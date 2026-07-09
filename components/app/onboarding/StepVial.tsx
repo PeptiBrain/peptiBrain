@@ -35,7 +35,7 @@ export function StepVial({
       initial={{ opacity: 0, x: 24 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-      className="mx-auto w-full max-w-sm px-4 py-6"
+      className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center px-4 py-6"
     >
       <div className="mb-5 flex items-center gap-3">
         <div className="flex size-12 items-center justify-center rounded-xl bg-primary/15">

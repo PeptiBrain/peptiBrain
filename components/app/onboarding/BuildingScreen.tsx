@@ -5,6 +5,8 @@ import { motion } from "motion/react";
 import { useTranslations } from "next-intl";
 import { Check } from "lucide-react";
 import { track } from "@/lib/mixpanel";
+import { celebrate } from "@/lib/celebrate";
+import { Mascot } from "@/components/app/shell/Mascot";
 
 export function BuildingScreen({
   peptideName,
@@ -24,6 +26,7 @@ export function BuildingScreen({
   ];
   const [activeIndex, setActiveIndex] = useState(0);
   const [percent, setPercent] = useState(8);
+  const done = activeIndex >= lines.length;
 
   useEffect(() => {
     const stepMs = 900;
@@ -37,7 +40,12 @@ export function BuildingScreen({
       );
     });
     track("onboarding_completed", { peptide: peptideName || undefined });
-    timers.push(setTimeout(onDone, stepMs * lines.length + 500));
+    timers.push(
+      setTimeout(() => {
+        celebrate();
+      }, stepMs * lines.length)
+    );
+    timers.push(setTimeout(onDone, stepMs * lines.length + 700));
     return () => timers.forEach(clearTimeout);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -48,25 +56,36 @@ export function BuildingScreen({
       aria-live="polite"
       aria-busy={activeIndex < lines.length}
     >
-      <div className="relative mb-6 flex size-28 items-center justify-center">
-        <svg viewBox="0 0 100 100" className="absolute inset-0 -rotate-90">
-          <circle cx="50" cy="50" r="42" fill="none" stroke="var(--secondary)" strokeWidth="9" />
-          <motion.circle
-            cx="50"
-            cy="50"
-            r="42"
-            fill="none"
-            stroke="var(--primary)"
-            strokeWidth="9"
-            strokeLinecap="round"
-            strokeDasharray={2 * Math.PI * 42}
-            initial={{ strokeDashoffset: 2 * Math.PI * 42 }}
-            animate={{ strokeDashoffset: 2 * Math.PI * 42 * (1 - percent / 100) }}
-            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          />
-        </svg>
-        <span className="tabular font-display text-2xl font-bold text-foreground">{percent}%</span>
-      </div>
+      {done ? (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+          className="mb-6"
+        >
+          <Mascot state="celebrating" size={112} />
+        </motion.div>
+      ) : (
+        <div className="relative mb-6 flex size-28 items-center justify-center">
+          <svg viewBox="0 0 100 100" className="absolute inset-0 -rotate-90">
+            <circle cx="50" cy="50" r="42" fill="none" stroke="var(--secondary)" strokeWidth="9" />
+            <motion.circle
+              cx="50"
+              cy="50"
+              r="42"
+              fill="none"
+              stroke="var(--primary)"
+              strokeWidth="9"
+              strokeLinecap="round"
+              strokeDasharray={2 * Math.PI * 42}
+              initial={{ strokeDashoffset: 2 * Math.PI * 42 }}
+              animate={{ strokeDashoffset: 2 * Math.PI * 42 * (1 - percent / 100) }}
+              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+            />
+          </svg>
+          <span className="tabular font-display text-2xl font-bold text-foreground">{percent}%</span>
+        </div>
+      )}
 
       <h1 className="mb-6 text-balance font-display text-xl font-bold text-foreground">{t("buildingTitle")}</h1>
 

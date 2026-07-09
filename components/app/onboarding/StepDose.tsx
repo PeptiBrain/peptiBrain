@@ -32,7 +32,7 @@ export function StepDose({
   peptideName: string;
   initialAmount: string;
   initialUnit: string;
-  onFinish: (when: string, amount: string, unit: string) => void;
+  onFinish: (when: string, scheduledAt: string, amount: string, unit: string) => void;
 }) {
   const t = useTranslations("Onboarding");
   const locale = useLocale() as Locale;
@@ -62,7 +62,7 @@ export function StepDose({
       initial={{ opacity: 0, x: 24 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-      className="mx-auto w-full max-w-sm px-4 py-6"
+      className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center px-4 py-6"
     >
       <div className="mb-5 flex items-center gap-3">
         <div className="flex size-12 items-center justify-center rounded-xl bg-primary/15">
@@ -122,7 +122,9 @@ export function StepDose({
       <button
         type="button"
         disabled={!whenInput.trim() || !amount.trim()}
-        onClick={() => onFinish(formatLabel(whenInput, locale), amount.trim(), unit)}
+        onClick={() =>
+          onFinish(formatLabel(whenInput, locale), new Date(whenInput).toISOString(), amount.trim(), unit)
+        }
         className="h-12 w-full rounded-lg bg-primary text-base font-semibold text-primary-foreground transition-transform active:scale-97 disabled:opacity-50"
       >
         {t("finish")}

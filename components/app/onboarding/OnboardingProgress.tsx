@@ -10,10 +10,12 @@ export function OnboardingProgress({
   percent,
   onBack,
   showBack,
+  onSkip,
 }: {
   percent: number;
   onBack?: () => void;
   showBack: boolean;
+  onSkip?: () => void;
 }) {
   const t = useTranslations("Onboarding");
   return (
@@ -48,6 +50,15 @@ export function OnboardingProgress({
         <span className="w-9 shrink-0 tabular text-right text-xs text-muted-foreground">
           {percent}%
         </span>
+        {onSkip && (
+          <button
+            type="button"
+            onClick={onSkip}
+            className="shrink-0 text-sm font-medium text-muted-foreground hover:text-foreground"
+          >
+            {t("skip")}
+          </button>
+        )}
       </div>
     </div>
   );

@@ -2,12 +2,13 @@
 
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Beaker, ChevronDown, Plus, Printer } from "lucide-react";
+import { Beaker, ChevronDown, Plus, Printer, Lock } from "lucide-react";
 import { addVial, PlanLimitError, type AppData, type Peptide, type SyringeType } from "@/lib/app-data";
 import { Link } from "@/i18n/navigation";
 import { PEPTIDE_PROFILES } from "@/lib/peptide-profiles";
 import { unitsToDraw } from "@/lib/dose-math";
 import { SyringeVisual, SYRINGE_CAPACITY } from "@/components/app/calculator/SyringeVisual";
+import { PeptideIcon } from "@/components/app/peptidos/PeptideIcon";
 
 const SYRINGE_OPTIONS: { value: SyringeType; label: string }[] = [
   { value: "u30", label: "U30 (0.3 mL)" },
@@ -96,11 +97,14 @@ export function PeptideCard({
         className="flex w-full items-center justify-between gap-2 text-left"
         aria-expanded={expanded}
       >
-        <div className="min-w-0">
-          <p className="truncate font-display text-base font-bold text-foreground">{peptide.name}</p>
-          <p className="truncate text-xs text-muted-foreground">
-            {peptide.route} · {vials.length} {vials.length === 1 ? t("vial") : t("vials")}
-          </p>
+        <div className="flex min-w-0 items-center gap-3">
+          <PeptideIcon peptideName={peptide.name} />
+          <div className="min-w-0">
+            <p className="truncate font-display text-base font-bold text-foreground">{peptide.name}</p>
+            <p className="truncate text-xs text-muted-foreground">
+              {peptide.route} · {vials.length} {vials.length === 1 ? t("vial") : t("vials")}
+            </p>
+          </div>
         </div>
         <ChevronDown
           className={`size-4 shrink-0 text-muted-foreground transition-transform ${expanded ? "rotate-180" : ""}`}
@@ -273,6 +277,18 @@ export function PeptideCard({
                   {t("saveVial")}
                 </button>
               </div>
+            </div>
+          ) : data.plan === "free" && data.vials.length >= 1 ? (
+            <div className="flex items-center justify-between gap-3 rounded-lg border border-dashed border-border bg-secondary/40 p-3">
+              <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                <Lock className="size-3.5 shrink-0" aria-hidden /> {t("planLimitReached")}
+              </p>
+              <Link
+                href="/paywall"
+                className="shrink-0 rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground"
+              >
+                {t("planLimitCta")}
+              </Link>
             </div>
           ) : (
             <button

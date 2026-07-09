@@ -2,24 +2,32 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Users, Plus, Trash2, Download } from "lucide-react";
+import { Users, Plus, Trash2, Download, Check, X, Eye } from "lucide-react";
 import {
   addFamilyMember,
   loadAppData,
+  loadReceivedInvitations,
   removeFamilyMember,
+  respondToInvitation,
   updateFamilyVisibility,
   type AppData,
+  type ReceivedInvitation,
 } from "@/lib/app-data";
+import { SharedDataModal } from "@/components/app/familia/SharedDataModal";
 
 export default function FamiliaPage() {
   const t = useTranslations("Familia");
   const [data, setData] = useState<AppData | null>(null);
+  const [invitations, setInvitations] = useState<ReceivedInvitation[] | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [confirmRemoveId, setConfirmRemoveId] = useState<string | null>(null);
+  const [viewingOwnerId, setViewingOwnerId] = useState<string | null>(null);
 
   useEffect(() => {
     loadAppData().then(setData);
+    loadReceivedInvitations().then(setInvitations);
   }, []);
 
   if (!data) return null;
@@ -41,6 +49,11 @@ export default function FamiliaPage() {
     setName("");
     setEmail("");
     setShowForm(false);
+  }
+
+  async function handleRespond(id: string, status: "accepted" | "revoked") {
+    await respondToInvitation(id, status);
+    setInvitations(await loadReceivedInvitations());
   }
 
   return (
@@ -93,6 +106,53 @@ export default function FamiliaPage() {
         </div>
       )}
 
+      {invitations && invitations.length > 0 && (
+        <div className="mt-5">
+          <p className="mb-2 text-sm font-semibold text-foreground">{t("sharedWithMeTitle")}</p>
+          <div className="space-y-2">
+            {invitations.map((inv) => (
+              <div key={inv.id} className="rounded-xl border border-border bg-card p-3">
+                <div className="flex items-center justify-between gap-2">
+                  <p className="truncate text-sm font-medium text-foreground">{inv.ownerName}</p>
+                  {inv.inviteStatus === "pending" && (
+                    <span className="shrink-0 rounded-full bg-[var(--notice-bg)] px-2 py-0.5 text-[11px] font-medium text-[var(--notice-icon)]">
+                      {t("statusPending")}
+                    </span>
+                  )}
+                </div>
+                {inv.inviteStatus === "pending" && (
+                  <div className="mt-2 flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => handleRespond(inv.id, "accepted")}
+                      className="flex h-9 flex-1 items-center justify-center gap-1.5 rounded-lg bg-primary text-xs font-semibold text-primary-foreground"
+                    >
+                      <Check className="size-3.5" aria-hidden /> {t("acceptInvite")}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleRespond(inv.id, "revoked")}
+                      className="flex h-9 flex-1 items-center justify-center gap-1.5 rounded-lg border border-border text-xs font-medium text-foreground"
+                    >
+                      <X className="size-3.5" aria-hidden /> {t("declineInvite")}
+                    </button>
+                  </div>
+                )}
+                {inv.inviteStatus === "accepted" && (
+                  <button
+                    type="button"
+                    onClick={() => setViewingOwnerId(inv.ownerId)}
+                    className="mt-2 flex h-9 w-full items-center justify-center gap-1.5 rounded-lg border border-border text-xs font-medium text-foreground hover:border-primary hover:text-primary"
+                  >
+                    <Eye className="size-3.5" aria-hidden /> {t("viewSharedData")}
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {data.familyMembers.length === 0 ? (
         <div className="mt-4 rounded-xl border border-dashed border-border p-8 text-center">
           <Users className="mx-auto mb-2 size-8 text-muted-foreground" aria-hidden />
@@ -109,17 +169,39 @@ export default function FamiliaPage() {
                 </div>
                 <button
                   type="button"
-                  onClick={async () => {
-                    if (window.confirm(t("confirmRemove", { name: member.name }))) {
-                      setData(await removeFamilyMember(data, member.id));
-                    }
-                  }}
+                  onClick={() => setConfirmRemoveId(member.id)}
                   aria-label={t("removeAria", { name: member.name })}
                   className="flex size-9 items-center justify-center rounded-full text-muted-foreground hover:bg-secondary hover:text-destructive"
                 >
                   <Trash2 className="size-4" aria-hidden />
                 </button>
               </div>
+
+              {confirmRemoveId === member.id && (
+                <div className="mt-2 flex items-center justify-between gap-2 rounded-lg bg-secondary/60 px-3 py-2">
+                  <p className="text-xs text-foreground">{t("confirmRemove", { name: member.name })}</p>
+                  <div className="flex shrink-0 gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => setConfirmRemoveId(null)}
+                      className="rounded-md px-2 py-1 text-xs font-medium text-muted-foreground hover:bg-secondary"
+                    >
+                      {t("cancelRemove")}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        setData(await removeFamilyMember(data, member.id));
+                        setConfirmRemoveId(null);
+                      }}
+                      className="rounded-md bg-destructive/10 px-2 py-1 text-xs font-semibold text-destructive hover:bg-destructive/20"
+                    >
+                      {t("confirmRemoveCta")}
+                    </button>
+                  </div>
+                </div>
+              )}
+
               <div className="mt-2 flex gap-2">
                 <button
                   type="button"
@@ -156,6 +238,12 @@ export default function FamiliaPage() {
       >
         <Download className="size-4" aria-hidden /> {t("exportData")}
       </button>
+
+      <SharedDataModal
+        open={viewingOwnerId !== null}
+        onClose={() => setViewingOwnerId(null)}
+        ownerId={viewingOwnerId}
+      />
     </div>
   );
 }
