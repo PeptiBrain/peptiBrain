@@ -29,6 +29,53 @@ export function doneDoses(doses: Dose[]): Dose[] {
   return doses.filter((d) => d.done);
 }
 
+export type VialStatus = {
+  totalMg: number;
+  usedMg: number;
+  remainingMg: number;
+  pct: number; // 0-100
+  dosesLeftEstimate: number | null;
+  daysLeftEstimate: number | null;
+  byMember: Record<string, number>; // memberId ("mine" para el dueño) -> nº de dosis
+};
+
+// Estima cuánto queda de un vial a partir de las dosis aplicadas desde que se abrió.
+// Solo funciona para unidades de peso (mg/mcg); ml/UI no se pueden sumar así.
+export function vialStatus(vial: Vial, doses: Dose[]): VialStatus | null {
+  if (vial.unit !== "mg" && vial.unit !== "mcg") return null;
+  const totalMg = toMg(vial.amount, vial.unit);
+  if (totalMg <= 0) return null;
+
+  const vialOpenedAt = new Date(vial.createdAt).getTime();
+  const relevant = doneDoses(doses).filter(
+    (d) => d.peptideId === vial.peptideId && new Date(d.scheduledAt).getTime() >= vialOpenedAt
+  );
+  const usedMg = relevant.reduce((sum, d) => sum + toMg(d.amount, d.unit), 0);
+  const remainingMg = Math.max(0, totalMg - usedMg);
+  const pct = Math.max(0, Math.min(100, Math.round((remainingMg / totalMg) * 100)));
+
+  let dosesLeftEstimate: number | null = null;
+  let daysLeftEstimate: number | null = null;
+  if (relevant.length >= 2) {
+    const avgDoseMg = usedMg / relevant.length;
+    if (avgDoseMg > 0) dosesLeftEstimate = Math.floor(remainingMg / avgDoseMg);
+    const times = relevant.map((d) => new Date(d.scheduledAt).getTime()).sort((a, b) => a - b);
+    const spanDays = (times[times.length - 1] - times[0]) / 86400000;
+    const avgIntervalDays = spanDays / (relevant.length - 1);
+    if (dosesLeftEstimate != null && avgIntervalDays > 0) {
+      daysLeftEstimate = Math.max(0, Math.round(dosesLeftEstimate * avgIntervalDays));
+    }
+  }
+
+  const byMember: Record<string, number> = {};
+  for (const d of relevant) {
+    const key = d.forMemberId || "mine";
+    byMember[key] = (byMember[key] || 0) + 1;
+  }
+
+  return { totalMg, usedMg, remainingMg, pct, dosesLeftEstimate, daysLeftEstimate, byMember };
+}
+
 // Coste por dosis aplicada = total invertido / nº de dosis aplicadas
 export function costPerDose(vials: Vial[], doses: Dose[]): number | null {
   const done = doneDoses(doses).length;

@@ -20,6 +20,8 @@ export type Vial = {
   syringeType?: SyringeType;
   cost?: string;
   createdAt: string;
+  sharedWithMemberId?: string;
+  splitPercent?: number; // % del dueño; el resto es de sharedWithMemberId
 };
 
 export type Dose = {
@@ -32,6 +34,7 @@ export type Dose = {
   done: boolean;
   injectionSite?: string;
   createdAt: string;
+  forMemberId?: string; // si el vial es compartido: para quién fue esta dosis (undefined = para mí)
 };
 
 export type HealthLog = {
@@ -74,6 +77,7 @@ export type FamilyMember = {
   sharePeptides: boolean;
   shareDoses: boolean;
   shareHealth: boolean;
+  sharedPeptideIds?: string[]; // undefined/vacío = comparte todos los péptidos
 };
 
 export type ReceivedInvitation = {
@@ -207,6 +211,8 @@ export async function loadAppData(): Promise<AppData> {
       syringeType: v.syringe_type || undefined,
       cost: v.cost != null ? String(v.cost) : undefined,
       createdAt: v.created_at,
+      sharedWithMemberId: v.shared_with_member_id || undefined,
+      splitPercent: v.split_percent != null ? Number(v.split_percent) : undefined,
     })),
     doses: (doses || []).map((d) => ({
       id: d.id,
@@ -218,6 +224,7 @@ export async function loadAppData(): Promise<AppData> {
       done: d.done,
       injectionSite: d.injection_site || undefined,
       createdAt: d.created_at,
+      forMemberId: d.for_member_id || undefined,
     })),
     healthLogs: (healthLogs || []).map((h) => ({
       id: h.id,
@@ -263,6 +270,7 @@ export async function loadAppData(): Promise<AppData> {
       sharePeptides: f.share_peptides,
       shareDoses: f.share_doses,
       shareHealth: f.share_health,
+      sharedPeptideIds: Array.isArray(f.shared_peptide_ids) && f.shared_peptide_ids.length > 0 ? f.shared_peptide_ids : undefined,
     })),
   };
 }
@@ -347,6 +355,8 @@ export async function addVial(
     bac_water: vial.bacWater ? Number(vial.bacWater) : null,
     syringe_type: vial.syringeType || null,
     cost: vial.cost ? Number(vial.cost) : null,
+    shared_with_member_id: vial.sharedWithMemberId || null,
+    split_percent: vial.sharedWithMemberId ? vial.splitPercent || 50 : null,
   });
   if (error) {
     if (error.message.includes("PLAN_LIMIT_REACHED")) throw new PlanLimitError();
@@ -358,6 +368,23 @@ export async function addVial(
 export async function removeVial(data: AppData, vialId: string): Promise<AppData> {
   const { supabase } = await requireUser();
   const { error } = await supabase.from("vials").delete().eq("id", vialId);
+  if (error) throw error;
+  return loadAppData();
+}
+
+export async function updateVialSplit(
+  data: AppData,
+  vialId: string,
+  split: { sharedWithMemberId: string | null; splitPercent: number | null }
+): Promise<AppData> {
+  const { supabase } = await requireUser();
+  const { error } = await supabase
+    .from("vials")
+    .update({
+      shared_with_member_id: split.sharedWithMemberId,
+      split_percent: split.sharedWithMemberId ? split.splitPercent || 50 : null,
+    })
+    .eq("id", vialId);
   if (error) throw error;
   return loadAppData();
 }
@@ -478,6 +505,7 @@ export async function addDose(
     when_label: dose.when,
     scheduled_at: dose.scheduledAt,
     done: false,
+    for_member_id: dose.forMemberId || null,
   });
   if (error) throw error;
   return loadAppData();
@@ -601,6 +629,20 @@ export async function updateFamilySharing(
   return loadAppData();
 }
 
+export async function updateFamilySharedPeptides(
+  data: AppData,
+  memberId: string,
+  peptideIds: string[] | null
+): Promise<AppData> {
+  const { supabase } = await requireUser();
+  const { error } = await supabase
+    .from("family_members")
+    .update({ shared_peptide_ids: peptideIds && peptideIds.length > 0 ? peptideIds : null })
+    .eq("id", memberId);
+  if (error) throw error;
+  return loadAppData();
+}
+
 export async function respondToInvitation(
   invitationId: string,
   status: "accepted" | "revoked"
@@ -618,25 +660,41 @@ export async function loadSharedOwnerData(ownerId: string): Promise<SharedOwnerD
   const { data: myProfile } = await supabase.from("profiles").select("email").eq("id", user.id).single();
   const { data: shareRow } = await supabase
     .from("family_members")
-    .select("share_peptides, share_doses, share_health")
+    .select("share_peptides, share_doses, share_health, shared_peptide_ids")
     .eq("owner_id", ownerId)
     .ilike("email", myProfile?.email || "")
     .maybeSingle();
   const sharePeptides = shareRow?.share_peptides ?? false;
   const shareDoses = shareRow?.share_doses ?? false;
   const shareHealth = shareRow?.share_health ?? false;
+  const restrictedIds: string[] | null =
+    Array.isArray(shareRow?.shared_peptide_ids) && shareRow.shared_peptide_ids.length > 0
+      ? shareRow.shared_peptide_ids
+      : null;
 
   const [{ data: ownerProfile }, { data: peptides }, { data: vials }, { data: doses }, { data: healthLogs }] =
     await Promise.all([
       supabase.from("profiles").select("name").eq("id", ownerId).single(),
       sharePeptides
-        ? supabase.from("peptides").select("*").eq("user_id", ownerId).order("created_at", { ascending: true })
+        ? (() => {
+            let q = supabase.from("peptides").select("*").eq("user_id", ownerId);
+            if (restrictedIds) q = q.in("id", restrictedIds);
+            return q.order("created_at", { ascending: true });
+          })()
         : Promise.resolve({ data: [] as never[] }),
       sharePeptides
-        ? supabase.from("vials").select("*").eq("user_id", ownerId).order("created_at", { ascending: true })
+        ? (() => {
+            let q = supabase.from("vials").select("*").eq("user_id", ownerId);
+            if (restrictedIds) q = q.in("peptide_id", restrictedIds);
+            return q.order("created_at", { ascending: true });
+          })()
         : Promise.resolve({ data: [] as never[] }),
       shareDoses
-        ? supabase.from("doses").select("*").eq("user_id", ownerId).order("scheduled_at", { ascending: false })
+        ? (() => {
+            let q = supabase.from("doses").select("*").eq("user_id", ownerId);
+            if (restrictedIds) q = q.in("peptide_id", restrictedIds);
+            return q.order("scheduled_at", { ascending: false });
+          })()
         : Promise.resolve({ data: [] as never[] }),
       shareHealth
         ? supabase

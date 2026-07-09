@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Users, Plus, Trash2, Download, Check, X, Eye, Lock, Camera } from "lucide-react";
+import { Users, Plus, Trash2, Download, Check, X, Eye, Lock, Camera, ChevronDown } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import {
   addFamilyMember,
@@ -10,6 +10,7 @@ import {
   loadReceivedInvitations,
   removeFamilyMember,
   respondToInvitation,
+  updateFamilySharedPeptides,
   updateFamilySharing,
   uploadFamilyPhoto,
   type AppData,
@@ -43,6 +44,7 @@ export default function FamiliaPage() {
   const [confirmRemoveId, setConfirmRemoveId] = useState<string | null>(null);
   const [viewingOwnerId, setViewingOwnerId] = useState<string | null>(null);
   const [uploadingId, setUploadingId] = useState<string | null>(null);
+  const [peptidePickerOpenId, setPeptidePickerOpenId] = useState<string | null>(null);
   const fileRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
   useEffect(() => {
@@ -53,6 +55,21 @@ export default function FamiliaPage() {
   if (!data) return null;
 
   const canShare = data.plan === "family";
+
+  function selectedPeptideIds(memberId: string): Set<string> {
+    const member = data!.familyMembers.find((m) => m.id === memberId);
+    const restricted = member?.sharedPeptideIds;
+    return new Set(restricted && restricted.length > 0 ? restricted : data!.peptides.map((p) => p.id));
+  }
+
+  async function togglePeptideForMember(memberId: string, peptideId: string) {
+    const selected = selectedPeptideIds(memberId);
+    if (selected.has(peptideId)) selected.delete(peptideId);
+    else selected.add(peptideId);
+    const allIds = data!.peptides.map((p) => p.id);
+    const isAll = allIds.length > 0 && allIds.every((id) => selected.has(id));
+    setData(await updateFamilySharedPeptides(data!, memberId, isAll ? null : Array.from(selected)));
+  }
 
   function handleExport() {
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
@@ -343,6 +360,43 @@ export default function FamiliaPage() {
                   );
                 })}
               </div>
+
+              {member.sharePeptides && data.peptides.length > 0 && (
+                <div className="mt-2">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setPeptidePickerOpenId((id) => (id === member.id ? null : member.id))
+                    }
+                    className="flex items-center gap-1 text-xs font-medium text-primary"
+                  >
+                    <ChevronDown
+                      className={`size-3.5 transition-transform ${
+                        peptidePickerOpenId === member.id ? "rotate-180" : ""
+                      }`}
+                      aria-hidden
+                    />
+                    {t("choosePeptidesToggle")}
+                  </button>
+                  {peptidePickerOpenId === member.id && (
+                    <div className="mt-2 space-y-1.5 rounded-lg border border-border bg-secondary/30 p-2.5">
+                      {data.peptides.map((p) => {
+                        const checked = selectedPeptideIds(member.id).has(p.id);
+                        return (
+                          <label key={p.id} className="flex items-center gap-2 text-xs text-foreground">
+                            <input
+                              type="checkbox"
+                              checked={checked}
+                              onChange={() => togglePeptideForMember(member.id, p.id)}
+                            />
+                            {p.name}
+                          </label>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           ))}
         </div>

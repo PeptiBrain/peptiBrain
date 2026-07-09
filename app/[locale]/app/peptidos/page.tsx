@@ -27,6 +27,7 @@ import { PremiumLocked } from "@/components/app/shell/PremiumLocked";
 import { DateRangeTabs } from "@/components/app/shell/DateRangeTabs";
 import { isWithinRange, type CustomRange, type DateRangeKey } from "@/lib/date-range";
 import { celebrate } from "@/lib/celebrate";
+import { vialStatus } from "@/lib/stats";
 
 const ROUTES = [
   { name: "Subcutánea", icon: Syringe },
@@ -339,6 +340,43 @@ function ViatesTab({
                   {reconstituted ? t("vialReconstituted") : t("vialNotReconstituted")}
                 </span>
 
+                {(() => {
+                  const status = vialStatus(v, data.doses);
+                  if (!status) return null;
+                  const tone =
+                    status.pct <= 0 ? "empty" : status.pct <= 30 ? "low" : "ok";
+                  const toneClass =
+                    tone === "empty"
+                      ? "bg-destructive/10 text-destructive"
+                      : tone === "low"
+                        ? "bg-[var(--notice-bg)] text-[var(--notice-icon)]"
+                        : "bg-primary/15 text-primary";
+                  return (
+                    <div className={`mt-2 rounded-lg px-2.5 py-1.5 text-[11px] font-medium ${toneClass}`}>
+                      {tone === "empty"
+                        ? t("vialEmpty")
+                        : status.dosesLeftEstimate != null
+                          ? t("vialDosesLeft", { count: status.dosesLeftEstimate })
+                          : t("vialPctLeft", { pct: status.pct })}
+                      {tone !== "ok" && status.daysLeftEstimate != null && (
+                        <span> · {t("vialDaysLeft", { days: status.daysLeftEstimate })}</span>
+                      )}
+                    </div>
+                  );
+                })()}
+
+                {v.sharedWithMemberId &&
+                  (() => {
+                    const member = data.familyMembers.find((m) => m.id === v.sharedWithMemberId);
+                    if (!member) return null;
+                    const mine = v.splitPercent ?? 50;
+                    return (
+                      <p className="mt-2 text-[11px] text-muted-foreground">
+                        {t("sharedVialWith", { name: member.name, mine, theirs: 100 - mine })}
+                      </p>
+                    );
+                  })()}
+
                 {confirmId === v.id && (
                   <div className="mt-3 flex items-center justify-between gap-2 rounded-lg bg-secondary/60 px-3 py-2">
                     <p className="text-xs text-foreground">{t("confirmDeleteVial")}</p>
@@ -557,18 +595,34 @@ function UsosTab({
   const [whenInput, setWhenInput] = useState(() => toLocalInputValue(new Date()));
   const [amount, setAmount] = useState("");
   const [unit, setUnit] = useState("mg");
+  const [forMemberId, setForMemberId] = useState("");
 
   const sorted = [...data.doses]
     .filter((d) => isWithinRange(d.scheduledAt, range, customRange))
     .sort((a, b) => new Date(b.scheduledAt).getTime() - new Date(a.scheduledAt).getTime());
 
+  const activeVial = [...data.vials]
+    .filter((v) => v.peptideId === peptideId)
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0];
+  const sharedMember = activeVial?.sharedWithMemberId
+    ? data.familyMembers.find((m) => m.id === activeVial.sharedWithMemberId)
+    : undefined;
+
   async function handleSave() {
     if (!peptideId || !amount.trim()) return;
     const label = formatWhenLabel(whenInput);
     const scheduledAt = new Date(whenInput).toISOString();
-    const next = await addDose(data, { peptideId, amount, unit, when: label, scheduledAt });
+    const next = await addDose(data, {
+      peptideId,
+      amount,
+      unit,
+      when: label,
+      scheduledAt,
+      forMemberId: forMemberId || undefined,
+    });
     onChange(next);
     setAmount("");
+    setForMemberId("");
     setShowForm(false);
   }
 
@@ -657,6 +711,35 @@ function UsosTab({
               </select>
             </div>
           </div>
+          {sharedMember && (
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-foreground">{t("forWhomLabel")}</label>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setForMemberId("")}
+                  className={`h-10 rounded-lg border text-sm font-medium ${
+                    !forMemberId
+                      ? "border-primary bg-accent text-accent-foreground"
+                      : "border-border bg-background text-foreground"
+                  }`}
+                >
+                  {t("forWhomMe")}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setForMemberId(sharedMember.id)}
+                  className={`h-10 rounded-lg border text-sm font-medium ${
+                    forMemberId === sharedMember.id
+                      ? "border-primary bg-accent text-accent-foreground"
+                      : "border-border bg-background text-foreground"
+                  }`}
+                >
+                  {sharedMember.name}
+                </button>
+              </div>
+            </div>
+          )}
           <button
             type="button"
             disabled={!peptideId || !amount.trim()}
@@ -677,12 +760,14 @@ function UsosTab({
         <div className="space-y-2 sm:grid sm:grid-cols-2 sm:gap-2 sm:space-y-0">
           {sorted.map((d) => {
             const peptide = data.peptides.find((p) => p.id === d.peptideId);
+            const recipient = d.forMemberId ? data.familyMembers.find((m) => m.id === d.forMemberId) : undefined;
             return (
               <div key={d.id} className="flex items-center justify-between rounded-xl border border-border bg-card p-3">
                 <div className="min-w-0">
                   <p className="truncate text-sm font-medium text-foreground">{peptide?.name || "—"}</p>
                   <p className="truncate text-xs text-muted-foreground">
                     {d.when} · {d.amount} {d.unit}
+                    {recipient && ` · ${t("doseForMember", { name: recipient.name })}`}
                   </p>
                 </div>
                 {d.done ? (

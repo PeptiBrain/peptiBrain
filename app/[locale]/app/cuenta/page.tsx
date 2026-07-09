@@ -175,6 +175,41 @@ export default function CuentaPage() {
     track("data_exported");
   }
 
+  function csvCell(value: string): string {
+    if (/[",\n]/.test(value)) return `"${value.replace(/"/g, '""')}"`;
+    return value;
+  }
+
+  async function handleExportCsv() {
+    const data = await loadAppData();
+    const rows = [["Fecha", "Hora", "Péptido", "Cantidad", "Unidad", "Aplicada", "Sitio de inyección"]];
+    const sorted = [...data.doses].sort(
+      (a, b) => new Date(b.scheduledAt).getTime() - new Date(a.scheduledAt).getTime()
+    );
+    for (const d of sorted) {
+      const peptide = data.peptides.find((p) => p.id === d.peptideId);
+      const when = new Date(d.scheduledAt);
+      rows.push([
+        when.toLocaleDateString("es-ES"),
+        when.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" }),
+        peptide?.name || "—",
+        d.amount,
+        d.unit,
+        d.done ? "Sí" : "No",
+        d.injectionSite || "",
+      ]);
+    }
+    const csv = rows.map((r) => r.map(csvCell).join(",")).join("\n");
+    const blob = new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "peptibrain-dosis.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+    track("data_exported_csv");
+  }
+
   async function handleDeleteAccount() {
     if (deleteConfirmText.trim().toUpperCase() !== t("deleteConfirmWord")) return;
     setDeleting(true);
@@ -369,6 +404,20 @@ export default function CuentaPage() {
         <div>
           <p className="text-sm font-semibold text-primary">{t("exportTitle")}</p>
           <p className="text-xs text-muted-foreground">{t("exportDesc")}</p>
+        </div>
+      </button>
+
+      <button
+        type="button"
+        onClick={handleExportCsv}
+        className="mt-2 flex w-full items-center gap-3 rounded-xl border border-border bg-card p-4 text-left hover:bg-secondary"
+      >
+        <div className="flex size-11 items-center justify-center rounded-full bg-primary/15">
+          <Download className="size-5 text-primary" aria-hidden />
+        </div>
+        <div>
+          <p className="text-sm font-semibold text-primary">{t("exportCsvTitle")}</p>
+          <p className="text-xs text-muted-foreground">{t("exportCsvDesc")}</p>
         </div>
       </button>
 
