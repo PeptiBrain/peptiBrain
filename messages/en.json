@@ -328,7 +328,20 @@
     "lightMode": "Light mode",
     "darkMode": "Dark mode",
     "profileMenu": "Profile menu",
-    "myAccount": "My account"
+    "myAccount": "My account",
+    "theme": "Theme",
+    "themeSystem": "System",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "editProfile": "Edit profile",
+    "shareProgress": "Share with family",
+    "downloadReport": "Download report",
+    "guidedTour": "Guided tour",
+    "helpCenter": "Help center",
+    "reminders": "Dose reminders",
+    "travelMode": "Travel mode",
+    "soon": "Soon",
+    "upgradeCta": "Upgrade to Premium"
   },
   "DateRange": {
     "today": "Today",

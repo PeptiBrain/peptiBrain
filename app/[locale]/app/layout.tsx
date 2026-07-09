@@ -2,7 +2,6 @@ import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { TopNav } from "@/components/app/shell/TopNav";
-import { ThemeToggle } from "@/components/app/shell/ThemeToggle";
 import { ProfileMenu } from "@/components/app/shell/ProfileMenu";
 import { AppTour } from "@/components/app/shell/AppTour";
 
@@ -12,9 +11,17 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     data: { user },
   } = await supabase.auth.getUser();
   let name = "";
+  let email = "";
+  let plan: "free" | "premium" | "family" = "free";
   if (user) {
-    const { data: profile } = await supabase.from("profiles").select("name").eq("id", user.id).single();
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("name, email, plan")
+      .eq("id", user.id)
+      .single();
     name = profile?.name ?? "";
+    email = profile?.email ?? user.email ?? "";
+    plan = (profile?.plan as "free" | "premium" | "family") ?? "free";
   }
 
   return (
@@ -28,8 +35,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           <span className="font-display text-base font-bold text-foreground">PeptiBrain</span>
         </Link>
         <div className="flex items-center gap-1.5">
-          <ThemeToggle />
-          <ProfileMenu name={name} />
+          <ProfileMenu name={name} email={email} plan={plan} />
         </div>
       </header>
       <TopNav />

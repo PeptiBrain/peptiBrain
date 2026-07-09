@@ -328,7 +328,20 @@
     "lightMode": "Modo claro",
     "darkMode": "Modo oscuro",
     "profileMenu": "Menú de perfil",
-    "myAccount": "Mi cuenta"
+    "myAccount": "Mi cuenta",
+    "theme": "Tema",
+    "themeSystem": "Sistema",
+    "themeLight": "Claro",
+    "themeDark": "Oscuro",
+    "editProfile": "Editar perfil",
+    "shareProgress": "Compartir con familia",
+    "downloadReport": "Descargar informe",
+    "guidedTour": "Tour guiado",
+    "helpCenter": "Centro de ayuda",
+    "reminders": "Recordatorios de dosis",
+    "travelMode": "Modo viaje",
+    "soon": "Pronto",
+    "upgradeCta": "Mejorar a Premium"
   },
   "DateRange": {
     "today": "Hoy",
