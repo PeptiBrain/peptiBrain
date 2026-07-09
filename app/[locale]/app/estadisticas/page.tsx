@@ -3,29 +3,68 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { motion } from "motion/react";
-import { Wallet, Syringe, Target, TrendingDown, TrendingUp, Trophy, BarChart3, AlertTriangle } from "lucide-react";
+import {
+  Wallet,
+  Syringe,
+  Target,
+  TrendingDown,
+  TrendingUp,
+  Trophy,
+  BarChart3,
+  AlertTriangle,
+  PieChart,
+} from "lucide-react";
 import { loadAppData, type AppData } from "@/lib/app-data";
-import { computeStats } from "@/lib/stats";
+import { computeStats, filterDataByRange, doseBuckets } from "@/lib/stats";
 import { PeptideIcon } from "@/components/app/peptidos/PeptideIcon";
 import { AnimatedNumber } from "@/components/app/shell/AnimatedNumber";
+import { BarChart, DonutChart } from "@/components/app/stats/Charts";
+import { STATS_RANGE_KEYS, type DateRangeKey, type CustomRange } from "@/lib/date-range";
 import { CURRENCY, type Locale } from "@/i18n/routing";
+
+const RANGE_LABEL_KEY: Record<DateRangeKey, string> = {
+  today: "today",
+  "7d": "last7",
+  "30d": "last30",
+  "3m": "last3m",
+  "6m": "last6m",
+  "1y": "last1y",
+  "2y": "last2y",
+  "3y": "last3y",
+  "5y": "last5y",
+  "10y": "last10y",
+  all: "all",
+  custom: "custom",
+};
 
 export default function EstadisticasPage() {
   const t = useTranslations("Stats");
+  const tr = useTranslations("DateRange");
   const locale = useLocale() as Locale;
   const { symbol } = CURRENCY[locale];
   const [data, setData] = useState<AppData | null>(null);
+  const [range, setRange] = useState<DateRangeKey>("all");
+  const [custom, setCustom] = useState<CustomRange | null>(null);
 
   useEffect(() => {
     loadAppData().then(setData);
   }, []);
 
-  const stats = useMemo(() => (data ? computeStats(data, new Date()) : null), [data]);
+  const filtered = useMemo(
+    () => (data ? filterDataByRange(data, range, custom) : null),
+    [data, range, custom]
+  );
+  const stats = useMemo(() => (filtered ? computeStats(filtered, new Date()) : null), [filtered]);
+  const buckets = useMemo(
+    () => (data ? doseBuckets(data, range, custom, new Date(), locale) : []),
+    [data, range, custom, locale]
+  );
 
-  if (!data || !stats) return null;
+  if (!data || !filtered || !stats) return null;
 
-  const hasData = stats.totalDosesDone > 0 || stats.totalInvested > 0 || data.peptides.length > 0;
+  const hasData = data.peptides.length > 0 || data.doses.length > 0;
   const maxDoses = stats.usage[0]?.doseCount || 1;
+  const chartHasValues = buckets.some((b) => b.value > 0);
 
   const fade = {
     initial: { opacity: 0, y: 12 },
@@ -48,6 +87,39 @@ export default function EstadisticasPage() {
         </div>
       ) : (
         <div className="space-y-3">
+          {/* Selector de rango */}
+          <div className="rounded-xl border border-border bg-card p-3">
+            <label className="mb-1.5 block text-xs font-medium text-muted-foreground">{t("rangeLabel")}</label>
+            <select
+              value={range}
+              onChange={(e) => setRange(e.target.value as DateRangeKey)}
+              className="h-10 w-full rounded-lg border border-input bg-background px-3 text-sm text-foreground"
+            >
+              {STATS_RANGE_KEYS.map((k) => (
+                <option key={k} value={k}>
+                  {tr(RANGE_LABEL_KEY[k])}
+                </option>
+              ))}
+            </select>
+            {range === "custom" && (
+              <div className="mt-2 flex items-center gap-2">
+                <input
+                  type="date"
+                  value={custom?.start || ""}
+                  onChange={(e) => setCustom({ start: e.target.value, end: custom?.end || e.target.value })}
+                  className="h-10 flex-1 rounded-lg border border-input bg-background px-2 text-sm text-foreground"
+                />
+                <span className="text-xs text-muted-foreground">{tr("customTo")}</span>
+                <input
+                  type="date"
+                  value={custom?.end || ""}
+                  onChange={(e) => setCustom({ start: custom?.start || e.target.value, end: e.target.value })}
+                  className="h-10 flex-1 rounded-lg border border-input bg-background px-2 text-sm text-foreground"
+                />
+              </div>
+            )}
+          </div>
+
           {/* HÉROE: dinero invertido */}
           <motion.div
             {...fade}
@@ -83,8 +155,34 @@ export default function EstadisticasPage() {
             )}
           </motion.div>
 
+          {/* GRÁFICA DE BARRAS: dosis en el tiempo */}
+          <motion.div {...fade} className="rounded-xl border border-border bg-card p-4">
+            <p className="mb-3 flex items-center gap-1.5 text-sm font-semibold text-foreground">
+              <BarChart3 className="size-4 text-primary" aria-hidden /> {t("dosesOverTime")}
+            </p>
+            {chartHasValues ? (
+              <BarChart data={buckets} />
+            ) : (
+              <p className="py-6 text-center text-sm text-muted-foreground">{t("noDosesInRange")}</p>
+            )}
+          </motion.div>
+
+          {/* DONUT: reparto por péptido */}
+          {stats.usage.length > 0 && (
+            <motion.div {...fade} className="rounded-xl border border-border bg-card p-4">
+              <p className="mb-3 flex items-center gap-1.5 text-sm font-semibold text-foreground">
+                <PieChart className="size-4 text-primary" aria-hidden /> {t("usageShare")}
+              </p>
+              <DonutChart
+                data={stats.usage.map((u) => ({ label: u.peptide.name, value: u.doseCount }))}
+                centerLabel={t("totalDosesSub")}
+                centerValue={String(stats.totalDosesDone)}
+              />
+            </motion.div>
+          )}
+
           {/* GRID de métricas */}
-          <motion.div {...fade} transition={{ ...fade.transition, delay: 0.05 }} className="grid grid-cols-2 gap-3">
+          <motion.div {...fade} className="grid grid-cols-2 gap-3">
             <StatCard
               icon={<Target className="size-4 text-primary" aria-hidden />}
               label={t("adherence")}
@@ -105,11 +203,7 @@ export default function EstadisticasPage() {
 
           {/* Péptido más usado */}
           {stats.mostUsed && (
-            <motion.div
-              {...fade}
-              transition={{ ...fade.transition, delay: 0.1 }}
-              className="flex items-center gap-3 rounded-xl border border-border bg-card p-4"
-            >
+            <motion.div {...fade} className="flex items-center gap-3 rounded-xl border border-border bg-card p-4">
               <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-primary/15">
                 <Trophy className="size-6 text-primary" aria-hidden />
               </div>
@@ -132,11 +226,7 @@ export default function EstadisticasPage() {
 
           {/* Ranking de uso por péptido */}
           {stats.usage.length > 0 && (
-            <motion.div
-              {...fade}
-              transition={{ ...fade.transition, delay: 0.15 }}
-              className="rounded-xl border border-border bg-card p-4"
-            >
+            <motion.div {...fade} className="rounded-xl border border-border bg-card p-4">
               <p className="mb-3 flex items-center gap-1.5 text-sm font-semibold text-foreground">
                 <BarChart3 className="size-4 text-primary" aria-hidden /> {t("usageTitle")}
               </p>
@@ -167,7 +257,7 @@ export default function EstadisticasPage() {
           )}
 
           {/* Peso + efectos */}
-          <motion.div {...fade} transition={{ ...fade.transition, delay: 0.2 }} className="grid grid-cols-2 gap-3">
+          <motion.div {...fade} className="grid grid-cols-2 gap-3">
             <StatCard
               icon={
                 stats.weight && stats.weight.deltaKg < 0 ? (
