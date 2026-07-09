@@ -3,6 +3,9 @@ import { requireAdmin } from "@/lib/supabase/admin-guard";
 import { loadAdminOverview } from "@/lib/admin-data";
 import { AdminDashboard } from "@/components/app/admin/AdminDashboard";
 
+// Nunca cachear: el acceso depende de quién esté logueado en cada petición.
+export const dynamic = "force-dynamic";
+
 function hoursSince(iso: string | null) {
   if (!iso) return Infinity;
   return (Date.now() - new Date(iso).getTime()) / (1000 * 60 * 60);
