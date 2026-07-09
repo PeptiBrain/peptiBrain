@@ -12,6 +12,7 @@ import { saveOnboarding } from "@/lib/onboarding";
 import { Turnstile } from "@/components/app/Turnstile";
 import { createClient } from "@/lib/supabase/client";
 import { track, identifyUser } from "@/lib/mixpanel";
+import { getUtm } from "@/lib/utm";
 
 const COUNTRIES = [
   { flag: "🇪🇸", code: "+34", name: "España" },
@@ -98,9 +99,13 @@ function LoginPageContent() {
       return;
     }
     if (data.user) {
-      await supabase.from("profiles").update({ phone_code: phoneCode, phone }).eq("id", data.user.id);
+      const utmSource = getUtm();
+      await supabase
+        .from("profiles")
+        .update({ phone_code: phoneCode, phone, ...(utmSource ? { utm_source: utmSource } : {}) })
+        .eq("id", data.user.id);
       identifyUser(data.user.id, { email, name, plan: "free" });
-      track("sign_up_completed", { method: "email" });
+      track("sign_up_completed", { method: "email", utm_source: utmSource || "directo" });
     }
     saveOnboarding({ name, email, phoneCode, phone });
     setLoading(false);

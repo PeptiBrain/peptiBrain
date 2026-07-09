@@ -7,10 +7,12 @@ import { Pricing } from "@/components/app/landing/Pricing";
 import { Testimonials } from "@/components/app/landing/Testimonials";
 import { Faq } from "@/components/app/landing/Faq";
 import { FinalCta } from "@/components/app/landing/FinalCta";
+import { UtmCapture } from "@/components/app/UtmCapture";
 
 export default function Home() {
   return (
     <>
+      <UtmCapture />
       <Header />
       <main id="main-content" className="flex-1">
         <Hero />

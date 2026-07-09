@@ -22,8 +22,26 @@ export type AdminOverview = {
   assistantMessagesToday: number;
   assistantGlobalLimit: number;
   assistantPaused: boolean;
+  // Finanzas (estimadas a partir de los planes activos)
+  premiumActive: number;
+  familyActive: number;
+  lifetimeUsers: number;
+  lifetimeTotal: number;
+  payingCustomers: number;
+  estMrr: number; // ingreso recurrente mensual estimado
+  lifetimeRevenue: number; // ingreso de pagos únicos de por vida
+  arpu: number; // ingreso medio por cliente pagador (mensual)
+  conversionPct: number; // registrados → pagadores
+  currencySymbol: string;
+  utmSources: { source: string; count: number }[];
   users: AdminUser[];
 };
+
+// Precios mensuales de referencia (deben coincidir con el paywall).
+const PRICE_PREMIUM = Number(process.env.NEXT_PUBLIC_PRICE_PREMIUM) || 9;
+const PRICE_FAMILY = Number(process.env.NEXT_PUBLIC_PRICE_FAMILY) || 19;
+const PRICE_LIFETIME = Number(process.env.NEXT_PUBLIC_LIFETIME_PRICE) || 99;
+const LIFETIME_TOTAL = Number(process.env.NEXT_PUBLIC_LIFETIME_TOTAL_SLOTS) || 100;
 
 function daysAgoIso(days: number) {
   const d = new Date();
@@ -45,7 +63,7 @@ export async function loadAdminOverview(): Promise<AdminOverview> {
   ] = await Promise.all([
     admin
       .from("profiles")
-      .select("id, name, email, plan, plan_status, created_at, updated_at")
+      .select("id, name, email, plan, plan_status, created_at, updated_at, is_lifetime, utm_source")
       .order("created_at", { ascending: false }),
     admin
       .from("hotmart_events")
@@ -84,6 +102,31 @@ export async function loadAdminOverview(): Promise<AdminOverview> {
   const ASSISTANT_GLOBAL_LIMIT = Number(process.env.ASSISTANT_GLOBAL_DAILY_LIMIT) || 500;
   const assistantMessagesToday = globalUsage?.message_count || 0;
 
+  // --- Finanzas estimadas ---
+  const isActive = (p: { plan_status: string }) => p.plan_status === "active";
+  const premiumActive = profiles.filter(
+    (p) => p.plan === "premium" && isActive(p) && !p.is_lifetime
+  ).length;
+  const familyActive = profiles.filter(
+    (p) => p.plan === "family" && isActive(p) && !p.is_lifetime
+  ).length;
+  const lifetimeUsers = profiles.filter((p) => p.is_lifetime).length;
+  const payingCustomers = premiumActive + familyActive + lifetimeUsers;
+  const estMrr = premiumActive * PRICE_PREMIUM + familyActive * PRICE_FAMILY;
+  const lifetimeRevenue = lifetimeUsers * PRICE_LIFETIME;
+  const arpu = premiumActive + familyActive > 0 ? estMrr / (premiumActive + familyActive) : 0;
+  const conversionPct = profiles.length > 0 ? Math.round((payingCustomers / profiles.length) * 100) : 0;
+
+  // --- Marketing: origen del tráfico (UTM) ---
+  const utmMap = new Map<string, number>();
+  for (const p of profiles) {
+    const src = (p.utm_source && String(p.utm_source).trim()) || "directo";
+    utmMap.set(src, (utmMap.get(src) || 0) + 1);
+  }
+  const utmSources = [...utmMap.entries()]
+    .map(([source, count]) => ({ source, count }))
+    .sort((a, b) => b.count - a.count);
+
   return {
     totalUsers: profiles.length,
     usersByPlan,
@@ -97,6 +140,17 @@ export async function loadAdminOverview(): Promise<AdminOverview> {
     assistantMessagesToday,
     assistantGlobalLimit: ASSISTANT_GLOBAL_LIMIT,
     assistantPaused: assistantMessagesToday >= ASSISTANT_GLOBAL_LIMIT,
+    premiumActive,
+    familyActive,
+    lifetimeUsers,
+    lifetimeTotal: LIFETIME_TOTAL,
+    payingCustomers,
+    estMrr,
+    lifetimeRevenue,
+    arpu,
+    conversionPct,
+    currencySymbol: "€",
+    utmSources,
     users: profiles.map((p) => ({
       id: p.id,
       name: p.name,
