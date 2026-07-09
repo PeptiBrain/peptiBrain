@@ -53,3 +53,12 @@ export function getUtm(): string | null {
   if (typeof window === "undefined") return null;
   return window.localStorage.getItem(KEY);
 }
+
+// Dispositivo desde el que se registra el usuario (iOS / Android / Escritorio).
+export function detectPlatform(): string {
+  if (typeof navigator === "undefined") return "desconocido";
+  const ua = navigator.userAgent || "";
+  if (/iPad|iPhone|iPod/i.test(ua)) return "iOS";
+  if (/Android/i.test(ua)) return "Android";
+  return "Escritorio";
+}

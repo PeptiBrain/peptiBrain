@@ -1,4 +1,5 @@
 import { createAdminClient } from "@/lib/supabase/admin";
+import { countryFromPhoneCode } from "@/lib/countries";
 
 export type AdminUser = {
   id: string;
@@ -7,6 +8,12 @@ export type AdminUser = {
   plan: "free" | "premium" | "family";
   planStatus: string;
   createdAt: string;
+  phone: string;
+  phoneCode: string;
+  country: string;
+  countryFlag: string;
+  platform: string;
+  source: string;
 };
 
 export type AdminOverview = {
@@ -34,6 +41,8 @@ export type AdminOverview = {
   conversionPct: number; // registrados → pagadores
   currencySymbol: string;
   utmSources: { source: string; count: number }[];
+  platforms: { platform: string; count: number }[];
+  countries: { country: string; flag: string; count: number }[];
   users: AdminUser[];
 };
 
@@ -63,7 +72,9 @@ export async function loadAdminOverview(): Promise<AdminOverview> {
   ] = await Promise.all([
     admin
       .from("profiles")
-      .select("id, name, email, plan, plan_status, created_at, updated_at, is_lifetime, utm_source")
+      .select(
+        "id, name, email, plan, plan_status, created_at, updated_at, is_lifetime, utm_source, phone, phone_code, platform"
+      )
       .order("created_at", { ascending: false }),
     admin
       .from("hotmart_events")
@@ -127,6 +138,27 @@ export async function loadAdminOverview(): Promise<AdminOverview> {
     .map(([source, count]) => ({ source, count }))
     .sort((a, b) => b.count - a.count);
 
+  // --- Dispositivo (iOS / Android / Escritorio) ---
+  const platMap = new Map<string, number>();
+  for (const p of profiles) {
+    const plat = (p.platform && String(p.platform).trim()) || "desconocido";
+    platMap.set(plat, (platMap.get(plat) || 0) + 1);
+  }
+  const platforms = [...platMap.entries()]
+    .map(([platform, count]) => ({ platform, count }))
+    .sort((a, b) => b.count - a.count);
+
+  // --- País (por código de teléfono) ---
+  const countryMap = new Map<string, { flag: string; count: number }>();
+  for (const p of profiles) {
+    const c = countryFromPhoneCode(p.phone_code);
+    const cur = countryMap.get(c.name) || { flag: c.flag, count: 0 };
+    countryMap.set(c.name, { flag: c.flag, count: cur.count + 1 });
+  }
+  const countries = [...countryMap.entries()]
+    .map(([country, { flag, count }]) => ({ country, flag, count }))
+    .sort((a, b) => b.count - a.count);
+
   return {
     totalUsers: profiles.length,
     usersByPlan,
@@ -151,13 +183,24 @@ export async function loadAdminOverview(): Promise<AdminOverview> {
     conversionPct,
     currencySymbol: "€",
     utmSources,
-    users: profiles.map((p) => ({
-      id: p.id,
-      name: p.name,
-      email: p.email,
-      plan: p.plan,
-      planStatus: p.plan_status,
-      createdAt: p.created_at,
-    })),
+    platforms,
+    countries,
+    users: profiles.map((p) => {
+      const c = countryFromPhoneCode(p.phone_code);
+      return {
+        id: p.id,
+        name: p.name,
+        email: p.email,
+        plan: p.plan,
+        planStatus: p.plan_status,
+        createdAt: p.created_at,
+        phone: p.phone || "",
+        phoneCode: p.phone_code || "",
+        country: c.name,
+        countryFlag: c.flag,
+        platform: (p.platform && String(p.platform)) || "—",
+        source: (p.utm_source && String(p.utm_source)) || "directo",
+      };
+    }),
   };
 }
