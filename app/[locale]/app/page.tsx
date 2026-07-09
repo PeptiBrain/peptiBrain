@@ -75,6 +75,12 @@ export default function InicioPage() {
       ? t("weekTagPerfect")
       : t("weekTagCatchUp");
 
+  // Saludo según la hora + fecha de hoy
+  const now = new Date();
+  const hour = now.getHours();
+  const greetKey = hour < 12 ? "greetMorning" : hour < 20 ? "greetAfternoon" : "greetEvening";
+  const dateLabel = now.toLocaleDateString(locale, { weekday: "long", day: "numeric", month: "long" });
+
   async function handleMarkDone() {
     if (!pendingDose || !data) return;
     setData(await markDoseDone(data, pendingDose.id));
@@ -91,7 +97,7 @@ export default function InicioPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-5">
-      <div className="mb-2 flex justify-end gap-2">
+      <div className="mb-2 flex flex-wrap justify-end gap-2">
         <button
           type="button"
           onClick={() => setShowCalendar(true)}
@@ -99,6 +105,17 @@ export default function InicioPage() {
         >
           <CalendarDays className="size-3.5" aria-hidden /> {tCal("openCalendar")}
         </button>
+        <Link
+          href={streak > 0 ? "/app/estadisticas" : "/app/peptidos"}
+          className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-colors ${
+            streak > 0
+              ? "bg-accent text-primary hover:bg-accent/80"
+              : "border border-border bg-card text-muted-foreground hover:border-primary hover:text-primary"
+          }`}
+        >
+          <Flame className="size-3.5" aria-hidden />{" "}
+          {streak > 0 ? t("streakChip", { count: streak }) : t("startStreak")}
+        </Link>
         {data.plan === "free" ? (
           <Link
             href="/paywall"
@@ -119,36 +136,47 @@ export default function InicioPage() {
       <motion.p
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
-        className="text-sm text-muted-foreground"
+        className="flex items-center gap-1.5 text-xs font-semibold tracking-wide text-muted-foreground uppercase"
       >
-        {t("greeting")}
-        {name ? `, ${name}` : ""}
+        <span className="inline-block size-1.5 rounded-full bg-primary" /> {dateLabel}
       </motion.p>
-      <motion.p
+      <motion.h1
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.05 }}
-        className="flex items-center gap-1.5 font-display text-xl font-bold text-foreground"
+        className="mt-1 font-display text-3xl font-bold tracking-tight text-foreground"
       >
-        {streak > 0 ? (
+        {t(greetKey)}
+        {name ? (
           <>
-            {t("streakLine")} <Flame className="size-5 text-primary" aria-hidden />
+            ,{" "}
+            <span className="bg-gradient-to-r from-primary to-[#b59a52] bg-clip-text text-transparent">
+              {name}
+            </span>
           </>
+        ) : (
+          ""
+        )}
+      </motion.h1>
+      <motion.p
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.08 }}
+        className="mt-0.5 text-sm text-muted-foreground"
+      >
+        {weekDoses.length > 0 ? (
+          <>
+            {t("weekProgress", { done: weekDone, total: weekDoses.length })}{" "}
+            <span className="font-bold text-foreground">{weekTag}</span>
+          </>
+        ) : streak > 0 ? (
+          <span className="inline-flex items-center gap-1">
+            {t("streakLine")} <Flame className="size-4 text-primary" aria-hidden />
+          </span>
         ) : (
           t("goodDayFallback")
         )}
       </motion.p>
-      {weekDoses.length > 0 && (
-        <motion.p
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.08 }}
-          className="text-sm text-muted-foreground"
-        >
-          {t("weekProgress", { done: weekDone, total: weekDoses.length })}{" "}
-          <span className="font-bold text-primary">{weekTag}</span>
-        </motion.p>
-      )}
 
       {pendingDose ? (
         <motion.div

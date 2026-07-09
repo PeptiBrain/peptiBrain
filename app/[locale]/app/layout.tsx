@@ -3,6 +3,8 @@ import { Link } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { TopNav } from "@/components/app/shell/TopNav";
 import { ProfileMenu } from "@/components/app/shell/ProfileMenu";
+import { ThemeToggle } from "@/components/app/shell/ThemeToggle";
+import { RefreshButton } from "@/components/app/shell/RefreshButton";
 import { AppTour } from "@/components/app/shell/AppTour";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
@@ -34,7 +36,9 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           <Image src="/peptibrain-isotipo.svg" alt="" width={26} height={26} />
           <span className="font-display text-base font-bold text-foreground">PeptiBrain</span>
         </Link>
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1">
+          <RefreshButton />
+          <ThemeToggle />
           <ProfileMenu name={name} email={email} plan={plan} />
         </div>
       </header>
