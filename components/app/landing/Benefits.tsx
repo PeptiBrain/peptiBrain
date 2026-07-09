@@ -1,18 +1,16 @@
-import { Syringe, Droplet, Flame, HeartPulse, Bell } from "lucide-react";
+import { Syringe, Droplet, Flame, HeartPulse, Calculator, BarChart3 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Reveal } from "@/components/app/Reveal";
 
-const ICONS = [Syringe, Droplet, Flame, HeartPulse, Bell];
-const SPANS = ["sm:col-span-3", "sm:col-span-3", "sm:col-span-2", "sm:col-span-2", "sm:col-span-2"];
+const ICONS = [Syringe, Droplet, Flame, HeartPulse, Calculator, BarChart3];
 
 export function Benefits() {
   const t = useTranslations("Benefits");
 
-  const items = [1, 2, 3, 4, 5].map((n) => ({
+  const items = [1, 2, 3, 4, 5, 6].map((n) => ({
     icon: ICONS[n - 1],
     title: t(`item${n}Title`),
     body: t(`item${n}Body`),
-    span: SPANS[n - 1],
   }));
 
   return (
@@ -27,9 +25,9 @@ export function Benefits() {
           </p>
         </Reveal>
 
-        <div className="mt-10 grid gap-4 sm:grid-cols-6">
+        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {items.map((b, i) => (
-            <Reveal key={b.title} delay={i * 0.06} className={b.span}>
+            <Reveal key={b.title} delay={i * 0.06}>
               <div className="h-full rounded-xl border border-border bg-card p-5">
                 <div className="flex size-9 items-center justify-center rounded-lg bg-primary/15">
                   <b.icon className="size-4.5 text-primary" aria-hidden />

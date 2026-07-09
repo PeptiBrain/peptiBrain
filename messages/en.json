@@ -53,13 +53,15 @@
     "item1Title": "Log a dose in seconds",
     "item1Body": "Note what you took, when, and where. The app keeps track for you.",
     "item2Title": "Knows how much you have left",
-    "item2Body": "Calculates each vial’s reconstitution and warns you before you run out.",
+    "item2Body": "Each vial's exact concentration and stock that goes down with every dose.",
     "item3Title": "Keep your streak",
     "item3Body": "A calendar and streaks that celebrate your consistency, day after day.",
     "item4Title": "All your wellness together",
     "item4Body": "Weight, meals, hydration, exercise and side effects, all in one place.",
-    "item5Title": "Timely reminders",
-    "item5Body": "Notifications for your next dose, right when you need them."
+    "item5Title": "Calculator and converter",
+    "item5Body": "Calculate reconstitution and convert mg, mcg and insulin units instantly.",
+    "item6Title": "Stats and finances",
+    "item6Body": "Charts of your progress, your adherence and how much you invest in peptides."
   },
   "HowItWorks": {
     "eyebrow": "How it works",
@@ -69,7 +71,7 @@
     "step2Title": "Log each vial and dose",
     "step2Body": "The app works out your stock and builds your calendar automatically.",
     "step3Title": "See your progress",
-    "step3Body": "Clear trends, streaks, and reminders that keep you on track."
+    "step3Body": "Clear charts, streaks, and stats that keep you on track."
   },
   "Pricing": {
     "title": "Start free. Upgrade when you need to.",

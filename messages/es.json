@@ -53,13 +53,15 @@
     "item1Title": "Registra una dosis en segundos",
     "item1Body": "Anota qué te aplicaste, cuándo y en qué zona. La app lleva la cuenta por ti.",
     "item2Title": "Sabe cuánto te queda",
-    "item2Body": "Calcula la reconstitución de cada vial y te avisa antes de quedarte sin stock.",
+    "item2Body": "Concentración exacta de cada vial y stock que se descuenta con cada dosis.",
     "item3Title": "Mantén la racha",
     "item3Body": "Calendario y rachas que celebran tu constancia, día tras día.",
     "item4Title": "Todo tu bienestar junto",
     "item4Body": "Peso, comidas, hidratación, ejercicio y efectos secundarios, en el mismo sitio.",
-    "item5Title": "Recordatorios a tiempo",
-    "item5Body": "Notificaciones para tu próxima dosis, justo cuando las necesitas."
+    "item5Title": "Calculadora y conversor",
+    "item5Body": "Calcula la reconstitución y convierte mg, mcg y unidades de insulina al instante.",
+    "item6Title": "Estadísticas y finanzas",
+    "item6Body": "Gráficas de tu progreso, tu adherencia y cuánto inviertes en péptidos."
   },
   "HowItWorks": {
     "eyebrow": "Cómo funciona",
@@ -69,7 +71,7 @@
     "step2Title": "Registra cada vial y dosis",
     "step2Body": "La app calcula tu stock y arma tu calendario automáticamente.",
     "step3Title": "Mira tu progreso",
-    "step3Body": "Tendencias claras, rachas y recordatorios que te mantienen al día."
+    "step3Body": "Gráficas claras, rachas y estadísticas que te mantienen al día."
   },
   "Pricing": {
     "title": "Empieza gratis. Sube cuando lo necesites.",
