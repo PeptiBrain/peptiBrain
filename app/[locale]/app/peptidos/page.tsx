@@ -55,10 +55,16 @@ export default function PeptidosPage() {
   const isPremium = data.plan !== "free";
 
   const TABS: SubTabItem[] = [
-    { key: "usos", label: t("tabUses"), icon: Syringe },
-    { key: "peptidos", label: t("title"), icon: Package },
-    { key: "viales", label: t("tabVials"), icon: Beaker },
-    { key: "calculadora", label: t("tabCalculator"), icon: Calculator, locked: !isPremium },
+    { key: "usos", label: t("tabUses"), subtitle: t("tabUsesDesc"), icon: Syringe },
+    { key: "peptidos", label: t("title"), subtitle: t("tabPeptidesDesc"), icon: Package },
+    { key: "viales", label: t("tabVials"), subtitle: t("tabVialsDesc"), icon: Beaker },
+    {
+      key: "calculadora",
+      label: t("tabCalculator"),
+      subtitle: t("tabCalculatorDesc"),
+      icon: Calculator,
+      locked: !isPremium,
+    },
   ];
 
   async function handleAdd() {
@@ -245,13 +251,22 @@ function ViatesTab({
               year: "numeric",
             });
             return (
-              <div key={v.id} className="rounded-xl border border-border bg-card p-3">
-                <div className="flex items-start gap-2">
-                  <PeptideIcon peptideName={peptide?.name || ""} size="size-8" />
+              <div key={v.id} className="rounded-xl border border-border bg-card p-4">
+                <div className="flex items-start gap-3">
+                  <div
+                    className={`flex size-12 shrink-0 items-center justify-center rounded-xl ${
+                      reconstituted ? "bg-primary/15" : "bg-[var(--notice-bg)]"
+                    }`}
+                  >
+                    <PeptideIcon peptideName={peptide?.name || ""} size="size-6" />
+                  </div>
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-foreground">{peptide?.name || "—"}</p>
+                    <p className="truncate text-sm font-semibold text-foreground">{peptide?.name || "—"}</p>
                     <p className="truncate text-xs text-muted-foreground">
-                      {t("vialOpenedOn", { date: openedOn })} · {v.amount} {v.unit}
+                      {t("vialOpenedOn", { date: openedOn })}
+                    </p>
+                    <p className="truncate text-xs text-muted-foreground">
+                      {v.amount} {v.unit}
                       {v.bacWater &&
                         ` · ${(parseFloat(v.amount) / parseFloat(v.bacWater)).toFixed(2)} ${v.unit}/mL`}
                     </p>
@@ -266,7 +281,7 @@ function ViatesTab({
                   </button>
                 </div>
                 <span
-                  className={`mt-2 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium ${
+                  className={`mt-3 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium ${
                     reconstituted
                       ? "bg-primary/15 text-primary"
                       : "bg-[var(--notice-bg)] text-[var(--notice-icon)]"
@@ -277,7 +292,7 @@ function ViatesTab({
                 </span>
 
                 {confirmId === v.id && (
-                  <div className="mt-2 flex items-center justify-between gap-2 rounded-lg bg-secondary/60 px-3 py-2">
+                  <div className="mt-3 flex items-center justify-between gap-2 rounded-lg bg-secondary/60 px-3 py-2">
                     <p className="text-xs text-foreground">{t("confirmDeleteVial")}</p>
                     <div className="flex shrink-0 gap-1.5">
                       <button
