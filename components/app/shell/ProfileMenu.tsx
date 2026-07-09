@@ -22,8 +22,7 @@ import { createClient } from "@/lib/supabase/client";
 import { resetMixpanel } from "@/lib/mixpanel";
 import { getStoredPref, setThemePref, type ThemePref } from "@/lib/theme";
 import { RESTART_EVENT } from "@/components/app/shell/AppTour";
-
-const SUPPORT_EMAIL = "soporte@peptibrain.com";
+import { HelpCenter } from "@/components/app/shell/HelpCenter";
 
 export function ProfileMenu({
   name,
@@ -37,6 +36,7 @@ export function ProfileMenu({
   const t = useTranslations("AppShell");
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
   const [pref, setPref] = useState<ThemePref>("system");
   const ref = useRef<HTMLDivElement>(null);
   const initial = name.trim().charAt(0).toUpperCase() || "?";
@@ -159,7 +159,7 @@ export function ProfileMenu({
               label={t("helpCenter")}
               onClick={() => {
                 setOpen(false);
-                window.location.href = `mailto:${SUPPORT_EMAIL}`;
+                setShowHelp(true);
               }}
             />
 
@@ -182,6 +182,8 @@ export function ProfileMenu({
           )}
         </div>
       )}
+
+      <HelpCenter open={showHelp} onClose={() => setShowHelp(false)} />
     </div>
   );
 }
