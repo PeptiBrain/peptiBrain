@@ -2,10 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Users, Plus, Trash2, Download, Check, X, Eye, Lock, Camera, ChevronDown } from "lucide-react";
+import { Users, Plus, Trash2, Download, Check, X, Eye, Lock, Camera, ChevronDown, Upload } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import {
   addFamilyMember,
+  importFamilyMembers,
   leaveFamily,
   loadAppData,
   loadReceivedInvitations,
@@ -19,6 +20,7 @@ import {
   type FamilyRelationship,
   type ReceivedInvitation,
 } from "@/lib/app-data";
+import { csvToFamilyRows } from "@/lib/csv";
 import { SharedDataModal } from "@/components/app/familia/SharedDataModal";
 
 const COUNTRIES = [
@@ -61,7 +63,10 @@ export default function FamiliaPage() {
   const [uploadingId, setUploadingId] = useState<string | null>(null);
   const [peptidePickerOpenId, setPeptidePickerOpenId] = useState<string | null>(null);
   const [seatLimitId, setSeatLimitId] = useState<string | null>(null);
+  const [importResult, setImportResult] = useState<{ imported: number; skipped: number } | null>(null);
+  const [importing, setImporting] = useState(false);
   const fileRefs = useRef<Record<string, HTMLInputElement | null>>({});
+  const csvInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     loadAppData().then(setData);
@@ -117,6 +122,22 @@ export default function FamiliaPage() {
     setShowForm(false);
   }
 
+  async function handleCsvFile(file: File) {
+    if (!data || !canShare) return;
+    setImporting(true);
+    setImportResult(null);
+    try {
+      const text = await file.text();
+      const rows = csvToFamilyRows(text);
+      const result = await importFamilyMembers(data, rows);
+      setData(result.data);
+      setImportResult({ imported: result.imported, skipped: result.skipped });
+    } finally {
+      setImporting(false);
+      if (csvInputRef.current) csvInputRef.current.value = "";
+    }
+  }
+
   async function handleRespond(id: string, status: "accepted" | "revoked") {
     setSeatLimitId(null);
     try {
@@ -155,16 +176,43 @@ export default function FamiliaPage() {
           <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
         </div>
         {canShare && (
-          <button
-            type="button"
-            onClick={() => setShowForm((s) => !s)}
-            aria-label={t("inviteAria")}
-            className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground transition-transform active:scale-97"
-          >
-            <Plus className="size-5" aria-hidden />
-          </button>
+          <div className="flex shrink-0 items-center gap-2">
+            <button
+              type="button"
+              onClick={() => csvInputRef.current?.click()}
+              disabled={importing}
+              aria-label={t("importCsvAria")}
+              className="flex h-10 items-center gap-1.5 rounded-full border border-border bg-card px-3.5 text-xs font-semibold text-foreground transition-transform active:scale-97 disabled:opacity-50"
+            >
+              <Upload className="size-3.5" aria-hidden /> {importing ? t("importing") : t("importCsv")}
+            </button>
+            <input
+              ref={csvInputRef}
+              type="file"
+              accept=".csv,text/csv"
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) handleCsvFile(file);
+              }}
+            />
+            <button
+              type="button"
+              onClick={() => setShowForm((s) => !s)}
+              aria-label={t("inviteAria")}
+              className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground transition-transform active:scale-97"
+            >
+              <Plus className="size-5" aria-hidden />
+            </button>
+          </div>
         )}
       </div>
+
+      {importResult && (
+        <div className="mt-3 rounded-lg bg-secondary/60 px-3 py-2 text-xs text-foreground">
+          {t("importResult", { imported: importResult.imported, skipped: importResult.skipped })}
+        </div>
+      )}
 
       {!canShare && (
         <div className="mt-4 flex items-center justify-between gap-3 rounded-xl border border-dashed border-border bg-secondary/40 p-3">

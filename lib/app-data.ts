@@ -592,6 +592,64 @@ export async function addFamilyMember(
   return loadAppData();
 }
 
+const RELATIONSHIP_ALIASES: Record<string, FamilyRelationship> = {
+  pareja: "pareja", esposa: "pareja", esposo: "pareja", marido: "pareja", mujer: "pareja", partner: "pareja",
+  hermano: "hermano", hermana: "hermano", sibling: "hermano",
+  hijo: "hijo", hija: "hijo", child: "hijo",
+  padre: "padre_madre", madre: "padre_madre", parent: "padre_madre",
+  primo: "primo", prima: "primo", cousin: "primo",
+  tio: "tio", tia: "tio", uncle: "tio", aunt: "tio",
+  sobrino: "sobrino", sobrina: "sobrino", nephew: "sobrino", niece: "sobrino",
+  cunado: "cunado", cunada: "cunado",
+  amigo: "amigo", amiga: "amigo", friend: "amigo",
+  vecino: "vecino", vecina: "vecino", neighbor: "vecino",
+};
+
+function normalizeRelationship(raw?: string): FamilyRelationship {
+  if (!raw) return "otro";
+  const key = raw
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "");
+  return RELATIONSHIP_ALIASES[key] || "otro";
+}
+
+export type FamilyImportRow = { name: string; email: string; phone?: string; relationship?: string };
+export type FamilyImportResult = { data: AppData; imported: number; skipped: number };
+
+// Agrega varios familiares/clientes de golpe (caso empresa: dar de alta muchos
+// clientes a la vez). Duplicados por correo se saltan solos, no rompen el resto.
+export async function importFamilyMembers(
+  data: AppData,
+  rows: FamilyImportRow[]
+): Promise<FamilyImportResult> {
+  const { supabase, user } = await requireUser();
+  const { data: myProfile } = await supabase.from("profiles").select("name").eq("id", user.id).single();
+
+  const payload = rows.map((r) => ({
+    owner_id: user.id,
+    name: r.name,
+    email: r.email,
+    phone: r.phone || null,
+    phone_code: r.phone ? "+34" : null,
+    relationship: normalizeRelationship(r.relationship),
+    share_peptides: true,
+    share_doses: true,
+    share_health: false,
+    owner_name: myProfile?.name || "",
+  }));
+
+  const { data: inserted, error } = await supabase
+    .from("family_members")
+    .upsert(payload, { onConflict: "owner_id,email", ignoreDuplicates: true })
+    .select("id");
+  if (error) throw error;
+
+  const next = await loadAppData();
+  return { data: next, imported: inserted?.length || 0, skipped: rows.length - (inserted?.length || 0) };
+}
+
 export async function uploadFamilyPhoto(data: AppData, memberId: string, file: File): Promise<AppData> {
   const { supabase, user } = await requireUser();
   const ext = (file.name.split(".").pop() || "png").toLowerCase();
