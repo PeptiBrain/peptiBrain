@@ -11,6 +11,8 @@ export type Peptide = {
 
 export type SyringeType = "u30" | "u50" | "u100";
 
+export type VialShare = { memberId: string; percent: number };
+
 export type Vial = {
   id: string;
   peptideId: string;
@@ -20,8 +22,7 @@ export type Vial = {
   syringeType?: SyringeType;
   cost?: string;
   createdAt: string;
-  sharedWithMemberId?: string;
-  splitPercent?: number; // % del dueño; el resto es de sharedWithMemberId
+  shares: VialShare[]; // reparto con familiares — puede ser con varios a la vez
 };
 
 export type Dose = {
@@ -186,6 +187,7 @@ export async function loadAppData(): Promise<AppData> {
     { data: providers },
     { data: trips },
     { data: family },
+    { data: vialShares },
   ] = await Promise.all([
     supabase.from("peptides").select("*").order("created_at", { ascending: true }),
     supabase.from("vials").select("*").order("created_at", { ascending: true }),
@@ -195,7 +197,15 @@ export async function loadAppData(): Promise<AppData> {
     supabase.from("providers").select("*").order("created_at", { ascending: true }),
     supabase.from("trips").select("*").order("start_date", { ascending: false }),
     supabase.from("family_members").select("*").order("created_at", { ascending: true }),
+    supabase.from("vial_shares").select("*"),
   ]);
+
+  const sharesByVial = new Map<string, VialShare[]>();
+  for (const s of vialShares || []) {
+    const list = sharesByVial.get(s.vial_id) || [];
+    list.push({ memberId: s.member_id, percent: Number(s.percent) });
+    sharesByVial.set(s.vial_id, list);
+  }
 
   return {
     plan: (profile?.plan as AppData["plan"]) || "free",
@@ -215,8 +225,7 @@ export async function loadAppData(): Promise<AppData> {
       syringeType: v.syringe_type || undefined,
       cost: v.cost != null ? String(v.cost) : undefined,
       createdAt: v.created_at,
-      sharedWithMemberId: v.shared_with_member_id || undefined,
-      splitPercent: v.split_percent != null ? Number(v.split_percent) : undefined,
+      shares: sharesByVial.get(v.id) || [],
     })),
     doses: (doses || []).map((d) => ({
       id: d.id,
@@ -347,7 +356,7 @@ export async function addPeptide(
 
 export async function addVial(
   data: AppData,
-  vial: Omit<Vial, "id" | "createdAt">
+  vial: Omit<Vial, "id" | "createdAt" | "shares">
 ): Promise<AppData> {
   const { supabase, user } = await requireUser();
   if (data.plan === "free" && data.vials.length >= 1) {
@@ -361,8 +370,6 @@ export async function addVial(
     bac_water: vial.bacWater ? Number(vial.bacWater) : null,
     syringe_type: vial.syringeType || null,
     cost: vial.cost ? Number(vial.cost) : null,
-    shared_with_member_id: vial.sharedWithMemberId || null,
-    split_percent: vial.sharedWithMemberId ? vial.splitPercent || 50 : null,
   });
   if (error) {
     if (error.message.includes("PLAN_LIMIT_REACHED")) throw new PlanLimitError();
@@ -378,19 +385,28 @@ export async function removeVial(data: AppData, vialId: string): Promise<AppData
   return loadAppData();
 }
 
-export async function updateVialSplit(
+// Un vial se puede repartir con varios familiares a la vez, cada uno con su %.
+export async function addVialShare(
   data: AppData,
   vialId: string,
-  split: { sharedWithMemberId: string | null; splitPercent: number | null }
+  memberId: string,
+  percent: number
 ): Promise<AppData> {
   const { supabase } = await requireUser();
   const { error } = await supabase
-    .from("vials")
-    .update({
-      shared_with_member_id: split.sharedWithMemberId,
-      split_percent: split.sharedWithMemberId ? split.splitPercent || 50 : null,
-    })
-    .eq("id", vialId);
+    .from("vial_shares")
+    .upsert({ vial_id: vialId, member_id: memberId, percent }, { onConflict: "vial_id,member_id" });
+  if (error) throw error;
+  return loadAppData();
+}
+
+export async function removeVialShare(data: AppData, vialId: string, memberId: string): Promise<AppData> {
+  const { supabase } = await requireUser();
+  const { error } = await supabase
+    .from("vial_shares")
+    .delete()
+    .eq("vial_id", vialId)
+    .eq("member_id", memberId);
   if (error) throw error;
   return loadAppData();
 }
@@ -811,6 +827,7 @@ export async function loadSharedOwnerData(ownerId: string): Promise<SharedOwnerD
       syringeType: v.syringe_type || undefined,
       cost: v.cost != null ? String(v.cost) : undefined,
       createdAt: v.created_at,
+      shares: [],
     })),
     doses: (doses || []).map((d) => ({
       id: d.id,

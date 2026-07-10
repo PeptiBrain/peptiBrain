@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { Plus, Package, Syringe, Beaker, Calculator, Check, Lock, Droplet, Trash2, CalendarClock, Zap, Pill, Wind, ArrowRightLeft, Building2, Users } from "lucide-react";
+import { Plus, Package, Syringe, Beaker, Calculator, Check, Lock, Droplet, Trash2, CalendarClock, Zap, Pill, Wind, ArrowRightLeft, Building2, Users, X } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import {
   addDose,
@@ -13,7 +13,8 @@ import {
   markDoseDone,
   removeProvider,
   removeVial,
-  updateVialSplit,
+  addVialShare,
+  removeVialShare,
   PlanLimitError,
   type AppData,
   type Vial,
@@ -439,104 +440,90 @@ function VialShareControl({
 }) {
   const locale = useLocale();
   const symbol = CURRENCY[locale as Locale].symbol;
-  const [editing, setEditing] = useState(false);
-  const [memberId, setMemberId] = useState(vial.sharedWithMemberId || "");
-  const [pct, setPct] = useState(vial.splitPercent ?? 50);
+  const [adding, setAdding] = useState(false);
+  const [memberId, setMemberId] = useState("");
+  const [pct, setPct] = useState(20);
 
-  const member = vial.sharedWithMemberId
-    ? data.familyMembers.find((m) => m.id === vial.sharedWithMemberId)
-    : undefined;
+  const cost = vial.cost ? parseFloat(vial.cost) : null;
+  const alreadySharedIds = new Set(vial.shares.map((s) => s.memberId));
+  const availableMembers = data.familyMembers.filter((m) => !alreadySharedIds.has(m.id));
 
   async function save() {
-    const next = await updateVialSplit(data, vial.id, {
-      sharedWithMemberId: memberId || null,
-      splitPercent: memberId ? pct : null,
-    });
+    if (!memberId) return;
+    const next = await addVialShare(data, vial.id, memberId, pct);
     onChange(next);
-    setEditing(false);
+    setAdding(false);
+    setMemberId("");
+    setPct(20);
   }
 
-  if (editing) {
-    return (
-      <div className="mt-2 rounded-lg border border-dashed border-border p-3">
-        <select
-          value={memberId}
-          onChange={(e) => setMemberId(e.target.value)}
-          className="h-10 w-full rounded-lg border border-input bg-background px-2 text-sm text-foreground"
-        >
-          <option value="">{t("shareVialNone")}</option>
-          {data.familyMembers.map((m) => (
-            <option key={m.id} value={m.id}>
-              {m.name}
-            </option>
-          ))}
-        </select>
-        {memberId && (
-          <div className="mt-2">
-            <p className="mb-1 text-xs text-muted-foreground">
-              {t("splitLabel", { mine: pct, theirs: 100 - pct })}
-            </p>
-            <input
-              type="range"
-              min={1}
-              max={99}
-              value={pct}
-              onChange={(e) => setPct(Number(e.target.value))}
-              className="w-full"
-            />
-          </div>
-        )}
-        <div className="mt-2 flex gap-2">
-          <button
-            type="button"
-            onClick={() => setEditing(false)}
-            className="h-9 flex-1 rounded-lg border border-border text-xs font-medium text-foreground"
-          >
-            {t("cancel")}
-          </button>
-          <button
-            type="button"
-            onClick={save}
-            className="h-9 flex-1 rounded-lg bg-primary text-xs font-semibold text-primary-foreground"
-          >
-            {t("saveShare")}
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  if (member) {
-    const mine = vial.splitPercent ?? 50;
-    const cost = vial.cost ? parseFloat(vial.cost) : null;
-    return (
-      <button
-        type="button"
-        onClick={() => setEditing(true)}
-        className="mt-2 w-full rounded-lg bg-secondary/60 px-2.5 py-2 text-left text-[11px] text-muted-foreground hover:bg-secondary"
-      >
-        <p>{t("sharedVialWith", { name: member.name, mine, theirs: 100 - mine })}</p>
-        {cost != null && (
-          <p className="mt-0.5 font-medium text-foreground">
-            {t("sharedVialCost", {
-              mineCost: `${symbol}${((cost * mine) / 100).toFixed(0)}`,
-              theirsCost: `${symbol}${(cost * (100 - mine) / 100).toFixed(0)}`,
-              name: member.name,
-            })}
-          </p>
-        )}
-      </button>
-    );
+  async function remove(memberId: string) {
+    const next = await removeVialShare(data, vial.id, memberId);
+    onChange(next);
   }
 
   return (
-    <button
-      type="button"
-      onClick={() => setEditing(true)}
-      className="mt-2 flex h-9 w-full items-center justify-center gap-1.5 rounded-lg bg-primary text-xs font-semibold text-primary-foreground transition-transform active:scale-97"
-    >
-      <Users className="size-3.5" aria-hidden /> {t("shareVialCta")}
-    </button>
+    <div className="mt-2 space-y-1.5">
+      {vial.shares.length > 0 && (
+        <ul className="space-y-1.5">
+          {vial.shares.map((s) => {
+            const member = data.familyMembers.find((m) => m.id === s.memberId);
+            return (
+              <li key={s.memberId} className="flex items-center justify-between gap-2 rounded-lg bg-secondary/60 px-2.5 py-1.5 text-[11px]">
+                <span className="text-foreground">
+                  {member?.name || "—"} {s.percent}%
+                  {cost != null && (
+                    <span className="text-muted-foreground"> · {symbol}{((cost * s.percent) / 100).toFixed(0)}</span>
+                  )}
+                </span>
+                <button type="button" onClick={() => remove(s.memberId)} className="text-muted-foreground hover:text-destructive">
+                  <X className="size-3.5" aria-hidden />
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+
+      {adding ? (
+        <div className="rounded-lg border border-dashed border-border p-3">
+          <select
+            value={memberId}
+            onChange={(e) => setMemberId(e.target.value)}
+            className="h-10 w-full rounded-lg border border-input bg-background px-2 text-sm text-foreground"
+          >
+            <option value="">{t("chooseVial") /* reutilizado como "elige a quién" */}</option>
+            {availableMembers.map((m) => (
+              <option key={m.id} value={m.id}>
+                {m.name}
+              </option>
+            ))}
+          </select>
+          {memberId && (
+            <div className="mt-2">
+              <p className="mb-1 text-xs text-muted-foreground">{t("theirPercentLabel", { pct })}</p>
+              <input type="range" min={1} max={99} value={pct} onChange={(e) => setPct(Number(e.target.value))} className="w-full" />
+            </div>
+          )}
+          <div className="mt-2 flex gap-2">
+            <button type="button" onClick={() => setAdding(false)} className="h-9 flex-1 rounded-lg border border-border text-xs font-medium text-foreground">
+              {t("cancel")}
+            </button>
+            <button type="button" disabled={!memberId} onClick={save} className="h-9 flex-1 rounded-lg bg-primary text-xs font-semibold text-primary-foreground disabled:opacity-50">
+              {t("saveShare")}
+            </button>
+          </div>
+        </div>
+      ) : availableMembers.length > 0 ? (
+        <button
+          type="button"
+          onClick={() => setAdding(true)}
+          className="flex h-9 w-full items-center justify-center gap-1.5 rounded-lg bg-primary text-xs font-semibold text-primary-foreground transition-transform active:scale-97"
+        >
+          <Users className="size-3.5" aria-hidden /> {vial.shares.length > 0 ? t("shareVialWithAnother") : t("shareVialCta")}
+        </button>
+      ) : null}
+    </div>
   );
 }
 
@@ -713,9 +700,9 @@ function UsosTab({
   const activeVial = [...data.vials]
     .filter((v) => v.peptideId === peptideId)
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0];
-  const sharedMember = activeVial?.sharedWithMemberId
-    ? data.familyMembers.find((m) => m.id === activeVial.sharedWithMemberId)
-    : undefined;
+  const sharedMembers = (activeVial?.shares || [])
+    .map((s) => data.familyMembers.find((m) => m.id === s.memberId))
+    .filter((m): m is NonNullable<typeof m> => Boolean(m));
 
   async function handleSave() {
     if (!peptideId || !amount.trim()) return;
@@ -820,7 +807,7 @@ function UsosTab({
               </select>
             </div>
           </div>
-          {sharedMember && (
+          {sharedMembers.length > 0 && (
             <div>
               <label className="mb-1.5 block text-sm font-medium text-foreground">{t("forWhomLabel")}</label>
               <div className="grid grid-cols-2 gap-2">
@@ -835,17 +822,20 @@ function UsosTab({
                 >
                   {t("forWhomMe")}
                 </button>
-                <button
-                  type="button"
-                  onClick={() => setForMemberId(sharedMember.id)}
-                  className={`h-10 rounded-lg border text-sm font-medium ${
-                    forMemberId === sharedMember.id
-                      ? "border-primary bg-accent text-accent-foreground"
-                      : "border-border bg-background text-foreground"
-                  }`}
-                >
-                  {sharedMember.name}
-                </button>
+                {sharedMembers.map((m) => (
+                  <button
+                    key={m.id}
+                    type="button"
+                    onClick={() => setForMemberId(m.id)}
+                    className={`h-10 rounded-lg border text-sm font-medium ${
+                      forMemberId === m.id
+                        ? "border-primary bg-accent text-accent-foreground"
+                        : "border-border bg-background text-foreground"
+                    }`}
+                  >
+                    {m.name}
+                  </button>
+                ))}
               </div>
             </div>
           )}

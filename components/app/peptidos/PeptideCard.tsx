@@ -36,8 +36,6 @@ export function PeptideCard({
   const [doseAmount, setDoseAmount] = useState("");
   const [doseUnit, setDoseUnit] = useState("mcg");
   const [limitReached, setLimitReached] = useState(false);
-  const [sharedWithMemberId, setSharedWithMemberId] = useState("");
-  const [splitPercent, setSplitPercent] = useState(50);
 
   const vials = data.vials.filter((v) => v.peptideId === peptide.id);
   const profile = PEPTIDE_PROFILES.find(
@@ -84,15 +82,11 @@ export function PeptideCard({
         bacWater,
         syringeType,
         cost,
-        sharedWithMemberId: sharedWithMemberId || undefined,
-        splitPercent: sharedWithMemberId ? splitPercent : undefined,
       });
       onChange(next);
       setAmount("");
       setBacWater("");
       setCost("");
-      setSharedWithMemberId("");
-      setSplitPercent(50);
       setShowForm(false);
       setLimitReached(false);
     } catch (err) {
@@ -260,42 +254,6 @@ export function PeptideCard({
                   </div>
                   {draw > SYRINGE_CAPACITY[syringeType] && (
                     <p className="mt-1 text-center text-xs text-destructive">{t("overCapacity")}</p>
-                  )}
-                </div>
-              )}
-
-              {data.familyMembers.length > 0 && (
-                <div className="mt-3 rounded-lg border border-dashed border-border p-3">
-                  <p className="mb-1.5 text-xs font-medium text-foreground">{t("shareVialLabel")}</p>
-                  <select
-                    value={sharedWithMemberId}
-                    onChange={(e) => setSharedWithMemberId(e.target.value)}
-                    className="h-10 w-full rounded-lg border border-input bg-background px-2 text-sm text-foreground"
-                  >
-                    <option value="">{t("shareVialNone")}</option>
-                    {data.familyMembers.map((m) => (
-                      <option key={m.id} value={m.id}>
-                        {m.name}
-                      </option>
-                    ))}
-                  </select>
-                  {sharedWithMemberId && (
-                    <div className="mt-2">
-                      <p className="mb-1 text-xs text-muted-foreground">
-                        {t("splitLabel", {
-                          mine: splitPercent,
-                          theirs: 100 - splitPercent,
-                        })}
-                      </p>
-                      <input
-                        type="range"
-                        min={1}
-                        max={99}
-                        value={splitPercent}
-                        onChange={(e) => setSplitPercent(Number(e.target.value))}
-                        className="w-full"
-                      />
-                    </div>
                   )}
                 </div>
               )}

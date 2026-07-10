@@ -10,15 +10,14 @@ function toMg(amount: string, unit: string): number {
   return 0; // ml, UI: no cuentan como peso acumulado
 }
 
-// Si el vial está repartido con un familiar, solo cuenta TU parte como "invertido"
-// (el resto es de esa persona, aunque tú hayas pagado el vial completo).
+// Si el vial está repartido con uno o varios familiares, solo cuenta TU parte
+// como "invertido" (el resto es de esas personas, aunque tú hayas pagado el vial).
 function myShareOfCost(v: Vial): number {
   if (!v.cost) return 0;
   const cost = parseFloat(v.cost) || 0;
-  if (v.sharedWithMemberId && v.splitPercent != null) {
-    return (cost * v.splitPercent) / 100;
-  }
-  return cost;
+  const sharedPct = v.shares.reduce((sum, s) => sum + s.percent, 0);
+  const myPct = Math.max(0, 100 - sharedPct);
+  return (cost * myPct) / 100;
 }
 
 export function totalInvested(vials: Vial[]): number {

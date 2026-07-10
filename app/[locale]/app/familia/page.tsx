@@ -15,7 +15,8 @@ import {
   SeatLimitError,
   updateFamilySharedPeptides,
   updateFamilySharing,
-  updateVialSplit,
+  addVialShare,
+  removeVialShare,
   uploadFamilyPhoto,
   type AppData,
   type FamilyMember,
@@ -596,22 +597,22 @@ function MemberVialShare({
   const symbol = CURRENCY[locale].symbol;
   const [adding, setAdding] = useState(false);
   const [vialId, setVialId] = useState("");
-  const [pct, setPct] = useState(50);
+  const [pct, setPct] = useState(20);
 
-  const sharedVials = data.vials.filter((v) => v.sharedWithMemberId === member.id);
-  const availableVials = data.vials.filter((v) => !v.sharedWithMemberId);
+  const sharedVials = data.vials.filter((v) => v.shares.some((s) => s.memberId === member.id));
+  const availableVials = data.vials.filter((v) => !v.shares.some((s) => s.memberId === member.id));
 
   async function save() {
     if (!vialId) return;
-    const next = await updateVialSplit(data, vialId, { sharedWithMemberId: member.id, splitPercent: pct });
+    const next = await addVialShare(data, vialId, member.id, pct);
     onChange(next);
     setAdding(false);
     setVialId("");
-    setPct(50);
+    setPct(20);
   }
 
   async function unshare(vId: string) {
-    const next = await updateVialSplit(data, vId, { sharedWithMemberId: null, splitPercent: null });
+    const next = await removeVialShare(data, vId, member.id);
     onChange(next);
   }
 
@@ -624,13 +625,13 @@ function MemberVialShare({
         <ul className="mb-2 space-y-1.5">
           {sharedVials.map((v) => {
             const peptide = data.peptides.find((p) => p.id === v.peptideId);
-            const mine = v.splitPercent ?? 50;
+            const theirPct = v.shares.find((s) => s.memberId === member.id)?.percent ?? 0;
             return (
               <li key={v.id} className="flex items-center justify-between gap-2 rounded-lg bg-secondary/60 px-2.5 py-1.5 text-xs">
                 <span className="flex items-center gap-1.5 text-foreground">
                   <Beaker className="size-3.5 text-primary" aria-hidden /> {peptide?.name || "—"}
                   <span className="text-muted-foreground">
-                    ({mine}% / {100 - mine}%{v.cost ? ` · ${symbol}${((parseFloat(v.cost) * (100 - mine)) / 100).toFixed(0)}` : ""})
+                    ({theirPct}%{v.cost ? ` · ${symbol}${((parseFloat(v.cost) * theirPct) / 100).toFixed(0)}` : ""})
                   </span>
                 </span>
                 <button type="button" onClick={() => unshare(v.id)} className="text-muted-foreground hover:text-destructive">
@@ -661,7 +662,7 @@ function MemberVialShare({
           </select>
           {vialId && (
             <div className="mt-2">
-              <p className="mb-1 text-xs text-muted-foreground">{t("splitLabel", { mine: pct, theirs: 100 - pct })}</p>
+              <p className="mb-1 text-xs text-muted-foreground">{t("theirPercentLabel", { pct })}</p>
               <input type="range" min={1} max={99} value={pct} onChange={(e) => setPct(Number(e.target.value))} className="w-full" />
             </div>
           )}
