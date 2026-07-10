@@ -104,6 +104,11 @@ export async function POST(request: NextRequest) {
           is_lifetime: updates.is_lifetime,
         });
       }
+    } else if (updates.plan !== "family") {
+      // Si quien pagaba Family deja de pagar (o pasa a otro plan), a quienes
+      // heredaron el asiento Premium por su cuenta también se les baja a free.
+      const ownerId = updatedRows[0].id;
+      await supabase.from("profiles").update({ plan: "free", family_seat_owner_id: null }).eq("family_seat_owner_id", ownerId);
     }
   }
 

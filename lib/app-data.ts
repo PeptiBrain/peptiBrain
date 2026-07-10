@@ -658,16 +658,27 @@ export async function updateFamilySharedPeptides(
   return loadAppData();
 }
 
+export class SeatLimitError extends Error {
+  constructor(message = "SEAT_LIMIT_REACHED") {
+    super(message);
+    this.name = "SeatLimitError";
+  }
+}
+
 export async function respondToInvitation(
   invitationId: string,
   status: "accepted" | "revoked"
 ): Promise<void> {
-  const { supabase } = await requireUser();
-  const { error } = await supabase
-    .from("family_members")
-    .update({ invite_status: status })
-    .eq("id", invitationId);
-  if (error) throw error;
+  const res = await fetch("/api/family/membership", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ action: status === "accepted" ? "accept" : "decline", memberId: invitationId }),
+  });
+  if (!res.ok) {
+    const body = await res.json().catch(() => null);
+    if (body?.error === "seat_limit_reached") throw new SeatLimitError();
+    throw new Error(body?.error || "request_failed");
+  }
 }
 
 export async function loadSharedOwnerData(ownerId: string): Promise<SharedOwnerData> {
@@ -774,10 +785,24 @@ export async function loadSharedOwnerData(ownerId: string): Promise<SharedOwnerD
 }
 
 export async function removeFamilyMember(data: AppData, memberId: string): Promise<AppData> {
-  const { supabase } = await requireUser();
-  const { error } = await supabase.from("family_members").delete().eq("id", memberId);
-  if (error) throw error;
+  const res = await fetch("/api/family/membership", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ action: "remove", memberId }),
+  });
+  if (!res.ok) throw new Error("request_failed");
   return loadAppData();
+}
+
+// Un invitado que ya aceptó puede salirse de la familia de otra persona
+// (pierde el asiento Premium que había heredado, si lo tenía).
+export async function leaveFamily(invitationId: string): Promise<void> {
+  const res = await fetch("/api/family/membership", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ action: "leave", memberId: invitationId }),
+  });
+  if (!res.ok) throw new Error("request_failed");
 }
 
 export function computeStreak(doses: Dose[]): number {

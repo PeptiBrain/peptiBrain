@@ -6,10 +6,12 @@ import { Users, Plus, Trash2, Download, Check, X, Eye, Lock, Camera, ChevronDown
 import { Link } from "@/i18n/navigation";
 import {
   addFamilyMember,
+  leaveFamily,
   loadAppData,
   loadReceivedInvitations,
   removeFamilyMember,
   respondToInvitation,
+  SeatLimitError,
   updateFamilySharedPeptides,
   updateFamilySharing,
   uploadFamilyPhoto,
@@ -58,6 +60,7 @@ export default function FamiliaPage() {
   const [viewingOwnerId, setViewingOwnerId] = useState<string | null>(null);
   const [uploadingId, setUploadingId] = useState<string | null>(null);
   const [peptidePickerOpenId, setPeptidePickerOpenId] = useState<string | null>(null);
+  const [seatLimitId, setSeatLimitId] = useState<string | null>(null);
   const fileRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
   useEffect(() => {
@@ -115,8 +118,23 @@ export default function FamiliaPage() {
   }
 
   async function handleRespond(id: string, status: "accepted" | "revoked") {
-    await respondToInvitation(id, status);
+    setSeatLimitId(null);
+    try {
+      await respondToInvitation(id, status);
+      setInvitations(await loadReceivedInvitations());
+    } catch (err) {
+      if (err instanceof SeatLimitError) {
+        setSeatLimitId(id);
+      } else {
+        throw err;
+      }
+    }
+  }
+
+  async function handleLeave(id: string) {
+    await leaveFamily(id);
     setInvitations(await loadReceivedInvitations());
+    setData(await loadAppData());
   }
 
   async function handlePhoto(memberId: string, file: File) {
@@ -264,14 +282,26 @@ export default function FamiliaPage() {
                     </button>
                   </div>
                 )}
+                {seatLimitId === inv.id && (
+                  <p className="mt-2 text-xs text-destructive">{t("seatLimitReached")}</p>
+                )}
                 {inv.inviteStatus === "accepted" && (
-                  <button
-                    type="button"
-                    onClick={() => setViewingOwnerId(inv.ownerId)}
-                    className="mt-2 flex h-9 w-full items-center justify-center gap-1.5 rounded-lg border border-border text-xs font-medium text-foreground hover:border-primary hover:text-primary"
-                  >
-                    <Eye className="size-3.5" aria-hidden /> {t("viewSharedData")}
-                  </button>
+                  <div className="mt-2 space-y-1.5">
+                    <button
+                      type="button"
+                      onClick={() => setViewingOwnerId(inv.ownerId)}
+                      className="flex h-9 w-full items-center justify-center gap-1.5 rounded-lg border border-border text-xs font-medium text-foreground hover:border-primary hover:text-primary"
+                    >
+                      <Eye className="size-3.5" aria-hidden /> {t("viewSharedData")}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleLeave(inv.id)}
+                      className="flex h-8 w-full items-center justify-center text-xs font-medium text-muted-foreground hover:text-destructive"
+                    >
+                      {t("leaveFamily")}
+                    </button>
+                  </div>
                 )}
               </div>
             ))}
@@ -283,6 +313,15 @@ export default function FamiliaPage() {
         <div className="mt-4 rounded-xl border border-dashed border-border bg-card/60 p-10 text-center">
           <Users className="mx-auto mb-2 size-8 text-muted-foreground" aria-hidden />
           <p className="mx-auto max-w-xs text-sm text-muted-foreground">{t("emptyState")}</p>
+          {canShare && (
+            <button
+              type="button"
+              onClick={() => setShowForm(true)}
+              className="mx-auto mt-4 flex h-11 items-center gap-1.5 rounded-full bg-primary px-5 text-sm font-semibold text-primary-foreground transition-transform active:scale-97"
+            >
+              <Plus className="size-4" aria-hidden /> {t("addFamilyCta")}
+            </button>
+          )}
         </div>
       ) : (
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
