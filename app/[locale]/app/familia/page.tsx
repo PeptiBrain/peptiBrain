@@ -201,6 +201,14 @@ export default function FamiliaPage() {
             >
               <Upload className="size-3.5" aria-hidden /> {importing ? t("importing") : t("importCsv")}
             </button>
+            <button
+              type="button"
+              onClick={handleExport}
+              aria-label={t("exportData")}
+              className="flex size-10 shrink-0 items-center justify-center rounded-full border border-border bg-card text-foreground transition-transform active:scale-97"
+            >
+              <Download className="size-4" aria-hidden />
+            </button>
             <input
               ref={csvInputRef}
               type="file"
@@ -564,14 +572,6 @@ export default function FamiliaPage() {
           ))}
         </div>
       )}
-
-      <button
-        type="button"
-        onClick={handleExport}
-        className="mt-6 flex h-11 w-full items-center justify-center gap-2 rounded-lg border border-dashed border-border text-sm font-medium text-muted-foreground hover:border-primary hover:text-primary sm:w-auto sm:px-6"
-      >
-        <Download className="size-4" aria-hidden /> {t("exportData")}
-      </button>
 
       <SharedDataModal
         open={viewingOwnerId !== null}
