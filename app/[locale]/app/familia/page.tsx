@@ -21,6 +21,7 @@ import {
   type ReceivedInvitation,
 } from "@/lib/app-data";
 import { csvToFamilyRows } from "@/lib/csv";
+import { loadOnboarding } from "@/lib/onboarding";
 import { SharedDataModal } from "@/components/app/familia/SharedDataModal";
 
 const COUNTRIES = [
@@ -115,11 +116,20 @@ export default function FamiliaPage() {
       shareHealth: false,
     });
     setData(next);
+    notifyInviteEmail(email.trim(), name.trim());
     setName("");
     setEmail("");
     setPhone("");
     setRelationship("otro");
     setShowForm(false);
+  }
+
+  function notifyInviteEmail(toEmail: string, toName: string) {
+    fetch("/api/family/invite-email", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ toEmail, toName, ownerName: loadOnboarding().name }),
+    }).catch(() => {});
   }
 
   async function handleCsvFile(file: File) {
@@ -132,6 +142,7 @@ export default function FamiliaPage() {
       const result = await importFamilyMembers(data, rows);
       setData(result.data);
       setImportResult({ imported: result.imported, skipped: result.skipped });
+      for (const r of rows) notifyInviteEmail(r.email, r.name);
     } finally {
       setImporting(false);
       if (csvInputRef.current) csvInputRef.current.value = "";
