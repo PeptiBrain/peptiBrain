@@ -131,6 +131,7 @@ export type AppData = {
   trips: Trip[];
   familyMembers: FamilyMember[];
   plan: "free" | "premium" | "family";
+  extraFamilySeats: number;
 };
 
 const EMPTY: AppData = {
@@ -143,6 +144,7 @@ const EMPTY: AppData = {
   providers: [],
   familyMembers: [],
   plan: "free",
+  extraFamilySeats: 0,
 };
 
 export class PlanLimitError extends Error {
@@ -200,6 +202,12 @@ export async function loadAppData(): Promise<AppData> {
     supabase.from("vial_shares").select("*"),
   ]);
 
+  const { count: extraFamilySeats } = await supabase
+    .from("family_extra_seats")
+    .select("id", { count: "exact", head: true })
+    .eq("owner_id", user.id)
+    .eq("status", "active");
+
   const sharesByVial = new Map<string, VialShare[]>();
   for (const s of vialShares || []) {
     const list = sharesByVial.get(s.vial_id) || [];
@@ -209,6 +217,7 @@ export async function loadAppData(): Promise<AppData> {
 
   return {
     plan: (profile?.plan as AppData["plan"]) || "free",
+    extraFamilySeats: extraFamilySeats || 0,
     peptides: (peptides || []).map((p) => ({
       id: p.id,
       name: p.name,

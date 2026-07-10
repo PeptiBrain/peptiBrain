@@ -29,3 +29,15 @@ export function hotmartLifetimeCheckoutUrl(email?: string): string | null {
   url.searchParams.set("email", email);
   return url.toString();
 }
+
+// Asiento extra de Family (5€/mes), oferta recurrente aparte configurada en Hotmart.
+// Sin esta env var configurada, el botón de "añadir asiento" simplemente no aparece.
+export function hotmartExtraSeatCheckoutUrl(email?: string): string | null {
+  const offerCode = process.env.NEXT_PUBLIC_HOTMART_OFFER_EXTRA_SEAT;
+  if (!offerCode) return null;
+  const base = `https://pay.hotmart.com/Q106628596T?off=${offerCode}`;
+  if (!email) return base;
+  const url = new URL(base);
+  url.searchParams.set("email", email);
+  return url.toString();
+}

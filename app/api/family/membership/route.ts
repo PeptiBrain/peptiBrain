@@ -2,10 +2,11 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 
-// El plan Family regala Premium a hasta 2 invitados (3 cuentas en total con el
-// dueño), tal como ya lo promete el Centro de Ayuda. Los cambios de plan/asiento
-// solo pasan por aquí (service_role) — nunca directo desde el cliente.
-const MAX_FAMILY_GUESTS = 2;
+// El plan Family regala Premium a hasta 2 invitados base (3 cuentas en total con
+// el dueño), tal como ya lo promete el Centro de Ayuda. Cada asiento extra
+// comprado (5€/mes, family_extra_seats) suma uno más al tope. Los cambios de
+// plan/asiento solo pasan por aquí (service_role) — nunca directo desde el cliente.
+const BASE_FAMILY_GUESTS = 2;
 
 export async function POST(req: Request) {
   const supabase = await createClient();
@@ -46,7 +47,13 @@ export async function POST(req: Request) {
         .select("id", { count: "exact", head: true })
         .eq("owner_id", row.owner_id)
         .eq("invite_status", "accepted");
-      if ((count || 0) >= MAX_FAMILY_GUESTS) {
+      const { count: extraSeats } = await admin
+        .from("family_extra_seats")
+        .select("id", { count: "exact", head: true })
+        .eq("owner_id", row.owner_id)
+        .eq("status", "active");
+      const maxGuests = BASE_FAMILY_GUESTS + (extraSeats || 0);
+      if ((count || 0) >= maxGuests) {
         return NextResponse.json({ error: "seat_limit_reached" }, { status: 409 });
       }
       await admin

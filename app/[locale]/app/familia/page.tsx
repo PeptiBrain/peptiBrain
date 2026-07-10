@@ -24,6 +24,7 @@ import {
   type ReceivedInvitation,
 } from "@/lib/app-data";
 import { csvToFamilyRows } from "@/lib/csv";
+import { hotmartExtraSeatCheckoutUrl } from "@/lib/hotmart-links";
 import { loadOnboarding } from "@/lib/onboarding";
 import { CURRENCY, type Locale } from "@/i18n/routing";
 import { SharedDataModal } from "@/components/app/familia/SharedDataModal";
@@ -236,6 +237,27 @@ export default function FamiliaPage() {
           {t("importResult", { imported: importResult.imported, skipped: importResult.skipped })}
         </div>
       )}
+
+      {canShare &&
+        (() => {
+          const maxGuests = 2 + data.extraFamilySeats;
+          const seatsUsed = data.familyMembers.length;
+          const extraSeatUrl = hotmartExtraSeatCheckoutUrl();
+          if (seatsUsed < maxGuests || !extraSeatUrl) return null;
+          return (
+            <div className="mt-3 flex items-center justify-between gap-3 rounded-xl border border-dashed border-border bg-secondary/40 p-3">
+              <p className="text-xs text-muted-foreground">{t("seatsFullNote", { used: seatsUsed, max: maxGuests })}</p>
+              <a
+                href={extraSeatUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="shrink-0 rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground"
+              >
+                {t("addExtraSeatCta")}
+              </a>
+            </div>
+          );
+        })()}
 
       {!canShare && (
         <div className="mt-4 flex items-center justify-between gap-3 rounded-xl border border-dashed border-border bg-secondary/40 p-3">

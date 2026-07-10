@@ -15,6 +15,13 @@ const OFFER_TO_PLAN: Record<string, "premium" | "family"> = {
 // servidor también puede leer variables NEXT_PUBLIC_, no hace falta duplicarla.
 const LIFETIME_OFFER_CODE = process.env.NEXT_PUBLIC_HOTMART_OFFER_LIFETIME;
 
+// Asiento extra de Family (5€/mes, add-on recurrente aparte del plan): no cambia
+// profiles.plan, solo suma/quita una fila en family_extra_seats. Se identifica por
+// el subscriber_code de Hotmart (estable en cada cobro del mismo suscriptor, a
+// diferencia del código de transacción que cambia en cada renovación) para no
+// duplicar el asiento en cada cobro mensual.
+const EXTRA_SEAT_OFFER_CODE = process.env.NEXT_PUBLIC_HOTMART_OFFER_EXTRA_SEAT;
+
 const APPROVED_EVENTS = new Set(["PURCHASE_APPROVED", "PURCHASE_COMPLETE"]);
 const PENDING_EVENTS = new Set(["PURCHASE_DELAYED", "PURCHASE_BILLET_PRINTED", "PURCHASE_PIX_GENERATED"]);
 const REVOKE_EVENT_STATUS: Record<string, string> = {
@@ -65,6 +72,33 @@ export async function POST(request: NextRequest) {
     if (existing) {
       return NextResponse.json({ ok: true, duplicate: true });
     }
+  }
+
+  const isExtraSeatPurchase = Boolean(EXTRA_SEAT_OFFER_CODE && offerCode === EXTRA_SEAT_OFFER_CODE);
+  if (isExtraSeatPurchase) {
+    const subscriberCode = body.data?.subscription?.subscriber?.code as string | undefined;
+    if (subscriberCode) {
+      const { data: ownerProfile } = await supabase.from("profiles").select("id").ilike("email", buyerEmail).maybeSingle();
+      if (ownerProfile) {
+        if (APPROVED_EVENTS.has(event) || PENDING_EVENTS.has(event)) {
+          await supabase
+            .from("family_extra_seats")
+            .upsert(
+              { owner_id: ownerProfile.id, subscriber_code: subscriberCode, status: "active", updated_at: new Date().toISOString() },
+              { onConflict: "subscriber_code" }
+            );
+        } else if (event in REVOKE_EVENT_STATUS) {
+          await supabase
+            .from("family_extra_seats")
+            .update({ status: "canceled", updated_at: new Date().toISOString() })
+            .eq("subscriber_code", subscriberCode);
+        }
+      }
+    }
+    if (eventId) {
+      await supabase.from("hotmart_events").insert({ event_id: eventId, event_type: event, payload: body });
+    }
+    return NextResponse.json({ ok: true });
   }
 
   const isLifetimePurchase = Boolean(LIFETIME_OFFER_CODE && offerCode === LIFETIME_OFFER_CODE);
