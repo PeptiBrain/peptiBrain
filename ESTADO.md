@@ -15,6 +15,11 @@
 1. Terminar de conectar Resend: agregar `RESEND_API_KEY` en Vercel (ya la tiene en `.env.local`).
 2. Probar de punta a punta el plan Family: invitar una segunda cuenta propia, aceptar desde ahí, confirmar que pasa a Family sola.
 3. Confirmar si ya corrió la **migración 0025** (`vial_shares`, reparto de un vial entre varios familiares) — la última vez que se probó, el botón "Guardar" seguía fallando porque esa tabla no existía en producción.
+4. Correr **migración 0026** (`family_extra_seats`) — nueva, para el asiento extra de Family.
+5. Crear en Hotmart una oferta RECURRENTE de 5€/mes bajo el mismo producto (Q106628596T) para el asiento extra, copiar su código de oferta y ponerlo en `.env.local` + Vercel como `NEXT_PUBLIC_HOTMART_OFFER_EXTRA_SEAT`. Sin esa env var, el botón "Añadir un asiento extra" simplemente no aparece (no rompe nada).
+
+## ✅ Asiento extra de Family — 5€/mes (2026-07-10, tarde) — desplegado, falta la oferta en Hotmart
+Precio confirmado por el usuario. Cuando un dueño de Family llena sus 3 cupos, ve un botón "Añadir un asiento extra (5€/mes)" en Familia que lleva a un checkout de Hotmart aparte (recurrente). El webhook reconoce esa oferta por su código y SOLO suma/quita una fila en `family_extra_seats` (nunca toca `profiles.plan`) — usa el `subscriber_code` de Hotmart como llave para no duplicar el asiento en cada cobro mensual. El tope real de invitados en `/api/family/membership` ahora es `2 + asientos activos comprados`. Migración 0026.
 
 ## ✅ Ajuste chico (2026-07-10, tarde) — botón "Descargar mis datos (JSON)" reubicado en Familia
 Antes vivía solo, abajo del todo de la página. Ahora es un botón redondo (ícono de descarga) junto a "Importar CSV", arriba, a pedido del usuario. Verificado: tsc ✓ · build ✓ · preview 375px ✓ (cabe sin desbordar ni tapar el botón "+" de invitar).
