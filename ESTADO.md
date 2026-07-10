@@ -14,6 +14,11 @@
 ## ⚠️ Pendiente del usuario ahora mismo
 1. Terminar de conectar Resend: agregar `RESEND_API_KEY` en Vercel (ya la tiene en `.env.local`).
 2. Probar de punta a punta el plan Family: invitar una segunda cuenta propia, aceptar desde ahí, confirmar que pasa a Family sola.
+3. Confirmar si ya corrió la **migración 0025** (`vial_shares`, reparto de un vial entre varios familiares) — la última vez que se probó, el botón "Guardar" seguía fallando porque esa tabla no existía en producción.
+
+## ✅ Ajuste chico (2026-07-10, tarde) — botón "Descargar mis datos (JSON)" reubicado en Familia
+Antes vivía solo, abajo del todo de la página. Ahora es un botón redondo (ícono de descarga) junto a "Importar CSV", arriba, a pedido del usuario. Verificado: tsc ✓ · build ✓ · preview 375px ✓ (cabe sin desbordar ni tapar el botón "+" de invitar).
+Pendiente de decisión del usuario (no construido aún): precio de asiento extra de Family más allá de las 3 cuentas — se le dio la recomendación de €5/mes, falta que decida y avise si se construye el cobro.
 
 ## ✅ Sesión 7 (2026-07-09) — desplegado a producción
 - **BUG CRÍTICO corregido (migración 0012)**: recursión infinita en RLS (`profiles` ↔ `family_members` en ciclo → error 42P17) rompía TODAS las lecturas (péptidos/viales/dosis/salud/comidas) para cualquier usuario logueado. Resuelto con funciones SECURITY DEFINER `private.current_user_email()` y `private.has_shared_access()`. Corrido en prod.
