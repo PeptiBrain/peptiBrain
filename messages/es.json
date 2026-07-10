@@ -803,6 +803,8 @@
     "sharedWeight": "Peso",
     "sharedVials": "Viales",
     "vialsCount": "{count, plural, one {# vial} other {# viales}}",
+    "sharedMeals": "Comidas",
+    "mealsCount": "{count, plural, one {# comida registrada} other {# comidas registradas}}",
     "noSharedData": "Sin datos todavía.",
     "done": "Aplicada",
     "pending": "Pendiente",

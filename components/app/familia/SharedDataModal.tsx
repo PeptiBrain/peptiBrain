@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { Users, Package, Beaker, Syringe, Scale } from "lucide-react";
+import { Users, Package, Beaker, Syringe, Scale, Apple, Wallet } from "lucide-react";
 import { ModalShell } from "@/components/app/shell/ModalShell";
 import { loadSharedOwnerData, type SharedOwnerData } from "@/lib/app-data";
+import { CURRENCY, type Locale } from "@/i18n/routing";
 
 export function SharedDataModal({
   open,
@@ -16,7 +17,8 @@ export function SharedDataModal({
   ownerId: string | null;
 }) {
   const t = useTranslations("Familia");
-  const locale = useLocale();
+  const locale = useLocale() as Locale;
+  const symbol = CURRENCY[locale].symbol;
   const [data, setData] = useState<SharedOwnerData | null>(null);
 
   useEffect(() => {
@@ -94,6 +96,34 @@ export function SharedDataModal({
                 <Beaker className="size-4 text-primary" aria-hidden /> {t("sharedVials")}
               </p>
               <p className="text-sm text-muted-foreground">{t("vialsCount", { count: data.vials.length })}</p>
+              {data.vials.some((v) => v.cost) && (
+                <ul className="mt-1.5 space-y-1">
+                  {data.vials
+                    .filter((v) => v.cost)
+                    .map((v) => {
+                      const peptide = data.peptides.find((p) => p.id === v.peptideId);
+                      return (
+                        <li key={v.id} className="flex items-center justify-between gap-2 text-xs">
+                          <span className="flex items-center gap-1 text-foreground">
+                            <Wallet className="size-3 text-primary" aria-hidden /> {peptide?.name || "—"}
+                          </span>
+                          <span className="text-muted-foreground">{symbol}{v.cost}</span>
+                        </li>
+                      );
+                    })}
+                </ul>
+              )}
+            </div>
+          )}
+
+          {data.meals.length > 0 && (
+            <div>
+              <p className="mb-1.5 flex items-center gap-1.5 text-sm font-semibold text-foreground">
+                <Apple className="size-4 text-primary" aria-hidden /> {t("sharedMeals")}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                {t("mealsCount", { count: data.meals.length })}
+              </p>
             </div>
           )}
         </div>

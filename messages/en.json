@@ -803,6 +803,8 @@
     "sharedWeight": "Weight",
     "sharedVials": "Vials",
     "vialsCount": "{count, plural, one {# vial} other {# vials}}",
+    "sharedMeals": "Meals",
+    "mealsCount": "{count, plural, one {# meal logged} other {# meals logged}}",
     "noSharedData": "No data yet.",
     "done": "Taken",
     "pending": "Pending",
