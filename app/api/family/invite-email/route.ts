@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { emailShell, emailButton, escapeHtml } from "@/lib/email-template";
 
 // Avisa por correo a la persona invitada. Si RESEND_API_KEY no está configurado
 // todavía, no rompe nada: la invitación ya quedó guardada, solo no manda el
@@ -26,6 +27,20 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: true, sent: false, reason: "resend_not_configured" });
   }
 
+  const html = emailShell(`
+    <p style="margin:0 0 16px 0;">Hola${toName ? " " + escapeHtml(toName) : ""},</p>
+    <p style="margin:0 0 8px 0;">
+      <strong>${escapeHtml(ownerName)}</strong> te invitó a ver su progreso en PeptiBrain
+      (péptidos, dosis, y lo que decida compartir contigo).
+    </p>
+    ${emailButton("https://peptibrain.com", "Ver invitación")}
+    <p style="margin:16px 0 0 0;color:#5B6478;font-size:13px;">
+      Entra con este correo (${escapeHtml(toEmail)}) — si no tienes cuenta, créala con este
+      mismo correo y verás la invitación en tu pestaña Familia.
+    </p>
+  `);
+  const text = `Hola${toName ? " " + toName : ""},\n\n${ownerName} te invitó a ver su progreso en PeptiBrain (péptidos, dosis, y lo que decida compartir contigo).\n\nEntra a https://peptibrain.com con este correo (${toEmail}) — si no tienes cuenta, créala con este mismo correo y verás la invitación en tu pestaña Familia.\n\nSi no esperabas este correo, puedes ignorarlo.`;
+
   try {
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
@@ -34,7 +49,8 @@ export async function POST(req: Request) {
         from: "PeptiBrain <hello@peptibrain.com>",
         to: toEmail,
         subject: `${ownerName} te invitó a compartir progreso en PeptiBrain`,
-        text: `Hola${toName ? " " + toName : ""},\n\n${ownerName} te invitó a ver su progreso en PeptiBrain (péptidos, dosis, y lo que decida compartir contigo).\n\nEntra a https://peptibrain.com con este correo (${toEmail}) — si no tienes cuenta, créala con este mismo correo y verás la invitación en tu pestaña Familia.\n\nSi no esperabas este correo, puedes ignorarlo.`,
+        html,
+        text,
       }),
     });
     return NextResponse.json({ ok: true, sent: res.ok });
