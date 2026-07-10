@@ -443,23 +443,36 @@ function VialShareControl({
   const [adding, setAdding] = useState(false);
   const [memberId, setMemberId] = useState("");
   const [pct, setPct] = useState(20);
+  const [error, setError] = useState("");
 
   const cost = vial.cost ? parseFloat(vial.cost) : null;
   const alreadySharedIds = new Set(vial.shares.map((s) => s.memberId));
   const availableMembers = data.familyMembers.filter((m) => !alreadySharedIds.has(m.id));
+  const sharedSoFar = vial.shares.reduce((sum, s) => sum + s.percent, 0);
+  const maxPct = Math.max(1, 99 - sharedSoFar);
 
   async function save() {
     if (!memberId) return;
-    const next = await addVialShare(data, vial.id, memberId, pct);
-    onChange(next);
-    setAdding(false);
-    setMemberId("");
-    setPct(20);
+    setError("");
+    try {
+      const next = await addVialShare(data, vial.id, memberId, Math.min(pct, maxPct));
+      onChange(next);
+      setAdding(false);
+      setMemberId("");
+      setPct(20);
+    } catch {
+      setError(t("shareError"));
+    }
   }
 
   async function remove(memberId: string) {
-    const next = await removeVialShare(data, vial.id, memberId);
-    onChange(next);
+    setError("");
+    try {
+      const next = await removeVialShare(data, vial.id, memberId);
+      onChange(next);
+    } catch {
+      setError(t("shareError"));
+    }
   }
 
   return (
@@ -501,10 +514,21 @@ function VialShareControl({
           </select>
           {memberId && (
             <div className="mt-2">
-              <p className="mb-1 text-xs text-muted-foreground">{t("theirPercentLabel", { pct })}</p>
-              <input type="range" min={1} max={99} value={pct} onChange={(e) => setPct(Number(e.target.value))} className="w-full" />
+              <p className="mb-1 text-xs text-muted-foreground">{t("theirPercentLabel", { pct: Math.min(pct, maxPct) })}</p>
+              <input
+                type="range"
+                min={1}
+                max={maxPct}
+                value={Math.min(pct, maxPct)}
+                onChange={(e) => setPct(Number(e.target.value))}
+                className="w-full"
+              />
+              {sharedSoFar > 0 && (
+                <p className="mt-1 text-[11px] text-muted-foreground">{t("remainingPct", { pct: maxPct })}</p>
+              )}
             </div>
           )}
+          {error && <p className="mt-2 text-xs text-destructive">{error}</p>}
           <div className="mt-2 flex gap-2">
             <button type="button" onClick={() => setAdding(false)} className="h-9 flex-1 rounded-lg border border-border text-xs font-medium text-foreground">
               {t("cancel")}
