@@ -13,9 +13,10 @@ import {
   BarChart3,
   AlertTriangle,
   PieChart,
+  Users,
 } from "lucide-react";
-import { loadAppData, type AppData } from "@/lib/app-data";
-import { computeStats, filterDataByRange, doseBuckets } from "@/lib/stats";
+import { loadAppData, loadFamilySharedData, type AppData, type SharedOwnerData } from "@/lib/app-data";
+import { computeStats, filterDataByRange, doseBuckets, totalInvested, doneDoses } from "@/lib/stats";
 import { PeptideIcon } from "@/components/app/peptidos/PeptideIcon";
 import { AnimatedNumber } from "@/components/app/shell/AnimatedNumber";
 import { BarChart, DonutChart } from "@/components/app/stats/Charts";
@@ -43,22 +44,61 @@ export default function EstadisticasPage() {
   const locale = useLocale() as Locale;
   const { symbol } = CURRENCY[locale];
   const [data, setData] = useState<AppData | null>(null);
+  const [familyData, setFamilyData] = useState<SharedOwnerData[] | null>(null);
   const [range, setRange] = useState<DateRangeKey>("all");
   const [custom, setCustom] = useState<CustomRange | null>(null);
+  const [viewMode, setViewMode] = useState<"mine" | "family">("mine");
 
   useEffect(() => {
     loadAppData().then(setData);
+    loadFamilySharedData().then(setFamilyData);
   }, []);
 
+  const hasFamilyData = (familyData?.length || 0) > 0;
+  const combined = viewMode === "family" && hasFamilyData;
+
+  // En modo "yo + familia" se suman péptidos/viales/dosis/comidas de quienes
+  // aceptaron compartir contigo. Peso y efectos secundarios se dejan solo
+  // tuyos: promediar el peso de dos personas distintas no tiene sentido.
+  const combinedSource: AppData | null = useMemo(() => {
+    if (!data) return null;
+    if (!combined || !familyData) return data;
+    return {
+      ...data,
+      peptides: [...data.peptides, ...familyData.flatMap((f) => f.peptides)],
+      vials: [...data.vials, ...familyData.flatMap((f) => f.vials)],
+      doses: [...data.doses, ...familyData.flatMap((f) => f.doses)],
+      meals: [...data.meals, ...familyData.flatMap((f) => f.meals)],
+    };
+  }, [data, familyData, combined]);
+
   const filtered = useMemo(
-    () => (data ? filterDataByRange(data, range, custom) : null),
-    [data, range, custom]
+    () => (combinedSource ? filterDataByRange(combinedSource, range, custom) : null),
+    [combinedSource, range, custom]
   );
   const stats = useMemo(() => (filtered ? computeStats(filtered, new Date()) : null), [filtered]);
   const buckets = useMemo(
-    () => (data ? doseBuckets(data, range, custom, new Date(), locale) : []),
-    [data, range, custom, locale]
+    () => (combinedSource ? doseBuckets(combinedSource, range, custom, new Date(), locale) : []),
+    [combinedSource, range, custom, locale]
   );
+
+  const perPerson = useMemo(() => {
+    if (!data || !familyData) return [];
+    const mine = filterDataByRange(data, range, custom);
+    const rows = [
+      { name: t("youLabel"), invested: totalInvested(mine.vials), doses: doneDoses(mine.doses).length },
+    ];
+    for (const f of familyData) {
+      const asAppData: AppData = { ...data, doses: f.doses, healthLogs: f.healthLogs, vials: f.vials, meals: f.meals };
+      const theirFiltered = filterDataByRange(asAppData, range, custom);
+      rows.push({
+        name: f.ownerName,
+        invested: totalInvested(theirFiltered.vials),
+        doses: doneDoses(theirFiltered.doses).length,
+      });
+    }
+    return rows;
+  }, [data, familyData, range, custom, t]);
 
   if (!data || !filtered || !stats) return null;
 
@@ -74,10 +114,38 @@ export default function EstadisticasPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-5">
-      <div className="mb-4">
-        <h1 className="font-display text-xl font-bold text-foreground">{t("title")}</h1>
-        <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
+      <div className="mb-4 flex items-start justify-between gap-3">
+        <div>
+          <h1 className="font-display text-xl font-bold text-foreground">{t("title")}</h1>
+          <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
+        </div>
+        {hasFamilyData && (
+          <div className="flex shrink-0 gap-1 rounded-full bg-secondary p-1">
+            <button
+              type="button"
+              onClick={() => setViewMode("mine")}
+              className={`flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
+                viewMode === "mine" ? "bg-card text-primary shadow-sm" : "text-muted-foreground"
+              }`}
+            >
+              {t("viewMine")}
+            </button>
+            <button
+              type="button"
+              onClick={() => setViewMode("family")}
+              className={`flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
+                viewMode === "family" ? "bg-card text-primary shadow-sm" : "text-muted-foreground"
+              }`}
+            >
+              <Users className="size-3.5" aria-hidden /> {t("viewFamily")}
+            </button>
+          </div>
+        )}
       </div>
+
+      {combined && (
+        <p className="mb-3 text-xs text-muted-foreground">{t("familyNote")}</p>
+      )}
 
       {!hasData ? (
         <div className="rounded-xl border border-dashed border-border p-8 text-center">
@@ -153,6 +221,19 @@ export default function EstadisticasPage() {
             {stats.totalInvested === 0 && (
               <p className="mt-2 text-[11px] text-muted-foreground">{t("addCostHint")}</p>
             )}
+            {combined && perPerson.length > 0 && (
+              <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 border-t border-primary/20 pt-3 text-xs">
+                {perPerson.map((p) => (
+                  <span key={p.name} className="text-muted-foreground">
+                    {p.name}:{" "}
+                    <span className="font-semibold text-foreground">
+                      {symbol}
+                      {p.invested.toFixed(0)}
+                    </span>
+                  </span>
+                ))}
+              </div>
+            )}
           </motion.div>
 
           {/* GRÁFICA DE BARRAS: dosis en el tiempo */}
@@ -197,7 +278,11 @@ export default function EstadisticasPage() {
               icon={<Syringe className="size-4 text-primary" aria-hidden />}
               label={t("totalDoses")}
               value={<AnimatedNumber value={stats.totalDosesDone} />}
-              sub={t("totalDosesSub")}
+              sub={
+                combined && perPerson.length > 0
+                  ? perPerson.map((p) => `${p.name}: ${p.doses}`).join(" · ")
+                  : t("totalDosesSub")
+              }
             />
           </motion.div>
 

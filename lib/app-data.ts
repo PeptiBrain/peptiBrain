@@ -90,11 +90,13 @@ export type ReceivedInvitation = {
 };
 
 export type SharedOwnerData = {
+  ownerId: string;
   ownerName: string;
   peptides: Peptide[];
   vials: Vial[];
   doses: Dose[];
   healthLogs: HealthLog[];
+  meals: Meal[];
 };
 
 export type Provider = {
@@ -617,6 +619,13 @@ export async function loadReceivedInvitations(): Promise<ReceivedInvitation[]> {
   }));
 }
 
+// Trae los datos que cada familiar que te invitó (y aceptaste) decidió compartir contigo.
+export async function loadFamilySharedData(): Promise<SharedOwnerData[]> {
+  const invitations = await loadReceivedInvitations();
+  const accepted = invitations.filter((i) => i.inviteStatus === "accepted");
+  return Promise.all(accepted.map((i) => loadSharedOwnerData(i.ownerId)));
+}
+
 export async function updateFamilySharing(
   data: AppData,
   memberId: string,
@@ -678,7 +687,7 @@ export async function loadSharedOwnerData(ownerId: string): Promise<SharedOwnerD
       ? shareRow.shared_peptide_ids
       : null;
 
-  const [{ data: ownerProfile }, { data: peptides }, { data: vials }, { data: doses }, { data: healthLogs }] =
+  const [{ data: ownerProfile }, { data: peptides }, { data: vials }, { data: doses }, { data: healthLogs }, { data: meals }] =
     await Promise.all([
       supabase.from("profiles").select("name").eq("id", ownerId).single(),
       sharePeptides
@@ -708,11 +717,14 @@ export async function loadSharedOwnerData(ownerId: string): Promise<SharedOwnerD
             .select("*")
             .eq("user_id", ownerId)
             .order("log_date", { ascending: false })
-            .limit(10)
+        : Promise.resolve({ data: [] as never[] }),
+      shareHealth
+        ? supabase.from("meals").select("*").eq("user_id", ownerId).order("log_date", { ascending: false })
         : Promise.resolve({ data: [] as never[] }),
     ]);
 
   return {
+    ownerId,
     ownerName: ownerProfile?.name || "—",
     peptides: (peptides || []).map((p) => ({
       id: p.id,
@@ -728,9 +740,10 @@ export async function loadSharedOwnerData(ownerId: string): Promise<SharedOwnerD
       unit: v.unit,
       bacWater: v.bac_water != null ? String(v.bac_water) : "",
       syringeType: v.syringe_type || undefined,
+      cost: v.cost != null ? String(v.cost) : undefined,
       createdAt: v.created_at,
     })),
-    doses: (doses || []).slice(0, 10).map((d) => ({
+    doses: (doses || []).map((d) => ({
       id: d.id,
       peptideId: d.peptide_id,
       amount: String(d.amount),
@@ -749,6 +762,13 @@ export async function loadSharedOwnerData(ownerId: string): Promise<SharedOwnerD
       exerciseMin: h.exercise_min != null ? String(h.exercise_min) : undefined,
       sideEffect: h.side_effect || undefined,
       notes: h.notes || undefined,
+    })),
+    meals: (meals || []).map((m) => ({
+      id: m.id,
+      date: m.log_date,
+      description: m.description,
+      calories: m.calories != null ? String(m.calories) : undefined,
+      createdAt: m.created_at,
     })),
   };
 }
