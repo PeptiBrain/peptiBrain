@@ -10,17 +10,27 @@ function toMg(amount: string, unit: string): number {
   return 0; // ml, UI: no cuentan como peso acumulado
 }
 
+// Si el vial está repartido con un familiar, solo cuenta TU parte como "invertido"
+// (el resto es de esa persona, aunque tú hayas pagado el vial completo).
+function myShareOfCost(v: Vial): number {
+  if (!v.cost) return 0;
+  const cost = parseFloat(v.cost) || 0;
+  if (v.sharedWithMemberId && v.splitPercent != null) {
+    return (cost * v.splitPercent) / 100;
+  }
+  return cost;
+}
+
 export function totalInvested(vials: Vial[]): number {
-  return vials.reduce((sum, v) => sum + (v.cost ? parseFloat(v.cost) || 0 : 0), 0);
+  return vials.reduce((sum, v) => sum + myShareOfCost(v), 0);
 }
 
 export function spendThisMonth(vials: Vial[], now: Date): number {
   const y = now.getFullYear();
   const m = now.getMonth();
   return vials.reduce((sum, v) => {
-    if (!v.cost) return sum;
     const d = new Date(v.createdAt);
-    if (d.getFullYear() === y && d.getMonth() === m) return sum + (parseFloat(v.cost) || 0);
+    if (d.getFullYear() === y && d.getMonth() === m) return sum + myShareOfCost(v);
     return sum;
   }, 0);
 }

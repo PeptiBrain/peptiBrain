@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useTranslations } from "next-intl";
-import { Users, Plus, Trash2, Download, Check, X, Eye, Lock, Camera, ChevronDown, Upload } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
+import { Users, Plus, Trash2, Download, Check, X, Eye, Lock, Camera, ChevronDown, Upload, Beaker } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import {
   addFamilyMember,
@@ -15,13 +15,16 @@ import {
   SeatLimitError,
   updateFamilySharedPeptides,
   updateFamilySharing,
+  updateVialSplit,
   uploadFamilyPhoto,
   type AppData,
+  type FamilyMember,
   type FamilyRelationship,
   type ReceivedInvitation,
 } from "@/lib/app-data";
 import { csvToFamilyRows } from "@/lib/csv";
 import { loadOnboarding } from "@/lib/onboarding";
+import { CURRENCY, type Locale } from "@/i18n/routing";
 import { SharedDataModal } from "@/components/app/familia/SharedDataModal";
 
 const COUNTRIES = [
@@ -554,6 +557,8 @@ export default function FamiliaPage() {
                   )}
                 </div>
               )}
+
+              <MemberVialShare member={member} data={data} onChange={setData} t={t} />
             </div>
           ))}
         </div>
@@ -572,6 +577,114 @@ export default function FamiliaPage() {
         onClose={() => setViewingOwnerId(null)}
         ownerId={viewingOwnerId}
       />
+    </div>
+  );
+}
+
+function MemberVialShare({
+  member,
+  data,
+  onChange,
+  t,
+}: {
+  member: FamilyMember;
+  data: AppData;
+  onChange: (next: AppData) => void;
+  t: (key: string, values?: Record<string, string | number>) => string;
+}) {
+  const locale = useLocale() as Locale;
+  const symbol = CURRENCY[locale].symbol;
+  const [adding, setAdding] = useState(false);
+  const [vialId, setVialId] = useState("");
+  const [pct, setPct] = useState(50);
+
+  const sharedVials = data.vials.filter((v) => v.sharedWithMemberId === member.id);
+  const availableVials = data.vials.filter((v) => !v.sharedWithMemberId);
+
+  async function save() {
+    if (!vialId) return;
+    const next = await updateVialSplit(data, vialId, { sharedWithMemberId: member.id, splitPercent: pct });
+    onChange(next);
+    setAdding(false);
+    setVialId("");
+    setPct(50);
+  }
+
+  async function unshare(vId: string) {
+    const next = await updateVialSplit(data, vId, { sharedWithMemberId: null, splitPercent: null });
+    onChange(next);
+  }
+
+  return (
+    <div className="mt-3 border-t border-border pt-3">
+      <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+        {t("sharedVialsTitle")}
+      </p>
+      {sharedVials.length > 0 && (
+        <ul className="mb-2 space-y-1.5">
+          {sharedVials.map((v) => {
+            const peptide = data.peptides.find((p) => p.id === v.peptideId);
+            const mine = v.splitPercent ?? 50;
+            return (
+              <li key={v.id} className="flex items-center justify-between gap-2 rounded-lg bg-secondary/60 px-2.5 py-1.5 text-xs">
+                <span className="flex items-center gap-1.5 text-foreground">
+                  <Beaker className="size-3.5 text-primary" aria-hidden /> {peptide?.name || "—"}
+                  <span className="text-muted-foreground">
+                    ({mine}% / {100 - mine}%{v.cost ? ` · ${symbol}${((parseFloat(v.cost) * (100 - mine)) / 100).toFixed(0)}` : ""})
+                  </span>
+                </span>
+                <button type="button" onClick={() => unshare(v.id)} className="text-muted-foreground hover:text-destructive">
+                  <X className="size-3.5" aria-hidden />
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+
+      {adding ? (
+        <div className="rounded-lg border border-dashed border-border p-2.5">
+          <select
+            value={vialId}
+            onChange={(e) => setVialId(e.target.value)}
+            className="h-9 w-full rounded-lg border border-input bg-background px-2 text-xs text-foreground"
+          >
+            <option value="">{t("chooseVial")}</option>
+            {availableVials.map((v) => {
+              const peptide = data.peptides.find((p) => p.id === v.peptideId);
+              return (
+                <option key={v.id} value={v.id}>
+                  {peptide?.name || "—"} ({v.amount} {v.unit})
+                </option>
+              );
+            })}
+          </select>
+          {vialId && (
+            <div className="mt-2">
+              <p className="mb-1 text-xs text-muted-foreground">{t("splitLabel", { mine: pct, theirs: 100 - pct })}</p>
+              <input type="range" min={1} max={99} value={pct} onChange={(e) => setPct(Number(e.target.value))} className="w-full" />
+            </div>
+          )}
+          <div className="mt-2 flex gap-2">
+            <button type="button" onClick={() => setAdding(false)} className="h-8 flex-1 rounded-lg border border-border text-xs font-medium text-foreground">
+              {t("cancelRemove")}
+            </button>
+            <button type="button" disabled={!vialId} onClick={save} className="h-8 flex-1 rounded-lg bg-primary text-xs font-semibold text-primary-foreground disabled:opacity-50">
+              {t("saveShare")}
+            </button>
+          </div>
+        </div>
+      ) : availableVials.length > 0 ? (
+        <button
+          type="button"
+          onClick={() => setAdding(true)}
+          className="flex h-9 w-full items-center justify-center gap-1.5 rounded-lg bg-primary text-xs font-semibold text-primary-foreground"
+        >
+          <Beaker className="size-3.5" aria-hidden /> {t("shareVialFromHere")}
+        </button>
+      ) : (
+        <p className="text-xs text-muted-foreground">{t("noVialsToShare")}</p>
+      )}
     </div>
   );
 }

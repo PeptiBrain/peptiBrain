@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { Plus, Package, Syringe, Beaker, Calculator, Check, Lock, Droplet, Trash2, CalendarClock, Zap, Pill, Wind, ArrowRightLeft, Building2 } from "lucide-react";
+import { Plus, Package, Syringe, Beaker, Calculator, Check, Lock, Droplet, Trash2, CalendarClock, Zap, Pill, Wind, ArrowRightLeft, Building2, Users } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import {
   addDose,
@@ -533,9 +533,9 @@ function VialShareControl({
     <button
       type="button"
       onClick={() => setEditing(true)}
-      className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-lg border border-dashed border-border py-2 text-xs font-medium text-muted-foreground hover:border-primary hover:text-primary"
+      className="mt-2 flex h-9 w-full items-center justify-center gap-1.5 rounded-lg bg-primary text-xs font-semibold text-primary-foreground transition-transform active:scale-97"
     >
-      {t("shareVialCta")}
+      <Users className="size-3.5" aria-hidden /> {t("shareVialCta")}
     </button>
   );
 }
