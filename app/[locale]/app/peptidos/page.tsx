@@ -13,9 +13,12 @@ import {
   markDoseDone,
   removeProvider,
   removeVial,
+  updateVialSplit,
   PlanLimitError,
   type AppData,
+  type Vial,
 } from "@/lib/app-data";
+import { CURRENCY, type Locale } from "@/i18n/routing";
 import { PeptideCard } from "@/components/app/peptidos/PeptideCard";
 import { PeptideIcon } from "@/components/app/peptidos/PeptideIcon";
 import { ProtocolModal } from "@/components/app/peptidos/ProtocolModal";
@@ -365,17 +368,9 @@ function ViatesTab({
                   );
                 })()}
 
-                {v.sharedWithMemberId &&
-                  (() => {
-                    const member = data.familyMembers.find((m) => m.id === v.sharedWithMemberId);
-                    if (!member) return null;
-                    const mine = v.splitPercent ?? 50;
-                    return (
-                      <p className="mt-2 text-[11px] text-muted-foreground">
-                        {t("sharedVialWith", { name: member.name, mine, theirs: 100 - mine })}
-                      </p>
-                    );
-                  })()}
+                {data.familyMembers.length > 0 && (
+                  <VialShareControl vial={v} data={data} onChange={onChange} t={t} />
+                )}
 
                 {confirmId === v.id && (
                   <div className="mt-3 flex items-center justify-between gap-2 rounded-lg bg-secondary/60 px-3 py-2">
@@ -428,6 +423,120 @@ function ViatesTab({
         )}
       </CollapsibleSection>
     </div>
+  );
+}
+
+function VialShareControl({
+  vial,
+  data,
+  onChange,
+  t,
+}: {
+  vial: Vial;
+  data: AppData;
+  onChange: (next: AppData) => void;
+  t: (key: string, values?: Record<string, string | number>) => string;
+}) {
+  const locale = useLocale();
+  const symbol = CURRENCY[locale as Locale].symbol;
+  const [editing, setEditing] = useState(false);
+  const [memberId, setMemberId] = useState(vial.sharedWithMemberId || "");
+  const [pct, setPct] = useState(vial.splitPercent ?? 50);
+
+  const member = vial.sharedWithMemberId
+    ? data.familyMembers.find((m) => m.id === vial.sharedWithMemberId)
+    : undefined;
+
+  async function save() {
+    const next = await updateVialSplit(data, vial.id, {
+      sharedWithMemberId: memberId || null,
+      splitPercent: memberId ? pct : null,
+    });
+    onChange(next);
+    setEditing(false);
+  }
+
+  if (editing) {
+    return (
+      <div className="mt-2 rounded-lg border border-dashed border-border p-3">
+        <select
+          value={memberId}
+          onChange={(e) => setMemberId(e.target.value)}
+          className="h-10 w-full rounded-lg border border-input bg-background px-2 text-sm text-foreground"
+        >
+          <option value="">{t("shareVialNone")}</option>
+          {data.familyMembers.map((m) => (
+            <option key={m.id} value={m.id}>
+              {m.name}
+            </option>
+          ))}
+        </select>
+        {memberId && (
+          <div className="mt-2">
+            <p className="mb-1 text-xs text-muted-foreground">
+              {t("splitLabel", { mine: pct, theirs: 100 - pct })}
+            </p>
+            <input
+              type="range"
+              min={1}
+              max={99}
+              value={pct}
+              onChange={(e) => setPct(Number(e.target.value))}
+              className="w-full"
+            />
+          </div>
+        )}
+        <div className="mt-2 flex gap-2">
+          <button
+            type="button"
+            onClick={() => setEditing(false)}
+            className="h-9 flex-1 rounded-lg border border-border text-xs font-medium text-foreground"
+          >
+            {t("cancel")}
+          </button>
+          <button
+            type="button"
+            onClick={save}
+            className="h-9 flex-1 rounded-lg bg-primary text-xs font-semibold text-primary-foreground"
+          >
+            {t("saveShare")}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (member) {
+    const mine = vial.splitPercent ?? 50;
+    const cost = vial.cost ? parseFloat(vial.cost) : null;
+    return (
+      <button
+        type="button"
+        onClick={() => setEditing(true)}
+        className="mt-2 w-full rounded-lg bg-secondary/60 px-2.5 py-2 text-left text-[11px] text-muted-foreground hover:bg-secondary"
+      >
+        <p>{t("sharedVialWith", { name: member.name, mine, theirs: 100 - mine })}</p>
+        {cost != null && (
+          <p className="mt-0.5 font-medium text-foreground">
+            {t("sharedVialCost", {
+              mineCost: `${symbol}${((cost * mine) / 100).toFixed(0)}`,
+              theirsCost: `${symbol}${(cost * (100 - mine) / 100).toFixed(0)}`,
+              name: member.name,
+            })}
+          </p>
+        )}
+      </button>
+    );
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={() => setEditing(true)}
+      className="mt-2 flex w-full items-center justify-center gap-1.5 rounded-lg border border-dashed border-border py-2 text-xs font-medium text-muted-foreground hover:border-primary hover:text-primary"
+    >
+      {t("shareVialCta")}
+    </button>
   );
 }
 
