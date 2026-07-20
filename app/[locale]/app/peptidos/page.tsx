@@ -5,7 +5,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { Plus, Package, Syringe, Beaker, Calculator, Check, Lock, Droplet, Trash2, CalendarClock, Zap, Pill, Wind, ArrowRightLeft, Building2, Users, X } from "lucide-react";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
-import { getVialBottleImage } from "@/lib/vial-visual";
+import { getPeptideBottleImage } from "@/lib/vial-visual";
 import {
   addDose,
   addPeptide,
@@ -309,7 +309,7 @@ function ViatesTab({
                 <div className="flex items-start gap-3">
                   <div className="flex size-12 shrink-0 items-center justify-center">
                     <Image
-                      src={getVialBottleImage(v.id)}
+                      src={getPeptideBottleImage(peptide?.name || "")}
                       alt=""
                       width={48}
                       height={48}
