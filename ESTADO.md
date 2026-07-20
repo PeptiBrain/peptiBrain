@@ -12,11 +12,11 @@
 - **Plan Business (multi-perfil sin login, tipo Netflix) — APROBADO por el usuario, anotado para el futuro, NO construir sin que lo pida explícitamente**: detalle completo en la memoria persistente del agente (`peptibrain.md`), no solo aquí — es un plan de pago nuevo y separado del Family, pensado para negocios que gestionan muchos clientes bajo un solo login.
 
 ## ⚠️ Pendiente del usuario ahora mismo
-1. Terminar de conectar Resend: agregar `RESEND_API_KEY` en Vercel (ya la tiene en `.env.local`).
+1. ✅ `RESEND_API_KEY` confirmada puesta en Vercel (2026-07-21) — los correos de invitación a familia ya deberían llegar en producción.
 2. Probar de punta a punta el plan Family: invitar una segunda cuenta propia, aceptar desde ahí, confirmar que pasa a Family sola.
-3. Confirmar si ya corrió la **migración 0025** (`vial_shares`, reparto de un vial entre varios familiares) — la última vez que se probó, el botón "Guardar" seguía fallando porque esa tabla no existía en producción.
+3. ✅ Migración 0025 (`vial_shares`) confirmada contra la DB real (2026-07-21) — existe y responde bien.
 4. ✅ Migración 0026 (`family_extra_seats`) corrida y confirmada contra la DB real (2026-07-11).
-5. ✅ Producto "PeptiBrain — Asiento extra Family" creado en Hotmart (ID 8158646, 5€/mes, ventas activas, webhook propio registrado con el mismo hottok de la cuenta). Env vars ya puestas en `.env.local`: `NEXT_PUBLIC_HOTMART_EXTRA_SEAT_URL=https://pay.hotmart.com/I106808939O` y `NEXT_PUBLIC_HOTMART_EXTRA_SEAT_PRODUCT_ID=8158646`. **Falta**: pegar esas mismas 2 variables en Vercel (Settings → Environment Variables) y volver a desplegar — sin eso, el botón "Añadir un asiento extra" no aparece en producción.
+5. ✅ Producto "PeptiBrain — Asiento extra Family" creado en Hotmart (ID 8158646, 5€/mes), env vars puestas en `.env.local` Y en Vercel, redeploy hecho (2026-07-21) — el asiento extra ya está 100% activo en producción.
 6. **Pendiente de verificar con un pago real**: nadie ha comprado un asiento extra todavía. La primera vez que alguien lo compre, conviene confirmar en Supabase que apareció una fila en `family_extra_seats` — si no aparece, avisar para revisar el webhook.
 
 ## ✅ Asiento extra de Family — 5€/mes (2026-07-11) — construido y desplegado, falta poner las 2 env vars en Vercel
