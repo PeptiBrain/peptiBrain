@@ -3,7 +3,9 @@
 import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { Plus, Package, Syringe, Beaker, Calculator, Check, Lock, Droplet, Trash2, CalendarClock, Zap, Pill, Wind, ArrowRightLeft, Building2, Users, X } from "lucide-react";
+import Image from "next/image";
 import { Link } from "@/i18n/navigation";
+import { getVialBottleImage } from "@/lib/vial-visual";
 import {
   addDose,
   addPeptide,
@@ -21,7 +23,6 @@ import {
 } from "@/lib/app-data";
 import { CURRENCY, type Locale } from "@/i18n/routing";
 import { PeptideCard } from "@/components/app/peptidos/PeptideCard";
-import { PeptideIcon } from "@/components/app/peptidos/PeptideIcon";
 import { ProtocolModal } from "@/components/app/peptidos/ProtocolModal";
 import { ReconstitutionCalculator } from "@/components/app/peptidos/ReconstitutionCalculator";
 import { UnitConverter } from "@/components/app/peptidos/UnitConverter";
@@ -306,12 +307,14 @@ function ViatesTab({
             return (
               <div key={v.id} className="rounded-xl border border-border bg-card p-4">
                 <div className="flex items-start gap-3">
-                  <div
-                    className={`flex size-12 shrink-0 items-center justify-center rounded-xl ${
-                      reconstituted ? "bg-primary/15" : "bg-[var(--notice-bg)]"
-                    }`}
-                  >
-                    <PeptideIcon peptideName={peptide?.name || ""} size="size-6" />
+                  <div className="flex size-12 shrink-0 items-center justify-center">
+                    <Image
+                      src={getVialBottleImage(v.id)}
+                      alt=""
+                      width={48}
+                      height={48}
+                      className="size-12 object-contain"
+                    />
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-semibold text-foreground">{peptide?.name || "—"}</p>
