@@ -1,4 +1,5 @@
-import { getPeptideIcon } from "@/lib/peptide-visual";
+import Image from "next/image";
+import { getPeptideBottleImage } from "@/lib/vial-visual";
 
 export function PeptideIcon({
   peptideName,
@@ -7,10 +8,15 @@ export function PeptideIcon({
   peptideName: string;
   size?: string;
 }) {
-  const Icon = getPeptideIcon(peptideName);
   return (
-    <div className={`flex ${size} shrink-0 items-center justify-center rounded-full bg-primary/15`}>
-      <Icon className="size-4 text-primary" aria-hidden />
+    <div className={`flex ${size} shrink-0 items-center justify-center`}>
+      <Image
+        src={getPeptideBottleImage(peptideName || "peptibrain")}
+        alt=""
+        width={40}
+        height={40}
+        className={`${size} object-contain`}
+      />
     </div>
   );
 }
