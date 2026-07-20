@@ -17,10 +17,11 @@ const LIFETIME_OFFER_CODE = process.env.NEXT_PUBLIC_HOTMART_OFFER_LIFETIME;
 
 // Asiento extra de Family (5€/mes, add-on recurrente aparte del plan): no cambia
 // profiles.plan, solo suma/quita una fila en family_extra_seats. Se identifica por
-// el subscriber_code de Hotmart (estable en cada cobro del mismo suscriptor, a
-// diferencia del código de transacción que cambia en cada renovación) para no
-// duplicar el asiento en cada cobro mensual.
-const EXTRA_SEAT_OFFER_CODE = process.env.NEXT_PUBLIC_HOTMART_OFFER_EXTRA_SEAT;
+// el ID numérico del producto en Hotmart (el que se ve en el panel, ej. "ID: 8158646"
+// — es un producto propio y separado, no una oferta más del producto principal, así
+// que basta con el ID del producto, sin necesitar el código de oferta). Usa el
+// subscriber_code como llave para no duplicar el asiento en cada cobro mensual.
+const EXTRA_SEAT_PRODUCT_ID = process.env.NEXT_PUBLIC_HOTMART_EXTRA_SEAT_PRODUCT_ID;
 
 const APPROVED_EVENTS = new Set(["PURCHASE_APPROVED", "PURCHASE_COMPLETE"]);
 const PENDING_EVENTS = new Set(["PURCHASE_DELAYED", "PURCHASE_BILLET_PRINTED", "PURCHASE_PIX_GENERATED"]);
@@ -54,6 +55,7 @@ export async function POST(request: NextRequest) {
   const eventId = body.id as string | undefined;
   const buyerEmailRaw = body.data?.buyer?.email as string | undefined;
   const offerCode = body.data?.purchase?.offer?.code as string | undefined;
+  const productId = body.data?.product?.id != null ? String(body.data.product.id) : undefined;
 
   if (!event || !buyerEmailRaw) {
     return NextResponse.json({ error: "missing event or buyer email" }, { status: 400 });
@@ -74,7 +76,7 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  const isExtraSeatPurchase = Boolean(EXTRA_SEAT_OFFER_CODE && offerCode === EXTRA_SEAT_OFFER_CODE);
+  const isExtraSeatPurchase = Boolean(EXTRA_SEAT_PRODUCT_ID && productId === EXTRA_SEAT_PRODUCT_ID);
   if (isExtraSeatPurchase) {
     const subscriberCode = body.data?.subscription?.subscriber?.code as string | undefined;
     if (subscriberCode) {
