@@ -15,7 +15,7 @@
 1. Terminar de conectar Resend: agregar `RESEND_API_KEY` en Vercel (ya la tiene en `.env.local`).
 2. Probar de punta a punta el plan Family: invitar una segunda cuenta propia, aceptar desde ahí, confirmar que pasa a Family sola.
 3. Confirmar si ya corrió la **migración 0025** (`vial_shares`, reparto de un vial entre varios familiares) — la última vez que se probó, el botón "Guardar" seguía fallando porque esa tabla no existía en producción.
-4. Correr **migración 0026** (`family_extra_seats`) — nueva, para el asiento extra de Family.
+4. ✅ Migración 0026 (`family_extra_seats`) corrida y confirmada contra la DB real (2026-07-11).
 5. Crear en Hotmart el producto NUEVO Y SEPARADO "Asiento extra Family" (5€/mes, oculto del Mercado), y pegar 2 env vars en `.env.local` + Vercel: `NEXT_PUBLIC_HOTMART_EXTRA_SEAT_URL` (el link de checkout completo) y `NEXT_PUBLIC_HOTMART_OFFER_EXTRA_SEAT` (solo el código después de `off=` de ese mismo link, lo usa el webhook). Sin esas env vars, el botón "Añadir un asiento extra" simplemente no aparece (no rompe nada). Instrucciones paso a paso ya entregadas al usuario en el chat.
 
 ## ✅ Asiento extra de Family — 5€/mes (2026-07-10, tarde) — desplegado, falta el producto en Hotmart
