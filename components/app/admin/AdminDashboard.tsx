@@ -2,17 +2,18 @@
 
 import { useState } from "react";
 import { motion } from "motion/react";
-import { AlertTriangle, CheckCircle2, TrendingDown, TrendingUp, Activity, Bug } from "lucide-react";
+import { AlertTriangle, CheckCircle2, TrendingDown, TrendingUp, Activity, Bug, Syringe, HeartPulse, Wallet } from "lucide-react";
 import type { AdminOverview } from "@/lib/admin-data";
 import { UsersTable } from "@/components/app/admin/UsersTable";
 import { AnimatedNumber } from "@/components/app/shell/AnimatedNumber";
 import { ADMIN, AdminBarChart, AdminDonut, RetentionBars } from "@/components/app/admin/AdminCharts";
 
-type Tab = "all" | "finance" | "users" | "retention" | "health" | "acq";
+type Tab = "all" | "finance" | "activity" | "users" | "retention" | "health" | "acq";
 
 const TABS: { key: Tab; label: string }[] = [
   { key: "all", label: "Todo" },
   { key: "finance", label: "Finanzas" },
+  { key: "activity", label: "Actividad" },
   { key: "users", label: "Usuarios" },
   { key: "retention", label: "Retención" },
   { key: "health", label: "Salud" },
@@ -38,6 +39,7 @@ export function AdminDashboard({ data, alerts }: { data: AdminOverview; alerts: 
   const lifetimeLeft = Math.max(0, data.lifetimeTotal - data.lifetimeUsers);
 
   const showFinance = tab === "all" || tab === "finance";
+  const showActivity = tab === "all" || tab === "activity";
   const showUsers = tab === "all" || tab === "users";
   const showRetention = tab === "all" || tab === "retention";
   const showHealth = tab === "all" || tab === "health";
@@ -186,6 +188,123 @@ export function AdminDashboard({ data, alerts }: { data: AdminOverview; alerts: 
           </Section>
         )}
 
+        {/* ACTIVIDAD DE LA APP */}
+        {showActivity && (
+          <Section
+            title="Actividad de la app"
+            note="Qué hacen tus usuarios dentro de la app. Todo dato real, en vivo."
+            delay={0.22}
+          >
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+              <MiniStat label="Activos hoy" value={data.activeToday} icon={<Activity className="size-3.5" aria-hidden />} />
+              <MiniStat label="Activos · 7 días" value={data.activeThisWeek} />
+              <MiniStat label="Activos · 30 días" value={data.activeThisMonth} />
+              <MiniStat label="Cuentas reales" value={data.realAccounts} sub={`+ ${data.testAccounts} de prueba`} />
+            </div>
+
+            <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <BolaCard
+                label="Dosis registradas"
+                value={`${data.totalDoses}`}
+                breakdown={[
+                  { label: "Aplicadas", value: `${data.dosesApplied}`, color: ADMIN.positive },
+                  { label: "Adherencia", value: data.adherencePct == null ? "—" : `${data.adherencePct}%`, color: ADMIN.accent },
+                ]}
+                icon={<Syringe className="size-3.5" aria-hidden />}
+                accent
+              />
+              <BolaCard
+                label="Dinero que rastrean tus usuarios"
+                value={`${s}${data.moneyTrackedByUsers.toLocaleString()}`}
+                sub={`en ${data.totalVials} viales`}
+                breakdown={[{ label: "Péptidos registrados", value: `${data.totalPeptides}`, color: "#A78BFA" }]}
+                icon={<Wallet className="size-3.5" aria-hidden />}
+              />
+            </div>
+
+            {/* Adopción de funciones */}
+            <div className="mt-4 rounded-2xl p-5" style={{ background: ADMIN.surface, border: `1px solid ${ADMIN.border}` }}>
+              <p className="mb-3 text-xs font-semibold uppercase tracking-wide" style={{ color: ADMIN.textMuted }}>
+                Qué funciones usan
+              </p>
+              <ul className="space-y-2.5">
+                {data.featureAdoption.map((f) => (
+                  <li key={f.label} className="flex items-center gap-3">
+                    <span className="w-40 shrink-0 truncate text-sm font-medium" style={{ color: ADMIN.text }}>
+                      {f.label}
+                    </span>
+                    <div className="h-2 flex-1 overflow-hidden rounded-full" style={{ background: ADMIN.border }}>
+                      <div className="h-full rounded-full" style={{ width: `${f.pct ?? 0}%`, background: ADMIN.accent }} />
+                    </div>
+                    <span className="w-24 shrink-0 text-right text-xs" style={{ color: ADMIN.textMuted }}>
+                      {f.value} · {f.pct ?? 0}%
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Vías de administración */}
+            {data.topRoutes.length > 0 && (
+              <div className="mt-4 rounded-2xl p-5" style={{ background: ADMIN.surface, border: `1px solid ${ADMIN.border}` }}>
+                <p className="mb-3 text-xs font-semibold uppercase tracking-wide" style={{ color: ADMIN.textMuted }}>
+                  Cómo se administran los péptidos
+                </p>
+                <ul className="space-y-2.5">
+                  {(() => {
+                    const max = Math.max(...data.topRoutes.map((r) => r.count), 1);
+                    return data.topRoutes.map((r) => {
+                      const pct = Math.round((r.count / max) * 100);
+                      return (
+                        <li key={r.route} className="flex items-center gap-3">
+                          <span className="w-40 shrink-0 truncate text-sm font-medium" style={{ color: ADMIN.text }}>
+                            {r.route}
+                          </span>
+                          <div className="h-2 flex-1 overflow-hidden rounded-full" style={{ background: ADMIN.border }}>
+                            <div className="h-full rounded-full" style={{ width: `${pct}%`, background: ADMIN.accent }} />
+                          </div>
+                          <span className="w-14 shrink-0 text-right text-xs" style={{ color: ADMIN.textMuted }}>
+                            {r.count}
+                          </span>
+                        </li>
+                      );
+                    });
+                  })()}
+                </ul>
+              </div>
+            )}
+
+            {/* Efectos secundarios — señal de seguridad */}
+            <div className="mt-4 rounded-2xl p-5" style={{ background: ADMIN.surface, border: `1px solid ${ADMIN.border}` }}>
+              <p className="mb-1 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide" style={{ color: ADMIN.textMuted }}>
+                <HeartPulse className="size-3.5" aria-hidden /> Efectos secundarios reportados
+              </p>
+              {data.sideEffectsReported === 0 ? (
+                <p className="text-sm" style={{ color: ADMIN.textMuted }}>
+                  Ninguno reportado todavía.
+                </p>
+              ) : (
+                <>
+                  <p className="mb-3 text-sm" style={{ color: ADMIN.text }}>
+                    {data.sideEffectsReported} en total — señal de seguridad de tus usuarios.
+                  </p>
+                  <ul className="flex flex-wrap gap-2">
+                    {data.sideEffectsList.map((e) => (
+                      <li
+                        key={e.effect}
+                        className="rounded-full px-3 py-1 text-xs"
+                        style={{ background: "rgba(251,191,36,0.1)", color: ADMIN.warning }}
+                      >
+                        {e.effect} · {e.count}
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
+            </div>
+          </Section>
+        )}
+
         {/* USUARIOS */}
         {showUsers && (
           <Section title="Usuarios" delay={0.25}>
@@ -193,11 +312,10 @@ export function AdminDashboard({ data, alerts }: { data: AdminOverview; alerts: 
               <BolaCard
                 label="Usuarios · Total"
                 value={data.totalUsers.toLocaleString()}
-                breakdown={data.platforms.map((p) => ({
-                  label: p.platform,
-                  value: `${p.count}`,
-                  color: PLATFORM_COLOR[p.platform] || ADMIN.textMuted,
-                }))}
+                breakdown={[
+                  { label: "Reales", value: `${data.realAccounts}`, color: ADMIN.positive },
+                  { label: "De prueba (tuyas)", value: `${data.testAccounts}`, color: ADMIN.textMuted },
+                ]}
                 accent
               />
               <BolaCard
@@ -481,18 +599,49 @@ function Section({
   );
 }
 
+function MiniStat({
+  label,
+  value,
+  sub,
+  icon,
+}: {
+  label: string;
+  value: number;
+  sub?: string;
+  icon?: React.ReactNode;
+}) {
+  return (
+    <div className="rounded-2xl p-4" style={{ background: ADMIN.surface, border: `1px solid ${ADMIN.border}` }}>
+      <p className="flex items-center gap-1 text-[11px] font-semibold uppercase tracking-wide" style={{ color: ADMIN.textMuted }}>
+        {icon}
+        {label}
+      </p>
+      <p className="mt-1 font-display text-2xl font-bold tabular-nums" style={{ color: ADMIN.text }}>
+        <AnimatedNumber value={value} />
+      </p>
+      {sub && (
+        <p className="text-[11px]" style={{ color: ADMIN.textMuted }}>
+          {sub}
+        </p>
+      )}
+    </div>
+  );
+}
+
 function BolaCard({
   label,
   value,
   sub,
   breakdown,
   accent,
+  icon,
 }: {
   label: string;
   value: string;
   sub?: string;
   breakdown?: { label: string; value: string; color: string }[];
   accent?: boolean;
+  icon?: React.ReactNode;
 }) {
   return (
     <div
@@ -502,7 +651,8 @@ function BolaCard({
         border: `1px solid ${ADMIN.border}`,
       }}
     >
-      <p className="text-xs font-semibold uppercase tracking-wide" style={{ color: ADMIN.textMuted }}>
+      <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide" style={{ color: ADMIN.textMuted }}>
+        {icon}
         {label}
       </p>
       <p className="mt-1 font-display text-4xl font-bold tracking-tight" style={{ color: ADMIN.text }}>

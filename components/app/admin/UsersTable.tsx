@@ -11,16 +11,21 @@ const STATUSES = ["active", "past_due", "canceled", "refunded", "chargeback"] as
 export function UsersTable({ initialUsers }: { initialUsers: AdminUser[] }) {
   const [users, setUsers] = useState(initialUsers);
   const [query, setQuery] = useState("");
+  const [hideTest, setHideTest] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [draftPlan, setDraftPlan] = useState<string>("free");
   const [draftStatus, setDraftStatus] = useState<string>("active");
   const [draftPhone, setDraftPhone] = useState<string>("");
   const [saving, setSaving] = useState(false);
 
+  const testCount = useMemo(() => users.filter((u) => u.isTest).length, [users]);
+
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return users;
-    return users.filter(
+    let list = users;
+    if (hideTest) list = list.filter((u) => !u.isTest);
+    if (!q) return list;
+    return list.filter(
       (u) =>
         u.email.toLowerCase().includes(q) ||
         u.name.toLowerCase().includes(q) ||
@@ -28,7 +33,7 @@ export function UsersTable({ initialUsers }: { initialUsers: AdminUser[] }) {
         u.source.toLowerCase().includes(q) ||
         u.phone.includes(q)
     );
-  }, [users, query]);
+  }, [users, query, hideTest]);
 
   function startEdit(user: AdminUser) {
     setEditingId(user.id);
@@ -76,6 +81,21 @@ export function UsersTable({ initialUsers }: { initialUsers: AdminUser[] }) {
           style={{ background: ADMIN.bg, borderColor: ADMIN.border, color: ADMIN.text }}
         />
       </div>
+      {testCount > 0 && (
+        <button
+          type="button"
+          onClick={() => setHideTest((v) => !v)}
+          className="mb-3 inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold transition-colors active:scale-97"
+          style={
+            hideTest
+              ? { background: ADMIN.accent, color: "#04140F" }
+              : { background: ADMIN.bg, color: ADMIN.textMuted, border: `1px solid ${ADMIN.border}` }
+          }
+        >
+          {hideTest ? "✓ " : ""}
+          Ocultar {testCount} cuenta{testCount === 1 ? "" : "s"} de prueba
+        </button>
+      )}
       <div className="overflow-x-auto rounded-xl border" style={{ borderColor: ADMIN.border }}>
         <table className="w-full min-w-[720px] text-left text-sm">
           <thead className="text-xs" style={{ background: ADMIN.bg, color: ADMIN.textMuted }}>
@@ -97,8 +117,18 @@ export function UsersTable({ initialUsers }: { initialUsers: AdminUser[] }) {
               const editing = editingId === u.id;
               return (
                 <tr key={u.id} style={{ borderColor: ADMIN.border }}>
-                  <td className="max-w-[8rem] truncate px-3 py-2 font-medium" style={{ color: ADMIN.text }}>
-                    {u.name}
+                  <td className="max-w-[9rem] px-3 py-2 font-medium" style={{ color: ADMIN.text }}>
+                    <span className="flex items-center gap-1.5">
+                      <span className="truncate">{u.name}</span>
+                      {u.isTest && (
+                        <span
+                          className="shrink-0 rounded px-1.5 py-0.5 text-[9px] font-semibold uppercase"
+                          style={{ background: ADMIN.border, color: ADMIN.textMuted }}
+                        >
+                          prueba
+                        </span>
+                      )}
+                    </span>
                   </td>
                   <td className="max-w-[11rem] truncate px-3 py-2" style={{ color: ADMIN.textMuted }}>
                     {u.email}

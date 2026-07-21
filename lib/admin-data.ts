@@ -21,6 +21,20 @@ function categoryLabelForPeptide(name: string): string {
   return category ? CATEGORY_LABELS[category] || "Otro" : "Personalizado";
 }
 
+// Detecta cuentas de prueba/QA (las que creamos desarrollando) para poder separarlas
+// de los clientes reales en el panel. Conservador: correos con "test"/"qa"/"prueba"/"demo",
+// alias de Gmail con "+", el typo josepoveda.com, o dominios de ejemplo. Un cliente real
+// con un alias "+" es raro, pero por eso el panel deja un interruptor para incluirlas.
+function isTestAccount(email: string): boolean {
+  const e = (email || "").toLowerCase();
+  return (
+    /\+\d/.test(e) ||
+    /(test|qa|prueba|demo)/.test(e) ||
+    e.includes("example.com") ||
+    e.includes("josepoveda.com@")
+  );
+}
+
 export type AdminUser = {
   id: string;
   name: string;
@@ -34,7 +48,10 @@ export type AdminUser = {
   countryFlag: string;
   platform: string;
   source: string;
+  isTest: boolean;
 };
+
+export type ActivityStat = { label: string; value: number; pct?: number };
 
 export type AdminOverview = {
   totalUsers: number;
@@ -83,6 +100,23 @@ export type AdminOverview = {
   errorsByMessage30d: { message: string; count: number }[];
   errorsToday: number;
   topPeptides: { name: string; category: string; userCount: number }[];
+  // Cuentas de prueba vs reales
+  testAccounts: number;
+  realAccounts: number;
+  // Actividad / engagement (todo dato real)
+  activeToday: number;
+  activeThisWeek: number;
+  activeThisMonth: number;
+  totalDoses: number;
+  dosesApplied: number;
+  adherencePct: number | null;
+  totalPeptides: number;
+  totalVials: number;
+  moneyTrackedByUsers: number;
+  sideEffectsReported: number;
+  sideEffectsList: { effect: string; count: number }[];
+  featureAdoption: ActivityStat[];
+  topRoutes: { route: string; count: number }[];
 };
 
 // Precios mensuales de referencia (deben coincidir con el paywall).
@@ -111,6 +145,10 @@ export async function loadAdminOverview(): Promise<AdminOverview> {
     { data: doseActivity },
     { data: recentErrorRows },
     { data: allPeptides },
+    { data: allVials },
+    { data: allHealthLogs },
+    { data: allMeals },
+    { data: assistantUsers },
   ] = await Promise.all([
     admin
       .from("profiles")
@@ -128,13 +166,17 @@ export async function loadAdminOverview(): Promise<AdminOverview> {
       .select("message_count")
       .eq("usage_date", todayIso())
       .maybeSingle(),
-    admin.from("doses").select("user_id, created_at"),
+    admin.from("doses").select("user_id, created_at, done, injection_site"),
     admin
       .from("error_log")
       .select("id, message, context, created_at")
       .order("created_at", { ascending: false })
       .limit(200),
-    admin.from("peptides").select("user_id, name"),
+    admin.from("peptides").select("user_id, name, route"),
+    admin.from("vials").select("user_id, cost, created_at"),
+    admin.from("health_logs").select("user_id, log_date, side_effect"),
+    admin.from("meals").select("user_id, created_at"),
+    admin.from("assistant_usage").select("user_id"),
   ]);
 
   const profiles = allProfiles || [];
@@ -263,6 +305,79 @@ export async function loadAdminOverview(): Promise<AdminOverview> {
     .sort((a, b) => b.userCount - a.userCount)
     .slice(0, 10);
 
+  // --- Cuentas de prueba vs reales ---
+  const testAccounts = profiles.filter((p) => isTestAccount(p.email)).length;
+  const realAccounts = profiles.length - testAccounts;
+
+  // --- Actividad / engagement (todo dato real) ---
+  const doseRows = doseActivity || [];
+  const vialRows = allVials || [];
+  const healthRows = allHealthLogs || [];
+  const mealRows = allMeals || [];
+
+  // Un usuario está "activo" en un periodo si registró CUALQUIER cosa (dosis, vial,
+  // salud, comida) dentro de él. Salud usa log_date (solo fecha); el resto, created_at.
+  function activeSince(cutoffIso: string): number {
+    const cutoffDay = cutoffIso.slice(0, 10);
+    const active = new Set<string>();
+    for (const d of doseRows) if (d.user_id && d.created_at >= cutoffIso) active.add(d.user_id);
+    for (const v of vialRows) if (v.user_id && v.created_at >= cutoffIso) active.add(v.user_id);
+    for (const m of mealRows) if (m.user_id && m.created_at >= cutoffIso) active.add(m.user_id);
+    for (const h of healthRows) if (h.user_id && h.log_date >= cutoffDay) active.add(h.user_id);
+    return active.size;
+  }
+  const activeToday = activeSince(`${todayIso()}T00:00:00.000Z`);
+  const activeThisWeek = activeSince(since7d);
+  const activeThisMonth = activeSince(since30d);
+
+  const totalDoses = doseRows.length;
+  const dosesApplied = doseRows.filter((d) => d.done).length;
+  const adherencePct = totalDoses > 0 ? Math.round((dosesApplied / totalDoses) * 100) : null;
+  const totalPeptides = (allPeptides || []).length;
+  const totalVials = vialRows.length;
+  const moneyTrackedByUsers = vialRows.reduce(
+    (sum, v) => sum + (v.cost != null ? Number(v.cost) || 0 : 0),
+    0
+  );
+
+  // Efectos secundarios reportados (señal de seguridad, clave en una app de péptidos).
+  const effectMap = new Map<string, number>();
+  let sideEffectsReported = 0;
+  for (const h of healthRows) {
+    const eff = (h.side_effect && String(h.side_effect).trim()) || "";
+    if (!eff) continue;
+    sideEffectsReported++;
+    const key = eff.toLowerCase();
+    effectMap.set(key, (effectMap.get(key) || 0) + 1);
+  }
+  const sideEffectsList = [...effectMap.entries()]
+    .map(([effect, count]) => ({ effect, count }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 8);
+
+  // Adopción por función: cuántos usuarios distintos usaron cada una.
+  const usersWithPeptides = new Set((allPeptides || []).map((p) => p.user_id).filter(Boolean));
+  const usersWithHealth = new Set(healthRows.map((h) => h.user_id).filter(Boolean));
+  const usersWithFamily = new Set(profiles.filter((p) => p.plan === "family").map((p) => p.id));
+  const usersWithAssistant = new Set((assistantUsers || []).map((a) => a.user_id).filter(Boolean));
+  const totalForPct = profiles.length || 1;
+  const featureAdoption: ActivityStat[] = [
+    { label: "Registran péptidos", value: usersWithPeptides.size, pct: Math.round((usersWithPeptides.size / totalForPct) * 100) },
+    { label: "Usan Salud", value: usersWithHealth.size, pct: Math.round((usersWithHealth.size / totalForPct) * 100) },
+    { label: "Comparten en Familia", value: usersWithFamily.size, pct: Math.round((usersWithFamily.size / totalForPct) * 100) },
+    { label: "Usan el Asistente IA", value: usersWithAssistant.size, pct: Math.round((usersWithAssistant.size / totalForPct) * 100) },
+  ];
+
+  // Vías de administración más usadas.
+  const routeMap = new Map<string, number>();
+  for (const p of allPeptides || []) {
+    const r = (p.route && String(p.route).trim()) || "Sin especificar";
+    routeMap.set(r, (routeMap.get(r) || 0) + 1);
+  }
+  const topRoutes = [...routeMap.entries()]
+    .map(([route, count]) => ({ route, count }))
+    .sort((a, b) => b.count - a.count);
+
   // --- Salud técnica: errores recientes ---
   const errorRows = recentErrorRows || [];
   const errorsToday = errorRows.filter((e) => e.created_at >= todayStart).length;
@@ -354,6 +469,7 @@ export async function loadAdminOverview(): Promise<AdminOverview> {
         countryFlag: c.flag,
         platform: (p.platform && String(p.platform)) || "—",
         source: (p.utm_source && String(p.utm_source)) || "directo",
+        isTest: isTestAccount(p.email),
       };
     }),
     involuntaryChurn30d,
@@ -371,5 +487,20 @@ export async function loadAdminOverview(): Promise<AdminOverview> {
     errorsByMessage30d,
     errorsToday,
     topPeptides,
+    testAccounts,
+    realAccounts,
+    activeToday,
+    activeThisWeek,
+    activeThisMonth,
+    totalDoses,
+    dosesApplied,
+    adherencePct,
+    totalPeptides,
+    totalVials,
+    moneyTrackedByUsers,
+    sideEffectsReported,
+    sideEffectsList,
+    featureAdoption,
+    topRoutes,
   };
 }
