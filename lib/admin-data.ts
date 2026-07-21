@@ -1,5 +1,25 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { countryFromPhoneCode } from "@/lib/countries";
+import { PEPTIDE_PROFILES } from "@/lib/peptide-profiles";
+
+const CATEGORY_LABELS: Record<string, string> = {
+  peso: "Pérdida de peso",
+  musculo_gh: "Músculo y GH",
+  recuperacion: "Recuperación",
+  longevidad: "Longevidad",
+  sueno: "Sueño",
+  piel_belleza: "Piel y belleza",
+  cognicion: "Cognición",
+  libido: "Libido",
+  intestinal: "Salud digestiva",
+  inmunidad: "Inmunidad",
+};
+
+function categoryLabelForPeptide(name: string): string {
+  const profile = PEPTIDE_PROFILES.find((p) => p.name.toLowerCase() === name.toLowerCase());
+  const category = profile?.categories[0];
+  return category ? CATEGORY_LABELS[category] || "Otro" : "Personalizado";
+}
 
 export type AdminUser = {
   id: string;
@@ -62,6 +82,7 @@ export type AdminOverview = {
   recentErrors: { id: string; message: string; context: string; createdAt: string }[];
   errorsByMessage30d: { message: string; count: number }[];
   errorsToday: number;
+  topPeptides: { name: string; category: string; userCount: number }[];
 };
 
 // Precios mensuales de referencia (deben coincidir con el paywall).
@@ -89,6 +110,7 @@ export async function loadAdminOverview(): Promise<AdminOverview> {
     { data: globalUsage },
     { data: doseActivity },
     { data: recentErrorRows },
+    { data: allPeptides },
   ] = await Promise.all([
     admin
       .from("profiles")
@@ -112,6 +134,7 @@ export async function loadAdminOverview(): Promise<AdminOverview> {
       .select("id, message, context, created_at")
       .order("created_at", { ascending: false })
       .limit(200),
+    admin.from("peptides").select("user_id, name"),
   ]);
 
   const profiles = allProfiles || [];
@@ -222,6 +245,24 @@ export async function loadAdminOverview(): Promise<AdminOverview> {
     { label: "De por vida", value: lifetimeUsers, color: "#8b5cf6" },
   ].filter((s) => s.value > 0);
 
+  // --- Péptidos más usados: por cuántos usuarios distintos, con su categoría ---
+  const peptideMap = new Map<string, { displayName: string; users: Set<string> }>();
+  for (const p of allPeptides || []) {
+    if (!p.name || !p.user_id) continue;
+    const key = p.name.trim().toLowerCase();
+    const entry = peptideMap.get(key) || { displayName: p.name.trim(), users: new Set<string>() };
+    entry.users.add(p.user_id);
+    peptideMap.set(key, entry);
+  }
+  const topPeptides = [...peptideMap.values()]
+    .map((v) => ({
+      name: v.displayName,
+      category: categoryLabelForPeptide(v.displayName),
+      userCount: v.users.size,
+    }))
+    .sort((a, b) => b.userCount - a.userCount)
+    .slice(0, 10);
+
   // --- Salud técnica: errores recientes ---
   const errorRows = recentErrorRows || [];
   const errorsToday = errorRows.filter((e) => e.created_at >= todayStart).length;
@@ -329,5 +370,6 @@ export async function loadAdminOverview(): Promise<AdminOverview> {
     recentErrors,
     errorsByMessage30d,
     errorsToday,
+    topPeptides,
   };
 }

@@ -220,6 +220,44 @@ export function AdminDashboard({ data, alerts }: { data: AdminOverview; alerts: 
 
             <div className="mt-4 rounded-2xl p-5" style={{ background: ADMIN.surface, border: `1px solid ${ADMIN.border}` }}>
               <p className="mb-3 text-xs font-semibold uppercase tracking-wide" style={{ color: ADMIN.textMuted }}>
+                Péptidos más usados por tus clientes
+              </p>
+              {data.topPeptides.length === 0 ? (
+                <p className="text-sm" style={{ color: ADMIN.textMuted }}>
+                  Aún no hay registros.
+                </p>
+              ) : (
+                <ul className="space-y-2.5">
+                  {(() => {
+                    const max = Math.max(...data.topPeptides.map((p) => p.userCount), 1);
+                    return data.topPeptides.map((p) => {
+                      const pct = Math.round((p.userCount / max) * 100);
+                      return (
+                        <li key={p.name} className="flex items-center gap-3">
+                          <div className="w-36 shrink-0">
+                            <p className="truncate text-sm font-medium" style={{ color: ADMIN.text }}>
+                              {p.name}
+                            </p>
+                            <p className="truncate text-[10px]" style={{ color: ADMIN.textMuted }}>
+                              {p.category}
+                            </p>
+                          </div>
+                          <div className="h-2 flex-1 overflow-hidden rounded-full" style={{ background: ADMIN.border }}>
+                            <div className="h-full rounded-full" style={{ width: `${pct}%`, background: ADMIN.accent }} />
+                          </div>
+                          <span className="w-20 shrink-0 text-right text-xs" style={{ color: ADMIN.textMuted }}>
+                            {p.userCount} {p.userCount === 1 ? "cliente" : "clientes"}
+                          </span>
+                        </li>
+                      );
+                    });
+                  })()}
+                </ul>
+              )}
+            </div>
+
+            <div className="mt-4 rounded-2xl p-5" style={{ background: ADMIN.surface, border: `1px solid ${ADMIN.border}` }}>
+              <p className="mb-3 text-xs font-semibold uppercase tracking-wide" style={{ color: ADMIN.textMuted }}>
                 De qué países
               </p>
               {data.countries.length === 0 ? (
