@@ -37,6 +37,21 @@ export default async function AdminPage() {
       `${data.pastDue} usuario(s) con el pago fallido — clientes que sí querían pagar, revisa el reintento en Hotmart.`
     );
   }
+  if (data.marginPct != null && data.marginPct <= 0 && data.estMrr > 0) {
+    alerts.push(
+      "La ganancia real de este mes es 0 o negativa — estás perdiendo dinero por cliente. Revisa costos o precio antes de escalar."
+    );
+  }
+  if (data.involuntaryChurn30d >= 3 && data.involuntaryChurn30d > data.voluntaryChurn30d) {
+    alerts.push(
+      `${data.involuntaryChurn30d} bajas por pago fallido/reembolso en 30 días (más que las voluntarias) — activa o revisa el dunning de pagos.`
+    );
+  }
+  if (data.errorsToday >= 5) {
+    alerts.push(
+      `${data.errorsToday} errores registrados hoy — revisa la sección Salud para ver cuáles se repiten más.`
+    );
+  }
 
   return <AdminDashboard data={data} alerts={alerts} />;
 }
