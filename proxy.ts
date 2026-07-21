@@ -1,7 +1,20 @@
 import createMiddleware from "next-intl/middleware";
 import { routing } from "@/i18n/routing";
 import { updateSession } from "@/lib/supabase/middleware";
-import type { NextRequest } from "next/server";
+import { checkRateLimit } from "@/lib/rate-limit";
+import { NextResponse, type NextRequest } from "next/server";
+
+// Rutas llamadas por servidores de confianza (Hotmart, el cron de Vercel), nunca
+// por un visitante directo — no tiene sentido limitarles la tasa de peticiones.
+function isTrustedServerRoute(pathname: string): boolean {
+  return pathname === "/api/webhooks/hotmart" || pathname.startsWith("/api/cron/");
+}
+
+function getClientIp(request: NextRequest): string {
+  const forwardedFor = request.headers.get("x-forwarded-for");
+  if (forwardedFor) return forwardedFor.split(",")[0].trim();
+  return request.headers.get("x-real-ip") || "unknown";
+}
 
 // Países donde el inglés es el idioma esperado — todo lo demás cae en español (LATAM/España,
 // el mercado principal). Vercel manda gratis el país real del visitante en esta cabecera
@@ -20,6 +33,24 @@ const ENGLISH_SPEAKING_COUNTRIES = new Set([
 const handleI18nRouting = createMiddleware(routing);
 
 export default async function middleware(request: NextRequest) {
+  const pathname = request.nextUrl.pathname;
+
+  if (!isTrustedServerRoute(pathname)) {
+    const { blocked, retryAfterSeconds } = await checkRateLimit(getClientIp(request));
+    if (blocked) {
+      return new NextResponse("Too Many Requests — inténtalo de nuevo en unos minutos.", {
+        status: 429,
+        headers: retryAfterSeconds ? { "Retry-After": String(retryAfterSeconds) } : undefined,
+      });
+    }
+  }
+
+  // Las rutas de API manejan su propia respuesta — el enrutamiento por idioma de
+  // abajo es solo para páginas, no tiene sentido reescribirlo sobre /api.
+  if (pathname.startsWith("/api")) {
+    return NextResponse.next();
+  }
+
   // Si el visitante ya eligió idioma a mano (o next-intl ya lo detectó antes), no lo pisamos.
   if (!request.cookies.get("NEXT_LOCALE")) {
     const country = request.headers.get("x-vercel-ip-country");
@@ -34,5 +65,5 @@ export default async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!api|trpc|_next|_vercel|.*\\..*).*)"],
+  matcher: ["/((?!_next|_vercel|.*\\..*).*)"],
 };
