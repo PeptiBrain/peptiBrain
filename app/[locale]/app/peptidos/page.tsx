@@ -26,13 +26,16 @@ import { PeptideCard } from "@/components/app/peptidos/PeptideCard";
 import { ProtocolModal } from "@/components/app/peptidos/ProtocolModal";
 import { ReconstitutionCalculator } from "@/components/app/peptidos/ReconstitutionCalculator";
 import { UnitConverter } from "@/components/app/peptidos/UnitConverter";
+import { GlpDoseCalculator } from "@/components/app/calculator/GlpDoseCalculator";
 import { ProviderModal } from "@/components/app/peptidos/ProviderModal";
+import { WeekSchedule } from "@/components/app/peptidos/WeekSchedule";
+import { ShoppingList } from "@/components/app/peptidos/ShoppingList";
 import { SubTabs, type SubTabItem } from "@/components/app/shell/SubTabs";
 import { PremiumLocked } from "@/components/app/shell/PremiumLocked";
 import { DateRangeTabs } from "@/components/app/shell/DateRangeTabs";
 import { isWithinRange, type CustomRange, type DateRangeKey } from "@/lib/date-range";
 import { celebrate } from "@/lib/celebrate";
-import { vialStatus } from "@/lib/stats";
+import { vialStatus, vialLifecycle } from "@/lib/stats";
 
 const ROUTES = [
   { name: "Subcutánea", icon: Syringe },
@@ -209,6 +212,13 @@ export default function PeptidosPage() {
             <div className="mt-4 border-t border-border pt-4">
               <ViatesTab data={data} onChange={setData} t={t} />
             </div>
+
+            {/* Lista de la compra para las próximas semanas */}
+            {data.peptides.length > 0 && (
+              <div className="mt-4">
+                <ShoppingList doses={data.doses} peptides={data.peptides} vials={data.vials} />
+              </div>
+            )}
           </>
         )}
 
@@ -232,36 +242,38 @@ function CalculadoraTab({
   data: AppData;
   t: (key: string, values?: Record<string, string | number>) => string;
 }) {
-  const [tool, setTool] = useState<"recon" | "converter">("recon");
+  const [tool, setTool] = useState<"recon" | "glp" | "converter">("recon");
+  const TOOLS = [
+    { key: "recon" as const, label: t("calculatorToolRecon"), icon: Calculator },
+    { key: "glp" as const, label: t("calculatorToolGlp"), icon: Syringe },
+    { key: "converter" as const, label: t("calculatorToolConverter"), icon: ArrowRightLeft },
+  ];
   return (
     <div>
-      <div className="mb-3 grid grid-cols-2 gap-2">
-        <button
-          type="button"
-          onClick={() => setTool("recon")}
-          className={`flex h-10 min-w-0 items-center justify-center gap-1.5 rounded-lg border text-sm font-medium ${
-            tool === "recon"
-              ? "border-primary bg-accent text-accent-foreground"
-              : "border-border bg-card text-foreground"
-          }`}
-        >
-          <Calculator className="size-4 shrink-0" aria-hidden />
-          <span className="truncate">{t("calculatorToolRecon")}</span>
-        </button>
-        <button
-          type="button"
-          onClick={() => setTool("converter")}
-          className={`flex h-10 min-w-0 items-center justify-center gap-1.5 rounded-lg border text-sm font-medium ${
-            tool === "converter"
-              ? "border-primary bg-accent text-accent-foreground"
-              : "border-border bg-card text-foreground"
-          }`}
-        >
-          <ArrowRightLeft className="size-4 shrink-0" aria-hidden />
-          <span className="truncate">{t("calculatorToolConverter")}</span>
-        </button>
+      <div className="mb-3 grid grid-cols-3 gap-2">
+        {TOOLS.map((tl) => (
+          <button
+            key={tl.key}
+            type="button"
+            onClick={() => setTool(tl.key)}
+            className={`flex h-10 min-w-0 items-center justify-center gap-1.5 rounded-lg border text-xs font-medium sm:text-sm ${
+              tool === tl.key
+                ? "border-primary bg-accent text-accent-foreground"
+                : "border-border bg-card text-foreground"
+            }`}
+          >
+            <tl.icon className="size-4 shrink-0" aria-hidden />
+            <span className="truncate">{tl.label}</span>
+          </button>
+        ))}
       </div>
-      {tool === "recon" ? <ReconstitutionCalculator data={data} /> : <UnitConverter />}
+      {tool === "recon" ? (
+        <ReconstitutionCalculator data={data} />
+      ) : tool === "glp" ? (
+        <GlpDoseCalculator />
+      ) : (
+        <UnitConverter />
+      )}
     </div>
   );
 }
@@ -367,6 +379,38 @@ function ViatesTab({
                           : t("vialPctLeft", { pct: status.pct })}
                       {tone !== "ok" && status.daysLeftEstimate != null && (
                         <span> · {t("vialDaysLeft", { days: status.daysLeftEstimate })}</span>
+                      )}
+                    </div>
+                  );
+                })()}
+
+                {(() => {
+                  const life = vialLifecycle(v, data.doses, new Date());
+                  if (!life) return null;
+                  const fmt = (ts: number) =>
+                    new Date(ts).toLocaleDateString(locale, { day: "numeric", month: "short" });
+                  const alert = life.verdict === "waste" || life.verdict === "expired";
+                  return (
+                    <div
+                      className={`mt-2 rounded-lg px-2.5 py-1.5 text-[11px] font-medium ${
+                        alert
+                          ? "bg-[var(--notice-bg)] text-[var(--notice-icon)]"
+                          : "bg-secondary/60 text-muted-foreground"
+                      }`}
+                    >
+                      <span className="flex items-center gap-1">
+                        <CalendarClock className="size-3 shrink-0" aria-hidden />
+                        {life.verdict === "expired"
+                          ? t("vialLifeExpired")
+                          : t("vialLifeExpires", { days: Math.max(0, life.daysToExpiry), date: fmt(life.expiryAt) })}
+                      </span>
+                      {life.verdict === "waste" && (
+                        <span className="mt-1 block">{t("vialLifeWaste")}</span>
+                      )}
+                      {life.verdict === "deplete" && life.depletionAt != null && (
+                        <span className="mt-1 block">
+                          {t("vialLifeDeplete", { date: fmt(life.depletionAt) })}
+                        </span>
                       )}
                     </div>
                   );
@@ -755,6 +799,12 @@ function UsosTab({
 
   return (
     <div>
+      {data.doses.length > 0 && (
+        <div className="mb-4">
+          <WeekSchedule doses={data.doses} peptides={data.peptides} />
+        </div>
+      )}
+
       <div className="mb-3 flex justify-end gap-2">
         <button
           type="button"

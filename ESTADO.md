@@ -1,7 +1,15 @@
 # ESTADO — PeptiBrain
-Última actualización: 2026-07-22 | Sesión 10 (SEO: 3 páginas públicas gratis de herramientas). Migraciones 0003-0028 corridas y confirmadas; **0029 (`app_settings`) PENDIENTE de correr**. Herramientas SEO SIN commitear todavía.
+Última actualización: 2026-07-22 | Sesión 10 (SEO público + herramientas dentro de la app inspiradas en peptidosfacil.com). Migraciones 0003-0028 corridas y confirmadas; **0029 (`app_settings`) PENDIENTE de correr**.
 
-## ✅ Sesión 10 (2026-07-22) — Páginas públicas SEO (imán de tráfico gratis)
+## ✅ Sesión 10b (2026-07-22) — Herramientas dentro de la app (idea de peptidosfacil.com)
+Investigué peptidosfacil.com (web EDUCATIVA con IA "Pep" + afiliados; modelo distinto al nuestro). Robé 4 ideas que encajan en una app de tracking y las construí en la sección **Péptidos**:
+- **Calc. GLP-1 dentro de la app**: `GlpDoseCalculator` (semaglutida/tirzepatida con titulación) ahora es un 3er botón en la pestaña Calculadora (Reconstitución · GLP-1 · Conversor).
+- **Vida del vial** (`vialLifecycle` en `lib/stats.ts`): cruza CADUCIDAD (reconstituido + `RECON_SHELF_LIFE_DAYS=30`) vs AGOTAMIENTO (ritmo real de dosis). Avisa "caduca antes de gastarse → desperdicio" o "se te acabará ~fecha". Se muestra en cada tarjeta de vial reconstituido. Verificado: verdicts ok/waste/deplete/expired correctos.
+- **Calendario semanal** (`WeekSchedule.tsx`): vista Lun–Dom con qué toca cada día, "Descanso" en vacíos, "Hoy" resaltado, puntos verde(hecha)/gris(pendiente), navegación ← →. Al inicio de la pestaña Resumen.
+- **Lista de la compra** (`ShoppingList.tsx`): desde las dosis programadas de las próximas 4 semanas calcula viales + agua + jeringas a comprar (por péptido + totales). En Inventario. Si no hay protocolo → invita a crearlo.
+- i18n es/en (+21 claves en `Peptidos`). ✅ Verificado: tsc ✓ eslint ✓ build ✓ · render 375px con datos mock (cálculos correctos: lista 9 jeringas/5mL; vida del vial waste/ok). Página de prueba `toolscheck` creada y BORRADA antes del commit.
+
+## ✅ Sesión 10a (2026-07-22) — Páginas públicas SEO (imán de tráfico gratis) — DESPLEGADO ✓
 Objetivo: captar búsquedas de Google que hoy no captamos (la calculadora vivía DENTRO de la app, tras login → Google no la indexa). Creadas 3 páginas públicas, sin login, indexables, que enganchan a la app:
 - **`/calculadora`** — calculadora de reconstitución pública (reutiliza `unitsToDraw` + `SyringeVisual`). Admite prerelleno por URL (`?vial=&vialUnit=&bac=&dose=&doseUnit=`). Cubre KW: calculadora de péptidos, reconstitución, agua bacteriostática.
 - **`/calculadora-semaglutida`** — **#7 completo**: calculadora de semaglutida Y tirzepatida con **tabla de titulación** completa (sema 0.25→2.4mg; tirze 2.5→15mg), toca una fila y ves esa fase en la jeringa U100. Cubre el mayor imán de tráfico (adelgazar/GLP-1).

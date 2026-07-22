@@ -48,6 +48,48 @@ export type VialStatus = {
   byMember: Record<string, number>; // memberId ("mine" para el dueño) -> nº de dosis
 };
 
+// Vida útil de referencia de un vial YA reconstituido (mezclado con agua), refrigerado.
+// Es una ESTIMACIÓN habitual en la comunidad, no consejo médico — cada péptido varía.
+export const RECON_SHELF_LIFE_DAYS = 30;
+const DAY_MS = 86400000;
+
+export type VialLifecycle = {
+  reconstituted: boolean;
+  expiryAt: number; // timestamp de caducidad estimada (solo si reconstituido)
+  daysToExpiry: number; // puede ser negativo (ya caducó)
+  depletionAt: number | null; // timestamp estimado en que se agota (según ritmo real de dosis)
+  daysToDeplete: number | null;
+  verdict: "expired" | "waste" | "deplete" | "ok";
+};
+
+// Cruza CADUCIDAD (por reconstitución) vs AGOTAMIENTO (por ritmo de dosis) para avisar
+// si el vial vencerá antes de gastarse (desperdicio) o si te quedarás sin producto antes.
+export function vialLifecycle(vial: Vial, doses: Dose[], now: Date): VialLifecycle | null {
+  if (!vial.bacWater) return null; // solo aplica a viales reconstituidos
+  const reconstitutedAt = new Date(vial.createdAt).getTime();
+  if (!Number.isFinite(reconstitutedAt)) return null;
+
+  const nowMs = now.getTime();
+  const expiryAt = reconstitutedAt + RECON_SHELF_LIFE_DAYS * DAY_MS;
+  const daysToExpiry = Math.round((expiryAt - nowMs) / DAY_MS);
+
+  const status = vialStatus(vial, doses);
+  let depletionAt: number | null = null;
+  let daysToDeplete: number | null = null;
+  if (status && status.daysLeftEstimate != null && status.pct > 0) {
+    daysToDeplete = status.daysLeftEstimate;
+    depletionAt = nowMs + status.daysLeftEstimate * DAY_MS;
+  }
+
+  let verdict: VialLifecycle["verdict"];
+  if (daysToExpiry < 0) verdict = "expired";
+  else if (depletionAt != null && expiryAt < depletionAt) verdict = "waste";
+  else if (depletionAt != null && depletionAt <= expiryAt) verdict = "deplete";
+  else verdict = "ok";
+
+  return { reconstituted: true, expiryAt, daysToExpiry, depletionAt, daysToDeplete, verdict };
+}
+
 // Estima cuánto queda de un vial a partir de las dosis aplicadas desde que se abrió.
 // Solo funciona para unidades de peso (mg/mcg); ml/UI no se pueden sumar así.
 export function vialStatus(vial: Vial, doses: Dose[]): VialStatus | null {
