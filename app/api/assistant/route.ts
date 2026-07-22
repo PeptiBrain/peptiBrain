@@ -5,7 +5,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 // Gemini (Google) vía su endpoint compatible con OpenAI — fiable y con plan gratis
 // generoso. El modelo y la URL son env vars por si algún día se cambia de proveedor
 // sin tocar código (cualquier API compatible-OpenAI funciona igual).
-const AI_MODEL = process.env.ASSISTANT_AI_MODEL || "gemini-2.0-flash";
+const AI_MODEL = process.env.ASSISTANT_AI_MODEL || "gemini-flash-latest";
 const AI_BASE_URL =
   process.env.ASSISTANT_AI_BASE_URL || "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions";
 const MAX_MESSAGES_PER_DAY = 20;
