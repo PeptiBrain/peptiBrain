@@ -1,5 +1,5 @@
 # ESTADO — PeptiBrain
-Última actualización: 2026-07-21 | Sesión 9 (seguridad + retención completa + certificación pre-lanzamiento). TODO commiteado y desplegado. Migraciones 0003-0026 + 0028 corridas y confirmadas contra la DB real; **0027 (`error_log`) PENDIENTE**.
+Última actualización: 2026-07-21 | Sesión 9 (seguridad + retención completa + certificación pre-lanzamiento). TODO commiteado y desplegado. Migraciones 0003-0028 TODAS corridas y confirmadas contra la DB real (incluida 0027 `error_log`).
 
 ## 🚦 CERTIFICACIÓN PRE-LANZAMIENTO (2026-07-21) — veredicto: **NO APTO todavía** (1 bloqueante)
 Auditoría con evidencia real, no solo compilación. Estado por bloque:
@@ -10,7 +10,7 @@ Auditoría con evidencia real, no solo compilación. Estado por bloque:
 - **Pago** ❌ **BLOQUEANTE**: webhook idempotente/firmado ✓ PERO **nunca se probó un pago real end-to-end** (pagar → plan activo → features). Requiere acción del usuario.
 - **Legal** ✅: 5 páginas legales (LLC real), borrado de cuenta real (cascada, cableado en `/app/cuenta`), disclaimer IA.
 - **Economía** ✅: costo IA ~0% (modelo gratis) < 20%.
-- **Operación** ✅: MANUAL-DEL-DUEÑO.md, panel de admin con salud/errores (sustituto de Sentry para dueño no técnico), soporte visible, rollback vía Vercel. ⚠️ migración 0027 sin correr → los Error Boundaries no guardan aún.
+- **Operación** ✅: MANUAL-DEL-DUEÑO.md, panel de admin con salud/errores (sustituto de Sentry para dueño no técnico), soporte visible, rollback vía Vercel. ✅ migración 0027 (`error_log`) corrida y confirmada (2026-07-21) — los Error Boundaries ya capturan errores al panel.
 - **Producto enriquecido** ✅: rico en valor, verificado a 375px en múltiples pantallas durante la sesión.
 - **Rigor de entrega** ✅: invariantes de dinero (gating por trigger, webhook idempotente), IDOR probado, circuit-breaker IA, export de datos, manual del dueño. ⚠️ auto-QA end-to-end completo requiere login real del usuario.
 **Acciones que SOLO el usuario puede hacer antes de vender**: (1) ❌ prueba de pago real, (2) confirmar backups, (3) correr migración 0027, (4) probar plan Family con 2 cuentas, (5) spot-check de calidad del Asistente IA, (6) subir Supabase a Pro al tener tráfico.
