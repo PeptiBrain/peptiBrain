@@ -5,6 +5,7 @@ import { ShieldAlert } from "lucide-react";
 
 export function Footer() {
   const t = useTranslations("Footer");
+  const tt = useTranslations("Tools");
 
   return (
     <>
@@ -19,6 +20,20 @@ export function Footer() {
       </div>
 
       <footer role="contentinfo" className="border-t border-border px-4 py-6">
+        <nav
+          aria-label={tt("moreTools")}
+          className="mx-auto mb-5 flex max-w-6xl flex-wrap items-center justify-center gap-x-5 gap-y-1.5 text-sm font-medium text-muted-foreground"
+        >
+          <Link href="/calculadora" className="hover:text-foreground hover:underline">
+            {tt("navCalculator")}
+          </Link>
+          <Link href="/calculadora-semaglutida" className="hover:text-foreground hover:underline">
+            {tt("navSemaglutide")}
+          </Link>
+          <Link href="/protocolos" className="hover:text-foreground hover:underline">
+            {tt("navProtocols")}
+          </Link>
+        </nav>
         <div className="mx-auto flex max-w-6xl items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
             <Image src="/peptibrain-isotipo.svg" alt="" width={22} height={22} />

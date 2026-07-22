@@ -1119,5 +1119,133 @@
     "analyticsDesc": "Helps us understand how to improve the app.",
     "back": "Back",
     "savePreferences": "Save preferences"
+  },
+  "Tools": {
+    "disclaimer": "This tool is for informational and educational purposes only. It is not medical advice and does not replace a healthcare professional. Peptides should be used under medical supervision; always consult your doctor before starting any protocol.",
+    "ctaTitle": "Keep your whole protocol in one place",
+    "ctaBody": "PeptiBrain stores your vials, calculates your doses, reminds you of every shot, and tracks your progress. Start free.",
+    "ctaButton": "Try PeptiBrain free",
+    "faqTitle": "Frequently asked questions",
+    "moreTools": "More free tools",
+    "navCalculator": "Reconstitution calculator",
+    "navSemaglutide": "Semaglutide calculator",
+    "navProtocols": "Peptide protocols"
+  },
+  "Calculadora": {
+    "metaTitle": "Free Peptide Reconstitution Calculator | PeptiBrain",
+    "metaDescription": "Free calculator for how many units to draw based on your vial and bacteriostatic water. Fast, clear peptide reconstitution with a visual syringe.",
+    "kicker": "Free tool",
+    "h1": "Peptide Reconstitution Calculator",
+    "subtitle": "Enter your vial's mg, the bacteriostatic water you added, and your target dose. We tell you exactly how many units to draw, with a syringe diagram so you never miss.",
+    "vialLabel": "Vial amount (peptide)",
+    "vialUnitLabel": "Vial unit",
+    "amountPlaceholder": "e.g. 5",
+    "bacWaterLabel": "Bacteriostatic water added",
+    "bacWaterPlaceholder": "e.g. 2",
+    "concentration": "Concentration:",
+    "syringeTypeLabel": "Insulin syringe type",
+    "desiredDoseLabel": "Desired dose",
+    "doseUnitLabel": "Dose unit",
+    "dosePlaceholder": "e.g. 250",
+    "drawUpTo": "Draw the syringe up to",
+    "units": "units",
+    "overCapacity": "The dose exceeds the syringe capacity. Use a larger syringe or more water.",
+    "print": "Print / Save PDF",
+    "emptyResult": "Fill in the 3 fields and you'll see the units to draw here.",
+    "howTitle": "How to use the calculator",
+    "howSteps": [
+      "Enter the mg (or mcg) your peptide vial contains.",
+      "Enter how many milliliters of bacteriostatic water you added.",
+      "Pick your syringe (U100 is the most common) and the dose you want to inject.",
+      "We show the exact units to draw and a syringe diagram."
+    ],
+    "faq": [
+      {
+        "q": "What does reconstituting a peptide mean?",
+        "a": "It means mixing the powdered (lyophilized) peptide in the vial with bacteriostatic water so it can be injected. The amount of water you add defines the concentration and therefore how many units you draw per dose."
+      },
+      {
+        "q": "How much bacteriostatic water should I add?",
+        "a": "There's no single amount: more water means more diluted and more units for the same dose. What matters is always using the same amount for that vial and calculating from it. This calculator adapts to whatever amount you enter."
+      },
+      {
+        "q": "What do the syringe units mean?",
+        "a": "On a U100 insulin syringe, 100 units equal 1 mL. The calculator converts your dose (in mg or mcg) into the units to draw based on your vial's concentration."
+      },
+      {
+        "q": "Is the calculator free?",
+        "a": "Yes, completely free and no signup. If you also want to store your vials, get dose reminders, and keep your history, you can use the PeptiBrain app."
+      }
+    ]
+  },
+  "Semaglutida": {
+    "metaTitle": "Free Semaglutide & Tirzepatide Dose Calculator | PeptiBrain",
+    "metaDescription": "Free calculator for semaglutide or tirzepatide units based on your vial and bacteriostatic water, with the full titration schedule (0.25 to 2.4 mg). Visual syringe.",
+    "kicker": "Free tool · GLP-1",
+    "h1": "Semaglutide & Tirzepatide Calculator",
+    "subtitle": "Pick the compound, enter your vial's mg and the water you added, and we calculate the units to draw for each phase of the weekly titration.",
+    "semaglutide": "Semaglutide",
+    "tirzepatide": "Tirzepatide",
+    "vialLabel": "Vial (mg)",
+    "bacWaterLabel": "Water (mL)",
+    "concentration": "Concentration:",
+    "scheduleTitle": "Titration schedule (weekly dose)",
+    "colWeeks": "Phase",
+    "colDose": "Dose",
+    "colUnits": "Draw",
+    "weeksShort": "Wk.",
+    "phaseDraw": "Weeks {weeks} · {mg} mg — draw on the U100 syringe",
+    "overCapacity": "Exceeds one U100 syringe (100 U). Needs more than one draw or more water.",
+    "howTitle": "How titration works",
+    "howSteps": [
+      "Semaglutide and tirzepatide are increased gradually (titration) to reduce side effects.",
+      "Enter your vial's mg and the bacteriostatic water you added: that sets the concentration.",
+      "The table shows, for each weekly phase, how many units to draw on the U100 syringe.",
+      "Tap a row to see that phase drawn on the syringe."
+    ],
+    "faq": [
+      {
+        "q": "What's the typical semaglutide titration?",
+        "a": "The reference schedule starts at 0.25 mg weekly for 4 weeks, then 0.5 mg, 1.0 mg, 1.7 mg, and up to 2.4 mg maintenance, changing every 4 weeks. Your doctor may adjust it to your case."
+      },
+      {
+        "q": "And tirzepatide?",
+        "a": "The reference schedule starts at 2.5 mg weekly and increases every 4 weeks: 5, 7.5, 10, 12.5, and up to 15 mg maintenance. Always as medically directed."
+      },
+      {
+        "q": "Why does it give units, not mg?",
+        "a": "Because in the syringe you draw volume, not weight. The calculator converts each phase's mg into the exact U100 syringe units based on your vial's concentration."
+      },
+      {
+        "q": "Does this replace my doctor?",
+        "a": "No. It's an informational calculation tool. Semaglutide and tirzepatide are prescription medicines: their use and dosing must be directed and supervised by a healthcare professional."
+      }
+    ]
+  },
+  "Protocolos": {
+    "metaTitle": "Peptide Protocols: doses, frequency & reconstitution | PeptiBrain",
+    "metaDescription": "Reference guide of peptide protocols: common dose, frequency, vial and bacteriostatic water for the most used peptides. Calculate your units in one click.",
+    "kicker": "Reference guide",
+    "h1": "Peptide Protocols",
+    "subtitle": "Reference values for the most used peptides: common dose, frequency, vial size, and bacteriostatic water. Tap 'Calculate dose' and we send it straight to the calculator.",
+    "fieldDose": "Common dose",
+    "fieldFreq": "Frequency",
+    "fieldVial": "Vial",
+    "fieldBac": "Bac. water",
+    "calcCta": "Calculate dose",
+    "faq": [
+      {
+        "q": "Where do these protocols come from?",
+        "a": "They are reference values compiled from public information circulating in the peptide community. They serve as a starting point for calculation; they are not a personalized medical prescription."
+      },
+      {
+        "q": "Can I change the doses?",
+        "a": "Yes. Each protocol opens the calculator with those values prefilled, but you can adjust them to what your doctor has indicated."
+      },
+      {
+        "q": "Is it safe to follow these protocols?",
+        "a": "Peptides should be used under medical supervision. This guide is informational and educational; it does not recommend doses or replace a healthcare professional's assessment."
+      }
+    ]
   }
 }

@@ -1119,5 +1119,133 @@
     "analyticsDesc": "Nos ayuda a entender cómo mejorar la app.",
     "back": "Atrás",
     "savePreferences": "Guardar preferencias"
+  },
+  "Tools": {
+    "disclaimer": "Esta herramienta es solo informativa y educativa. No es consejo médico ni sustituye a un profesional sanitario. Los péptidos deben usarse bajo supervisión médica; consulta siempre con tu médico antes de iniciar cualquier protocolo.",
+    "ctaTitle": "Lleva todo tu protocolo en un solo lugar",
+    "ctaBody": "PeptiBrain guarda tus viales, calcula tus dosis, te recuerda cada aplicación y registra tu progreso. Empieza gratis.",
+    "ctaButton": "Probar PeptiBrain gratis",
+    "faqTitle": "Preguntas frecuentes",
+    "moreTools": "Más herramientas gratis",
+    "navCalculator": "Calculadora de reconstitución",
+    "navSemaglutide": "Calculadora de semaglutida",
+    "navProtocols": "Protocolos de péptidos"
+  },
+  "Calculadora": {
+    "metaTitle": "Calculadora de reconstitución de péptidos gratis | PeptiBrain",
+    "metaDescription": "Calcula gratis cuántas unidades cargar en la jeringa según tu vial y el agua bacteriostática. Reconstitución de péptidos rápida, clara y con jeringa visual. En español.",
+    "kicker": "Herramienta gratis",
+    "h1": "Calculadora de reconstitución de péptidos",
+    "subtitle": "Introduce los mg de tu vial, el agua bacteriostática que añadiste y la dosis que quieres. Te decimos cuántas unidades cargar en la jeringa, con un dibujo para no fallar.",
+    "vialLabel": "Cantidad del vial (péptido)",
+    "vialUnitLabel": "Unidad del vial",
+    "amountPlaceholder": "Ej. 5",
+    "bacWaterLabel": "Agua bacteriostática añadida",
+    "bacWaterPlaceholder": "Ej. 2",
+    "concentration": "Concentración:",
+    "syringeTypeLabel": "Tipo de jeringa de insulina",
+    "desiredDoseLabel": "Dosis deseada",
+    "doseUnitLabel": "Unidad de la dosis",
+    "dosePlaceholder": "Ej. 250",
+    "drawUpTo": "Carga la jeringa hasta",
+    "units": "unidades",
+    "overCapacity": "La dosis supera la capacidad de la jeringa. Usa una jeringa mayor o más agua.",
+    "print": "Imprimir / Guardar PDF",
+    "emptyResult": "Rellena los 3 datos y verás aquí las unidades a cargar.",
+    "howTitle": "Cómo usar la calculadora",
+    "howSteps": [
+      "Escribe los mg (o mcg) que trae tu vial de péptido.",
+      "Escribe cuántos mililitros de agua bacteriostática le añadiste.",
+      "Elige tu jeringa (U100 es la más común) y la dosis que quieres aplicar.",
+      "Te mostramos las unidades exactas a cargar y un dibujo de la jeringa."
+    ],
+    "faq": [
+      {
+        "q": "¿Qué es reconstituir un péptido?",
+        "a": "Es mezclar el péptido en polvo (que viene liofilizado en el vial) con agua bacteriostática para poder inyectarlo. La cantidad de agua que añades define la concentración y, por tanto, cuántas unidades cargas para cada dosis."
+      },
+      {
+        "q": "¿Cuánta agua bacteriostática debo añadir?",
+        "a": "No hay una cantidad única: cuanta más agua, más diluido y más unidades cargarás para la misma dosis. Lo importante es usar siempre la misma cantidad para ese vial y calcular en base a ella. Esta calculadora se adapta a la cantidad que tú indiques."
+      },
+      {
+        "q": "¿Qué significan las unidades de la jeringa?",
+        "a": "En una jeringa de insulina U100, 100 unidades equivalen a 1 mL. La calculadora convierte tu dosis (en mg o mcg) a las unidades que debes cargar según la concentración de tu vial."
+      },
+      {
+        "q": "¿La calculadora es gratis?",
+        "a": "Sí, totalmente gratis y sin registro. Si quieres además guardar tus viales, recibir recordatorios de dosis y llevar tu historial, puedes usar la app PeptiBrain."
+      }
+    ]
+  },
+  "Semaglutida": {
+    "metaTitle": "Calculadora de dosis de semaglutida y tirzepatida gratis | PeptiBrain",
+    "metaDescription": "Calcula gratis las unidades de semaglutida o tirzepatida según tu vial y agua bacteriostática, con la tabla de titulación completa (0,25 a 2,4 mg). Jeringa visual. En español.",
+    "kicker": "Herramienta gratis · GLP-1",
+    "h1": "Calculadora de semaglutida y tirzepatida",
+    "subtitle": "Elige el compuesto, indica los mg de tu vial y el agua que añadiste, y te calculamos las unidades a cargar en cada fase de la titulación semanal.",
+    "semaglutide": "Semaglutida",
+    "tirzepatide": "Tirzepatida",
+    "vialLabel": "Vial (mg)",
+    "bacWaterLabel": "Agua (mL)",
+    "concentration": "Concentración:",
+    "scheduleTitle": "Tabla de titulación (dosis semanal)",
+    "colWeeks": "Fase",
+    "colDose": "Dosis",
+    "colUnits": "Cargar",
+    "weeksShort": "Sem.",
+    "phaseDraw": "Semanas {weeks} · {mg} mg — carga en la jeringa U100",
+    "overCapacity": "Supera 1 jeringa U100 (100 U). Se necesita más de una carga o más agua.",
+    "howTitle": "Cómo funciona la titulación",
+    "howSteps": [
+      "La semaglutida y la tirzepatida se suben de dosis poco a poco (titulación) para reducir efectos secundarios.",
+      "Indica los mg de tu vial y el agua bacteriostática que añadiste: eso fija la concentración.",
+      "La tabla te muestra, para cada fase semanal, cuántas unidades cargar en la jeringa U100.",
+      "Toca una fila para ver esa fase dibujada en la jeringa."
+    ],
+    "faq": [
+      {
+        "q": "¿Cuál es la titulación típica de la semaglutida?",
+        "a": "El esquema de referencia sube de 0,25 mg a la semana durante 4 semanas, luego 0,5 mg, 1,0 mg, 1,7 mg y hasta 2,4 mg de mantenimiento, cambiando cada 4 semanas. Tu médico puede ajustarlo a tu caso."
+      },
+      {
+        "q": "¿Y la de la tirzepatida?",
+        "a": "El esquema de referencia empieza en 2,5 mg semanales y sube cada 4 semanas: 5, 7,5, 10, 12,5 y hasta 15 mg de mantenimiento. Siempre según indicación médica."
+      },
+      {
+        "q": "¿Por qué me da unidades y no mg?",
+        "a": "Porque en la jeringa cargas volumen, no peso. La calculadora convierte los mg de cada fase a las unidades exactas de la jeringa U100 según la concentración de tu vial."
+      },
+      {
+        "q": "¿Esto sustituye a mi médico?",
+        "a": "No. Es una herramienta de cálculo informativa. La semaglutida y la tirzepatida son medicamentos de prescripción: su uso y dosis deben ser indicados y supervisados por un profesional sanitario."
+      }
+    ]
+  },
+  "Protocolos": {
+    "metaTitle": "Protocolos de péptidos: dosis, frecuencia y reconstitución | PeptiBrain",
+    "metaDescription": "Guía de referencia de protocolos de péptidos: dosis común, frecuencia, vial y agua bacteriostática de los péptidos más usados. Calcula tus unidades con un clic. En español.",
+    "kicker": "Guía de referencia",
+    "h1": "Protocolos de péptidos",
+    "subtitle": "Valores de referencia de los péptidos más usados: dosis común, frecuencia, tamaño de vial y agua bacteriostática. Toca «Calcular dosis» y lo pasamos directo a la calculadora.",
+    "fieldDose": "Dosis común",
+    "fieldFreq": "Frecuencia",
+    "fieldVial": "Vial",
+    "fieldBac": "Agua bact.",
+    "calcCta": "Calcular dosis",
+    "faq": [
+      {
+        "q": "¿De dónde salen estos protocolos?",
+        "a": "Son valores de referencia recopilados de la información pública que circula en la comunidad de péptidos. Sirven como punto de partida para el cálculo; no son una pauta médica personalizada."
+      },
+      {
+        "q": "¿Puedo cambiar las dosis?",
+        "a": "Sí. Cada protocolo abre la calculadora con esos valores ya puestos, pero puedes ajustarlos a lo que te haya indicado tu médico."
+      },
+      {
+        "q": "¿Es seguro seguir estos protocolos?",
+        "a": "Los péptidos deben usarse bajo supervisión médica. Esta guía es informativa y educativa; no recomienda dosis ni sustituye la valoración de un profesional sanitario."
+      }
+    ]
   }
 }
