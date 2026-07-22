@@ -1268,5 +1268,18 @@
         "a": "Los péptidos deben usarse bajo supervisión médica. Esta guía es informativa y educativa; no recomienda dosis ni sustituye la valoración de un profesional sanitario."
       }
     ]
+  },
+  "FreeToolsSection": {
+    "eyebrow": "Gratis · sin registro",
+    "title": "Prueba nuestras calculadoras ahora",
+    "subtitle": "Herramientas que la comunidad de péptidos usa todos los días. Úsalas gratis, sin crear cuenta.",
+    "try": "Probar gratis",
+    "noSignup": "Sin registro · sin tarjeta · resultado al instante",
+    "t1Title": "Calculadora de reconstitución",
+    "t1Desc": "Cuántas unidades cargar según tu vial y el agua.",
+    "t2Title": "Calculadora de semaglutida",
+    "t2Desc": "Semaglutida y tirzepatida con la titulación completa.",
+    "t3Title": "Protocolos de péptidos",
+    "t3Desc": "Dosis, frecuencia y agua de los péptidos más usados."
   }
 }

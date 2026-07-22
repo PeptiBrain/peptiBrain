@@ -1268,5 +1268,18 @@
         "a": "Peptides should be used under medical supervision. This guide is informational and educational; it does not recommend doses or replace a healthcare professional's assessment."
       }
     ]
+  },
+  "FreeToolsSection": {
+    "eyebrow": "Free · no signup",
+    "title": "Try our calculators now",
+    "subtitle": "Tools the peptide community uses every day. Use them free, no account needed.",
+    "try": "Try free",
+    "noSignup": "No signup · no card · instant result",
+    "t1Title": "Reconstitution calculator",
+    "t1Desc": "How many units to draw based on your vial and water.",
+    "t2Title": "Semaglutide calculator",
+    "t2Desc": "Semaglutide and tirzepatide with the full titration.",
+    "t3Title": "Peptide protocols",
+    "t3Desc": "Doses, frequency and water for the most used peptides."
   }
 }
