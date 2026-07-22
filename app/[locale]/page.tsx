@@ -18,11 +18,11 @@ export default function Home() {
       <main id="main-content" className="flex-1">
         <Hero />
         <Benefits />
-        <FreeTools />
         <HowItWorks />
         <Pricing />
         <Testimonials />
         <Faq />
+        <FreeTools />
         <FinalCta />
       </main>
       <Footer />
