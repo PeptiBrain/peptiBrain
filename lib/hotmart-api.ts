@@ -61,11 +61,50 @@ export type HotmartSummary = {
   activeSubscriptions: number | null;
 };
 
-const APPROVED = new Set(["APPROVED", "COMPLETE"]);
-const REFUNDED = new Set(["REFUNDED", "CHARGEBACK", "DISPUTE"]);
+type SaleItem = {
+  product?: { id?: number | string };
+  purchase?: {
+    status?: string;
+    order_date?: number;
+    approved_date?: number;
+    price?: { value?: number; currency_code?: string };
+  };
+};
 
-// Trae las ventas de los productos de PeptiBrain y las agrega. Recorre varias
-// páginas con tope, para no colgarse si hay muchísimas transacciones.
+// Recorre TODAS las páginas de sales/history para un filtro de estatus concreto,
+// aplicando un callback a cada venta de los productos de PeptiBrain. Nota de la doc
+// de Hotmart: sin `transaction_status`, el endpoint devuelve solo APPROVED+COMPLETE;
+// por eso los reembolsos se piden en una consulta aparte.
+async function forEachSale(
+  token: string,
+  productIds: Set<string>,
+  status: string | null,
+  cb: (it: SaleItem) => void
+): Promise<boolean> {
+  let pageToken: string | undefined;
+  let pages = 0;
+  do {
+    const url = new URL(SALES_URL);
+    url.searchParams.set("max_results", "100");
+    if (status) url.searchParams.set("transaction_status", status);
+    if (pageToken) url.searchParams.set("page_token", pageToken);
+    const res = await fetch(url.toString(), {
+      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+    });
+    if (!res.ok) return false;
+    const body = (await res.json()) as { items?: SaleItem[]; page_info?: { next_page_token?: string } };
+    for (const it of body.items || []) {
+      const pid = it.product?.id != null ? String(it.product.id) : "";
+      if (productIds.size > 0 && !productIds.has(pid)) continue;
+      cb(it);
+    }
+    pageToken = body.page_info?.next_page_token;
+    pages += 1;
+  } while (pageToken && pages < 30);
+  return true;
+}
+
+// Trae las ventas de los productos de PeptiBrain y las agrega.
 export async function getHotmartSummary(): Promise<HotmartSummary> {
   const empty: HotmartSummary = {
     configured: hotmartConfigured(),
@@ -89,49 +128,23 @@ export async function getHotmartSummary(): Promise<HotmartSummary> {
   let salesCount = 0;
   let refundsCount = 0;
   let currency = "EUR";
-  let pageToken: string | undefined;
-  let pages = 0;
 
   try {
-    do {
-      const url = new URL(SALES_URL);
-      url.searchParams.set("max_results", "100");
-      if (pageToken) url.searchParams.set("page_token", pageToken);
-      const res = await fetch(url.toString(), { headers: { Authorization: `Bearer ${token}` } });
-      if (!res.ok) return { ...empty, ok: false };
-      const body = (await res.json()) as {
-        items?: Array<{
-          product?: { id?: number | string };
-          purchase?: {
-            status?: string;
-            order_date?: number;
-            approved_date?: number;
-            price?: { value?: number; currency_code?: string };
-          };
-        }>;
-        page_info?: { next_page_token?: string };
-      };
+    // 1) Ventas aprobadas (filtro por defecto = APPROVED + COMPLETE) → ingresos.
+    const okApproved = await forEachSale(token, productIds, null, (it) => {
+      const value = Number(it.purchase?.price?.value) || 0;
+      if (it.purchase?.price?.currency_code) currency = it.purchase.price.currency_code;
+      const when = it.purchase?.approved_date || it.purchase?.order_date || 0;
+      revenueTotal += value;
+      salesCount += 1;
+      if (when >= monthStart) revenueThisMonth += value;
+    });
+    if (!okApproved) return { ...empty, ok: false };
 
-      for (const it of body.items || []) {
-        const pid = it.product?.id != null ? String(it.product.id) : "";
-        if (productIds.size > 0 && !productIds.has(pid)) continue;
-        const status = (it.purchase?.status || "").toUpperCase();
-        const value = Number(it.purchase?.price?.value) || 0;
-        if (it.purchase?.price?.currency_code) currency = it.purchase.price.currency_code;
-        const when = it.purchase?.approved_date || it.purchase?.order_date || 0;
-
-        if (APPROVED.has(status)) {
-          revenueTotal += value;
-          salesCount += 1;
-          if (when >= monthStart) revenueThisMonth += value;
-        } else if (REFUNDED.has(status)) {
-          refundsCount += 1;
-        }
-      }
-
-      pageToken = body.page_info?.next_page_token;
-      pages += 1;
-    } while (pageToken && pages < 20);
+    // 2) Reembolsos (consulta aparte, la doc no los incluye en el filtro por defecto).
+    await forEachSale(token, productIds, "REFUNDED", () => {
+      refundsCount += 1;
+    });
 
     return {
       configured: true,
