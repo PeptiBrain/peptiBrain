@@ -38,7 +38,7 @@ async function alertOwnerOnce(admin: ReturnType<typeof createAdminClient>, date:
         from: "PeptiBrain <hello@peptibrain.com>",
         to: ownerEmail,
         subject: "⚠️ Asistente IA pausado — se llegó al límite diario",
-        text: `El Asistente de PeptiBrain llegó a ${count} mensajes hoy (${date}), el tope configurado. Se pausó automáticamente para evitar un gasto inesperado. Súbelo en ASSISTANT_GLOBAL_DAILY_LIMIT si quieres permitir más, o revisa tu saldo en OpenRouter.`,
+        text: `El Asistente de PeptiBrain llegó a ${count} mensajes hoy (${date}), el tope configurado. Se pausó automáticamente para evitar un gasto inesperado. Súbelo en ASSISTANT_GLOBAL_DAILY_LIMIT si quieres permitir más, o revisa tu cuota en Google AI Studio (Gemini).`,
       }),
     });
   } catch {
@@ -144,6 +144,18 @@ export async function POST(request: NextRequest) {
       .from("assistant_global_usage")
       .upsert({ usage_date: date, message_count: globalCount + 1 }, { onConflict: "usage_date" }),
   ]);
+
+  // Registra la pregunta para que el dueño vea qué duda la gente (solo lectura admin).
+  // Se guarda solo el texto de la pregunta, no el contexto de datos personales. Va
+  // aparte y tolera fallos: si la tabla aún no existe (migración sin correr), NO debe
+  // romper la respuesta del asistente que el usuario ya está esperando.
+  try {
+    await admin
+      .from("assistant_questions")
+      .insert({ user_id: user.id, plan: profile.plan, question: message.trim().slice(0, 500) });
+  } catch {
+    // el registro es "nice to have"; nunca bloquea la respuesta al usuario
+  }
 
   return NextResponse.json({ reply, remaining: MAX_MESSAGES_PER_DAY - ((usage?.message_count || 0) + 1) });
 }

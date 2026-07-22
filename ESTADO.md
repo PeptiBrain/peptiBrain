@@ -1,5 +1,14 @@
 # ESTADO — PeptiBrain
-Última actualización: 2026-07-22 | Sesión 10 (SEO público + herramientas dentro de la app inspiradas en peptidosfacil.com). Migraciones 0003-0028 corridas y confirmadas; **0029 (`app_settings`) PENDIENTE de correr**.
+Última actualización: 2026-07-22 | Sesión 10 (SEO público + herramientas in-app + registro de preguntas del asistente). Migraciones 0003-0028 corridas; **0029 (`app_settings`) y 0030 (`assistant_questions`) PENDIENTES de correr**.
+
+## ✅ Sesión 10c (2026-07-22) — Registro de preguntas del Asistente IA (idea "Pep" de peptidosfacil, fase 1)
+El usuario propuso un chat público tipo "Pep". Aclaré que el chat con Gemini YA existe (in-app, Premium, con guardrails médicos + tope de coste 20/día usuario + 500/día global), pero NO guardaba las preguntas. Elegimos **empezar por lo barato y seguro: registrar qué pregunta la gente** (el chat público queda para fase 2, con límite duro + Turnstile por el riesgo de coste).
+- **Migración 0030** (`assistant_questions`): id, user_id, plan, question, created_at. RLS: escribe solo el servidor (service_role); lee solo el dueño (role='admin'). **PENDIENTE de correr** — hasta correrla, el registro falla en silencio (el insert va aparte con try/catch, NO rompe el asistente).
+- `app/api/assistant/route.ts`: registra la pregunta (texto, no el contexto personal) tras responder, tolerante a fallos. Corregido texto viejo que decía "OpenRouter" → Gemini.
+- `app/api/admin/questions/route.ts`: endpoint admin (recent 50 + total + últimos 7 días).
+- `components/app/admin/AssistantQuestionsCard.tsx`: tarjeta en la sección "Actividad" del panel con las preguntas + contadores.
+- ✅ tsc ✓ eslint(nuevos) ✓ build ✓. Verificación visual de la tarjeta: pendiente del panel real del usuario (requiere admin+datos; me bloqueó mi propio rate-limiter al previsualizar). Idéntica en patrón a HotmartSalesCard (que ya funciona).
+- **Fase 2 futura** (si el usuario quiere): chat público "Pregúntale a PeptiBrain" como imán de registros — con N preguntas gratis/visitante, rate-limit, Turnstile y kill-switch. Idea extra: que cite estudios reales.
 
 ## ✅ Sesión 10b (2026-07-22) — Herramientas dentro de la app (idea de peptidosfacil.com)
 Investigué peptidosfacil.com (web EDUCATIVA con IA "Pep" + afiliados; modelo distinto al nuestro). Robé 4 ideas que encajan en una app de tracking y las construí en la sección **Péptidos**:

@@ -9,6 +9,7 @@ import { AnimatedNumber } from "@/components/app/shell/AnimatedNumber";
 import { ADMIN, AdminBarChart, AdminDonut, RetentionBars } from "@/components/app/admin/AdminCharts";
 import { IntegrationsPanel } from "@/components/app/admin/IntegrationsPanel";
 import { HotmartSalesCard } from "@/components/app/admin/HotmartSalesCard";
+import { AssistantQuestionsCard } from "@/components/app/admin/AssistantQuestionsCard";
 
 type Tab = "all" | "finance" | "activity" | "users" | "retention" | "health" | "acq" | "integrations";
 
@@ -313,6 +314,9 @@ export function AdminDashboard({ data, alerts }: { data: AdminOverview; alerts: 
                 </>
               )}
             </div>
+
+            {/* Qué pregunta la gente al Asistente IA */}
+            <AssistantQuestionsCard />
           </Section>
         )}
 
