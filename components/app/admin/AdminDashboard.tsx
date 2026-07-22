@@ -49,17 +49,21 @@ export function AdminDashboard({ data, alerts }: { data: AdminOverview; alerts: 
     <div className="min-h-dvh" style={{ background: ADMIN.bg }}>
       <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6">
         <motion.div {...fadeUp(0)} className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h1 className="font-display text-2xl font-bold tracking-tight sm:text-3xl" style={{ color: ADMIN.text }}>
-              Panel de control
-            </h1>
-            <p className="mt-1 flex items-center gap-1.5 text-sm" style={{ color: ADMIN.textMuted }}>
-              <span
-                className="inline-block size-2 animate-pulse rounded-full"
-                style={{ background: ADMIN.accent }}
-              />
-              Datos en vivo · solo para ti
-            </p>
+          <div className="flex items-center gap-3">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/peptibrain-isotipo.svg" alt="PeptiBrain" className="size-11 shrink-0 rounded-2xl" />
+            <div>
+              <h1 className="font-display text-2xl font-bold tracking-tight sm:text-3xl" style={{ color: ADMIN.text }}>
+                PeptiBrain
+              </h1>
+              <p className="mt-0.5 flex items-center gap-1.5 text-sm" style={{ color: ADMIN.textMuted }}>
+                <span
+                  className="inline-block size-2 animate-pulse rounded-full"
+                  style={{ background: ADMIN.accent }}
+                />
+                Panel de control · datos en vivo
+              </p>
+            </div>
           </div>
         </motion.div>
 
