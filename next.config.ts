@@ -24,11 +24,11 @@ function supabaseHost(): string {
 // de nonces por petición, fuera de alcance de este ajuste.
 const CSP = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com",
+  "script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com https://www.googletagmanager.com",
   "style-src 'self' 'unsafe-inline'",
-  `img-src 'self' data: blob: https://${supabaseHost()}`,
+  `img-src 'self' data: blob: https://${supabaseHost()} https://www.google-analytics.com https://www.googletagmanager.com`,
   "font-src 'self' data:",
-  `connect-src 'self' https://${supabaseHost()} https://api.mixpanel.com https://api-js.mixpanel.com https://challenges.cloudflare.com`,
+  `connect-src 'self' https://${supabaseHost()} https://api.mixpanel.com https://api-js.mixpanel.com https://challenges.cloudflare.com https://www.google-analytics.com https://www.googletagmanager.com https://region1.google-analytics.com`,
   "frame-src https://challenges.cloudflare.com",
   "object-src 'none'",
   "base-uri 'self'",

@@ -7,6 +7,8 @@ import { routing } from "@/i18n/routing";
 import { MixpanelProvider } from "@/components/app/MixpanelProvider";
 import { ServiceWorkerRegister } from "@/components/app/ServiceWorkerRegister";
 import { CookieConsentBanner } from "@/components/app/CookieConsentBanner";
+import { GoogleAnalytics } from "@/components/app/GoogleAnalytics";
+import { getPublicSetting } from "@/lib/app-settings";
 import "../globals.css";
 
 const poppins = Poppins({
@@ -50,6 +52,7 @@ export default async function LocaleLayout({
   }
   setRequestLocale(locale);
   const messages = await getMessages();
+  const gaId = await getPublicSetting("ga_measurement_id");
 
   return (
     <html
@@ -71,6 +74,7 @@ export default async function LocaleLayout({
         <NextIntlClientProvider messages={messages}>
           <MixpanelProvider>{children}</MixpanelProvider>
           <CookieConsentBanner />
+          {gaId && <GoogleAnalytics gaId={gaId} />}
         </NextIntlClientProvider>
       </body>
     </html>

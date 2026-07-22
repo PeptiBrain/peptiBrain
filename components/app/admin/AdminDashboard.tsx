@@ -7,8 +7,9 @@ import type { AdminOverview } from "@/lib/admin-data";
 import { UsersTable } from "@/components/app/admin/UsersTable";
 import { AnimatedNumber } from "@/components/app/shell/AnimatedNumber";
 import { ADMIN, AdminBarChart, AdminDonut, RetentionBars } from "@/components/app/admin/AdminCharts";
+import { IntegrationsPanel } from "@/components/app/admin/IntegrationsPanel";
 
-type Tab = "all" | "finance" | "activity" | "users" | "retention" | "health" | "acq";
+type Tab = "all" | "finance" | "activity" | "users" | "retention" | "health" | "acq" | "integrations";
 
 const TABS: { key: Tab; label: string }[] = [
   { key: "all", label: "Todo" },
@@ -18,6 +19,7 @@ const TABS: { key: Tab; label: string }[] = [
   { key: "retention", label: "Retención" },
   { key: "health", label: "Salud" },
   { key: "acq", label: "Adquisición" },
+  { key: "integrations", label: "Integraciones" },
 ];
 
 const PLATFORM_COLOR: Record<string, string> = {
@@ -44,6 +46,7 @@ export function AdminDashboard({ data, alerts }: { data: AdminOverview; alerts: 
   const showRetention = tab === "all" || tab === "retention";
   const showHealth = tab === "all" || tab === "health";
   const showAcq = tab === "all" || tab === "acq";
+  const showIntegrations = tab === "all" || tab === "integrations";
 
   return (
     <div className="min-h-dvh" style={{ background: ADMIN.bg }}>
@@ -570,6 +573,17 @@ export function AdminDashboard({ data, alerts }: { data: AdminOverview; alerts: 
                 invertir en un canal, se puede agregar aquí para saber cuál conviene escalar.
               </p>
             </div>
+          </Section>
+        )}
+
+        {/* INTEGRACIONES */}
+        {showIntegrations && (
+          <Section
+            title="Integraciones"
+            note="Conecta herramientas externas de analítica. Se activan respetando el banner de cookies."
+            delay={0.45}
+          >
+            <IntegrationsPanel />
           </Section>
         )}
       </div>

@@ -6,8 +6,18 @@ import { motion, AnimatePresence } from "motion/react";
 import { Link } from "@/i18n/navigation";
 import { Switch } from "@/components/ui/switch";
 import { grantTrackingConsent, denyTrackingConsent } from "@/lib/mixpanel";
+import { grantAnalyticsConsent, denyAnalyticsConsent } from "@/lib/analytics";
 
 const KEY = "peptibrain_cookie_consent";
+
+function grantAll() {
+  grantTrackingConsent();
+  grantAnalyticsConsent();
+}
+function denyAll() {
+  denyTrackingConsent();
+  denyAnalyticsConsent();
+}
 
 export function CookieConsentBanner() {
   const t = useTranslations("CookieBanner");
@@ -23,23 +33,23 @@ export function CookieConsentBanner() {
 
   function accept() {
     window.localStorage.setItem(KEY, "accepted");
-    grantTrackingConsent();
+    grantAll();
     setVisible(false);
   }
 
   function reject() {
     window.localStorage.setItem(KEY, "rejected");
-    denyTrackingConsent();
+    denyAll();
     setVisible(false);
   }
 
   function savePreferences() {
     if (analyticsEnabled) {
       window.localStorage.setItem(KEY, "accepted");
-      grantTrackingConsent();
+      grantAll();
     } else {
       window.localStorage.setItem(KEY, "rejected");
-      denyTrackingConsent();
+      denyAll();
     }
     setVisible(false);
   }
