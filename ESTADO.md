@@ -1,5 +1,9 @@
 # ESTADO — PeptiBrain
-Última actualización: 2026-07-21 | Sesión 9 (seguridad + retención completa + certificación pre-lanzamiento). TODO commiteado y desplegado. Migraciones 0003-0028 TODAS corridas y confirmadas contra la DB real (incluida 0027 `error_log`).
+Última actualización: 2026-07-22 | Sesión 9 (seguridad + retención + certificación + Gemini + panel: logo/integraciones). TODO commiteado y desplegado. Migraciones 0003-0028 corridas y confirmadas; **0029 (`app_settings`) PENDIENTE de correr**.
+
+## ✅ Panel: logo + apartado Integraciones (2026-07-22)
+- **Logo de PeptiBrain** en la cabecera del panel de control (isotipo verde + nombre + "Panel de control · datos en vivo").
+- **Apartado "Integraciones"** (nueva pestaña del panel): Mixpanel mostrado como "Conectado ✓"; **Google Analytics conectable de verdad** — el dueño pega el ID `G-XXXX` en el panel, se guarda en la tabla `app_settings` (migración 0029), y el layout carga GA4 SOLO si hay ID Y el visitante aceptó las cookies (respeta el banner, `lib/analytics.ts` + `components/app/GoogleAnalytics.tsx`). Endpoint admin `/api/admin/settings` (solo role=admin). CSP actualizada para permitir dominios de Google (googletagmanager/google-analytics). `getPublicSetting` lee con fetch cacheado (revalidate 300s, sin cookies) para NO volver dinámicas las páginas estáticas (landing/login/paywall siguen ISR). Hueco "más integraciones próximamente" (Firebase/Amplitude/Meta Pixel). **Pendiente**: correr migración 0029; sin ella el apartado funciona pero GA no guarda (la tabla no existe).
 
 ## 🚦 CERTIFICACIÓN PRE-LANZAMIENTO (2026-07-21) — veredicto: **NO APTO todavía** (1 bloqueante)
 Auditoría con evidencia real, no solo compilación. Estado por bloque:
