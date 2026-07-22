@@ -16,7 +16,7 @@ export type PushSubscriptionRow = { endpoint: string; p256dh: string; auth: stri
 
 export async function sendPush(
   sub: PushSubscriptionRow,
-  payload: { title: string; body: string; url?: string }
+  payload: { title: string; body: string; url?: string; doseId?: string }
 ): Promise<{ ok: boolean; expired: boolean }> {
   ensureConfigured();
   try {

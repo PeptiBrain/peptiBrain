@@ -8,6 +8,7 @@ import { Link } from "@/i18n/navigation";
 import { loadOnboarding } from "@/lib/onboarding";
 import { computeStreak, loadAppData, markDoseDone, type AppData } from "@/lib/app-data";
 import { computeStats } from "@/lib/stats";
+import { celebrateDoseLogged } from "@/lib/celebrate";
 import { CURRENCY, type Locale } from "@/i18n/routing";
 import { track } from "@/lib/mixpanel";
 import { DateRangeTabs } from "@/components/app/shell/DateRangeTabs";
@@ -83,7 +84,9 @@ export default function InicioPage() {
 
   async function handleMarkDone() {
     if (!pendingDose || !data) return;
-    setData(await markDoseDone(data, pendingDose.id));
+    const next = await markDoseDone(data, pendingDose.id);
+    setData(next);
+    celebrateDoseLogged(next);
     track("dose_logged", { peptide: donePeptide?.name });
   }
 

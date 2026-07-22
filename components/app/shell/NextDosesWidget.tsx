@@ -6,6 +6,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Syringe, Check, X, ChevronRight, AlertTriangle } from "lucide-react";
 import { loadAppData, markDoseDone, type AppData, type Dose } from "@/lib/app-data";
+import { celebrateDoseLogged } from "@/lib/celebrate";
 import { PeptideIcon } from "@/components/app/peptidos/PeptideIcon";
 
 export function NextDosesWidget() {
@@ -45,7 +46,9 @@ export function NextDosesWidget() {
   }
 
   async function markDone(doseId: string) {
-    setData(await markDoseDone(data!, doseId));
+    const next = await markDoseDone(data!, doseId);
+    setData(next);
+    celebrateDoseLogged(next);
   }
 
   return (

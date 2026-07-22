@@ -540,6 +540,12 @@
     "peptideFallback": "Your peptide",
     "overdueBy": "Overdue by {days, plural, one {# day} other {# days}}"
   },
+  "DoseToast": {
+    "title": "Dose logged!",
+    "doses": "{count, plural, one {# dose} other {# doses}} so far",
+    "adherence": "{pct}% adherence",
+    "weight": "{delta} kg"
+  },
   "Providers": {
     "modalTitle": "New supplier",
     "close": "Close",
@@ -821,6 +827,8 @@
     "noSharedData": "No data yet.",
     "done": "Taken",
     "pending": "Pending",
+    "memberAdherence": "{name} has {count, plural, one {# dose} other {# doses}} · {pct}% adherence",
+    "memberDoses": "{name} has {count, plural, one {# dose logged} other {# doses logged}}",
     "planRequired": "Sharing with family is part of the Family plan.",
     "planRequiredCta": "Upgrade to Family"
   },

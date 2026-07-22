@@ -8,6 +8,7 @@ import { RefreshButton } from "@/components/app/shell/RefreshButton";
 import { AppTour } from "@/components/app/shell/AppTour";
 import { NextDosesWidget } from "@/components/app/shell/NextDosesWidget";
 import { NotificationBell } from "@/components/app/shell/NotificationBell";
+import { DoseCelebrationToast } from "@/components/app/shell/DoseCelebrationToast";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
@@ -72,6 +73,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       <div className="print:hidden">
         <AppTour />
         <NextDosesWidget />
+        <DoseCelebrationToast />
       </div>
     </div>
   );

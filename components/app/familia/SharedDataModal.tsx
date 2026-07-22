@@ -5,6 +5,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { Users, Package, Beaker, Syringe, Scale, Apple, Wallet } from "lucide-react";
 import { ModalShell } from "@/components/app/shell/ModalShell";
 import { loadSharedOwnerData, type SharedOwnerData } from "@/lib/app-data";
+import { adherence, doneDoses } from "@/lib/stats";
 import { CURRENCY, type Locale } from "@/i18n/routing";
 
 export function SharedDataModal({
@@ -29,6 +30,8 @@ export function SharedDataModal({
   }, [open, ownerId]);
 
   const lastWeight = data?.healthLogs.find((h) => h.weightKg);
+  const memberAdherence = data ? adherence(data.doses, new Date()) : null;
+  const memberDosesDone = data ? doneDoses(data.doses).length : 0;
 
   return (
     <ModalShell
@@ -41,6 +44,17 @@ export function SharedDataModal({
         <p className="text-sm text-muted-foreground">{t("loading")}</p>
       ) : (
         <div className="space-y-4">
+          {(memberAdherence || memberDosesDone > 0) && (
+            <div className="flex items-center gap-3 rounded-xl border border-primary/20 bg-primary/5 p-3">
+              <Syringe className="size-5 shrink-0 text-primary" aria-hidden />
+              <p className="text-sm text-foreground">
+                {memberAdherence
+                  ? t("memberAdherence", { name: data.ownerName, pct: memberAdherence.pct, count: memberDosesDone })
+                  : t("memberDoses", { name: data.ownerName, count: memberDosesDone })}
+              </p>
+            </div>
+          )}
+
           <div>
             <p className="mb-1.5 flex items-center gap-1.5 text-sm font-semibold text-foreground">
               <Package className="size-4 text-primary" aria-hidden /> {t("sharedPeptides")}

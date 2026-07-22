@@ -540,6 +540,12 @@
     "peptideFallback": "Tu péptido",
     "overdueBy": "Vencida hace {days, plural, one {# día} other {# días}}"
   },
+  "DoseToast": {
+    "title": "¡Dosis registrada!",
+    "doses": "Llevas {count, plural, one {# dosis} other {# dosis}}",
+    "adherence": "{pct}% de adherencia",
+    "weight": "{delta} kg"
+  },
   "Providers": {
     "modalTitle": "Nuevo proveedor",
     "close": "Cerrar",
@@ -821,6 +827,8 @@
     "noSharedData": "Sin datos todavía.",
     "done": "Aplicada",
     "pending": "Pendiente",
+    "memberAdherence": "{name} lleva {count, plural, one {# dosis} other {# dosis}} · {pct}% de adherencia",
+    "memberDoses": "{name} lleva {count, plural, one {# dosis registrada} other {# dosis registradas}}",
     "planRequired": "Compartir con familia es parte del plan Family.",
     "planRequiredCta": "Subir a Family"
   },

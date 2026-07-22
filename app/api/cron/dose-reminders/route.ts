@@ -89,6 +89,7 @@ export async function GET(req: Request) {
         title: "Es hora de tu dosis",
         body: `${name} · ${dose.amount} ${dose.unit}`,
         url: "/app",
+        doseId: dose.id,
       });
       if (result.expired) {
         await admin.from("push_subscriptions").delete().eq("endpoint", sub.endpoint);

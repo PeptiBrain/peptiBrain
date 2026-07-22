@@ -1,4 +1,4 @@
-const CACHE_NAME = "peptibrain-v1";
+const CACHE_NAME = "peptibrain-v2";
 
 self.addEventListener("install", (event) => {
   self.skipWaiting();
@@ -22,19 +22,52 @@ self.addEventListener("push", (event) => {
   } catch {
     // ignore, use defaults
   }
+  // Si el aviso trae un doseId, añadimos un botón "✓ Hecho" para registrar la
+  // dosis en 1 toque sin abrir la app.
+  const actions = data.doseId ? [{ action: "mark-done", title: "✓ Hecho" }] : [];
   event.waitUntil(
     self.registration.showNotification(data.title, {
       body: data.body,
       icon: "/peptibrain-isotipo.svg",
       badge: "/peptibrain-isotipo.svg",
-      data: { url: data.url },
+      actions,
+      data: { url: data.url, doseId: data.doseId },
     })
   );
 });
 
 self.addEventListener("notificationclick", (event) => {
-  event.notification.close();
+  const doseId = event.notification.data?.doseId;
   const url = event.notification.data?.url || "/app";
+  event.notification.close();
+
+  // Botón "✓ Hecho": marca la dosis sin abrir la app (la cookie de sesión viaja
+  // con la petición al ser mismo origen). Si algo falla, abre la app como respaldo.
+  if (event.action === "mark-done" && doseId) {
+    event.waitUntil(
+      fetch("/api/doses/mark-done", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ doseId }),
+      })
+        .then((res) => {
+          if (res.ok) {
+            return self.registration.showNotification("✓ Dosis registrada", {
+              body: "¡Bien! Queda guardada en tu historial.",
+              icon: "/peptibrain-isotipo.svg",
+              badge: "/peptibrain-isotipo.svg",
+            });
+          }
+          throw new Error("mark-done failed");
+        })
+        .catch(() => {
+          if (self.clients.openWindow) return self.clients.openWindow(url);
+        })
+    );
+    return;
+  }
+
   event.waitUntil(
     self.clients.matchAll({ type: "window" }).then((clients) => {
       for (const client of clients) {
