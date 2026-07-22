@@ -1,5 +1,19 @@
 # ESTADO — PeptiBrain
-Última actualización: 2026-07-21 | Sesión 9 (seguridad: rate limit + cabeceras/CORS + botes de colores por categoría). TODO commiteado y desplegado a producción. Migraciones 0003-0026 corridas en Supabase por el usuario (confirmado contra la DB real).
+Última actualización: 2026-07-21 | Sesión 9 (seguridad + retención completa + certificación pre-lanzamiento). TODO commiteado y desplegado. Migraciones 0003-0026 + 0028 corridas y confirmadas contra la DB real; **0027 (`error_log`) PENDIENTE**.
+
+## 🚦 CERTIFICACIÓN PRE-LANZAMIENTO (2026-07-21) — veredicto: **NO APTO todavía** (1 bloqueante)
+Auditoría con evidencia real, no solo compilación. Estado por bloque:
+- **Seguridad** ✅: cabeceras/CSP/HSTS/X-Frame VIVAS en prod (curl confirmado), CORS solo peptibrain.com, rate limit activo, secretos fuera del repo (nunca commiteados), webhook con hottok timing-safe + idempotencia, **IDOR probado de verdad** (cliente anónimo lee 0 filas en TODAS las tablas), trigger anti-escalada de plan. Nota menor ⚠️: CVE de `sharp`/libvips sin fix (riesgo real casi nulo — solo procesa nuestras imágenes estáticas; las fotos de familiares usan `<img>`, no next/image).
+- **Datos** ✅: RLS alto rendimiento, índices en FKs, migraciones aditivas. ⚠️ backups: el usuario debe confirmarlos en Supabase.
+- **Escala** ✅ para 300-500. ⚠️ Supabase Free pausa a los 7 días de inactividad + egress 5GB → al lanzar con tráfico, subir a Pro. El panel de admin carga sin paginar (ok a pequeña escala).
+- **IA** ✅: clave en servidor, kill-switch global + límite por usuario + max_tokens, modelo gratis. ⚠️ calidad del output nunca evaluada con preguntas reales.
+- **Pago** ❌ **BLOQUEANTE**: webhook idempotente/firmado ✓ PERO **nunca se probó un pago real end-to-end** (pagar → plan activo → features). Requiere acción del usuario.
+- **Legal** ✅: 5 páginas legales (LLC real), borrado de cuenta real (cascada, cableado en `/app/cuenta`), disclaimer IA.
+- **Economía** ✅: costo IA ~0% (modelo gratis) < 20%.
+- **Operación** ✅: MANUAL-DEL-DUEÑO.md, panel de admin con salud/errores (sustituto de Sentry para dueño no técnico), soporte visible, rollback vía Vercel. ⚠️ migración 0027 sin correr → los Error Boundaries no guardan aún.
+- **Producto enriquecido** ✅: rico en valor, verificado a 375px en múltiples pantallas durante la sesión.
+- **Rigor de entrega** ✅: invariantes de dinero (gating por trigger, webhook idempotente), IDOR probado, circuit-breaker IA, export de datos, manual del dueño. ⚠️ auto-QA end-to-end completo requiere login real del usuario.
+**Acciones que SOLO el usuario puede hacer antes de vender**: (1) ❌ prueba de pago real, (2) confirmar backups, (3) correr migración 0027, (4) probar plan Family con 2 cuentas, (5) spot-check de calidad del Asistente IA, (6) subir Supabase a Pro al tener tráfico.
 
 ## ✅ Sesión 9 (2026-07-21) — endurecimiento de seguridad + botes por categoría
 - **Auditoría de API keys**: revisadas todas las variables de entorno — ninguna clave secreta real estaba expuesta al cliente (las `NEXT_PUBLIC_*` que existen son intencionalmente públicas: URL de Supabase, anon key, site key de Turnstile, token de Mixpanel, códigos de oferta de Hotmart — todas diseñadas por su propio proveedor para ser públicas). No hizo falta mover nada.
