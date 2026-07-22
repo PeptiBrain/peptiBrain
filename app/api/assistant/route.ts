@@ -2,9 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 
-// OpenRouter — API compatible con OpenAI. Ver openrouter.ai/models para cambiar
-// de modelo (gratis con :free, o el de pago barato que prefieras) sin tocar código.
-const AI_MODEL = process.env.ASSISTANT_AI_MODEL || "openai/gpt-oss-20b:free";
+// Gemini (Google) vía su endpoint compatible con OpenAI — fiable y con plan gratis
+// generoso. El modelo y la URL son env vars por si algún día se cambia de proveedor
+// sin tocar código (cualquier API compatible-OpenAI funciona igual).
+const AI_MODEL = process.env.ASSISTANT_AI_MODEL || "gemini-2.0-flash";
+const AI_BASE_URL =
+  process.env.ASSISTANT_AI_BASE_URL || "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions";
 const MAX_MESSAGES_PER_DAY = 20;
 const MAX_TOKENS = 512;
 // Kill-switch: tope de mensajes de TODOS los usuarios juntos, por día. Protege
@@ -95,7 +98,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "daily_limit_reached" }, { status: 429 });
   }
 
-  const apiKey = process.env.OPENROUTER_API_KEY;
+  const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
     return NextResponse.json({ error: "assistant_not_configured" }, { status: 503 });
   }
@@ -106,13 +109,11 @@ export async function POST(request: NextRequest) {
 
   let reply: string;
   try {
-    const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    const res = await fetch(AI_BASE_URL, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
-        "HTTP-Referer": "https://peptibrain.com",
-        "X-Title": "PeptiBrain",
       },
       body: JSON.stringify({
         model: AI_MODEL,
