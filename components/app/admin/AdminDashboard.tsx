@@ -8,6 +8,7 @@ import { UsersTable } from "@/components/app/admin/UsersTable";
 import { AnimatedNumber } from "@/components/app/shell/AnimatedNumber";
 import { ADMIN, AdminBarChart, AdminDonut, RetentionBars } from "@/components/app/admin/AdminCharts";
 import { IntegrationsPanel } from "@/components/app/admin/IntegrationsPanel";
+import { HotmartSalesCard } from "@/components/app/admin/HotmartSalesCard";
 
 type Tab = "all" | "finance" | "activity" | "users" | "retention" | "health" | "acq" | "integrations";
 
@@ -181,6 +182,9 @@ export function AdminDashboard({ data, alerts }: { data: AdminOverview; alerts: 
                 value={`${data.conversionPct}%`}
                 breakdown={[{ label: "Ingreso medio/cliente", value: `${s}${data.arpu.toFixed(2)}`, color: ADMIN.positive }]}
               />
+            </div>
+            <div className="mt-4">
+              <HotmartSalesCard />
             </div>
             <div className="mt-4 rounded-2xl p-5" style={{ background: ADMIN.surface, border: `1px solid ${ADMIN.border}` }}>
               <p className="mb-3 text-xs font-semibold uppercase tracking-wide" style={{ color: ADMIN.textMuted }}>
