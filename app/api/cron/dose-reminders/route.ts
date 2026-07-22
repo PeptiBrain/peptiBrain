@@ -4,10 +4,14 @@ import { sendPush } from "@/lib/push";
 
 export const dynamic = "force-dynamic";
 
-// Corre cada ~10 minutos (ver vercel.json). Busca dosis pendientes que vencen
-// dentro de los próximos 10 minutos, sin recordatorio ya enviado, y le manda
-// una notificación push al dueño — salvo que tenga un viaje activo hoy
-// (Modo viaje: los recordatorios se pausan solos durante un viaje registrado).
+// Pensado para llamarse cada ~15 minutos (por un cron externo gratis como
+// cron-job.org, ya que el cron propio de Vercel gratis solo corre 1x/día).
+// Ventana: dosis pendientes que vencen entre hace 5 min y dentro de 15 min, sin
+// recordatorio ya enviado. La ventana (20 min) es mayor que el intervalo de
+// llamada (15 min) para que ninguna dosis caiga en un hueco entre dos llamadas;
+// `reminded_at` garantiza que cada dosis se avise UNA sola vez aunque dos
+// llamadas se solapen. El aviso llega como muy pronto ~15 min antes de la hora.
+// Se salta a quien tenga un viaje activo hoy (Modo viaje).
 export async function GET(req: Request) {
   const auth = req.headers.get("authorization");
   if (auth !== `Bearer ${process.env.CRON_SECRET}`) {
@@ -16,7 +20,8 @@ export async function GET(req: Request) {
 
   const admin = createAdminClient();
   const now = new Date();
-  const windowEnd = new Date(now.getTime() + 10 * 60 * 1000);
+  const windowStart = new Date(now.getTime() - 5 * 60 * 1000);
+  const windowEnd = new Date(now.getTime() + 15 * 60 * 1000);
   const today = now.toISOString().slice(0, 10);
 
   const { data: doses } = await admin
@@ -24,7 +29,7 @@ export async function GET(req: Request) {
     .select("id, user_id, peptide_id, amount, unit, scheduled_at")
     .eq("done", false)
     .is("reminded_at", null)
-    .gte("scheduled_at", now.toISOString())
+    .gte("scheduled_at", windowStart.toISOString())
     .lte("scheduled_at", windowEnd.toISOString());
 
   if (!doses || doses.length === 0) {
