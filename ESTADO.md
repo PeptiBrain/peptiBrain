@@ -29,7 +29,7 @@
 7. ✅ Rate limit 100% activo, en local Y en producción (2026-07-21) — env vars puestas en Vercel + redeploy confirmado por el usuario.
 8. **Correr migración 0027** (`error_log`, tabla para la nueva sección "Salud" del panel de admin) — sin ella la sección de errores simplemente se ve vacía, no rompe nada, pero conviene correrla para que empiece a capturar errores reales.
 9. ✅ **Recordatorios de dosis a la hora exacta — RESUELTO (2026-07-21)**: el cron gratis de Vercel solo corría 1x/día (rompía el aviso). Solución sin pagar: **cron-job.org** (cuenta gratis del usuario) llama a `/api/cron/dose-reminders` cada 15 min con el header `Authorization: Bearer <CRON_SECRET>`. Probado por el usuario → 200 OK. La ventana del endpoint se amplió a [-5min, +15min] para que ninguna dosis caiga en un hueco entre llamadas (`reminded_at` evita avisos duplicados). Era la **palanca #1 de retención**.
-10. **Correr migración 0028** (`vials.low_stock_notified_at` + `profiles.winback_sent_at`) — para el aviso de "vial bajo" y el re-enganche. Sin ella esas dos cosas fallan silenciosamente (no rompen el resto).
+10. ✅ Migración 0028 (`vials.low_stock_notified_at` + `profiles.winback_sent_at`) corrida y confirmada contra la DB real (2026-07-21) — vial bajo y re-enganche 100% activos.
 
 ## ✅ Sistema de RETENCIÓN completo (2026-07-21) — las 7 palancas construidas
 El usuario pidió "haz todo" sobre las 7 palancas de retención. Estado:
