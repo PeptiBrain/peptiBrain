@@ -142,6 +142,34 @@ function ComparisonColumn({
         <Field label={t("fieldBac")} value={`${profile.bacWater} mL`} />
         <Field label={t("fieldCategories")} value={profile.categories.map((c) => tc(c)).join(", ")} />
       </dl>
+
+      <div className="mt-4 space-y-2.5 border-t border-border/60 pt-4 text-sm">
+        <div>
+          <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{t("fieldHowItWorks")}</dt>
+          <dd className="mt-0.5 leading-relaxed text-foreground">{profile.howItWorks}</dd>
+        </div>
+        <div>
+          <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{t("fieldMostReported")}</dt>
+          <ul className="mt-1 list-disc space-y-0.5 pl-4 text-foreground">
+            {profile.mostReported.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </div>
+        <div>
+          <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{t("fieldEvidenceLevel")}</dt>
+          <dd className="mt-0.5 leading-relaxed text-foreground">{profile.evidenceLevel}</dd>
+        </div>
+        <div>
+          <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{t("fieldSideEffects")}</dt>
+          <dd className="mt-0.5 leading-relaxed text-foreground">{profile.commonSideEffects}</dd>
+        </div>
+        <div>
+          <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{t("fieldCombines")}</dt>
+          <dd className="mt-0.5 leading-relaxed text-foreground">{profile.combinesWithAvoid}</dd>
+        </div>
+      </div>
+
       <Link
         href={calcHref}
         className="mt-4 inline-flex h-10 items-center justify-center gap-1.5 rounded-lg border border-primary/40 bg-primary/5 text-xs font-semibold text-primary transition-colors hover:bg-primary/10"

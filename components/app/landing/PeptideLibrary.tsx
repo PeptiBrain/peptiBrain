@@ -200,6 +200,44 @@ export function PeptideLibrary() {
               <dd className="font-medium text-foreground">{quickView.frequency}</dd>
             </div>
           </dl>
+
+          <div className="mt-4 space-y-3 border-t border-border/60 pt-4 text-sm">
+            <div>
+              <dt className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                {t("fieldHowItWorks")}
+              </dt>
+              <dd className="mt-0.5 leading-relaxed text-foreground">{quickView.howItWorks}</dd>
+            </div>
+            <div>
+              <dt className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                {t("fieldMostReported")}
+              </dt>
+              <ul className="mt-1 list-disc space-y-0.5 pl-4 text-foreground">
+                {quickView.mostReported.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <dt className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                {t("fieldEvidenceLevel")}
+              </dt>
+              <dd className="mt-0.5 leading-relaxed text-foreground">{quickView.evidenceLevel}</dd>
+            </div>
+            <div>
+              <dt className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                {t("fieldSideEffects")}
+              </dt>
+              <dd className="mt-0.5 leading-relaxed text-foreground">{quickView.commonSideEffects}</dd>
+            </div>
+            <div>
+              <dt className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                {t("fieldCombines")}
+              </dt>
+              <dd className="mt-0.5 leading-relaxed text-foreground">{quickView.combinesWithAvoid}</dd>
+            </div>
+          </div>
+
           <div className="mt-5 flex flex-col gap-2">
             <Link
               href="/login"
