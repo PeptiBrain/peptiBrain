@@ -65,15 +65,26 @@ export function Footer() {
               {t("legalEntity")}
             </Link>
           </nav>
-          <a
-            href="https://www.instagram.com/peptibrain/"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={t("instagram")}
-            className="text-muted-foreground hover:text-foreground"
-          >
-            <InstagramIcon className="size-5" aria-hidden />
-          </a>
+          <div className="flex items-center gap-4">
+            <a
+              href="https://www.instagram.com/peptibrain/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={t("instagram")}
+              className="text-muted-foreground hover:text-foreground"
+            >
+              <InstagramIcon className="size-5" aria-hidden />
+            </a>
+            <a
+              href="https://www.tiktok.com/@peptibrainapp"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={t("tiktok")}
+              className="text-muted-foreground hover:text-foreground"
+            >
+              <TikTokIcon className="size-5" aria-hidden />
+            </a>
+          </div>
         </div>
       </footer>
     </>
@@ -93,6 +104,14 @@ function InstagramIcon({ className }: { className?: string }) {
       <rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" strokeWidth="1.6" />
       <circle cx="12" cy="12" r="4.2" stroke="currentColor" strokeWidth="1.6" />
       <circle cx="17.2" cy="6.8" r="1" fill="currentColor" />
+    </svg>
+  );
+}
+
+function TikTokIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" className={className} aria-hidden>
+      <path d="M16.6 5.82c-.9-.83-1.42-2.02-1.42-3.32h-3.06v14.06c0 1.44-1.17 2.62-2.62 2.62a2.62 2.62 0 0 1 0-5.25c.24 0 .48.03.7.1V10.9a5.9 5.9 0 0 0-.7-.04A5.69 5.69 0 0 0 4 16.55a5.69 5.69 0 0 0 9.68 4.08 5.66 5.66 0 0 0 1.71-4.08V9.4a8.6 8.6 0 0 0 5.02 1.6V8.94a5.28 5.28 0 0 1-3.81-3.12Z" />
     </svg>
   );
 }

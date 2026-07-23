@@ -4,7 +4,8 @@ import { Footer } from "@/components/app/Footer";
 import { Link } from "@/i18n/navigation";
 import { ArrowLeft, ArrowRight, Clock } from "lucide-react";
 import { ArticleHero } from "@/components/app/blog/ArticleHero";
-import { ToolCta, ToolDisclaimer, ToolCrossLinks, JsonLd } from "@/components/app/calculator/ToolPieces";
+import { BlogCtaBanner } from "@/components/app/blog/BlogCtaBanner";
+import { ToolDisclaimer, ToolCrossLinks, JsonLd } from "@/components/app/calculator/ToolPieces";
 import { BLOG_POSTS, localized, getPostImagePath, type BlogPost } from "@/lib/blog/posts";
 
 const BASE = "https://peptibrain.com";
@@ -72,7 +73,7 @@ export function ArticleLayout({ post, locale, children }: { post: BlogPost; loca
           <article className="mt-2">{children}</article>
 
           <ToolDisclaimer />
-          <ToolCta />
+          <BlogCtaBanner locale={locale} />
           <ToolCrossLinks current="calc" />
 
           {related.length > 0 && (

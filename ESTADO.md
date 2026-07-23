@@ -1,5 +1,11 @@
 # ESTADO — PeptiBrain
-Última actualización: 2026-07-23 | Sesión 11k (Comparador de péptidos agregado DENTRO de la app, 4ª sub-herramienta de la pestaña Calculadora). Migraciones 0003-0030 corridas (0029 `app_settings` y 0030 `assistant_questions` confirmadas OK por el usuario).
+Última actualización: 2026-07-23 | Sesión 11l (banner CTA de calculadoras en el blog + enlace de TikTok en el footer). Migraciones 0003-0030 corridas (0029 `app_settings` y 0030 `assistant_questions` confirmadas OK por el usuario).
+
+## ✅ Sesión 11l (2026-07-23) — Banner CTA del blog (con mockup de la app) + TikTok en el footer
+- **Banner CTA de calculadoras**: el usuario generó las 2 imágenes (es/en, prompt de sesión anterior: mockup de la app con "250 mcg" + botón "Probar gratis"/"Try free"). Se les quitó el destello de Gemini (mismo proceso de retoque que en las 11 portadas — esta vez la marca de agua caía encima de un borde recto del mockup del teléfono, así que se ajustó el radio/máscara para no dejar rastro). Guardadas en `public/blog/cta/calc-banner-{es,en}.png`.
+- Nuevo componente `components/app/blog/BlogCtaBanner.tsx`: banner de imagen completa (no texto+botón genérico) que **reemplaza** el `ToolCta` de texto al final de cada artículo del blog (`ArticleLayout.tsx`) — elige la imagen según el idioma, enlaza a `/login`. `ToolCta` sigue igual en las páginas de herramienta (`/calculadora`, `/protocolos`, `/comparador`) — el cambio es solo para artículos de blog.
+- **TikTok**: agregado el ícono + enlace (`https://www.tiktok.com/@peptibrainapp`) junto al de Instagram en el Footer, con su propio `aria-label` i18n.
+- ✅ Verificado: tsc ✓ eslint ✓ build ✓ · navegado en vivo en es/en confirmando que el banner correcto carga en cada idioma y se ve bien, y que los dos enlaces sociales (Instagram + TikTok) están en el DOM del footer con la URL correcta.
 
 ## ✅ Sesión 11k (2026-07-23) — Comparador de péptidos dentro de la app (Premium)
 El usuario pidió meter el comparador (hasta ahora solo público en `/comparador`) también dentro de la app logueada.
