@@ -4,7 +4,7 @@ import { Clock } from "lucide-react";
 import { Header } from "@/components/app/Header";
 import { Footer } from "@/components/app/Footer";
 import { Link } from "@/i18n/navigation";
-import { BLOG_POSTS, localized } from "@/lib/blog/posts";
+import { BLOG_POSTS, localized, getPostImagePath } from "@/lib/blog/posts";
 import { JsonLd } from "@/components/app/calculator/ToolPieces";
 import { ArticleHero } from "@/components/app/blog/ArticleHero";
 
@@ -91,7 +91,12 @@ export default async function BlogIndexPage({ params }: { params: Promise<{ loca
                   className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card transition-colors hover:border-primary/40"
                 >
                   <div className="p-3 pb-0">
-                    <ArticleHero icon={post.icon} category={category} compact />
+                    <ArticleHero
+                      icon={post.icon}
+                      category={category}
+                      image={getPostImagePath(post.slug)}
+                      compact
+                    />
                   </div>
                   <div className="flex flex-1 flex-col p-5">
                     <p className="text-[11px] font-semibold uppercase tracking-wide text-primary">{category}</p>

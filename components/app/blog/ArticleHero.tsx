@@ -1,18 +1,43 @@
+import Image from "next/image";
 import type { LucideIcon } from "lucide-react";
 
-// Ilustración de marca del artículo — icono + degradado verde, sin fotos externas
-// (decisión: en salud/bienestar las fotos genéricas de IA restan confianza; un
-// icono limpio en el verde de PeptiBrain es coherente con el resto de la web).
+// Ilustración de portada del artículo. Si el post ya tiene una imagen real
+// generada (public/blog/<slug>.png), se muestra esa; si no, cae al icono +
+// degradado verde de siempre (decisión: en salud/bienestar las fotos
+// genéricas de IA restan confianza, así que el fallback nunca es una foto
+// externa, solo el icono de marca).
 // `compact` = versión más baja para tarjetas de grid (índice del blog).
 export function ArticleHero({
   icon: Icon,
   category,
+  image,
   compact = false,
 }: {
   icon: LucideIcon;
   category: string;
+  image?: string | null;
   compact?: boolean;
 }) {
+  if (image) {
+    return (
+      <div className={`relative overflow-hidden rounded-2xl ${compact ? "h-32" : "h-48 sm:h-56"}`}>
+        <Image
+          src={image}
+          alt=""
+          fill
+          sizes={compact ? "(max-width: 640px) 100vw, 400px" : "(max-width: 640px) 100vw, 800px"}
+          className="object-cover"
+          priority={!compact}
+        />
+        {!compact && (
+          <span className="absolute bottom-3 left-3 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white backdrop-blur-sm">
+            {category}
+          </span>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div
       className={`relative flex items-center justify-center overflow-hidden rounded-2xl ${

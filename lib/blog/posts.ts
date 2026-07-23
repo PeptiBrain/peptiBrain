@@ -204,3 +204,23 @@ export const BLOG_POSTS: BlogPost[] = [
 export function getBlogPost(slug: string): BlogPost | undefined {
   return BLOG_POSTS.find((p) => p.slug === slug);
 }
+
+// Slugs que ya tienen una imagen de portada real en public/blog/<slug>.png
+// (si se agrega un artículo nuevo sin imagen, cae solo al icono + degradado de ArticleHero).
+const SLUGS_WITH_IMAGE = new Set([
+  "que-son-los-peptidos",
+  "como-reconstituir-un-peptido",
+  "semaglutida-como-funciona-y-como-se-calcula-la-dosis",
+  "bpc-157-que-es-y-para-que-se-usa",
+  "ghk-cu-el-peptido-de-la-piel",
+  "errores-comunes-al-empezar-con-peptidos",
+  "mejores-apps-de-peptidos",
+  "peptidos-populares",
+  "peptidos-segun-tu-objetivo",
+  "como-se-usan-los-peptidos",
+  "como-almacenar-tus-peptidos",
+]);
+
+export function getPostImagePath(slug: string): string | null {
+  return SLUGS_WITH_IMAGE.has(slug) ? `/blog/${slug}.png` : null;
+}

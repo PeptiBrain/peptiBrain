@@ -5,7 +5,7 @@ import { Link } from "@/i18n/navigation";
 import { ArrowLeft, ArrowRight, Clock } from "lucide-react";
 import { ArticleHero } from "@/components/app/blog/ArticleHero";
 import { ToolCta, ToolDisclaimer, ToolCrossLinks, JsonLd } from "@/components/app/calculator/ToolPieces";
-import { BLOG_POSTS, localized, type BlogPost } from "@/lib/blog/posts";
+import { BLOG_POSTS, localized, getPostImagePath, type BlogPost } from "@/lib/blog/posts";
 
 const BASE = "https://peptibrain.com";
 
@@ -56,7 +56,7 @@ export function ArticleLayout({ post, locale, children }: { post: BlogPost; loca
           </Link>
 
           <div className="mt-4">
-            <ArticleHero icon={post.icon} category={category} />
+            <ArticleHero icon={post.icon} category={category} image={getPostImagePath(post.slug)} />
           </div>
 
           <h1 className="mt-6 text-balance font-display text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
