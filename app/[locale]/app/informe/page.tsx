@@ -9,6 +9,7 @@ import { createClient } from "@/lib/supabase/client";
 import { computeStreak, loadAppData, type AppData } from "@/lib/app-data";
 import { computeStats } from "@/lib/stats";
 import { CURRENCY, type Locale } from "@/i18n/routing";
+import { PremiumLocked } from "@/components/app/shell/PremiumLocked";
 
 export default function InformePage() {
   const t = useTranslations("Informe");
@@ -32,6 +33,21 @@ export default function InformePage() {
 
   if (!data) return null;
 
+  const isPremium = data.plan !== "free";
+
+  if (!isPremium) {
+    return (
+      <div className="mx-auto max-w-2xl px-4 py-6">
+        <Link href="/app" className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground">
+          <ArrowLeft className="size-4" aria-hidden /> {t("back")}
+        </Link>
+        <div className="mt-6">
+          <PremiumLocked description={t("lockedDesc")} />
+        </div>
+      </div>
+    );
+  }
+
   const symbol = CURRENCY[locale as Locale].symbol;
   const stats = computeStats(data, new Date());
   const streak = computeStreak(data.doses);
@@ -40,6 +56,10 @@ export default function InformePage() {
   const recentDoses = [...data.doses]
     .filter((d) => d.done)
     .sort((a, b) => new Date(b.scheduledAt).getTime() - new Date(a.scheduledAt).getTime())
+    .slice(0, 15);
+  const recentWeights = [...data.healthLogs]
+    .filter((h) => h.weightKg && Number.isFinite(parseFloat(h.weightKg)))
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, 15);
 
   function peptideName(id: string) {
@@ -139,6 +159,64 @@ export default function InformePage() {
                     <td className="py-1.5 text-muted-foreground">
                       {d.amount} {d.unit}
                     </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+
+        <div className="mt-6">
+          <h2 className="text-sm font-semibold text-foreground">{t("vialsTitle")}</h2>
+          {data.vials.length === 0 ? (
+            <p className="mt-2 text-sm text-muted-foreground">{t("vialsEmpty")}</p>
+          ) : (
+            <table className="mt-2 w-full text-left text-sm">
+              <thead>
+                <tr className="border-b border-border text-xs text-muted-foreground">
+                  <th className="py-1.5 font-medium">{t("colPeptide")}</th>
+                  <th className="py-1.5 font-medium">{t("colVialAmount")}</th>
+                  <th className="py-1.5 font-medium">{t("colBacWater")}</th>
+                  <th className="py-1.5 font-medium">{t("colOpenedOn")}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.vials.map((v) => (
+                  <tr key={v.id} className="border-b border-border/60">
+                    <td className="py-1.5 text-foreground">{peptideName(v.peptideId)}</td>
+                    <td className="py-1.5 text-muted-foreground">
+                      {v.amount} {v.unit}
+                    </td>
+                    <td className="py-1.5 text-muted-foreground">{v.bacWater ? `${v.bacWater} mL` : "—"}</td>
+                    <td className="py-1.5 text-muted-foreground">
+                      {new Date(v.createdAt).toLocaleDateString(locale, { day: "numeric", month: "short", year: "numeric" })}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+
+        <div className="mt-6">
+          <h2 className="text-sm font-semibold text-foreground">{t("weightTitle")}</h2>
+          {recentWeights.length === 0 ? (
+            <p className="mt-2 text-sm text-muted-foreground">{t("weightEmpty")}</p>
+          ) : (
+            <table className="mt-2 w-full text-left text-sm">
+              <thead>
+                <tr className="border-b border-border text-xs text-muted-foreground">
+                  <th className="py-1.5 font-medium">{t("colDate")}</th>
+                  <th className="py-1.5 font-medium">{t("colWeight")}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {recentWeights.map((h) => (
+                  <tr key={h.id} className="border-b border-border/60">
+                    <td className="py-1.5 text-muted-foreground">
+                      {new Date(h.date).toLocaleDateString(locale, { day: "numeric", month: "short", year: "numeric" })}
+                    </td>
+                    <td className="py-1.5 text-foreground">{h.weightKg} kg</td>
                   </tr>
                 ))}
               </tbody>
