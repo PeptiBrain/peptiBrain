@@ -1,5 +1,10 @@
 # ESTADO — PeptiBrain
-Última actualización: 2026-07-23 | Sesión 11 (GEO: llms.txt+schema+Cloudflare AI bots desbloqueados, OG image, checklist de primeros pasos, blog de 7 artículos). Migraciones 0003-0030 corridas (0029 `app_settings` y 0030 `assistant_questions` confirmadas OK por el usuario).
+Última actualización: 2026-07-23 | Sesión 11 (GEO: llms.txt+schema+Cloudflare AI bots desbloqueados, OG image, checklist de primeros pasos, blog de 11 artículos). Migraciones 0003-0030 corridas (0029 `app_settings` y 0030 `assistant_questions` confirmadas OK por el usuario).
+
+## ✅ Sesión 11c (2026-07-23) — Blog: +4 artículos (11 en total)
+El usuario pidió 5 ideas inspiradas en peptidosfacil.com; una (errores de principiante) ya existía — se le avisó honestamente y NO se duplicó. Se construyeron las otras 4, con datos reales de `lib/peptide-profiles.ts` (nunca inventados): `peptidos-populares` (directorio por categoría), `peptidos-segun-tu-objetivo` (peso/recuperación/músculo/longevidad/piel), `como-se-usan-los-peptidos` (vía subcutánea, rotación de zonas, los 4 pasos de una aplicación), `como-almacenar-tus-peptidos` (antes/después de reconstituir, la regla de los ~30 días, el calor como enemigo). Todos con enlaces cruzados entre sí y a las calculadoras/protocolos.
+- ✅ Verificado: tsc ✓ eslint ✓ (2 comillas sin escapar más, corregidas con `&ldquo;&rdquo;`) build ✓ · navegado en vivo confirmando los 11 en el índice y los enlaces internos de "peptidos-segun-tu-objetivo" (4 hrefs correctos). Nota técnica: `rm -rf .next` hizo falta tras correr `npm run build` en paralelo al dev server (compartían caché y el dev server empezó a dar 404 en `/blog` hasta limpiarlo).
+- **Pendiente del usuario**: quiere un banner con las calculadoras para poner al final de cada artículo ("regalar la app") — se le dio un prompt de imagen para que lo genere él; falta integrarlo en `ArticleLayout.tsx` cuando lo tenga.
 
 ## ✅ Sesión 11b (2026-07-23) — Blog de contenido (7 artículos, solo español por ahora)
 Decisión con el usuario: empezar con 7 artículos fuertes (no los 20 pedidos originalmente) e ilustraciones de marca simples (icono + degradado verde), sin fotos de IA genéricas (en salud restan confianza). Arquitectura:

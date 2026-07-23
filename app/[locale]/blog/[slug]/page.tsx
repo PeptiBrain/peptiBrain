@@ -18,6 +18,10 @@ const CONTENT: Record<string, () => Promise<{ default: React.ComponentType }>> =
   "errores-comunes-al-empezar-con-peptidos": () =>
     import("@/components/app/blog/posts/errores-comunes-al-empezar-con-peptidos"),
   "mejores-apps-de-peptidos": () => import("@/components/app/blog/posts/mejores-apps-de-peptidos"),
+  "peptidos-populares": () => import("@/components/app/blog/posts/peptidos-populares"),
+  "peptidos-segun-tu-objetivo": () => import("@/components/app/blog/posts/peptidos-segun-tu-objetivo"),
+  "como-se-usan-los-peptidos": () => import("@/components/app/blog/posts/como-se-usan-los-peptidos"),
+  "como-almacenar-tus-peptidos": () => import("@/components/app/blog/posts/como-almacenar-tus-peptidos"),
 };
 
 export function generateStaticParams() {

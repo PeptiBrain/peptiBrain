@@ -1,4 +1,17 @@
-import { Beaker, Syringe, Sparkles, Dumbbell, ListChecks, AlertTriangle, BookOpen, type LucideIcon } from "lucide-react";
+import {
+  Beaker,
+  Syringe,
+  Sparkles,
+  Dumbbell,
+  ListChecks,
+  AlertTriangle,
+  BookOpen,
+  LayoutGrid,
+  Target,
+  MapPin,
+  Snowflake,
+  type LucideIcon,
+} from "lucide-react";
 
 export type BlogPost = {
   slug: string;
@@ -76,6 +89,42 @@ export const BLOG_POSTS: BlogPost[] = [
     icon: ListChecks,
     publishedAt: "2026-07-30",
     readingMinutes: 8,
+  },
+  {
+    slug: "peptidos-populares",
+    title: "Péptidos populares: los más mencionados y qué se investiga de cada uno",
+    excerpt: "Un repaso a los péptidos más buscados hoy — de dónde vienen, en qué categoría entran y qué se investiga de cada uno.",
+    category: "Directorio",
+    icon: LayoutGrid,
+    publishedAt: "2026-07-31",
+    readingMinutes: 7,
+  },
+  {
+    slug: "peptidos-segun-tu-objetivo",
+    title: "Péptidos según tu objetivo: peso, recuperación, músculo, antiedad y piel",
+    excerpt: "Organizados por lo que buscas: bajar de peso, recuperarte de una lesión, ganar músculo, cuidar tu piel o la longevidad.",
+    category: "Guía por objetivo",
+    icon: Target,
+    publishedAt: "2026-08-01",
+    readingMinutes: 8,
+  },
+  {
+    slug: "como-se-usan-los-peptidos",
+    title: "Cómo se usan los péptidos: vía, horario y rotación de zonas",
+    excerpt: "La parte práctica que casi nadie explica bien: por dónde se inyectan, cada cuánto y cómo rotar la zona para no irritar la piel.",
+    category: "Guía práctica",
+    icon: MapPin,
+    publishedAt: "2026-08-02",
+    readingMinutes: 6,
+  },
+  {
+    slug: "como-almacenar-tus-peptidos",
+    title: "Cómo almacenar tus péptidos: temperatura, luz y vida útil",
+    excerpt: "Antes y después de reconstituir: dónde guardar cada vial, por qué la luz y el calor son el enemigo, y cuánto dura de verdad.",
+    category: "Guía práctica",
+    icon: Snowflake,
+    publishedAt: "2026-08-03",
+    readingMinutes: 6,
   },
 ];
 
