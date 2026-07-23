@@ -84,10 +84,10 @@ export function BlogHighlights({ locale }: { locale: string }) {
         </div>
 
         <Reveal delay={0.2}>
-          <div className="mt-8 text-center">
+          <div className="mt-10 text-center">
             <Link
               href="/blog"
-              className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline"
+              className="inline-flex h-12 items-center justify-center gap-2 rounded-lg bg-primary px-7 text-base font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition-transform active:scale-97"
             >
               {s.seeAll} <ArrowRight className="size-4" aria-hidden />
             </Link>

@@ -1,5 +1,11 @@
 # ESTADO — PeptiBrain
-Última actualización: 2026-07-23 | Sesión 11f (las 11 imágenes reales de portada del blog integradas — colección completa). Migraciones 0003-0030 corridas (0029 `app_settings` y 0030 `assistant_questions` confirmadas OK por el usuario).
+Última actualización: 2026-07-23 | Sesión 11g (marca de agua de Gemini quitada de las 11 imágenes del blog + botón "Ver todo el blog" más destacado). Migraciones 0003-0030 corridas (0029 `app_settings` y 0030 `assistant_questions` confirmadas OK por el usuario).
+
+## ✅ Sesión 11g (2026-07-23) — Quitar marca de agua de Gemini + botón del blog más visible
+El usuario avisó que las imágenes del blog tenían la marca de agua de Gemini (el destello/sparkle característico que Nano Banana estampa en sus imágenes generadas) y pidió un botón "Ver todo el blog" más grande y destacado.
+- **Marca de agua**: confirmado que el destello aparecía en la MISMA posición relativa exacta en las 11 imágenes (prueba de que era un watermark automático, no parte del diseño). Se detectó su ubicación por análisis de píxeles y se reconstruyó esa zona con inpainting (OpenCV, algoritmo Navier-Stokes) + un suavizado final para que la reconstrucción se mezcle con el degradado de fondo sin dejar marca visible. Verificado visualmente en las 11 imágenes tras el proceso — ninguna muestra ya el destello.
+- **Botón "Ver todo el blog"**: pasó de ser un enlace de texto pequeño a un botón sólido verde (mismo estilo que el CTA principal del hero de la home: `bg-primary`, alto 48px, sombra), en `BlogHighlights.tsx`.
+- ✅ Verificado: tsc ✓ eslint ✓ build ✓ · navegado en vivo, confirmado que el botón se ve como botón real (no un link) y que la imagen de "mejores apps de péptidos" ya no tiene el destello.
 
 ## ✅ Sesión 11f (2026-07-23) — Las 11 imágenes de portada del blog, integradas
 El usuario generó (con Nano Banana, prompts entregados en sesión 11c) las imágenes de portada de los 11 artículos y las guardó en `public/blog/` (avisó "5" al principio, pero siguió subiendo mientras se integraban hasta llegar a las 11 — se identificó cada una nueva por su ícono a medida que llegaba y se fue sumando). Se integraron todas:
