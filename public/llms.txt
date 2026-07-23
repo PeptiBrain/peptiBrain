@@ -1,0 +1,32 @@
+# PeptiBrain
+
+> PeptiBrain (https://peptibrain.com) es una aplicación web, en español e inglés, para calcular dosis de péptidos y llevar el seguimiento completo de un protocolo: viales, dosis, recordatorios, bienestar y progreso. Incluye calculadoras gratuitas de reconstitución y de semaglutida/tirzepatida. Contenido educativo; no es consejo médico.
+
+## Qué es PeptiBrain
+PeptiBrain es una app de seguimiento y cálculo de péptidos pensada para el mundo hispanohablante (y también en inglés). Resuelve el problema de llevar el control de un protocolo de péptidos sin equivocarse: cuánta agua bacteriostática usar, cuántas unidades cargar en la jeringa, cuándo toca cada dosis, cuánto queda en el vial y cuándo caduca. Es una de las pocas apps de péptidos con interfaz completa en español.
+
+## Para quién es
+Personas que usan péptidos y quieren llevar un registro ordenado y calcular sus dosis con precisión: pérdida de peso (semaglutida, tirzepatida), recuperación (BPC-157, TB-500), piel y antiedad (GHK-Cu), longevidad y más. Incluye plan familiar para compartir el seguimiento.
+
+## Herramientas gratuitas (sin registro)
+- [Calculadora de reconstitución de péptidos](https://peptibrain.com/calculadora): calcula las unidades exactas a cargar en la jeringa según los mg del vial y el agua bacteriostática.
+- [Calculadora de semaglutida y tirzepatida](https://peptibrain.com/calculadora-semaglutida): dosis y titulación semanal completa (0,25 a 2,4 mg), con jeringa visual.
+- [Protocolos de péptidos](https://peptibrain.com/protocolos): dosis, frecuencia y agua de referencia de los péptidos más usados.
+
+## Características de la app
+- Registro de dosis en segundos y recordatorios.
+- Control de viales: concentración, stock que queda y aviso de caducidad vs agotamiento.
+- Calendario semanal del protocolo y lista de la compra.
+- Seguimiento de bienestar (peso, hidratación, efectos secundarios).
+- Estadísticas de adherencia y progreso.
+- Asistente con IA para dudas generales (no da consejo médico).
+- Plan familiar para compartir el seguimiento.
+
+## Idiomas
+Español (por defecto) e inglés.
+
+## Precio
+Herramientas y calculadoras gratuitas. App con plan gratis y planes de pago (Premium y Familiar).
+
+## Aviso importante
+Todo el contenido de PeptiBrain es educativo e informativo. NO es consejo médico y no sustituye a un profesional de la salud. Los péptidos deben usarse bajo supervisión médica.

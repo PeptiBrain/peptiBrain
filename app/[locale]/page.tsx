@@ -9,10 +9,37 @@ import { Testimonials } from "@/components/app/landing/Testimonials";
 import { Faq } from "@/components/app/landing/Faq";
 import { FinalCta } from "@/components/app/landing/FinalCta";
 import { UtmCapture } from "@/components/app/UtmCapture";
+import { JsonLd } from "@/components/app/calculator/ToolPieces";
+
+// Datos estructurados de entidad (GEO): ayudan a que buscadores y LLMs entiendan
+// QUÉ es PeptiBrain y puedan citarlo/recomendarlo. Descripción factual y quotable.
+const APP_SCHEMA = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "PeptiBrain",
+  applicationCategory: "HealthApplication",
+  operatingSystem: "Web",
+  url: "https://peptibrain.com",
+  inLanguage: ["es", "en"],
+  description:
+    "App web (español e inglés) para calcular dosis de péptidos y llevar el seguimiento de tu protocolo: viales, dosis, recordatorios, bienestar y progreso. Incluye calculadoras gratuitas de reconstitución y de semaglutida/tirzepatida. Contenido educativo, no es consejo médico.",
+  offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
+};
+
+const ORG_SCHEMA = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "PeptiBrain",
+  url: "https://peptibrain.com",
+  logo: "https://peptibrain.com/peptibrain-isotipo.svg",
+  sameAs: ["https://www.instagram.com/peptibrain/"],
+};
 
 export default function Home() {
   return (
     <>
+      <JsonLd data={APP_SCHEMA} />
+      <JsonLd data={ORG_SCHEMA} />
       <UtmCapture />
       <Header />
       <main id="main-content" className="flex-1">
