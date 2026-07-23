@@ -27,8 +27,7 @@
     "goToApp": "Go to my app",
     "free": "Free",
     "tools": "Tools",
-    "home": "Home",
-    "ideas": "Ideas"
+    "home": "Home"
   },
   "Footer": {
     "legalNotice": "PeptiBrain is a personal tracking diary. It is not medical advice and does not replace a healthcare professional, and it does not recommend doses: it records what you decide. Always consult a professional before making decisions about your health.",
@@ -38,7 +37,12 @@
     "tiktok": "PeptiBrain on TikTok",
     "cookies": "Cookies",
     "refunds": "Refunds",
-    "legalEntity": "Legal Notice"
+    "legalEntity": "Legal Notice",
+    "tagline": "Your peptide and wellness diary: doses, vials, and progress in one place.",
+    "colProduct": "Product",
+    "colCommunity": "Community",
+    "colLegal": "Legal",
+    "copyright": "© {year} PeptiBrain. All rights reserved."
   },
   "Hero": {
     "eyebrow": "Your peptide and wellness diary",

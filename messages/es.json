@@ -27,8 +27,7 @@
     "goToApp": "Ir a mi app",
     "free": "Gratis",
     "tools": "Herramientas",
-    "home": "Inicio",
-    "ideas": "Ideas"
+    "home": "Inicio"
   },
   "Footer": {
     "legalNotice": "PeptiBrain es un diario personal de seguimiento. No es consejo médico ni reemplaza a un profesional de la salud, y no recomienda dosis: registra lo que tú decides. Consulta siempre a un profesional antes de tomar decisiones sobre tu salud.",
@@ -38,7 +37,12 @@
     "tiktok": "PeptiBrain en TikTok",
     "cookies": "Cookies",
     "refunds": "Reembolsos",
-    "legalEntity": "Aviso Legal"
+    "legalEntity": "Aviso Legal",
+    "tagline": "Tu diario de péptidos y bienestar: dosis, viales y progreso en un solo lugar.",
+    "colProduct": "Producto",
+    "colCommunity": "Comunidad",
+    "colLegal": "Legal",
+    "copyright": "© {year} PeptiBrain. Todos los derechos reservados."
   },
   "Hero": {
     "eyebrow": "Tu diario de péptidos y bienestar",

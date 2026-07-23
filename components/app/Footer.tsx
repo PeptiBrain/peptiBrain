@@ -6,6 +6,7 @@ import { ShieldAlert } from "lucide-react";
 export function Footer() {
   const t = useTranslations("Footer");
   const tt = useTranslations("Tools");
+  const year = new Date().getFullYear();
 
   return (
     <>
@@ -19,78 +20,85 @@ export function Footer() {
         </div>
       </div>
 
-      <footer role="contentinfo" className="border-t border-border px-4 py-6">
-        <nav
-          aria-label={tt("moreTools")}
-          className="mx-auto mb-5 flex max-w-6xl flex-wrap items-center justify-center gap-x-5 gap-y-1.5 text-sm font-medium text-muted-foreground"
-        >
-          <Link href="/calculadora" className="hover:text-foreground hover:underline">
-            {tt("navCalculator")}
-          </Link>
-          <Link href="/calculadora-semaglutida" className="hover:text-foreground hover:underline">
-            {tt("navSemaglutide")}
-          </Link>
-          <Link href="/comparador" className="hover:text-foreground hover:underline">
-            {tt("navComparador")}
-          </Link>
-          <Link href="/protocolos" className="hover:text-foreground hover:underline">
-            {tt("navProtocols")}
-          </Link>
-          <Link href="/blog" className="hover:text-foreground hover:underline">
-            Blog
-          </Link>
-          <Link href="/ideas" className="hover:text-foreground hover:underline">
-            {tt("navIdeas")}
-          </Link>
-        </nav>
-        <div className="mx-auto flex max-w-6xl items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <Image src="/peptibrain-isotipo.svg" alt="" width={22} height={22} />
-            <span className="font-display text-sm font-bold text-foreground">PeptiBrain</span>
-          </Link>
-          <nav
-            aria-label="Legal"
-            className="flex flex-wrap items-center justify-end gap-x-4 gap-y-1 text-sm text-muted-foreground"
-          >
-            <Link href="/terminos" className="hover:text-foreground hover:underline">
-              {t("terms")}
-            </Link>
-            <Link href="/privacidad" className="hover:text-foreground hover:underline">
-              {t("privacy")}
-            </Link>
-            <Link href="/cookies" className="hover:text-foreground hover:underline">
-              {t("cookies")}
-            </Link>
-            <Link href="/reembolsos" className="hover:text-foreground hover:underline">
-              {t("refunds")}
-            </Link>
-            <Link href="/aviso-legal" className="hover:text-foreground hover:underline">
-              {t("legalEntity")}
-            </Link>
-          </nav>
-          <div className="flex items-center gap-4">
-            <a
-              href="https://www.instagram.com/peptibrain/"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={t("instagram")}
-              className="text-muted-foreground hover:text-foreground"
-            >
-              <InstagramIcon className="size-5" aria-hidden />
-            </a>
-            <a
-              href="https://www.tiktok.com/@peptibrainapp"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={t("tiktok")}
-              className="text-muted-foreground hover:text-foreground"
-            >
-              <TikTokIcon className="size-5" aria-hidden />
-            </a>
+      <footer role="contentinfo" className="border-t border-border bg-secondary/40">
+        <div className="mx-auto max-w-6xl px-4 py-12">
+          <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-5">
+            <div className="sm:col-span-2">
+              <Link href="/" className="flex items-center gap-2">
+                <Image src="/peptibrain-isotipo.svg" alt="" width={26} height={26} />
+                <span className="font-display text-base font-bold text-foreground">PeptiBrain</span>
+              </Link>
+              <p className="mt-3 max-w-xs text-sm leading-relaxed text-muted-foreground">
+                {t("tagline")}
+              </p>
+              <div className="mt-5 flex items-center gap-4">
+                <a
+                  href="https://www.instagram.com/peptibrain/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={t("instagram")}
+                  className="text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  <InstagramIcon className="size-5" aria-hidden />
+                </a>
+                <a
+                  href="https://www.tiktok.com/@peptibrainapp"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={t("tiktok")}
+                  className="text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  <TikTokIcon className="size-5" aria-hidden />
+                </a>
+              </div>
+            </div>
+
+            <FooterColumn title={t("colProduct")}>
+              <FooterLink href="/calculadora">{tt("navCalculator")}</FooterLink>
+              <FooterLink href="/calculadora-semaglutida">{tt("navSemaglutide")}</FooterLink>
+              <FooterLink href="/comparador">{tt("navComparador")}</FooterLink>
+              <FooterLink href="/protocolos">{tt("navProtocols")}</FooterLink>
+            </FooterColumn>
+
+            <FooterColumn title={t("colCommunity")}>
+              <FooterLink href="/blog">Blog</FooterLink>
+              <FooterLink href="/ideas">{tt("navIdeas")}</FooterLink>
+            </FooterColumn>
+
+            <FooterColumn title={t("colLegal")}>
+              <FooterLink href="/terminos">{t("terms")}</FooterLink>
+              <FooterLink href="/privacidad">{t("privacy")}</FooterLink>
+              <FooterLink href="/cookies">{t("cookies")}</FooterLink>
+              <FooterLink href="/reembolsos">{t("refunds")}</FooterLink>
+              <FooterLink href="/aviso-legal">{t("legalEntity")}</FooterLink>
+            </FooterColumn>
+          </div>
+
+          <div className="mt-10 border-t border-border pt-6">
+            <p className="text-xs text-muted-foreground">{t("copyright", { year })}</p>
           </div>
         </div>
       </footer>
     </>
+  );
+}
+
+function FooterColumn({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{title}</h3>
+      <ul className="mt-3 space-y-2.5">{children}</ul>
+    </div>
+  );
+}
+
+function FooterLink({ href, children }: { href: string; children: React.ReactNode }) {
+  return (
+    <li>
+      <Link href={href} className="text-sm text-muted-foreground hover:text-foreground hover:underline">
+        {children}
+      </Link>
+    </li>
   );
 }
 
