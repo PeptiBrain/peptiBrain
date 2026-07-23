@@ -25,7 +25,8 @@
     "login": "Sign in",
     "cta": "Start for free",
     "goToApp": "Go to my app",
-    "free": "Free"
+    "free": "Free",
+    "tools": "Tools"
   },
   "Footer": {
     "legalNotice": "PeptiBrain is a personal tracking diary. It is not medical advice and does not replace a healthcare professional, and it does not recommend doses: it records what you decide. Always consult a professional before making decisions about your health.",
@@ -1151,7 +1152,8 @@
     "moreTools": "More free tools",
     "navCalculator": "Reconstitution calculator",
     "navSemaglutide": "Semaglutide calculator",
-    "navProtocols": "Peptide protocols"
+    "navProtocols": "Peptide protocols",
+    "navComparador": "Peptide comparator"
   },
   "Calculadora": {
     "metaTitle": "Free Peptide Reconstitution Calculator | PeptiBrain",
@@ -1270,6 +1272,37 @@
       }
     ]
   },
+  "Comparador": {
+    "metaTitle": "Peptide comparator: dose, route & frequency side by side | PeptiBrain",
+    "metaDescription": "Compare two peptides side by side: administration route, common dose, frequency, vial and bacteriostatic water. Free, no signup.",
+    "kicker": "Free tool",
+    "h1": "Peptide comparator",
+    "subtitle": "Choose two peptides to see their route, dose, frequency and more, side by side.",
+    "labelA": "Peptide A",
+    "labelB": "Peptide B",
+    "placeholder": "— Select —",
+    "emptyState": "Choose both peptides above to see the comparison.",
+    "fieldRoute": "Route",
+    "fieldDose": "Common dose",
+    "fieldFreq": "Frequency",
+    "fieldVial": "Vial",
+    "fieldBac": "Bac. water",
+    "fieldCategories": "Categories",
+    "fieldDescription": "What it is",
+    "calcCta": "Calculate dose",
+    "popularTitle": "Popular comparisons",
+    "popularSubtitle": "Useful comparisons to start with.",
+    "faq": [
+      {
+        "q": "How is each peptide's data chosen?",
+        "a": "These are the same reference values we use in our protocols guide: common dose, frequency, vial and bacteriostatic water, compiled from public information circulating in the community."
+      },
+      {
+        "q": "Can I use this to decide which peptide to use?",
+        "a": "This comparison is informational and educational. The decision of which peptide to use, at what dose, and under what circumstances is always a healthcare professional's call."
+      }
+    ]
+  },
   "FreeToolsSection": {
     "eyebrow": "Free · no signup",
     "title": "Try our calculators now",
@@ -1281,7 +1314,9 @@
     "t2Title": "Semaglutide calculator",
     "t2Desc": "Semaglutide and tirzepatide with the full titration.",
     "t3Title": "Peptide protocols",
-    "t3Desc": "Doses, frequency and water for the most used peptides."
+    "t3Desc": "Doses, frequency and water for the most used peptides.",
+    "t4Title": "Peptide comparator",
+    "t4Desc": "Compare two peptides side by side: route, dose and frequency."
   },
   "FirstSteps": {
     "title": "First steps",

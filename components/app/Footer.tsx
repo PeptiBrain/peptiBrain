@@ -30,6 +30,9 @@ export function Footer() {
           <Link href="/calculadora-semaglutida" className="hover:text-foreground hover:underline">
             {tt("navSemaglutide")}
           </Link>
+          <Link href="/comparador" className="hover:text-foreground hover:underline">
+            {tt("navComparador")}
+          </Link>
           <Link href="/protocolos" className="hover:text-foreground hover:underline">
             {tt("navProtocols")}
           </Link>

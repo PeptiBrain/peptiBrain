@@ -25,7 +25,8 @@
     "login": "Ingresar",
     "cta": "Empezar gratis",
     "goToApp": "Ir a mi app",
-    "free": "Gratis"
+    "free": "Gratis",
+    "tools": "Herramientas"
   },
   "Footer": {
     "legalNotice": "PeptiBrain es un diario personal de seguimiento. No es consejo médico ni reemplaza a un profesional de la salud, y no recomienda dosis: registra lo que tú decides. Consulta siempre a un profesional antes de tomar decisiones sobre tu salud.",
@@ -1151,7 +1152,8 @@
     "moreTools": "Más herramientas gratis",
     "navCalculator": "Calculadora de reconstitución",
     "navSemaglutide": "Calculadora de semaglutida",
-    "navProtocols": "Protocolos de péptidos"
+    "navProtocols": "Protocolos de péptidos",
+    "navComparador": "Comparador de péptidos"
   },
   "Calculadora": {
     "metaTitle": "Calculadora de reconstitución de péptidos gratis | PeptiBrain",
@@ -1270,6 +1272,37 @@
       }
     ]
   },
+  "Comparador": {
+    "metaTitle": "Comparador de péptidos: dosis, vía y frecuencia lado a lado | PeptiBrain",
+    "metaDescription": "Compara dos péptidos lado a lado: vía de administración, dosis común, frecuencia, vial y agua bacteriostática. Gratis, sin registro. En español.",
+    "kicker": "Herramienta gratuita",
+    "h1": "Comparador de péptidos",
+    "subtitle": "Elige dos péptidos para ver su vía, dosis, frecuencia y más, lado a lado.",
+    "labelA": "Péptido A",
+    "labelB": "Péptido B",
+    "placeholder": "— Selecciona —",
+    "emptyState": "Elige los dos péptidos de arriba para ver la comparación.",
+    "fieldRoute": "Vía",
+    "fieldDose": "Dosis común",
+    "fieldFreq": "Frecuencia",
+    "fieldVial": "Vial",
+    "fieldBac": "Agua bact.",
+    "fieldCategories": "Categorías",
+    "fieldDescription": "Qué es",
+    "calcCta": "Calcular dosis",
+    "popularTitle": "Comparaciones populares",
+    "popularSubtitle": "Comparaciones útiles para empezar.",
+    "faq": [
+      {
+        "q": "¿Cómo se eligen los datos de cada péptido?",
+        "a": "Son los mismos valores de referencia que usamos en nuestra guía de protocolos: dosis común, frecuencia, vial y agua bacteriostática recopilados de la información pública que circula en la comunidad."
+      },
+      {
+        "q": "¿Puedo usar estos datos para decidir qué péptido usar?",
+        "a": "Esta comparación es informativa y educativa. La decisión de qué péptido usar, en qué dosis y bajo qué circunstancias corresponde siempre a un profesional de la salud."
+      }
+    ]
+  },
   "FreeToolsSection": {
     "eyebrow": "Gratis · sin registro",
     "title": "Prueba nuestras calculadoras ahora",
@@ -1281,7 +1314,9 @@
     "t2Title": "Calculadora de semaglutida",
     "t2Desc": "Semaglutida y tirzepatida con la titulación completa.",
     "t3Title": "Protocolos de péptidos",
-    "t3Desc": "Dosis, frecuencia y agua de los péptidos más usados."
+    "t3Desc": "Dosis, frecuencia y agua de los péptidos más usados.",
+    "t4Title": "Comparador de péptidos",
+    "t4Desc": "Compara dos péptidos lado a lado: vía, dosis y frecuencia."
   },
   "FirstSteps": {
     "title": "Primeros pasos",

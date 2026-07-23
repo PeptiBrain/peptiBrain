@@ -2,6 +2,7 @@ import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { LocaleSwitcher } from "@/components/app/LocaleSwitcher";
+import { ToolsMenu } from "@/components/app/ToolsMenu";
 import { createClient } from "@/lib/supabase/server";
 
 export async function Header() {
@@ -24,9 +25,7 @@ export async function Header() {
           </span>
         </Link>
         <nav aria-label="Navegación principal" className="flex shrink-0 items-center gap-3 sm:gap-4">
-          <Link href="/#calculadoras" className="text-sm font-semibold text-primary hover:underline">
-            {t("free")}
-          </Link>
+          <ToolsMenu triggerLabel={t("tools")} />
           <Link href="/blog" className="text-sm font-medium text-muted-foreground hover:text-foreground">
             Blog
           </Link>

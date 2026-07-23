@@ -1,5 +1,5 @@
 import { useTranslations } from "next-intl";
-import { Calculator, Syringe, ListChecks, ArrowRight } from "lucide-react";
+import { Calculator, Syringe, ListChecks, Shuffle, ArrowRight } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { Reveal } from "@/components/app/Reveal";
 import { CalculatorPreview } from "@/components/app/landing/CalculatorPreview";
@@ -11,6 +11,7 @@ export function FreeTools() {
   const tools = [
     { href: "/calculadora", icon: Calculator, title: t("t1Title"), desc: t("t1Desc") },
     { href: "/calculadora-semaglutida", icon: Syringe, title: t("t2Title"), desc: t("t2Desc") },
+    { href: "/comparador", icon: Shuffle, title: t("t4Title"), desc: t("t4Desc") },
     { href: "/protocolos", icon: ListChecks, title: t("t3Title"), desc: t("t3Desc") },
   ];
 
