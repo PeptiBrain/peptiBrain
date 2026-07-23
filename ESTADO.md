@@ -1,5 +1,13 @@
 # ESTADO — PeptiBrain
-Última actualización: 2026-07-23 | Sesión 11m (enlace "Inicio" en el menú del header). Migraciones 0003-0030 corridas (0029 `app_settings` y 0030 `assistant_questions` confirmadas OK por el usuario).
+Última actualización: 2026-07-23 | Sesión 11n (nueva sección "Biblioteca de péptidos" en la home). Migraciones 0003-0030 corridas (0029 `app_settings` y 0030 `assistant_questions` confirmadas OK por el usuario).
+
+## ✅ Sesión 11n (2026-07-23) — Biblioteca de péptidos en la home (carrusel + vista rápida)
+El usuario vio una referencia visual (biblioteca de péptidos con tarjetas, categoría, icono, "Vista rápida"/"Aprender más") y propuso algo "estilo Spotify" (listas de seguimiento personales sin cuenta). Se acordó con él la versión que protege el embudo de registro: la biblioteca se explora libremente (SEO, sin login), pero "Seguir" lleva a crear cuenta — nunca se construyó el guardado anónimo de listas.
+- Nuevo componente `components/app/landing/PeptideLibrary.tsx`: carrusel horizontal (scroll-snap, con puntos de paginación) con 10 péptidos curados (los mismos populares del artículo de blog), usando datos reales de `lib/peptide-profiles.ts`. Cada tarjeta: categoría (pill neutro, sin colores variados por categoría — la variedad viene del icono, no del color, respetando la disciplina cromática 60-30-10), icono único por categoría en círculo verde acento, nombre, descripción truncada, botón "Vista rápida" (abre modal reutilizando `ModalShell.tsx` ya existente, con dosis/frecuencia + CTA "Crear cuenta gratis para seguirlo" + "Ver protocolo completo") y botón "Seguir" (va directo a `/login`).
+- Insertada en la home entre `FreeTools` y `BlogHighlights`. De paso se agregó TikTok al `sameAs` del JSON-LD `Organization` (solo tenía Instagram).
+- **Bug real encontrado y avisado, NO corregido** (no era parte de este pedido, ya existía en `/protocolos`): los campos `route`/`frequency`/`description` de `lib/peptide-profiles.ts` solo existen en español — en la versión inglesa de la web (y ahora también en esta nueva sección) se mezcla texto en español con las etiquetas en inglés. Traducir los 24 perfiles sería un trabajo del tamaño de la traducción del blog — pendiente si el usuario lo pide.
+- ✅ Verificado: tsc ✓ eslint ✓ build ✓ · navegado en vivo en inglés y a 375px: el carrusel se ve bien, "Follow" lleva a `/en/login`, el modal "Vista rápida" abre con los datos correctos y sus dos botones, sin desborde horizontal.
+- **Pendiente futuro, anotado, NO construir sin que lo pida**: posible colaboración con marcas de péptidos (afiliación) o marca blanca/white label — el usuario lo mencionó como visión a futuro, no para ahora.
 
 ## ✅ Sesión 11m (2026-07-23) — Enlace "Inicio" en el menú
 El usuario pidió "añade la página de inicio a la web" — se aclaró con él que quería un enlace "Inicio" visible en el menú de navegación (antes solo se podía volver a la portada tocando el logo).

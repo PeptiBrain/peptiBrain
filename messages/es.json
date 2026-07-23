@@ -1321,6 +1321,18 @@
     "t4Title": "Comparador de péptidos",
     "t4Desc": "Compara dos péptidos lado a lado: vía, dosis y frecuencia."
   },
+  "PeptideLibrary": {
+    "eyebrow": "Biblioteca",
+    "title": "Péptidos populares",
+    "swipeHint": "Desliza para ver más",
+    "seeAll": "Ver todos",
+    "quickView": "Vista rápida",
+    "follow": "Seguir",
+    "fieldDose": "Dosis común",
+    "fieldFreq": "Frecuencia",
+    "modalCta": "Crear cuenta gratis para seguirlo",
+    "modalFullProtocol": "Ver protocolo completo"
+  },
   "FirstSteps": {
     "title": "Primeros pasos",
     "doneTitle": "¡Ya diste tus primeros pasos! 🎉",

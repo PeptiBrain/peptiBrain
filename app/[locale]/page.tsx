@@ -3,6 +3,7 @@ import { Footer } from "@/components/app/Footer";
 import { Hero } from "@/components/app/landing/Hero";
 import { Benefits } from "@/components/app/landing/Benefits";
 import { FreeTools } from "@/components/app/landing/FreeTools";
+import { PeptideLibrary } from "@/components/app/landing/PeptideLibrary";
 import { HowItWorks } from "@/components/app/landing/HowItWorks";
 import { Pricing } from "@/components/app/landing/Pricing";
 import { Testimonials } from "@/components/app/landing/Testimonials";
@@ -33,7 +34,7 @@ const ORG_SCHEMA = {
   name: "PeptiBrain",
   url: "https://peptibrain.com",
   logo: "https://peptibrain.com/peptibrain-isotipo.svg",
-  sameAs: ["https://www.instagram.com/peptibrain/"],
+  sameAs: ["https://www.instagram.com/peptibrain/", "https://www.tiktok.com/@peptibrainapp"],
 };
 
 export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
@@ -52,6 +53,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
         <Testimonials />
         <Faq />
         <FreeTools />
+        <PeptideLibrary />
         <BlogHighlights locale={locale} />
         <FinalCta />
       </main>

@@ -1321,6 +1321,18 @@
     "t4Title": "Peptide comparator",
     "t4Desc": "Compare two peptides side by side: route, dose and frequency."
   },
+  "PeptideLibrary": {
+    "eyebrow": "Library",
+    "title": "Popular peptides",
+    "swipeHint": "Swipe to see more",
+    "seeAll": "See all",
+    "quickView": "Quick view",
+    "follow": "Follow",
+    "fieldDose": "Common dose",
+    "fieldFreq": "Frequency",
+    "modalCta": "Create a free account to follow it",
+    "modalFullProtocol": "See full protocol"
+  },
   "FirstSteps": {
     "title": "First steps",
     "doneTitle": "You took your first steps! 🎉",
