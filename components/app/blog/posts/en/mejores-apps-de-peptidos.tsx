@@ -1,5 +1,17 @@
 import { Link } from "@/i18n/navigation";
 import { H2, H3, P, UL, LI, Callout } from "@/components/app/blog/ArticleBlocks";
+import { AppComparisonTable, type ComparisonRow } from "@/components/app/blog/AppComparisonTable";
+
+const COMPARISON_COLUMNS = ["PeptiBrain", "Peptide Tracker", "PeptIQ", "PepCalc / PeptideCalc", "Dose Track"];
+
+const COMPARISON_ROWS: ComparisonRow[] = [
+  { label: "Real Spanish interface", values: [true, false, false, null, null] },
+  { label: "Reconstitution calculator", values: [true, true, null, true, true] },
+  { label: "Dose log (history)", values: [true, true, true, false, null] },
+  { label: "Vial tracking (expiry)", values: [true, null, null, null, null] },
+  { label: "Family plan", values: [true, null, null, null, null] },
+  { label: "AI assistant", values: [true, null, null, null, null] },
+];
 
 export default function Post() {
   return (
@@ -9,6 +21,12 @@ export default function Post() {
         Here&apos;s a rundown of the most used apps today for calculating doses and tracking a peptide protocol —
         honestly, including where PeptiBrain fits and where it doesn&apos;t.
       </P>
+
+      <AppComparisonTable
+        columns={COMPARISON_COLUMNS}
+        rows={COMPARISON_ROWS}
+        unspecifiedLabel="Not specified by the app itself, or we couldn't confirm it — we don't guess."
+      />
 
       <H2>What a good peptide app should have</H2>
       <UL>

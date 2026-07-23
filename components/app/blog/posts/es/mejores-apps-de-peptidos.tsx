@@ -1,5 +1,17 @@
 import { Link } from "@/i18n/navigation";
 import { H2, H3, P, UL, LI, Callout } from "@/components/app/blog/ArticleBlocks";
+import { AppComparisonTable, type ComparisonRow } from "@/components/app/blog/AppComparisonTable";
+
+const COMPARISON_COLUMNS = ["PeptiBrain", "Peptide Tracker", "PeptIQ", "PepCalc / PeptideCalc", "Dose Track"];
+
+const COMPARISON_ROWS: ComparisonRow[] = [
+  { label: "Interfaz en español real", values: [true, false, false, null, null] },
+  { label: "Calculadora de reconstitución", values: [true, true, null, true, true] },
+  { label: "Registro de dosis (historial)", values: [true, true, true, false, null] },
+  { label: "Control de vial (caducidad)", values: [true, null, null, null, null] },
+  { label: "Plan familiar", values: [true, null, null, null, null] },
+  { label: "Asistente con IA", values: [true, null, null, null, null] },
+];
 
 export default function Post() {
   return (
@@ -9,6 +21,12 @@ export default function Post() {
         cortos. Repasamos las apps más usadas hoy para calcular dosis y llevar el seguimiento de un protocolo de
         péptidos — con honestidad, incluyendo dónde encaja PeptiBrain y dónde no.
       </P>
+
+      <AppComparisonTable
+        columns={COMPARISON_COLUMNS}
+        rows={COMPARISON_ROWS}
+        unspecifiedLabel="No especificado por la propia app o no lo pudimos confirmar — no lo inventamos."
+      />
 
       <H2>Qué debería tener una buena app de péptidos</H2>
       <UL>
