@@ -52,7 +52,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
         <Testimonials />
         <Faq />
         <FreeTools />
-        {locale === "es" && <BlogHighlights />}
+        <BlogHighlights locale={locale} />
         <FinalCta />
       </main>
       <Footer />

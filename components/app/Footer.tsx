@@ -1,12 +1,11 @@
 import Image from "next/image";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { ShieldAlert } from "lucide-react";
 
 export function Footer() {
   const t = useTranslations("Footer");
   const tt = useTranslations("Tools");
-  const locale = useLocale();
 
   return (
     <>
@@ -34,11 +33,9 @@ export function Footer() {
           <Link href="/protocolos" className="hover:text-foreground hover:underline">
             {tt("navProtocols")}
           </Link>
-          {locale === "es" && (
-            <Link href="/blog" className="hover:text-foreground hover:underline">
-              Blog
-            </Link>
-          )}
+          <Link href="/blog" className="hover:text-foreground hover:underline">
+            Blog
+          </Link>
         </nav>
         <div className="mx-auto flex max-w-6xl items-center justify-between">
           <Link href="/" className="flex items-center gap-2">

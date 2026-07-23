@@ -1,12 +1,11 @@
 import Image from "next/image";
-import { getLocale, getTranslations } from "next-intl/server";
+import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { LocaleSwitcher } from "@/components/app/LocaleSwitcher";
 import { createClient } from "@/lib/supabase/server";
 
 export async function Header() {
   const t = await getTranslations("Header");
-  const locale = await getLocale();
   const supabase = await createClient();
   const {
     data: { user },
@@ -28,11 +27,9 @@ export async function Header() {
           <Link href="/#calculadoras" className="text-sm font-semibold text-primary hover:underline">
             {t("free")}
           </Link>
-          {locale === "es" && (
-            <Link href="/blog" className="text-sm font-medium text-muted-foreground hover:text-foreground">
-              Blog
-            </Link>
-          )}
+          <Link href="/blog" className="text-sm font-medium text-muted-foreground hover:text-foreground">
+            Blog
+          </Link>
           <LocaleSwitcher />
           {user ? (
             <Link

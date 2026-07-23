@@ -51,13 +51,8 @@ export default async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // El blog SOLO existe en español por ahora. Si alguien físicamente en un país de
-  // habla inglesa (ej. hispanohablantes viviendo en EE.UU.) visita /blog, NO lo
-  // forzamos a inglés — si no, next-intl lo manda a /en/blog, que no existe (404).
-  const isBlogPath = pathname === "/blog" || pathname.startsWith("/blog/") || pathname.startsWith("/en/blog");
-
   // Si el visitante ya eligió idioma a mano (o next-intl ya lo detectó antes), no lo pisamos.
-  if (!request.cookies.get("NEXT_LOCALE") && !isBlogPath) {
+  if (!request.cookies.get("NEXT_LOCALE")) {
     const country = request.headers.get("x-vercel-ip-country");
     if (country) {
       const detected = ENGLISH_SPEAKING_COUNTRIES.has(country) ? "en" : "es";

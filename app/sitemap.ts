@@ -19,6 +19,7 @@ const PUBLIC_PATHS = [
   "/aviso-legal",
   "/cookies",
   "/reembolsos",
+  "/blog",
 ];
 
 function localizedPath(path: string, locale: string) {
@@ -35,11 +36,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   }));
 
-  // El blog es solo en español por ahora — sin alternates de idioma (no hay /en
-  // todavía) para no señalar una variante que no existe.
-  const blogPages = ["/blog", ...BLOG_POSTS.map((p) => `/blog/${p.slug}`)].map((path) => ({
-    url: `${BASE_URL}${path}`,
+  // El blog ya es bilingüe (es/en) — cada artículo con sus alternates de idioma.
+  const blogPages = BLOG_POSTS.map((p) => ({
+    url: `${BASE_URL}/blog/${p.slug}`,
     lastModified: new Date(),
+    alternates: {
+      languages: Object.fromEntries(
+        routing.locales.map((locale) => [locale, localizedPath(`/blog/${p.slug}`, locale)])
+      ),
+    },
   }));
 
   return [...publicPages, ...blogPages];

@@ -5,15 +5,25 @@ import { Link } from "@/i18n/navigation";
 import { ArrowLeft, ArrowRight, Clock } from "lucide-react";
 import { ArticleHero } from "@/components/app/blog/ArticleHero";
 import { ToolCta, ToolDisclaimer, ToolCrossLinks, JsonLd } from "@/components/app/calculator/ToolPieces";
-import { BLOG_POSTS, type BlogPost } from "@/lib/blog/posts";
+import { BLOG_POSTS, localized, type BlogPost } from "@/lib/blog/posts";
 
 const BASE = "https://peptibrain.com";
+
+const STRINGS = {
+  es: { readMinutes: (n: number) => `${n} min de lectura`, keepReading: "Sigue leyendo" },
+  en: { readMinutes: (n: number) => `${n} min read`, keepReading: "Keep reading" },
+};
 
 // Chrome compartido de cada artículo del blog: cabecera, ilustración, meta,
 // aviso médico, CTA a la app, enlaces cruzados a calculadoras/otros artículos
 // y datos estructurados Article (schema.org) para SEO/GEO.
-export function ArticleLayout({ post, children }: { post: BlogPost; children: ReactNode }) {
-  const dateLabel = new Date(`${post.publishedAt}T00:00:00`).toLocaleDateString("es", {
+export function ArticleLayout({ post, locale, children }: { post: BlogPost; locale: string; children: ReactNode }) {
+  const s = locale === "en" ? STRINGS.en : STRINGS.es;
+  const title = localized(post.title, locale);
+  const excerpt = localized(post.excerpt, locale);
+  const category = localized(post.category, locale);
+
+  const dateLabel = new Date(`${post.publishedAt}T00:00:00`).toLocaleDateString(locale === "en" ? "en-US" : "es", {
     day: "numeric",
     month: "long",
     year: "numeric",
@@ -24,12 +34,13 @@ export function ArticleLayout({ post, children }: { post: BlogPost; children: Re
   const articleLd = {
     "@context": "https://schema.org",
     "@type": "Article",
-    headline: post.title,
-    description: post.excerpt,
+    headline: title,
+    description: excerpt,
     datePublished: post.publishedAt,
+    inLanguage: locale,
     author: { "@type": "Organization", name: "PeptiBrain" },
     publisher: { "@type": "Organization", name: "PeptiBrain", logo: `${BASE}/peptibrain-isotipo.svg` },
-    mainEntityOfPage: `${BASE}/blog/${post.slug}`,
+    mainEntityOfPage: `${BASE}${locale === "en" ? "/en" : ""}/blog/${post.slug}`,
   };
 
   return (
@@ -45,16 +56,16 @@ export function ArticleLayout({ post, children }: { post: BlogPost; children: Re
           </Link>
 
           <div className="mt-4">
-            <ArticleHero icon={post.icon} category={post.category} />
+            <ArticleHero icon={post.icon} category={category} />
           </div>
 
           <h1 className="mt-6 text-balance font-display text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-            {post.title}
+            {title}
           </h1>
           <div className="mt-3 flex items-center gap-3 text-sm text-muted-foreground">
             <span>{dateLabel}</span>
             <span className="flex items-center gap-1">
-              <Clock className="size-3.5" aria-hidden /> {post.readingMinutes} min de lectura
+              <Clock className="size-3.5" aria-hidden /> {s.readMinutes(post.readingMinutes)}
             </span>
           </div>
 
@@ -66,7 +77,7 @@ export function ArticleLayout({ post, children }: { post: BlogPost; children: Re
 
           {related.length > 0 && (
             <section className="mt-10">
-              <h2 className="font-display text-lg font-bold text-foreground">Sigue leyendo</h2>
+              <h2 className="font-display text-lg font-bold text-foreground">{s.keepReading}</h2>
               <div className="mt-3 grid gap-3 sm:grid-cols-2">
                 {related.map((p) => (
                   <Link
@@ -77,7 +88,9 @@ export function ArticleLayout({ post, children }: { post: BlogPost; children: Re
                     <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-accent text-accent-foreground">
                       <p.icon className="size-5" aria-hidden />
                     </span>
-                    <span className="min-w-0 flex-1 text-sm font-semibold text-foreground">{p.title}</span>
+                    <span className="min-w-0 flex-1 text-sm font-semibold text-foreground">
+                      {localized(p.title, locale)}
+                    </span>
                     <ArrowRight
                       className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5"
                       aria-hidden
