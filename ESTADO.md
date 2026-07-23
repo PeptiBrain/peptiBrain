@@ -1,5 +1,12 @@
 # ESTADO — PeptiBrain
-Última actualización: 2026-07-23 | Sesión 11 (GEO: llms.txt+schema+Cloudflare AI bots desbloqueados, OG image, checklist de primeros pasos, blog de 11 artículos). Migraciones 0003-0030 corridas (0029 `app_settings` y 0030 `assistant_questions` confirmadas OK por el usuario).
+Última actualización: 2026-07-23 | Sesión 11 (GEO: llms.txt+schema+Cloudflare AI bots desbloqueados, OG image, checklist de primeros pasos, blog de 11 artículos + grid + destacados en home). Migraciones 0003-0030 corridas (0029 `app_settings` y 0030 `assistant_questions` confirmadas OK por el usuario).
+
+## ✅ Sesión 11d (2026-07-23) — Nav "Gratis" + destacados del blog en la home
+- **Header**: nuevo enlace **"Gratis"** (i18n, visible en ambos idiomas) → `/#calculadoras`, ancla nueva en la sección `FreeTools` (`id="calculadoras" scroll-mt-20`). "Blog" sigue solo en español.
+- **`BlogHighlights.tsx`**: nueva sección en la portada ("Nuestras guías más completas") con las 3 guías más potentes del blog (elegidas por peso estratégico: semaglutida = pilar #1 de demanda, péptidos-según-objetivo = amplio alcance, mejores-apps-de-péptidos = comparativa que posiciona PeptiBrain para SEO/GEO). Mismo estilo visual que el índice del blog (grid + `ArticleHero compact`). Solo se renderiza si `locale === "es"` (el blog aún no está en inglés) — confirmado con curl que en `/en` NO aparece y en `/` (es) sí.
+- ✅ Verificado: tsc ✓ eslint ✓ build ✓ · navegado en vivo (enlace "Gratis" con href correcto `/#calculadoras`, sección de destacados visible con las tarjetas correctas).
+- Nota técnica repetida: correr `npm run build` mientras el dev server sigue vivo corrompe `.next` (comparten caché) → siempre detener el preview antes de un build de verificación.
+- **Pendiente**: el usuario pidió también convertir esas 3 guías en guiones de vídeo para redes (no es código, se entrega como texto en el chat).
 
 ## ✅ Sesión 11c (2026-07-23) — Blog: +4 artículos (11 en total)
 El usuario pidió 5 ideas inspiradas en peptidosfacil.com; una (errores de principiante) ya existía — se le avisó honestamente y NO se duplicó. Se construyeron las otras 4, con datos reales de `lib/peptide-profiles.ts` (nunca inventados): `peptidos-populares` (directorio por categoría), `peptidos-segun-tu-objetivo` (peso/recuperación/músculo/longevidad/piel), `como-se-usan-los-peptidos` (vía subcutánea, rotación de zonas, los 4 pasos de una aplicación), `como-almacenar-tus-peptidos` (antes/después de reconstituir, la regla de los ~30 días, el calor como enemigo). Todos con enlaces cruzados entre sí y a las calculadoras/protocolos.

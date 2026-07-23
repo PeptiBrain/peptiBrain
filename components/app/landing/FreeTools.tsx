@@ -15,7 +15,7 @@ export function FreeTools() {
   ];
 
   return (
-    <section className="px-4 py-16">
+    <section id="calculadoras" className="scroll-mt-20 px-4 py-16">
       <div className="mx-auto max-w-6xl">
         <Reveal>
           <p className="text-center text-xs font-semibold uppercase tracking-wide text-primary">{t("eyebrow")}</p>

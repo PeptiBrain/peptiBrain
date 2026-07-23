@@ -7,6 +7,7 @@ import { HowItWorks } from "@/components/app/landing/HowItWorks";
 import { Pricing } from "@/components/app/landing/Pricing";
 import { Testimonials } from "@/components/app/landing/Testimonials";
 import { Faq } from "@/components/app/landing/Faq";
+import { BlogHighlights } from "@/components/app/landing/BlogHighlights";
 import { FinalCta } from "@/components/app/landing/FinalCta";
 import { UtmCapture } from "@/components/app/UtmCapture";
 import { JsonLd } from "@/components/app/calculator/ToolPieces";
@@ -35,7 +36,8 @@ const ORG_SCHEMA = {
   sameAs: ["https://www.instagram.com/peptibrain/"],
 };
 
-export default function Home() {
+export default async function Home({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
   return (
     <>
       <JsonLd data={APP_SCHEMA} />
@@ -50,6 +52,7 @@ export default function Home() {
         <Testimonials />
         <Faq />
         <FreeTools />
+        {locale === "es" && <BlogHighlights />}
         <FinalCta />
       </main>
       <Footer />

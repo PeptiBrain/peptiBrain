@@ -25,6 +25,9 @@ export async function Header() {
           </span>
         </Link>
         <nav aria-label="Navegación principal" className="flex shrink-0 items-center gap-3 sm:gap-4">
+          <Link href="/#calculadoras" className="text-sm font-semibold text-primary hover:underline">
+            {t("free")}
+          </Link>
           {locale === "es" && (
             <Link href="/blog" className="text-sm font-medium text-muted-foreground hover:text-foreground">
               Blog

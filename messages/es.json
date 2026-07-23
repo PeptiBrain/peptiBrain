@@ -24,7 +24,8 @@
   "Header": {
     "login": "Ingresar",
     "cta": "Empezar gratis",
-    "goToApp": "Ir a mi app"
+    "goToApp": "Ir a mi app",
+    "free": "Gratis"
   },
   "Footer": {
     "legalNotice": "PeptiBrain es un diario personal de seguimiento. No es consejo médico ni reemplaza a un profesional de la salud, y no recomienda dosis: registra lo que tú decides. Consulta siempre a un profesional antes de tomar decisiones sobre tu salud.",
