@@ -1331,7 +1331,9 @@
     "fieldDose": "Dosis común",
     "fieldFreq": "Frecuencia",
     "modalCta": "Crear cuenta gratis para seguirlo",
-    "modalFullProtocol": "Ver protocolo completo"
+    "modalFullProtocol": "Ver protocolo completo",
+    "scrollPrev": "Ver péptidos anteriores",
+    "scrollNext": "Ver más péptidos"
   },
   "FirstSteps": {
     "title": "Primeros pasos",

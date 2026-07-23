@@ -1,5 +1,12 @@
 # ESTADO — PeptiBrain
-Última actualización: 2026-07-23 | Sesión 11o (tabla comparativa real en el artículo "mejores-apps-de-peptidos"). Migraciones 0003-0030 corridas (0029 `app_settings` y 0030 `assistant_questions` confirmadas OK por el usuario).
+Última actualización: 2026-07-23 | Sesión 11p (flechas en el carrusel de la Biblioteca + precios repetidos debajo del blog). Migraciones 0003-0030 corridas (0029 `app_settings` y 0030 `assistant_questions` confirmadas OK por el usuario).
+
+## ✅ Sesión 11p (2026-07-23) — Flechas de navegación en la Biblioteca + Precios repetido
+El usuario pidió dos ajustes a la home: (1) flechas para mover el carrusel de "Péptidos populares" en vez de solo deslizar, y (2) repetir la sección de Precios debajo de los artículos del blog (la página es larga, conviene recordar el precio antes de que el visitante se vaya).
+- `PeptideLibrary.tsx`: agregadas 2 flechas circulares (◀ ▶, ocultas en móvil — el swipe ya alcanza ahí) que mueven el carrusel 2 tarjetas por clic.
+- **Bug real encontrado y corregido**: la primera implementación usaba `el.scrollBy({behavior:"smooth"})`, que no se anima de forma fiable en todos los entornos. Se cambió a asignación directa de `scrollLeft` + la clase CSS `scroll-smooth` en el contenedor (más estándar y fiable entre navegadores).
+- `app/[locale]/page.tsx`: `<Pricing />` ahora se renderiza dos veces — una vez en su posición original, y otra vez debajo de `<BlogHighlights />`, antes del CTA final. Sin conflicto de ids/anchors (verificado que Pricing no usa ninguno).
+- ✅ Verificado: tsc ✓ eslint ✓ build ✓ · el navegador de vista previa se quedó pegado a mitad de la verificación (una herramienta de scroll se colgó) — se detectó, se abrió una pestaña nueva limpia, y ahí se confirmó en vivo: clic en la flecha mueve el carrusel de verdad (scrollLeft pasó de 0 a 544, capturado en pantalla con Retatrutida/BPC-157/TB-500 visibles tras el clic), y las dos secciones de Precios existen en el DOM.
 
 ## ✅ Sesión 11o (2026-07-23) — Tabla comparativa real (no imagen) en el artículo de apps
 El usuario pidió una imagen "comparador potente" tipo checks/cruces contra la competencia con Nano Banana. Se le explicó el riesgo: no puedo generar logos reales de terceros, y una imagen con checks inventados para "App A/B/C" no sería precisa. Pidió que fuera "100% precisa como la información que tiene el artículo" — se decidió construirla como **tabla HTML real dentro del artículo** en vez de imagen generada (así es editable, accesible, y nunca desactualizada).

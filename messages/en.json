@@ -1331,7 +1331,9 @@
     "fieldDose": "Common dose",
     "fieldFreq": "Frequency",
     "modalCta": "Create a free account to follow it",
-    "modalFullProtocol": "See full protocol"
+    "modalFullProtocol": "See full protocol",
+    "scrollPrev": "See previous peptides",
+    "scrollNext": "See more peptides"
   },
   "FirstSteps": {
     "title": "First steps",

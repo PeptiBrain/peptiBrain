@@ -55,6 +55,7 @@ export default async function Home({ params }: { params: Promise<{ locale: strin
         <FreeTools />
         <PeptideLibrary />
         <BlogHighlights locale={locale} />
+        <Pricing />
         <FinalCta />
       </main>
       <Footer />

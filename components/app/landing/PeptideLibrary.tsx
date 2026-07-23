@@ -14,6 +14,8 @@ import {
   Salad,
   ShieldCheck,
   ArrowRight,
+  ChevronLeft,
+  ChevronRight,
   Clock,
   Droplet,
   type LucideIcon,
@@ -72,6 +74,16 @@ export function PeptideLibrary() {
     setActive(Math.round(el.scrollLeft / cardWidth));
   }
 
+  function scrollByCards(direction: 1 | -1) {
+    const el = scrollRef.current;
+    if (!el) return;
+    const cardWidth = el.scrollWidth / items.length;
+    // Asignación directa (en vez de scrollBy con behavior:"smooth") — la
+    // animación la da la clase CSS "scroll-smooth" del contenedor, que es
+    // más fiable entre navegadores que la opción behavior de la Scroll API.
+    el.scrollLeft += direction * cardWidth * 2;
+  }
+
   return (
     <section className="px-4 py-16">
       <div className="mx-auto max-w-6xl">
@@ -93,12 +105,30 @@ export function PeptideLibrary() {
           <p className="mt-1 text-xs text-muted-foreground sm:hidden">{t("swipeHint")}</p>
         </Reveal>
 
-        <div
-          ref={scrollRef}
-          onScroll={onScroll}
-          className="mt-6 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-        >
-          {items.map((p, i) => {
+        <div className="relative mt-6">
+          <button
+            type="button"
+            onClick={() => scrollByCards(-1)}
+            aria-label={t("scrollPrev")}
+            className="absolute -left-4 top-1/2 z-10 hidden size-10 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-card text-foreground shadow-md transition-colors hover:bg-muted sm:flex"
+          >
+            <ChevronLeft className="size-5" aria-hidden />
+          </button>
+          <button
+            type="button"
+            onClick={() => scrollByCards(1)}
+            aria-label={t("scrollNext")}
+            className="absolute -right-4 top-1/2 z-10 hidden size-10 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-card text-foreground shadow-md transition-colors hover:bg-muted sm:flex"
+          >
+            <ChevronRight className="size-5" aria-hidden />
+          </button>
+
+          <div
+            ref={scrollRef}
+            onScroll={onScroll}
+            className="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          >
+            {items.map((p, i) => {
             const Icon = CATEGORY_ICONS[p.categories[0]];
             return (
               <Reveal key={p.name} delay={i * 0.04}>
@@ -129,7 +159,8 @@ export function PeptideLibrary() {
                 </article>
               </Reveal>
             );
-          })}
+            })}
+          </div>
         </div>
 
         <div className="mt-4 hidden justify-center gap-1.5 sm:flex">
