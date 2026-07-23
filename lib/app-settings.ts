@@ -28,3 +28,9 @@ export async function getPublicSetting(key: string): Promise<string | null> {
 export function isValidGaId(value: string): boolean {
   return /^G-[A-Z0-9]{6,}$/i.test(value.trim());
 }
+
+// Valida el formato de un Project ID de Microsoft Clarity (alfanumérico en minúscula,
+// tipo "xqwlpj6o3f"; ~10 chars, rango 6-20 por si cambia la longitud).
+export function isValidClarityId(value: string): boolean {
+  return /^[a-z0-9]{6,20}$/i.test(value.trim());
+}

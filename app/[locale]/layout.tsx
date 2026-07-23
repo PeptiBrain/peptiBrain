@@ -8,6 +8,7 @@ import { MixpanelProvider } from "@/components/app/MixpanelProvider";
 import { ServiceWorkerRegister } from "@/components/app/ServiceWorkerRegister";
 import { CookieConsentBanner } from "@/components/app/CookieConsentBanner";
 import { GoogleAnalytics } from "@/components/app/GoogleAnalytics";
+import { MicrosoftClarity } from "@/components/app/MicrosoftClarity";
 import { getPublicSetting } from "@/lib/app-settings";
 import "../globals.css";
 
@@ -52,7 +53,10 @@ export default async function LocaleLayout({
   }
   setRequestLocale(locale);
   const messages = await getMessages();
-  const gaId = await getPublicSetting("ga_measurement_id");
+  const [gaId, clarityId] = await Promise.all([
+    getPublicSetting("ga_measurement_id"),
+    getPublicSetting("clarity_project_id"),
+  ]);
 
   return (
     <html
@@ -75,6 +79,7 @@ export default async function LocaleLayout({
           <MixpanelProvider>{children}</MixpanelProvider>
           <CookieConsentBanner />
           {gaId && <GoogleAnalytics gaId={gaId} />}
+          {clarityId && <MicrosoftClarity clarityId={clarityId} />}
         </NextIntlClientProvider>
       </body>
     </html>
