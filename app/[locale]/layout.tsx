@@ -24,15 +24,32 @@ const inter = Inter({
   weight: ["400", "500", "600"],
 });
 
+const SITE_TITLE = "PeptiBrain — Tu diario de péptidos y bienestar";
+const SITE_DESC =
+  "Registra tus dosis, viales y bienestar en un solo lugar. Nunca pierdas el hilo de tu protocolo, y compártelo con quien tú elijas.";
+
 export const metadata: Metadata = {
-  title: "PeptiBrain — Tu diario de péptidos y bienestar",
-  description:
-    "Registra tus dosis, viales y bienestar en un solo lugar. Nunca pierdas el hilo de tu protocolo, y compártelo con quien tú elijas.",
+  metadataBase: new URL("https://peptibrain.com"),
+  title: SITE_TITLE,
+  description: SITE_DESC,
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
     title: "PeptiBrain",
+  },
+  // Vista previa al compartir enlaces (la imagen la aporta app/opengraph-image.tsx).
+  openGraph: {
+    type: "website",
+    siteName: "PeptiBrain",
+    title: SITE_TITLE,
+    description: SITE_DESC,
+    url: "https://peptibrain.com",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_TITLE,
+    description: SITE_DESC,
   },
 };
 

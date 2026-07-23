@@ -65,5 +65,8 @@ export default async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next|_vercel|.*\\..*).*)"],
+  // Excluye _next/_vercel, archivos con extensión (sitemap.xml, robots.txt…) y las
+  // rutas de imágenes de metadatos de Next (opengraph-image/twitter-image) — si el
+  // middleware de idiomas las tocara, romperían la vista previa al compartir enlaces.
+  matcher: ["/((?!_next|_vercel|opengraph-image|twitter-image|.*\\..*).*)"],
 };
