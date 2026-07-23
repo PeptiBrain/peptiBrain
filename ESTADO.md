@@ -1,5 +1,11 @@
 # ESTADO — PeptiBrain
-Última actualización: 2026-07-23 | Sesión 11l (banner CTA de calculadoras en el blog + enlace de TikTok en el footer). Migraciones 0003-0030 corridas (0029 `app_settings` y 0030 `assistant_questions` confirmadas OK por el usuario).
+Última actualización: 2026-07-23 | Sesión 11m (enlace "Inicio" en el menú del header). Migraciones 0003-0030 corridas (0029 `app_settings` y 0030 `assistant_questions` confirmadas OK por el usuario).
+
+## ✅ Sesión 11m (2026-07-23) — Enlace "Inicio" en el menú
+El usuario pidió "añade la página de inicio a la web" — se aclaró con él que quería un enlace "Inicio" visible en el menú de navegación (antes solo se podía volver a la portada tocando el logo).
+- `Header.tsx`: nuevo enlace "Inicio"/"Home" antes de "Herramientas".
+- **Bug real encontrado y corregido en el momento**: agregarlo sin más rompía el layout en móvil — el header pasó a medir 410px de ancho en una pantalla de 375px (scroll horizontal), porque ya no cabían todos los elementos (Inicio + Herramientas + Blog + banderas + botón). Se ocultó "Inicio" en móvil (mismo patrón que "Ingresar", que también solo se ve desde `sm:` hacia arriba) — verificado con `document.documentElement.scrollWidth` que a 375px ya no desborda, y que en escritorio si se ve.
+- ✅ Verificado: tsc ✓ eslint ✓ build ✓ · confirmado en vivo a 375px (sin overflow) y a 1280px (enlace visible).
 
 ## ✅ Sesión 11l (2026-07-23) — Banner CTA del blog (con mockup de la app) + TikTok en el footer
 - **Banner CTA de calculadoras**: el usuario generó las 2 imágenes (es/en, prompt de sesión anterior: mockup de la app con "250 mcg" + botón "Probar gratis"/"Try free"). Se les quitó el destello de Gemini (mismo proceso de retoque que en las 11 portadas — esta vez la marca de agua caía encima de un borde recto del mockup del teléfono, así que se ajustó el radio/máscara para no dejar rastro). Guardadas en `public/blog/cta/calc-banner-{es,en}.png`.

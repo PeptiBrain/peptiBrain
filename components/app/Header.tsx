@@ -25,6 +25,12 @@ export async function Header() {
           </span>
         </Link>
         <nav aria-label="Navegación principal" className="flex shrink-0 items-center gap-3 sm:gap-4">
+          <Link
+            href="/"
+            className="hidden text-sm font-medium text-muted-foreground hover:text-foreground sm:inline"
+          >
+            {t("home")}
+          </Link>
           <ToolsMenu triggerLabel={t("tools")} />
           <Link href="/blog" className="text-sm font-medium text-muted-foreground hover:text-foreground">
             Blog
