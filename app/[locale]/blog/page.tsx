@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
 import { Clock } from "lucide-react";
 import { Header } from "@/components/app/Header";
@@ -11,13 +10,7 @@ import { ArticleHero } from "@/components/app/blog/ArticleHero";
 
 const BASE = "https://peptibrain.com";
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ locale: string }>;
-}): Promise<Metadata> {
-  const { locale } = await params;
-  if (locale !== "es") return {};
+export async function generateMetadata(): Promise<Metadata> {
   const url = `${BASE}/blog`;
   const title = "Blog de PeptiBrain — Guías sobre péptidos";
   const description =
@@ -30,10 +23,10 @@ export async function generateMetadata({
   };
 }
 
-export default async function BlogIndexPage({ params }: { params: Promise<{ locale: string }> }) {
-  const { locale } = await params;
-  if (locale !== "es") notFound();
-  setRequestLocale(locale);
+export default async function BlogIndexPage() {
+  // El blog SOLO existe en español por ahora. Nunca mostramos 404 aunque se llegue
+  // por /en/blog — se muestra el contenido en español (mejor eso que un error).
+  setRequestLocale("es");
 
   const blogLd = {
     "@context": "https://schema.org",

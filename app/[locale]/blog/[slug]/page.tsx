@@ -33,9 +33,9 @@ export async function generateMetadata({
 }: {
   params: Promise<{ locale: string; slug: string }>;
 }): Promise<Metadata> {
-  const { locale, slug } = await params;
+  const { slug } = await params;
   const post = getBlogPost(slug);
-  if (!post || locale !== "es") return {};
+  if (!post) return {};
   const url = `${BASE}/blog/${slug}`;
   return {
     title: `${post.title} | Blog de PeptiBrain`,
@@ -46,10 +46,11 @@ export async function generateMetadata({
 }
 
 export default async function BlogPostPage({ params }: { params: Promise<{ locale: string; slug: string }> }) {
-  const { locale, slug } = await params;
-  // Blog en español por ahora — cuando se traduzca, esta condición se ajusta.
-  if (locale !== "es") notFound();
-  setRequestLocale(locale);
+  const { slug } = await params;
+  // El blog SOLO existe en español por ahora. Si alguien llega por /en/blog/... (por
+  // ejemplo un enlace compartido, o el país detectado fuerza inglés), NUNCA mostramos
+  // un 404 — mostramos el contenido en español (mejor eso que un error para el visitante).
+  setRequestLocale("es");
 
   const post = getBlogPost(slug);
   const loader = CONTENT[slug];
