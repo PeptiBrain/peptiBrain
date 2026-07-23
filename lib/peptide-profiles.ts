@@ -17,6 +17,13 @@ export const PEPTIDE_CATEGORY_IDS = [
 
 export type PeptideCategoryId = (typeof PEPTIDE_CATEGORY_IDS)[number];
 
+// Nivel de confianza del dato de vida media (halfLife): "alto" cuando viene de
+// ficha técnica FDA o un estudio farmacocinético publicado en humanos; "medio"
+// cuando la literatura secundaria es consistente pero sin PK humana formal;
+// "bajo" cuando solo hay estudios preclínicos (animal) o estimaciones dispares;
+// "sin-dato" cuando no existe ningún valor confiable — nunca se inventa un número.
+export type HalfLifeConfidence = "alto" | "medio" | "bajo" | "sin-dato";
+
 export type PeptideProfile = {
   name: string;
   route: string;
@@ -29,6 +36,8 @@ export type PeptideProfile = {
   categories: PeptideCategoryId[];
   tags: string[];
   description: string;
+  halfLife: string;
+  halfLifeConfidence: HalfLifeConfidence;
 };
 
 // Valores típicos de referencia — el usuario los puede ajustar libremente.
@@ -47,6 +56,8 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     tags: ["Reparación tisular", "Salud digestiva"],
     description:
       "Pentadecapéptido derivado de una proteína gástrica. Conocido por sus propiedades de reparación tisular y salud digestiva.",
+    halfLife: "~15 min (estudios en animales; sin dato humano formal)",
+    halfLifeConfidence: "bajo",
   },
   {
     name: "TB-500",
@@ -61,6 +72,8 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     tags: ["Recuperación", "Movilidad"],
     description:
       "Fragmento sintético de la timosina beta-4. Promueve la cicatrización, regeneración celular y movilidad.",
+    halfLife: "~2-3 horas (estimado, sin PK humana formal)",
+    halfLifeConfidence: "bajo",
   },
   {
     name: "Semaglutida",
@@ -75,6 +88,8 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     tags: ["Control de peso"],
     description:
       "Agonista del receptor GLP-1. Reduce el apetito, retrasa el vaciamiento gástrico y mejora la sensibilidad a la insulina.",
+    halfLife: "~1 semana",
+    halfLifeConfidence: "alto",
   },
   {
     name: "Tirzepatida",
@@ -89,6 +104,8 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     tags: ["Control de peso"],
     description:
       "Agonista dual GIP/GLP-1. Apoya el control de peso y mejora la sensibilidad a la insulina.",
+    halfLife: "~5 días",
+    halfLifeConfidence: "alto",
   },
   {
     name: "Retatrutida",
@@ -102,6 +119,8 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     categories: ["peso"],
     tags: ["Control de peso"],
     description: "Agonista triple GIP/GLP-1/glucagón, en investigación para control de peso.",
+    halfLife: "~6 días",
+    halfLifeConfidence: "alto",
   },
   {
     name: "Cagrilintide",
@@ -116,6 +135,8 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     tags: ["Control de peso"],
     description:
       "Análogo de la amilina de acción prolongada. Suele combinarse con un GLP-1 para el control de peso.",
+    halfLife: "~7 días",
+    halfLifeConfidence: "alto",
   },
   {
     name: "AOD-9604",
@@ -129,6 +150,8 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     categories: ["peso"],
     tags: ["Metabolismo"],
     description: "Fragmento de la hormona de crecimiento asociado al metabolismo de las grasas.",
+    halfLife: "~3-4 min (estudios preclínicos)",
+    halfLifeConfidence: "bajo",
   },
   {
     name: "Adipotide (FTPP)",
@@ -143,6 +166,8 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     tags: ["Control de peso"],
     description:
       "Péptido pro-apoptótico dirigido a los vasos sanguíneos del tejido adiposo blanco. Reduce grasa abdominal.",
+    halfLife: "Sin dato confiable en humanos",
+    halfLifeConfidence: "sin-dato",
   },
   {
     name: "5-Amino-1MQ",
@@ -157,6 +182,8 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     tags: ["Metabolismo"],
     description:
       "Inhibidor de la enzima NNMT (nicotinamida N-metiltransferasa). Aumenta los niveles celulares de NAD+.",
+    halfLife: "~4-7 horas (estudios en animales)",
+    halfLifeConfidence: "bajo",
   },
   {
     name: "Ipamorelina",
@@ -171,6 +198,8 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     tags: ["Hormona de crecimiento"],
     description:
       "Secretagogo selectivo de hormona de crecimiento, con un perfil de efectos secundarios más suave que otros análogos.",
+    halfLife: "~2 horas",
+    halfLifeConfidence: "alto",
   },
   {
     name: "CJC-1295",
@@ -184,6 +213,8 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     categories: ["musculo_gh"],
     tags: ["Hormona de crecimiento"],
     description: "Análogo de acción prolongada de la hormona liberadora de GH. Suele combinarse con Ipamorelina.",
+    halfLife: "~30 min (sin DAC) — la versión con DAC llega a 6-8 días; confirma cuál tienes",
+    halfLifeConfidence: "medio",
   },
   {
     name: "MK-677 (Ibutamoren)",
@@ -198,6 +229,8 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     tags: ["Hormona de crecimiento"],
     description:
       "Secretagogo no peptídico de GH activo por vía oral. Imita la acción de la grelina sobre los receptores de GH.",
+    halfLife: "~4-6 horas (efecto sostenido reportado hasta 24 h)",
+    halfLifeConfidence: "medio",
   },
   {
     name: "Sermorelina",
@@ -212,6 +245,8 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     tags: ["Hormona de crecimiento"],
     description:
       "Análogo de la hormona liberadora de GH. Suele usarse antes de dormir por su efecto sobre el sueño profundo.",
+    halfLife: "~11-12 min",
+    halfLifeConfidence: "alto",
   },
   {
     name: "Tesamorelina",
@@ -226,6 +261,8 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     tags: ["Hormona de crecimiento"],
     description:
       "Análogo de la hormona liberadora de GH, estudiado especialmente para la reducción de grasa visceral.",
+    halfLife: "~8-11 min",
+    halfLifeConfidence: "alto",
   },
   {
     name: "GHK-Cu",
@@ -240,6 +277,8 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     tags: ["Piel", "Antienvejecimiento"],
     description:
       "Complejo péptido-cobre presente naturalmente en el cuerpo. Muy usado en cosmética por su efecto en colágeno y cicatrización; también tópico.",
+    halfLife: "~25-35 min (estimado, sin PK humana formal)",
+    halfLifeConfidence: "bajo",
   },
   {
     name: "MOTS-c",
@@ -254,6 +293,8 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     tags: ["Metabolismo", "Longevidad"],
     description:
       "Péptido derivado de la mitocondria. En tendencia por su posible rol en el metabolismo de la glucosa y la respuesta al estrés celular.",
+    halfLife: "Sin dato confiable en humanos",
+    halfLifeConfidence: "sin-dato",
   },
   {
     name: "Epitalon",
@@ -268,6 +309,8 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     tags: ["Longevidad"],
     description:
       "Péptido sintético derivado de la glándula pineal. Estudiado por su posible relación con la regulación del reloj biológico y la telomerasa.",
+    halfLife: "Sin dato confiable en ninguna especie",
+    halfLifeConfidence: "sin-dato",
   },
   {
     name: "DSIP",
@@ -281,6 +324,8 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     categories: ["sueno"],
     tags: ["Sueño"],
     description: "Péptido inductor del sueño delta (Delta Sleep-Inducing Peptide). Se usa antes de dormir.",
+    halfLife: "~15-25 min (estimado)",
+    halfLifeConfidence: "medio",
   },
   {
     name: "Selank",
@@ -295,6 +340,8 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     tags: ["Ansiolítico", "Enfoque"],
     description:
       "Péptido ansiolítico de origen ruso. Se asocia con calma mental y enfoque sin sedación.",
+    halfLife: "Sin dato confiable (fuentes muy dispares)",
+    halfLifeConfidence: "sin-dato",
   },
   {
     name: "Semax",
@@ -308,6 +355,8 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     categories: ["cognicion"],
     tags: ["Nootrópico"],
     description: "Péptido nootrópico derivado de la ACTH. Estudiado por su efecto en memoria y concentración.",
+    halfLife: "Sin dato confiable (fuentes muy dispares)",
+    halfLifeConfidence: "sin-dato",
   },
   {
     name: "PT-141 (Bremelanotida)",
@@ -321,6 +370,8 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     categories: ["libido"],
     tags: ["Libido"],
     description: "Activador de receptores de melanocortina. Usado para la libido y función sexual.",
+    halfLife: "~2.7 horas",
+    halfLifeConfidence: "alto",
   },
   {
     name: "Melanotan II",
@@ -334,6 +385,8 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     categories: ["piel_belleza", "libido"],
     tags: ["Bronceado"],
     description: "Análogo de la hormona estimulante de melanocitos. Conocido por su efecto bronceador.",
+    halfLife: "~1-2 horas",
+    halfLifeConfidence: "medio",
   },
   {
     name: "Timosina Alfa-1",
@@ -347,6 +400,8 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     categories: ["inmunidad"],
     tags: ["Inmunidad"],
     description: "Péptido inmunomodulador natural del timo. Estudiado para el soporte del sistema inmune.",
+    halfLife: "~2 horas",
+    halfLifeConfidence: "alto",
   },
   {
     name: "KPV",
@@ -360,5 +415,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     categories: ["intestinal", "piel_belleza"],
     tags: ["Antiinflamatorio"],
     description: "Fragmento de la alfa-MSH con propiedades antiinflamatorias. Usado en salud intestinal y de piel.",
+    halfLife: "~1-2 horas (estimado, sin PK humana formal)",
+    halfLifeConfidence: "bajo",
   },
 ];

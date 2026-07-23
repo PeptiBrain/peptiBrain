@@ -1250,15 +1250,20 @@
     ]
   },
   "Protocolos": {
-    "metaTitle": "Peptide Protocols: doses, frequency & reconstitution | PeptiBrain",
-    "metaDescription": "Reference guide of peptide protocols: common dose, frequency, vial and bacteriostatic water for the most used peptides. Calculate your units in one click.",
-    "kicker": "Reference guide",
-    "h1": "Peptide Protocols",
-    "subtitle": "Reference values for the most used peptides: common dose, frequency, vial size, and bacteriostatic water. Tap 'Calculate dose' and we send it straight to the calculator.",
+    "metaTitle": "Peptide library: doses, half-life & reconstitution | PeptiBrain",
+    "metaDescription": "Search and filter the most used peptides: common dose, frequency, vial, bacteriostatic water and half-life. Calculate your units in one click.",
+    "kicker": "Library",
+    "h1": "Peptide library",
+    "subtitle": "Search by name or filter by category: common dose, frequency, vial size, bacteriostatic water and half-life. Tap 'Calculate dose' and we send it straight to the calculator.",
+    "searchPlaceholder": "Search peptide...",
+    "filterAll": "All",
+    "showingCount": "Showing {count} of {total}",
+    "noResults": "We couldn't find a peptide matching that name or filter.",
     "fieldDose": "Common dose",
     "fieldFreq": "Frequency",
     "fieldVial": "Vial",
     "fieldBac": "Bac. water",
+    "fieldHalfLife": "Half-life",
     "calcCta": "Calculate dose",
     "faq": [
       {
@@ -1272,6 +1277,10 @@
       {
         "q": "Is it safe to follow these protocols?",
         "a": "Peptides should be used under medical supervision. This guide is informational and educational; it does not recommend doses or replace a healthcare professional's assessment."
+      },
+      {
+        "q": "Why don't some peptides show a half-life value?",
+        "a": "Because there's no reliable published pharmacokinetic study for that peptide in humans. We'd rather say \"no reliable data\" than show a made-up number."
       }
     ]
   },
