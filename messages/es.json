@@ -653,6 +653,7 @@
     "calculatorLockedDesc": "Calcula la reconstitución exacta de cualquier vial con tu plan Premium.",
     "calculatorToolRecon": "Reconstitución",
     "calculatorToolConverter": "Conversor",
+    "calculatorToolCompare": "Comparar",
     "converterWeightTab": "Peso",
     "converterDoseTab": "Dosis y volumen",
     "converterWeightHint": "Convierte entre miligramos y microgramos al instante.",

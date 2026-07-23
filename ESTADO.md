@@ -1,5 +1,11 @@
 # ESTADO — PeptiBrain
-Última actualización: 2026-07-23 | Sesión 11j (12/12 artículos del blog ya con imagen propia — imagen del FAQ integrada). Migraciones 0003-0030 corridas (0029 `app_settings` y 0030 `assistant_questions` confirmadas OK por el usuario).
+Última actualización: 2026-07-23 | Sesión 11k (Comparador de péptidos agregado DENTRO de la app, 4ª sub-herramienta de la pestaña Calculadora). Migraciones 0003-0030 corridas (0029 `app_settings` y 0030 `assistant_questions` confirmadas OK por el usuario).
+
+## ✅ Sesión 11k (2026-07-23) — Comparador de péptidos dentro de la app (Premium)
+El usuario pidió meter el comparador (hasta ahora solo público en `/comparador`) también dentro de la app logueada.
+- `app/[locale]/app/peptidos/page.tsx`: la pestaña **Calculadora** (bloqueada a Premium, como las otras 3 sub-herramientas) ahora tiene 4 opciones en vez de 3 — se reutiliza el MISMO componente `ComparadorTool.tsx` ya construido para la página pública (cero código duplicado). El switcher pasó de `grid-cols-3` a `grid-cols-2 sm:grid-cols-4` (2×2 en móvil a 375px, fila de 4 en pantallas más grandes) para que no se aprieten los textos.
+- Nueva clave i18n `calculatorToolCompare` ("Comparar"/"Compare") en el namespace `Peptidos`.
+- ✅ Verificado: tsc ✓ eslint ✓ build ✓ · página de prueba desechable `calctabcheck` (con datos mock plan Premium) creada, verificada a 375px en las 4 pestañas (Reconstitución, GLP-1, Conversor, Comparar) — todas renderizan bien, el comparador funciona igual que en la versión pública — y BORRADA antes del commit.
 
 ## ✅ Sesión 11j (2026-07-23) — Imagen del artículo FAQ integrada (12/12 completo)
 El usuario generó la imagen de portada del artículo FAQ (icono de interrogación, mismo estilo de marca). Se integró con el mismo proceso que las otras 11: quitar el destello de Gemini/Nano Banana (inpainting + suavizado) y sumar el slug a `SLUGS_WITH_IMAGE` en `lib/blog/posts.ts`. Los 12 artículos del blog ya tienen imagen propia — completo.

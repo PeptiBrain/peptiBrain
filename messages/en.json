@@ -653,6 +653,7 @@
     "calculatorLockedDesc": "Calculate the exact reconstitution of any vial with your Premium plan.",
     "calculatorToolRecon": "Reconstitution",
     "calculatorToolConverter": "Converter",
+    "calculatorToolCompare": "Compare",
     "converterWeightTab": "Weight",
     "converterDoseTab": "Dose & volume",
     "converterWeightHint": "Convert between milligrams and micrograms instantly.",

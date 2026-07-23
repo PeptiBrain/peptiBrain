@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { Plus, Package, Syringe, Beaker, Calculator, Check, Lock, Droplet, Trash2, CalendarClock, Zap, Pill, Wind, ArrowRightLeft, Building2, Users, X } from "lucide-react";
+import { Plus, Package, Syringe, Beaker, Calculator, Check, Lock, Droplet, Trash2, CalendarClock, Zap, Pill, Wind, ArrowRightLeft, Shuffle, Building2, Users, X } from "lucide-react";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import { getPeptideBottleImage } from "@/lib/vial-visual";
@@ -27,6 +27,7 @@ import { ProtocolModal } from "@/components/app/peptidos/ProtocolModal";
 import { ReconstitutionCalculator } from "@/components/app/peptidos/ReconstitutionCalculator";
 import { UnitConverter } from "@/components/app/peptidos/UnitConverter";
 import { GlpDoseCalculator } from "@/components/app/calculator/GlpDoseCalculator";
+import { ComparadorTool } from "@/components/app/calculator/ComparadorTool";
 import { ProviderModal } from "@/components/app/peptidos/ProviderModal";
 import { WeekSchedule } from "@/components/app/peptidos/WeekSchedule";
 import { ShoppingList } from "@/components/app/peptidos/ShoppingList";
@@ -242,15 +243,16 @@ function CalculadoraTab({
   data: AppData;
   t: (key: string, values?: Record<string, string | number>) => string;
 }) {
-  const [tool, setTool] = useState<"recon" | "glp" | "converter">("recon");
+  const [tool, setTool] = useState<"recon" | "glp" | "converter" | "compare">("recon");
   const TOOLS = [
     { key: "recon" as const, label: t("calculatorToolRecon"), icon: Calculator },
     { key: "glp" as const, label: t("calculatorToolGlp"), icon: Syringe },
     { key: "converter" as const, label: t("calculatorToolConverter"), icon: ArrowRightLeft },
+    { key: "compare" as const, label: t("calculatorToolCompare"), icon: Shuffle },
   ];
   return (
     <div>
-      <div className="mb-3 grid grid-cols-3 gap-2">
+      <div className="mb-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
         {TOOLS.map((tl) => (
           <button
             key={tl.key}
@@ -271,8 +273,12 @@ function CalculadoraTab({
         <ReconstitutionCalculator data={data} />
       ) : tool === "glp" ? (
         <GlpDoseCalculator />
-      ) : (
+      ) : tool === "converter" ? (
         <UnitConverter />
+      ) : (
+        <Suspense fallback={null}>
+          <ComparadorTool />
+        </Suspense>
       )}
     </div>
   );
