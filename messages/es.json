@@ -1281,5 +1281,18 @@
     "t2Desc": "Semaglutida y tirzepatida con la titulación completa.",
     "t3Title": "Protocolos de péptidos",
     "t3Desc": "Dosis, frecuencia y agua de los péptidos más usados."
+  },
+  "FirstSteps": {
+    "title": "Primeros pasos",
+    "doneTitle": "¡Ya diste tus primeros pasos! 🎉",
+    "progress": "{done} de {total} completados",
+    "step_peptide": "Añade tu primer péptido",
+    "step_vial": "Registra un vial",
+    "step_dose": "Registra tu primera dosis",
+    "step_doneDose": "Marca una dosis como aplicada",
+    "step_health": "Anota tu peso o cómo te sientes",
+    "collapseAria": "Minimizar",
+    "expandAria": "Expandir",
+    "closeAria": "Cerrar"
   }
 }

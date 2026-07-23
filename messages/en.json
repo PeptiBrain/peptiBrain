@@ -1281,5 +1281,18 @@
     "t2Desc": "Semaglutide and tirzepatide with the full titration.",
     "t3Title": "Peptide protocols",
     "t3Desc": "Doses, frequency and water for the most used peptides."
+  },
+  "FirstSteps": {
+    "title": "First steps",
+    "doneTitle": "You took your first steps! 🎉",
+    "progress": "{done} of {total} done",
+    "step_peptide": "Add your first peptide",
+    "step_vial": "Log a vial",
+    "step_dose": "Log your first dose",
+    "step_doneDose": "Mark a dose as applied",
+    "step_health": "Note your weight or how you feel",
+    "collapseAria": "Minimize",
+    "expandAria": "Expand",
+    "closeAria": "Close"
   }
 }

@@ -16,6 +16,7 @@ import { CalendarModal } from "@/components/app/shell/CalendarModal";
 import { AssistantModal } from "@/components/app/assistant/AssistantModal";
 import { PeptideIcon } from "@/components/app/peptidos/PeptideIcon";
 import { Mascot } from "@/components/app/shell/Mascot";
+import { FirstStepsChecklist } from "@/components/app/shell/FirstStepsChecklist";
 import { isWithinRange, type CustomRange, type DateRangeKey } from "@/lib/date-range";
 
 export default function InicioPage() {
@@ -176,6 +177,10 @@ export default function InicioPage() {
           t("goodDayFallback")
         )}
       </motion.p>
+
+      <div className="mt-4">
+        <FirstStepsChecklist data={data} />
+      </div>
 
       {pendingDose ? (
         <motion.div
