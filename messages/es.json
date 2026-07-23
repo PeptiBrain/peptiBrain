@@ -27,7 +27,8 @@
     "goToApp": "Ir a mi app",
     "free": "Gratis",
     "tools": "Herramientas",
-    "home": "Inicio"
+    "home": "Inicio",
+    "ideas": "Ideas"
   },
   "Footer": {
     "legalNotice": "PeptiBrain es un diario personal de seguimiento. No es consejo médico ni reemplaza a un profesional de la salud, y no recomienda dosis: registra lo que tú decides. Consulta siempre a un profesional antes de tomar decisiones sobre tu salud.",
@@ -1156,7 +1157,8 @@
     "navCalculator": "Calculadora de reconstitución",
     "navSemaglutide": "Calculadora de semaglutida",
     "navProtocols": "Protocolos de péptidos",
-    "navComparador": "Comparador de péptidos"
+    "navComparador": "Comparador de péptidos",
+    "navIdeas": "Ideas y Roadmap"
   },
   "Calculadora": {
     "metaTitle": "Calculadora de reconstitución de péptidos gratis | PeptiBrain",
@@ -1283,6 +1285,33 @@
         "a": "Porque no existe un estudio farmacocinético confiable publicado para esos péptidos en humanos. Preferimos decir «sin dato confiable» antes que mostrar un número inventado."
       }
     ]
+  },
+  "Ideas": {
+    "metaTitle": "Ideas y Roadmap de PeptiBrain — propón y vota mejoras",
+    "metaDescription": "Propón mejoras para PeptiBrain y vota las ideas de la comunidad. Mira qué estamos construyendo en el roadmap. Tú decides hacia dónde va la app.",
+    "kicker": "Comunidad",
+    "h1": "Ideas y Roadmap",
+    "subtitle": "Propón mejoras, vota las que más te gusten y mira qué estamos construyendo. Tú ayudas a decidir hacia dónde va PeptiBrain.",
+    "tabIdeas": "Ideas",
+    "tabRoadmap": "Roadmap",
+    "submitTitle": "Propón una mejora",
+    "fieldTitlePlaceholder": "Tu idea en una frase (ej. «Exportar mis dosis a Excel»)",
+    "fieldDescriptionPlaceholder": "Cuéntanos más (opcional): ¿qué problema resolvería?",
+    "submitButton": "Publicar idea",
+    "loginToPost": "Inicia sesión para publicar",
+    "empty": "Todavía no hay ideas. ¡Sé el primero en proponer una!",
+    "emptyRoadmap": "Nada por aquí todavía.",
+    "voteLabel": "Votar esta idea",
+    "status_open": "En estudio",
+    "status_planned": "Planeada",
+    "status_in_progress": "En desarrollo",
+    "status_done": "Lista",
+    "status_declined": "Descartada",
+    "cat_calculo": "Cálculo y dosis",
+    "cat_seguimiento": "Seguimiento",
+    "cat_familia": "Familia",
+    "cat_ia": "Asistente IA",
+    "cat_otra": "Otra"
   },
   "Comparador": {
     "metaTitle": "Comparador de péptidos: dosis, vía y frecuencia lado a lado | PeptiBrain",

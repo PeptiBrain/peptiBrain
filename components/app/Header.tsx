@@ -35,6 +35,12 @@ export async function Header() {
           <Link href="/blog" className="text-sm font-medium text-muted-foreground hover:text-foreground">
             Blog
           </Link>
+          <Link
+            href="/ideas"
+            className="hidden text-sm font-medium text-muted-foreground hover:text-foreground sm:inline"
+          >
+            {t("ideas")}
+          </Link>
           <LocaleSwitcher />
           {user ? (
             <Link

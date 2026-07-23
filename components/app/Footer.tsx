@@ -39,6 +39,9 @@ export function Footer() {
           <Link href="/blog" className="hover:text-foreground hover:underline">
             Blog
           </Link>
+          <Link href="/ideas" className="hover:text-foreground hover:underline">
+            {tt("navIdeas")}
+          </Link>
         </nav>
         <div className="mx-auto flex max-w-6xl items-center justify-between">
           <Link href="/" className="flex items-center gap-2">

@@ -27,7 +27,8 @@
     "goToApp": "Go to my app",
     "free": "Free",
     "tools": "Tools",
-    "home": "Home"
+    "home": "Home",
+    "ideas": "Ideas"
   },
   "Footer": {
     "legalNotice": "PeptiBrain is a personal tracking diary. It is not medical advice and does not replace a healthcare professional, and it does not recommend doses: it records what you decide. Always consult a professional before making decisions about your health.",
@@ -1156,7 +1157,8 @@
     "navCalculator": "Reconstitution calculator",
     "navSemaglutide": "Semaglutide calculator",
     "navProtocols": "Peptide protocols",
-    "navComparador": "Peptide comparator"
+    "navComparador": "Peptide comparator",
+    "navIdeas": "Ideas & Roadmap"
   },
   "Calculadora": {
     "metaTitle": "Free Peptide Reconstitution Calculator | PeptiBrain",
@@ -1283,6 +1285,33 @@
         "a": "Because there's no reliable published pharmacokinetic study for that peptide in humans. We'd rather say \"no reliable data\" than show a made-up number."
       }
     ]
+  },
+  "Ideas": {
+    "metaTitle": "PeptiBrain Ideas & Roadmap — suggest and vote on improvements",
+    "metaDescription": "Suggest improvements for PeptiBrain and vote on the community's ideas. See what we're building on the roadmap. You help decide where the app goes.",
+    "kicker": "Community",
+    "h1": "Ideas & Roadmap",
+    "subtitle": "Suggest improvements, upvote the ones you like, and see what we're building. You help decide where PeptiBrain goes next.",
+    "tabIdeas": "Ideas",
+    "tabRoadmap": "Roadmap",
+    "submitTitle": "Suggest an improvement",
+    "fieldTitlePlaceholder": "Your idea in one line (e.g. \"Export my doses to Excel\")",
+    "fieldDescriptionPlaceholder": "Tell us more (optional): what problem would it solve?",
+    "submitButton": "Post idea",
+    "loginToPost": "Sign in to post",
+    "empty": "No ideas yet. Be the first to suggest one!",
+    "emptyRoadmap": "Nothing here yet.",
+    "voteLabel": "Upvote this idea",
+    "status_open": "Under review",
+    "status_planned": "Planned",
+    "status_in_progress": "In progress",
+    "status_done": "Done",
+    "status_declined": "Declined",
+    "cat_calculo": "Calc & dosing",
+    "cat_seguimiento": "Tracking",
+    "cat_familia": "Family",
+    "cat_ia": "AI assistant",
+    "cat_otra": "Other"
   },
   "Comparador": {
     "metaTitle": "Peptide comparator: dose, route & frequency side by side | PeptiBrain",
