@@ -8,12 +8,15 @@ import { Syringe, Check, X, ChevronRight, AlertTriangle } from "lucide-react";
 import { loadAppData, markDoseDone, type AppData, type Dose } from "@/lib/app-data";
 import { celebrateDoseLogged } from "@/lib/celebrate";
 import { PeptideIcon } from "@/components/app/peptidos/PeptideIcon";
+import { InjectionSiteModal } from "@/components/app/shell/InjectionSiteModal";
+import { suggestNextInjectionSite, lastInjectionSite, type InjectionSiteId } from "@/lib/injection-sites";
 
 export function NextDosesWidget() {
   const t = useTranslations("NextDoses");
   const locale = useLocale();
   const [data, setData] = useState<AppData | null>(null);
   const [open, setOpen] = useState(false);
+  const [siteDose, setSiteDose] = useState<Dose | null>(null);
 
   useEffect(() => {
     loadAppData().then(setData);
@@ -45,10 +48,11 @@ export function NextDosesWidget() {
     return { overdue: false, text: `${dateStr} · ${timeStr}` };
   }
 
-  async function markDone(doseId: string) {
-    const next = await markDoseDone(data!, doseId);
+  async function markDone(doseId: string, injectionSite?: string) {
+    const next = await markDoseDone(data!, doseId, injectionSite);
     setData(next);
     celebrateDoseLogged(next);
+    setSiteDose(null);
   }
 
   return (
@@ -94,7 +98,7 @@ export function NextDosesWidget() {
                     </div>
                     <button
                       type="button"
-                      onClick={() => markDone(d.id)}
+                      onClick={() => setSiteDose(d)}
                       aria-label={t("markDone")}
                       className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground"
                     >
@@ -127,6 +131,17 @@ export function NextDosesWidget() {
           {pending.length}
         </span>
       </button>
+
+      {siteDose && (
+        <InjectionSiteModal
+          open={Boolean(siteDose)}
+          onClose={() => setSiteDose(null)}
+          onConfirm={(site: InjectionSiteId) => markDone(siteDose.id, site)}
+          onSkip={() => markDone(siteDose.id, undefined)}
+          suggested={suggestNextInjectionSite(data.doses, siteDose.peptideId)}
+          lastUsed={lastInjectionSite(data.doses, siteDose.peptideId)}
+        />
+      )}
     </>
   );
 }

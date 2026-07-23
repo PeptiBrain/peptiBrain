@@ -522,6 +522,7 @@
     "weekTagCatchUp": "TIME TO CATCH UP!",
     "nextDose": "Next dose",
     "peptideFallback": "Your peptide",
+    "lastSite": "Last time: {site}",
     "markDone": "Mark as taken",
     "noDosesPending": "You have no pending doses.",
     "scheduleDose": "Schedule a dose",
@@ -551,6 +552,17 @@
     "sideEffectsPanelTitle": "Side effects",
     "noSideEffectsTitle": "No side effects",
     "noSideEffectsPanel": "No effects in this range. Keep it up!"
+  },
+  "InjectionSite": {
+    "title": "Where did you inject it?",
+    "subtitle": "Rotate between sites to avoid irritating the same spot every time.",
+    "site_abdomen": "Abdomen",
+    "site_muslo": "Thigh",
+    "site_brazo": "Arm",
+    "suggested": "Suggested",
+    "lastUsed": "Last time: {site}",
+    "confirm": "Confirm",
+    "skip": "Skip and log"
   },
   "NextDoses": {
     "title": "Upcoming doses",

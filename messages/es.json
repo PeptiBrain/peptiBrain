@@ -522,6 +522,7 @@
     "weekTagCatchUp": "¡A REMONTAR!",
     "nextDose": "Próxima dosis",
     "peptideFallback": "Tu péptido",
+    "lastSite": "Última vez: {site}",
     "markDone": "Marcar como aplicada",
     "noDosesPending": "No tienes dosis pendientes.",
     "scheduleDose": "Programar una dosis",
@@ -551,6 +552,17 @@
     "sideEffectsPanelTitle": "Efectos secundarios",
     "noSideEffectsTitle": "Sin efectos secundarios",
     "noSideEffectsPanel": "Sin efectos en este rango. ¡Sigue así!"
+  },
+  "InjectionSite": {
+    "title": "¿En qué zona te la aplicaste?",
+    "subtitle": "Rota entre zonas para evitar irritar siempre el mismo punto.",
+    "site_abdomen": "Abdomen",
+    "site_muslo": "Muslo",
+    "site_brazo": "Brazo",
+    "suggested": "Sugerido",
+    "lastUsed": "Última vez: {site}",
+    "confirm": "Confirmar",
+    "skip": "Omitir y registrar"
   },
   "NextDoses": {
     "title": "Próximas dosis",

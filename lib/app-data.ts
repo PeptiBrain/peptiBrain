@@ -542,9 +542,12 @@ export async function addDose(
   return loadAppData();
 }
 
-export async function markDoseDone(data: AppData, doseId: string): Promise<AppData> {
+export async function markDoseDone(data: AppData, doseId: string, injectionSite?: string): Promise<AppData> {
   const { supabase } = await requireUser();
-  const { error } = await supabase.from("doses").update({ done: true }).eq("id", doseId);
+  const { error } = await supabase
+    .from("doses")
+    .update({ done: true, ...(injectionSite ? { injection_site: injectionSite } : {}) })
+    .eq("id", doseId);
   if (error) throw error;
   return loadAppData();
 }

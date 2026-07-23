@@ -14,14 +14,17 @@ import { track } from "@/lib/mixpanel";
 import { DateRangeTabs } from "@/components/app/shell/DateRangeTabs";
 import { CalendarModal } from "@/components/app/shell/CalendarModal";
 import { AssistantModal } from "@/components/app/assistant/AssistantModal";
+import { InjectionSiteModal } from "@/components/app/shell/InjectionSiteModal";
 import { PeptideIcon } from "@/components/app/peptidos/PeptideIcon";
 import { Mascot } from "@/components/app/shell/Mascot";
 import { FirstStepsChecklist } from "@/components/app/shell/FirstStepsChecklist";
 import { isWithinRange, type CustomRange, type DateRangeKey } from "@/lib/date-range";
+import { suggestNextInjectionSite, lastInjectionSite, type InjectionSiteId } from "@/lib/injection-sites";
 
 export default function InicioPage() {
   const t = useTranslations("Inicio");
   const tCal = useTranslations("Calendar");
+  const tSite = useTranslations("InjectionSite");
   const locale = useLocale();
   const [data, setData] = useState<AppData | null>(null);
   const [name, setName] = useState("");
@@ -29,6 +32,7 @@ export default function InicioPage() {
   const [customRange, setCustomRange] = useState<CustomRange | null>(null);
   const [showCalendar, setShowCalendar] = useState(false);
   const [showAssistant, setShowAssistant] = useState(false);
+  const [showSiteModal, setShowSiteModal] = useState(false);
 
   useEffect(() => {
     loadAppData().then(setData);
@@ -83,9 +87,15 @@ export default function InicioPage() {
   const greetKey = hour < 12 ? "greetMorning" : hour < 20 ? "greetAfternoon" : "greetEvening";
   const dateLabel = now.toLocaleDateString(locale, { weekday: "long", day: "numeric", month: "long" });
 
-  async function handleMarkDone() {
+  function handleMarkDone() {
     if (!pendingDose || !data) return;
-    const next = await markDoseDone(data, pendingDose.id);
+    setShowSiteModal(true);
+  }
+
+  async function confirmMarkDone(injectionSite?: string) {
+    if (!pendingDose || !data) return;
+    setShowSiteModal(false);
+    const next = await markDoseDone(data, pendingDose.id, injectionSite);
     setData(next);
     celebrateDoseLogged(next);
     track("dose_logged", { peptide: donePeptide?.name });
@@ -202,6 +212,11 @@ export default function InicioPage() {
               <p className="text-sm text-muted-foreground">
                 {pendingDose.amount} {pendingDose.unit}
               </p>
+              {lastInjectionSite(data.doses, pendingDose.peptideId) && (
+                <p className="text-xs text-muted-foreground">
+                  {t("lastSite", { site: tSite(`site_${lastInjectionSite(data.doses, pendingDose.peptideId)}`) })}
+                </p>
+              )}
             </div>
           </div>
           <button
@@ -419,6 +434,17 @@ export default function InicioPage() {
       />
 
       <AssistantModal open={showAssistant} onClose={() => setShowAssistant(false)} data={data} />
+
+      {pendingDose && (
+        <InjectionSiteModal
+          open={showSiteModal}
+          onClose={() => setShowSiteModal(false)}
+          onConfirm={(site: InjectionSiteId) => confirmMarkDone(site)}
+          onSkip={() => confirmMarkDone(undefined)}
+          suggested={suggestNextInjectionSite(data.doses, pendingDose.peptideId)}
+          lastUsed={lastInjectionSite(data.doses, pendingDose.peptideId)}
+        />
+      )}
     </div>
   );
 }
