@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { routing } from "@/i18n/routing";
+import { BLOG_POSTS } from "@/lib/blog/posts";
 
 const BASE_URL = "https://peptibrain.com";
 
@@ -26,11 +27,20 @@ function localizedPath(path: string, locale: string) {
 }
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  return PUBLIC_PATHS.map((path) => ({
+  const publicPages = PUBLIC_PATHS.map((path) => ({
     url: localizedPath(path, routing.defaultLocale),
     lastModified: new Date(),
     alternates: {
       languages: Object.fromEntries(routing.locales.map((locale) => [locale, localizedPath(path, locale)])),
     },
   }));
+
+  // El blog es solo en español por ahora — sin alternates de idioma (no hay /en
+  // todavía) para no señalar una variante que no existe.
+  const blogPages = ["/blog", ...BLOG_POSTS.map((p) => `/blog/${p.slug}`)].map((path) => ({
+    url: `${BASE_URL}${path}`,
+    lastModified: new Date(),
+  }));
+
+  return [...publicPages, ...blogPages];
 }

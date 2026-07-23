@@ -1,5 +1,15 @@
 # ESTADO — PeptiBrain
-Última actualización: 2026-07-23 | Sesión 11 (GEO: llms.txt+schema+Cloudflare AI bots desbloqueados, OG image, checklist de primeros pasos). Migraciones 0003-0030 corridas (0029 `app_settings` y 0030 `assistant_questions` confirmadas OK por el usuario).
+Última actualización: 2026-07-23 | Sesión 11 (GEO: llms.txt+schema+Cloudflare AI bots desbloqueados, OG image, checklist de primeros pasos, blog de 7 artículos). Migraciones 0003-0030 corridas (0029 `app_settings` y 0030 `assistant_questions` confirmadas OK por el usuario).
+
+## ✅ Sesión 11b (2026-07-23) — Blog de contenido (7 artículos, solo español por ahora)
+Decisión con el usuario: empezar con 7 artículos fuertes (no los 20 pedidos originalmente) e ilustraciones de marca simples (icono + degradado verde), sin fotos de IA genéricas (en salud restan confianza). Arquitectura:
+- `lib/blog/posts.ts`: metadata de los 7 posts (slug, título, extracto, categoría, icono, fecha, minutos de lectura).
+- `components/app/blog/ArticleBlocks.tsx` (H2/H3/P/UL/LI/OL/Callout reutilizables), `ArticleHero.tsx` (ilustración de marca sin fotos), `ArticleLayout.tsx` (chrome compartido: hero, meta, disclaimer médico, CTA a la app, cross-links a calculadoras, "Sigue leyendo" con 3 relacionados, JSON-LD `Article`).
+- `components/app/blog/posts/*.tsx`: los 7 cuerpos de artículo (JSX simple, sin sistema de bloques genérico — más rápido y suficiente para 7 piezas): qué son los péptidos, cómo reconstituir, semaglutida (dosis/titulación), BPC-157, GHK-Cu, 7 errores comunes, comparativa de mejores apps de péptidos 2026 (con PeptiBrain posicionado honestamente frente a Peptide Tracker/PeptIQ/PepCalc/Dose Track — pensada para SEO y para que los LLMs la citen, ver GEO de sesión 11a).
+- `app/[locale]/blog/page.tsx` (índice) + `app/[locale]/blog/[slug]/page.tsx` (plantilla, generateStaticParams+generateMetadata). **Blog SOLO en español por ahora** (decisión del usuario) — `/en/blog*` devuelve `notFound()` a propósito; el enlace "Blog" en el Footer solo se muestra con `locale === "es"`.
+- `app/sitemap.ts` ampliado con `/blog` + las 7 rutas (sin alternates de idioma, ya que no existe versión en). Footer con enlace a Blog.
+- ✅ Verificado: tsc ✓ eslint ✓ (20 errores reales de comillas sin escapar en JSX corregidos con `&ldquo;&rdquo;`, no silenciados) build ✓ · render en navegador confirmado: índice `/blog` ✓, artículo `/blog/semaglutida-como-funciona-y-como-se-calcula-la-dosis` ✓ (hero, meta, enlace interno a calculadora, disclaimer, CTA, 3 relacionados con iconos), `/en/blog` → 404 confirmado como se diseñó.
+- **Pendiente futuro (no ahora)**: traducir a inglés cuando se decida; ampliar con más artículos si estos 7 traccionan bien en Search Console.
 
 ## ✅ Sesión 11 (2026-07-23) — Checklist de "Primeros pasos" en Inicio
 Widget persistente (no un tour de una sola vez) con 5 acciones clave, derivadas 100% de datos reales de `AppData` (nunca marcadas a mano): añadir 1er péptido, registrar un vial, registrar 1a dosis, marcar una dosis como aplicada, anotar peso/salud. Se puede minimizar o cerrar sin perder el progreso (persiste en localStorage `peptibrain_first_steps_dismissed`/`..._collapsed`); si completa las 5, celebra con confeti una sola vez y cambia a "¡Ya diste tus primeros pasos!". Cada acción pendiente enlaza a la pantalla donde se hace.
