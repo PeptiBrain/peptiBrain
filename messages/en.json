@@ -30,7 +30,7 @@
     "home": "Home"
   },
   "Footer": {
-    "legalNotice": "PeptiBrain is a personal tracking diary. It is not medical advice and does not replace a healthcare professional, and it does not recommend doses: it records what you decide. Always consult a professional before making decisions about your health.",
+    "legalNotice": "PeptiBrain is a personal tracking diary. It is not medical advice and does not replace a healthcare professional, and it does not recommend doses: it records what you decide. Testosterone replacement therapy (TRT) is a prescription hormonal treatment that requires diagnosis and ongoing medical follow-up; never start or adjust it on your own. Always consult a professional before making decisions about your health.",
     "terms": "Terms",
     "privacy": "Privacy",
     "instagram": "PeptiBrain on Instagram",
@@ -45,10 +45,10 @@
     "copyright": "© {year} PeptiBrain. All rights reserved."
   },
   "Hero": {
-    "eyebrow": "Your peptide and wellness diary",
-    "titleLine1": "Peptide tracking, finally",
+    "eyebrow": "GLP-1 · Peptides · TRT",
+    "titleLine1": "Your protocol, finally",
     "titleHighlight": "without the hassle.",
-    "subtitle": "Log your doses, weight, hydration and effects in one place. See your trends, keep your streak, and never lose track of your protocol.",
+    "subtitle": "Log your GLP-1, peptide and testosterone replacement therapy (TRT) doses in one place. See your trends, keep your streak, and never lose track of your protocol.",
     "trustLine": "Your trusted Pepti-Friendly app",
     "ctaPrimary": "Start for free",
     "ctaSecondary": "I already have an account",
@@ -1152,7 +1152,7 @@
     "savePreferences": "Save preferences"
   },
   "Tools": {
-    "disclaimer": "This tool is for informational and educational purposes only. It is not medical advice and does not replace a healthcare professional. Peptides should be used under medical supervision; always consult your doctor before starting any protocol.",
+    "disclaimer": "This tool is for informational and educational purposes only. It is not medical advice and does not replace a healthcare professional. Peptides and GLP-1 medications should be used under medical supervision. Testosterone replacement therapy (TRT) is a prescription hormonal treatment: it should only be started after lab-confirmed deficiency and with ongoing medical follow-up, never on your own. Always consult your doctor before starting or adjusting any protocol.",
     "ctaTitle": "Keep your whole protocol in one place",
     "ctaBody": "PeptiBrain stores your vials, calculates your doses, reminds you of every shot, and tracks your progress. Start free.",
     "ctaButton": "Try PeptiBrain free",
@@ -1270,6 +1270,13 @@
     "fieldVial": "Vial",
     "fieldBac": "Bac. water",
     "fieldHalfLife": "Half-life",
+    "fieldHowItWorks": "How it works",
+    "fieldMostReported": "Most reported effects",
+    "fieldEvidenceLevel": "Evidence level",
+    "fieldSideEffects": "Common side effects",
+    "fieldCombines": "Combines with / avoid",
+    "expandCta": "View full profile",
+    "collapseCta": "Show less",
     "calcCta": "Calculate dose",
     "faq": [
       {

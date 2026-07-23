@@ -24,9 +24,9 @@ const inter = Inter({
   weight: ["400", "500", "600"],
 });
 
-const SITE_TITLE = "PeptiBrain — Tu diario de péptidos y bienestar";
+const SITE_TITLE = "PeptiBrain — GLP-1, péptidos y TRT en un solo lugar";
 const SITE_DESC =
-  "Registra tus dosis, viales y bienestar en un solo lugar. Nunca pierdas el hilo de tu protocolo, y compártelo con quien tú elijas.";
+  "Registra tus dosis de GLP-1, péptidos y terapia de testosterona (TRT), tus viales y tu bienestar en un solo lugar. Nunca pierdas el hilo de tu protocolo, y compártelo con quien tú elijas.";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://peptibrain.com"),

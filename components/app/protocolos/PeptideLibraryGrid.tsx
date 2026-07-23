@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { Search, ArrowRight } from "lucide-react";
+import { Search, ArrowRight, ChevronDown } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { getPeptideBottleImage } from "@/lib/vial-visual";
 import {
@@ -25,6 +25,16 @@ export function PeptideLibraryGrid() {
   const tc = useTranslations("PeptideCategories");
   const [query, setQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<PeptideCategoryId | "all">("all");
+  const [expanded, setExpanded] = useState<Set<string>>(new Set());
+
+  function toggleExpanded(name: string) {
+    setExpanded((prev) => {
+      const next = new Set(prev);
+      if (next.has(name)) next.delete(name);
+      else next.add(name);
+      return next;
+    });
+  }
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -106,6 +116,39 @@ export function PeptideLibraryGrid() {
                     </span>
                   </dd>
                 </div>
+
+                <button
+                  type="button"
+                  onClick={() => toggleExpanded(p.name)}
+                  className="mt-2 flex items-center justify-center gap-1 py-1 text-xs font-semibold text-muted-foreground hover:text-foreground"
+                  aria-expanded={expanded.has(p.name)}
+                >
+                  {expanded.has(p.name) ? t("collapseCta") : t("expandCta")}
+                  <ChevronDown
+                    className={`size-3.5 transition-transform ${expanded.has(p.name) ? "rotate-180" : ""}`}
+                    aria-hidden
+                  />
+                </button>
+
+                {expanded.has(p.name) && (
+                  <div className="mt-1 space-y-2.5 border-t border-border/60 pt-2.5 text-xs">
+                    <ExpandedField label={t("fieldHowItWorks")}>{p.howItWorks}</ExpandedField>
+                    <div>
+                      <dt className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+                        {t("fieldMostReported")}
+                      </dt>
+                      <ul className="mt-1 list-disc space-y-0.5 pl-4 text-foreground">
+                        {p.mostReported.map((item) => (
+                          <li key={item}>{item}</li>
+                        ))}
+                      </ul>
+                    </div>
+                    <ExpandedField label={t("fieldEvidenceLevel")}>{p.evidenceLevel}</ExpandedField>
+                    <ExpandedField label={t("fieldSideEffects")}>{p.commonSideEffects}</ExpandedField>
+                    <ExpandedField label={t("fieldCombines")}>{p.combinesWithAvoid}</ExpandedField>
+                  </div>
+                )}
+
                 <Link
                   href={calcHref}
                   className="mt-3 inline-flex h-10 items-center justify-center gap-1.5 rounded-lg border border-primary/40 bg-primary/5 text-xs font-semibold text-primary transition-colors hover:bg-primary/10"
@@ -150,6 +193,15 @@ function Field({ label, value }: { label: string; value: string }) {
     <div>
       <dt className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">{label}</dt>
       <dd className="font-medium text-foreground">{value}</dd>
+    </div>
+  );
+}
+
+function ExpandedField({ label, children }: { label: string; children: string }) {
+  return (
+    <div>
+      <dt className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">{label}</dt>
+      <dd className="mt-0.5 leading-relaxed text-foreground">{children}</dd>
     </div>
   );
 }

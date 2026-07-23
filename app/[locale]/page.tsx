@@ -24,7 +24,7 @@ const APP_SCHEMA = {
   url: "https://peptibrain.com",
   inLanguage: ["es", "en"],
   description:
-    "App web (español e inglés) para calcular dosis de péptidos y llevar el seguimiento de tu protocolo: viales, dosis, recordatorios, bienestar y progreso. Incluye calculadoras gratuitas de reconstitución y de semaglutida/tirzepatida. Contenido educativo, no es consejo médico.",
+    "App web (español e inglés) para calcular dosis de GLP-1, péptidos y terapia de reemplazo de testosterona (TRT), y llevar el seguimiento de tu protocolo: viales, dosis, recordatorios, bienestar y progreso. Incluye calculadoras gratuitas de reconstitución y de semaglutida/tirzepatida. Contenido educativo, no es consejo médico.",
   offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
 };
 
