@@ -1,11 +1,12 @@
 import Image from "next/image";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { LocaleSwitcher } from "@/components/app/LocaleSwitcher";
 import { createClient } from "@/lib/supabase/server";
 
 export async function Header() {
   const t = await getTranslations("Header");
+  const locale = await getLocale();
   const supabase = await createClient();
   const {
     data: { user },
@@ -23,7 +24,12 @@ export async function Header() {
             PeptiBrain
           </span>
         </Link>
-        <nav aria-label="Navegación principal" className="flex shrink-0 items-center gap-2 sm:gap-3">
+        <nav aria-label="Navegación principal" className="flex shrink-0 items-center gap-3 sm:gap-4">
+          {locale === "es" && (
+            <Link href="/blog" className="text-sm font-medium text-muted-foreground hover:text-foreground">
+              Blog
+            </Link>
+          )}
           <LocaleSwitcher />
           {user ? (
             <Link
