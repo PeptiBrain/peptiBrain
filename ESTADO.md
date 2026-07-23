@@ -1,5 +1,10 @@
 # ESTADO — PeptiBrain
-Última actualización: 2026-07-23 | Sesión 11i (nueva página pública `/comparador` + menú "Herramientas" en el header). Migraciones 0003-0030 corridas (0029 `app_settings` y 0030 `assistant_questions` confirmadas OK por el usuario).
+Última actualización: 2026-07-23 | Sesión 11j (12/12 artículos del blog ya con imagen propia — imagen del FAQ integrada). Migraciones 0003-0030 corridas (0029 `app_settings` y 0030 `assistant_questions` confirmadas OK por el usuario).
+
+## ✅ Sesión 11j (2026-07-23) — Imagen del artículo FAQ integrada (12/12 completo)
+El usuario generó la imagen de portada del artículo FAQ (icono de interrogación, mismo estilo de marca). Se integró con el mismo proceso que las otras 11: quitar el destello de Gemini/Nano Banana (inpainting + suavizado) y sumar el slug a `SLUGS_WITH_IMAGE` en `lib/blog/posts.ts`. Los 12 artículos del blog ya tienen imagen propia — completo.
+- ✅ Verificado: tsc ✓ build ✓ · navegado en vivo, la portada del artículo FAQ se ve sin marca de agua.
+- **Pendiente del usuario**: generar la imagen del Comparador y el banner CTA de calculadoras con los 2 prompts restantes que se le dieron.
 
 ## ✅ Sesión 11i (2026-07-23) — Comparador de péptidos (4ª herramienta gratuita) + menú "Herramientas"
 El usuario vio el comparador de péptidos de peptidosfacil.com y pidió algo similar, además de simplificar el menú (quitar "Gratis", poner "Herramientas" con todas las calculadoras dentro).

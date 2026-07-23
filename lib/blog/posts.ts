@@ -235,6 +235,7 @@ const SLUGS_WITH_IMAGE = new Set([
   "peptidos-segun-tu-objetivo",
   "como-se-usan-los-peptidos",
   "como-almacenar-tus-peptidos",
+  "preguntas-frecuentes-sobre-peptidos",
 ]);
 
 export function getPostImagePath(slug: string): string | null {
