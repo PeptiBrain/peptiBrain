@@ -10,6 +10,7 @@ import {
   Target,
   MapPin,
   Snowflake,
+  HelpCircle,
   type LucideIcon,
 } from "lucide-react";
 
@@ -198,6 +199,21 @@ export const BLOG_POSTS: BlogPost[] = [
     icon: Snowflake,
     publishedAt: "2026-08-03",
     readingMinutes: 6,
+  },
+  {
+    slug: "preguntas-frecuentes-sobre-peptidos",
+    title: {
+      es: "FAQ: péptidos sin rodeos",
+      en: "FAQ: peptides, no beating around the bush",
+    },
+    excerpt: {
+      es: "Las dudas que aparecen una y otra vez, respondidas de forma clara y sin promesas exageradas.",
+      en: "The questions that keep coming up, answered clearly and without overselling anything.",
+    },
+    category: { es: "Preguntas frecuentes", en: "FAQ" },
+    icon: HelpCircle,
+    publishedAt: "2026-08-04",
+    readingMinutes: 10,
   },
 ];
 

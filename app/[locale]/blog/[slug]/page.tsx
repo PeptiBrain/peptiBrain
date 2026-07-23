@@ -53,6 +53,10 @@ const CONTENT: Record<string, { es: Loader; en: Loader }> = {
     es: () => import("@/components/app/blog/posts/es/como-almacenar-tus-peptidos"),
     en: () => import("@/components/app/blog/posts/en/como-almacenar-tus-peptidos"),
   },
+  "preguntas-frecuentes-sobre-peptidos": {
+    es: () => import("@/components/app/blog/posts/es/preguntas-frecuentes-sobre-peptidos"),
+    en: () => import("@/components/app/blog/posts/en/preguntas-frecuentes-sobre-peptidos"),
+  },
 };
 
 export function generateStaticParams() {

@@ -1,5 +1,12 @@
 # ESTADO — PeptiBrain
-Última actualización: 2026-07-23 | Sesión 11g (marca de agua de Gemini quitada de las 11 imágenes del blog + botón "Ver todo el blog" más destacado). Migraciones 0003-0030 corridas (0029 `app_settings` y 0030 `assistant_questions` confirmadas OK por el usuario).
+Última actualización: 2026-07-23 | Sesión 11h (12º artículo del blog: FAQ bilingüe con schema FAQPage). Migraciones 0003-0030 corridas (0029 `app_settings` y 0030 `assistant_questions` confirmadas OK por el usuario).
+
+## ✅ Sesión 11h (2026-07-23) — 12º artículo del blog: FAQ
+El usuario dio el contenido completo de un FAQ de 7 preguntas (legalidad, seguridad, rapidez de resultados, análisis de sangre, combinar péptidos, vías de administración, duración de efectos) y pidió publicarlo como artículo.
+- Nuevo slug `preguntas-frecuentes-sobre-peptidos` (categoría "Preguntas frecuentes"/"FAQ", ícono `HelpCircle`, 10 min de lectura), agregado a `lib/blog/posts.ts` y al mapa `CONTENT` de `[slug]/page.tsx`. Cuerpo bilingüe en `posts/es/` y `posts/en/` con el patrón H2 (pregunta) + P (respuesta) ya usado en el resto del blog.
+- **Extra para SEO/GEO** (el usuario mencionó explícitamente que el objetivo del blog es aparecer en Google y ser citado por LLMs): además del JSON-LD `Article` que ya pone `ArticleLayout` en todo artículo, este además inyecta su propio JSON-LD `FAQPage` (con las 7 preguntas/respuestas) — es el formato que Google usa para "rich results" de preguntas frecuentes y que los LLMs citan directamente.
+- Sin imagen propia todavía (usa el icono+degradado de siempre) — pendiente que el usuario la genere como las otras 11, mismo patrón (sumarla a `SLUGS_WITH_IMAGE` cuando llegue).
+- ✅ Verificado: tsc ✓ eslint ✓ build ✓ · navegado en vivo en los dos idiomas (`/blog/preguntas-frecuentes-sobre-peptidos` y `/en/blog/...`) — las 7 preguntas, el aviso médico, el CTA y los artículos relacionados se ven bien; confirmado que aparece en el índice del blog con su tarjeta correcta.
 
 ## ✅ Sesión 11g (2026-07-23) — Quitar marca de agua de Gemini + botón del blog más visible
 El usuario avisó que las imágenes del blog tenían la marca de agua de Gemini (el destello/sparkle característico que Nano Banana estampa en sus imágenes generadas) y pidió un botón "Ver todo el blog" más grande y destacado.
