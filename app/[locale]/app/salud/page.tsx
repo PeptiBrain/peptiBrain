@@ -200,6 +200,9 @@ export default function SaludPage() {
               <div>
                 <span className="flex items-center gap-1">
                   <Scale className="size-3.5 text-muted-foreground" aria-hidden /> {log.weightKg} kg
+                  {log.bodyFatPct && (
+                    <span className="text-muted-foreground">· {t("bodyFatInline", { pct: log.bodyFatPct })}</span>
+                  )}
                 </span>
                 {log.notes && <p className="mt-1 text-xs text-muted-foreground">{log.notes}</p>}
               </div>
@@ -525,12 +528,14 @@ function WeightModal({
   const t = useTranslations("Salud");
   const [date, setDate] = useState(todayIso());
   const [weightKg, setWeightKg] = useState("");
+  const [bodyFatPct, setBodyFatPct] = useState("");
   const [notes, setNotes] = useState("");
 
   useEffect(() => {
     if (open) {
       setDate(todayIso());
       setWeightKg("");
+      setBodyFatPct("");
       setNotes("");
     }
   }, [open]);
@@ -558,6 +563,16 @@ function WeightModal({
           />
         </div>
         <div>
+          <label className="mb-1.5 block text-sm font-medium text-foreground">{t("bodyFatLabel")}</label>
+          <input
+            value={bodyFatPct}
+            onChange={(e) => setBodyFatPct(e.target.value)}
+            inputMode="decimal"
+            placeholder="18.5"
+            className="h-11 w-full rounded-lg border border-input bg-background px-3 text-base text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          />
+        </div>
+        <div>
           <label className="mb-1.5 block text-sm font-medium text-foreground">{t("notesLabel")}</label>
           <textarea
             value={notes}
@@ -570,7 +585,14 @@ function WeightModal({
           <button
             type="button"
             disabled={!weightKg.trim()}
-            onClick={() => onSave({ date, weightKg: weightKg.trim(), notes: notes.trim() || undefined })}
+            onClick={() =>
+              onSave({
+                date,
+                weightKg: weightKg.trim(),
+                bodyFatPct: bodyFatPct.trim() || undefined,
+                notes: notes.trim() || undefined,
+              })
+            }
             className="h-11 flex-1 rounded-lg bg-primary text-sm font-semibold text-primary-foreground disabled:opacity-50"
           >
             {t("saveRecord")}

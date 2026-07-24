@@ -813,6 +813,8 @@
     "subtitle": "Cómo va tu cuerpo con el protocolo",
     "addAria": "Registrar salud",
     "weightLabel": "Peso (kg)",
+    "bodyFatLabel": "% de grasa corporal (opcional)",
+    "bodyFatInline": "{pct}% grasa",
     "hydrationLabel": "Hidratación (ml)",
     "exerciseLabel": "Ejercicio (min)",
     "sideEffectLabel": "Efecto secundario — opcional",

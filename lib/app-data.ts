@@ -58,6 +58,7 @@ export type HealthLog = {
   id: string;
   date: string; // ISO yyyy-mm-dd
   weightKg?: string;
+  bodyFatPct?: string;
   hydrationMl?: string;
   exerciseMin?: string;
   sideEffect?: string;
@@ -322,6 +323,7 @@ export async function loadAppData(): Promise<AppData> {
       id: h.id,
       date: h.log_date,
       weightKg: h.weight_kg != null ? String(h.weight_kg) : undefined,
+      bodyFatPct: h.body_fat_pct != null ? String(h.body_fat_pct) : undefined,
       hydrationMl: h.hydration_ml != null ? String(h.hydration_ml) : undefined,
       exerciseMin: h.exercise_min != null ? String(h.exercise_min) : undefined,
       sideEffect: h.side_effect || undefined,
@@ -662,6 +664,8 @@ export async function addHealthLog(
       user_id: user.id,
       log_date: log.date,
       weight_kg: log.weightKg ?? existing?.weightKg ? Number(log.weightKg ?? existing?.weightKg) : null,
+      body_fat_pct:
+        log.bodyFatPct ?? existing?.bodyFatPct ? Number(log.bodyFatPct ?? existing?.bodyFatPct) : null,
       hydration_ml:
         log.hydrationMl ?? existing?.hydrationMl ? Number(log.hydrationMl ?? existing?.hydrationMl) : null,
       exercise_min:
@@ -1086,6 +1090,7 @@ export async function loadSharedOwnerData(ownerId: string): Promise<SharedOwnerD
       id: h.id,
       date: h.log_date,
       weightKg: h.weight_kg != null ? String(h.weight_kg) : undefined,
+      bodyFatPct: h.body_fat_pct != null ? String(h.body_fat_pct) : undefined,
       hydrationMl: h.hydration_ml != null ? String(h.hydration_ml) : undefined,
       exerciseMin: h.exercise_min != null ? String(h.exercise_min) : undefined,
       sideEffect: h.side_effect || undefined,

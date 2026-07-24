@@ -813,6 +813,8 @@
     "subtitle": "How your body is responding to the protocol",
     "addAria": "Log health data",
     "weightLabel": "Weight (kg)",
+    "bodyFatLabel": "Body fat % (optional)",
+    "bodyFatInline": "{pct}% fat",
     "hydrationLabel": "Hydration (ml)",
     "exerciseLabel": "Exercise (min)",
     "sideEffectLabel": "Side effect — optional",
