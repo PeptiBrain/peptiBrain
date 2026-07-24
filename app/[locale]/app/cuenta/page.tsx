@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { Link } from "@/i18n/navigation";
-import { Sparkles, Camera, Check, Eye, EyeOff, Download, Trash2, Mail, Flame, Snowflake } from "lucide-react";
+import { Sparkles, Camera, Check, Eye, EyeOff, Download, Trash2, Mail, Flame, Snowflake, Gem } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { CancelOfferModal } from "@/components/app/cuenta/CancelOfferModal";
 import { ModalShell } from "@/components/app/shell/ModalShell";
@@ -293,6 +293,9 @@ export default function CuentaPage() {
               </span>
               <span className="flex items-center gap-1 text-muted-foreground">
                 <Snowflake className="size-4" aria-hidden /> {appData.progress.freezes}
+              </span>
+              <span className="flex items-center gap-1 font-semibold text-foreground">
+                <Gem className="size-4 text-primary" aria-hidden /> {appData.progress.pbTotal}
               </span>
             </div>
           </div>

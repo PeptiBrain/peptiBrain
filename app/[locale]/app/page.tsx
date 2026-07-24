@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "motion/react";
 import { useLocale, useTranslations } from "next-intl";
-import { Check, Flame, Syringe, AlertTriangle, Scale, Droplets, Lock, Apple, CalendarDays, Sparkles, Wallet, Trophy, ArrowRight } from "lucide-react";
+import { Check, Flame, Syringe, AlertTriangle, Scale, Droplets, Lock, Apple, CalendarDays, Sparkles, Wallet, Trophy, ArrowRight, Gem } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { loadOnboarding } from "@/lib/onboarding";
 import { loadAppData, markDoseDone, type AppData } from "@/lib/app-data";
@@ -145,6 +145,9 @@ export default function InicioPage() {
           <Flame className="size-3.5" aria-hidden />{" "}
           {streak > 0 ? t("streakChip", { count: streak }) : t("startStreak")}
         </Link>
+        <span className="flex items-center gap-1.5 rounded-full border border-border bg-secondary px-3 py-1.5 text-xs font-medium text-muted-foreground">
+          <Gem className="size-3.5 text-primary" aria-hidden /> {t("pbChip", { count: data.progress.pbTotal })}
+        </span>
       </div>
       <motion.p
         initial={{ opacity: 0, y: 8 }}

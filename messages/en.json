@@ -517,6 +517,7 @@
     "greetEvening": "Good evening",
     "startStreak": "Start your streak",
     "streakChip": "Streak: {count, plural, one {# day} other {# days}}",
+    "pbChip": "{count} PB",
     "weekProgress": "{done} of {total} doses this week,",
     "weekTagPerfect": "PERFECT RUN!",
     "weekTagCatchUp": "TIME TO CATCH UP!",
