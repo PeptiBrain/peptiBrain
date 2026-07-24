@@ -9,7 +9,7 @@ import { createClient } from "@/lib/supabase/client";
 import { CancelOfferModal } from "@/components/app/cuenta/CancelOfferModal";
 import { ModalShell } from "@/components/app/shell/ModalShell";
 import { track } from "@/lib/mixpanel";
-import { loadAppData, setDailyGoal, type AppData } from "@/lib/app-data";
+import { loadAppData, setDailyGoal, resetTrackingData, type AppData } from "@/lib/app-data";
 
 const DAILY_GOALS = [10, 20, 30, 50] as const;
 
@@ -62,6 +62,11 @@ export default function CuentaPage() {
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState(false);
+
+  const [showResetData, setShowResetData] = useState(false);
+  const [resetConfirmText, setResetConfirmText] = useState("");
+  const [resetting, setResetting] = useState(false);
+  const [resetError, setResetError] = useState(false);
 
   const [appData, setAppData] = useState<AppData | null>(null);
   const [savingGoal, setSavingGoal] = useState(false);
@@ -246,6 +251,22 @@ export default function CuentaPage() {
     } catch {
       setDeleteError(true);
       setDeleting(false);
+    }
+  }
+
+  async function handleResetData() {
+    if (resetConfirmText.trim().toUpperCase() !== t("resetConfirmWord") || !appData) return;
+    setResetting(true);
+    setResetError(false);
+    try {
+      const next = await resetTrackingData(appData);
+      setAppData(next);
+      track("tracking_data_reset");
+      setShowResetData(false);
+    } catch {
+      setResetError(true);
+    } finally {
+      setResetting(false);
     }
   }
 
@@ -478,6 +499,22 @@ export default function CuentaPage() {
         </div>
       </button>
 
+      {/* Zona de peligro */}
+      <p className="mt-6 text-xs font-semibold uppercase tracking-wide text-destructive">{t("dangerZoneTitle")}</p>
+
+      {/* Restablecer datos de seguimiento (mantiene plan y familia) */}
+      <button
+        type="button"
+        onClick={() => {
+          setShowResetData(true);
+          setResetConfirmText("");
+          setResetError(false);
+        }}
+        className="mt-2 flex h-11 w-full items-center justify-center gap-2 rounded-lg border border-dashed border-destructive/40 text-sm font-medium text-destructive hover:bg-destructive/10"
+      >
+        <Trash2 className="size-4" aria-hidden /> {t("resetDataButton")}
+      </button>
+
       {/* Eliminar perfil */}
       <button
         type="button"
@@ -486,10 +523,46 @@ export default function CuentaPage() {
           setDeleteConfirmText("");
           setDeleteError(false);
         }}
-        className="mt-3 flex h-11 w-full items-center justify-center gap-2 rounded-lg border border-dashed border-destructive/40 text-sm font-medium text-destructive hover:bg-destructive/10"
+        className="mt-2 flex h-11 w-full items-center justify-center gap-2 rounded-lg border border-dashed border-destructive/40 text-sm font-medium text-destructive hover:bg-destructive/10"
       >
         <Trash2 className="size-4" aria-hidden /> {t("deleteAccountButton")}
       </button>
+
+      <ModalShell
+        open={showResetData}
+        onClose={() => setShowResetData(false)}
+        title={t("resetDataTitle")}
+        icon={<Trash2 className="size-5 text-destructive" aria-hidden />}
+      >
+        <p className="text-sm text-muted-foreground">{t("resetDataBody")}</p>
+        <label className="mt-4 mb-1.5 block text-sm font-medium text-foreground">
+          {t("deleteConfirmLabel", { word: t("resetConfirmWord") })}
+        </label>
+        <input
+          value={resetConfirmText}
+          onChange={(e) => setResetConfirmText(e.target.value)}
+          placeholder={t("resetConfirmWord")}
+          className="h-11 w-full rounded-lg border border-input bg-background px-3 text-base text-foreground outline-none focus-visible:ring-2 focus-visible:ring-destructive/40"
+        />
+        {resetError && <p className="mt-2 text-xs text-destructive">{t("resetDataError")}</p>}
+        <div className="mt-4 flex gap-2">
+          <button
+            type="button"
+            onClick={() => setShowResetData(false)}
+            className="h-11 flex-1 rounded-lg border border-border text-sm font-medium text-foreground"
+          >
+            {t("deleteAccountCancel")}
+          </button>
+          <button
+            type="button"
+            disabled={resetConfirmText.trim().toUpperCase() !== t("resetConfirmWord") || resetting}
+            onClick={handleResetData}
+            className="h-11 flex-1 rounded-lg bg-destructive text-sm font-semibold text-white disabled:opacity-50"
+          >
+            {resetting ? t("resetting") : t("resetDataCta")}
+          </button>
+        </div>
+      </ModalShell>
 
       <CancelOfferModal
         open={showOffer}

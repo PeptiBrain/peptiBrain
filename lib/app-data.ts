@@ -740,6 +740,29 @@ export async function setDailyGoal(data: AppData, goal: 10 | 20 | 30 | 50): Prom
   return loadAppData();
 }
 
+// "Zona de peligro" en Cuenta: borra SOLO los datos de seguimiento (péptidos,
+// viales, dosis, salud, comidas, fotos, análisis, favoritos, racha/PB) — NUNCA
+// el plan/suscripción ni el grupo familiar, eso se gestiona aparte.
+export async function resetTrackingData(data: AppData): Promise<AppData> {
+  const { supabase, user } = await requireUser();
+
+  const photoPaths = data.progressPhotos.map((p) => p.storagePath).filter(Boolean);
+  if (photoPaths.length > 0) {
+    await supabase.storage.from("progress-photos").remove(photoPaths);
+  }
+
+  const tables = ["peptides", "health_logs", "meals", "progress_photos", "lab_results", "favorite_peptides"];
+  for (const table of tables) {
+    const { error } = await supabase.from(table).delete().eq("user_id", user.id);
+    if (error) throw error;
+  }
+
+  const { error: rpcError } = await supabase.rpc("reset_tracking_progress");
+  if (rpcError) throw rpcError;
+
+  return loadAppData();
+}
+
 export async function addFamilyMember(
   data: AppData,
   member: Omit<FamilyMember, "id" | "photoUrl">
