@@ -587,6 +587,13 @@
     "body_365": "Un año entero. Pepti no tiene palabras — solo aplausos.",
     "cta": "Seguir así"
   },
+  "DailySummary": {
+    "title": "Resumen de tu día",
+    "dose": "Dosis aplicada",
+    "weight": "Peso registrado",
+    "hydration": "Hidratación registrada",
+    "cta": "Buenas noches 🌙"
+  },
   "Providers": {
     "modalTitle": "Nuevo proveedor",
     "close": "Cerrar",

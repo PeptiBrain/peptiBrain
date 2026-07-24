@@ -587,6 +587,13 @@
     "body_365": "A whole year. Pepti is speechless — just applauding.",
     "cta": "Keep it up"
   },
+  "DailySummary": {
+    "title": "Your day, summed up",
+    "dose": "Dose logged",
+    "weight": "Weight logged",
+    "hydration": "Hydration logged",
+    "cta": "Good night 🌙"
+  },
   "Providers": {
     "modalTitle": "New supplier",
     "close": "Close",

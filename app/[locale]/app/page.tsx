@@ -19,6 +19,7 @@ import { InjectionSiteModal } from "@/components/app/shell/InjectionSiteModal";
 import { PeptideIcon } from "@/components/app/peptidos/PeptideIcon";
 import { Mascot } from "@/components/app/shell/Mascot";
 import { FirstStepsChecklist } from "@/components/app/shell/FirstStepsChecklist";
+import { DailySummaryModal } from "@/components/app/shell/DailySummaryModal";
 import { isWithinRange, type CustomRange, type DateRangeKey } from "@/lib/date-range";
 import { suggestNextInjectionSite, lastInjectionSite, type InjectionSiteId } from "@/lib/injection-sites";
 
@@ -451,6 +452,8 @@ export default function InicioPage() {
           lastUsed={lastInjectionSite(data.doses, pendingDose.peptideId)}
         />
       )}
+
+      <DailySummaryModal data={data} />
     </div>
   );
 }
