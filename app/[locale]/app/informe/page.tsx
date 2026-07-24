@@ -6,7 +6,7 @@ import { Link } from "@/i18n/navigation";
 import { Printer, ArrowLeft } from "lucide-react";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
-import { computeStreak, loadAppData, type AppData } from "@/lib/app-data";
+import { loadAppData, type AppData } from "@/lib/app-data";
 import { computeStats } from "@/lib/stats";
 import { CURRENCY, type Locale } from "@/i18n/routing";
 import { PremiumLocked } from "@/components/app/shell/PremiumLocked";
@@ -50,7 +50,7 @@ export default function InformePage() {
 
   const symbol = CURRENCY[locale as Locale].symbol;
   const stats = computeStats(data, new Date());
-  const streak = computeStreak(data.doses);
+  const streak = data.progress.currentStreak;
   const generatedOn = new Date().toLocaleDateString(locale, { day: "numeric", month: "long", year: "numeric" });
   const planLabel = { free: "Free", premium: "Premium", family: "Family" }[data.plan];
   const recentDoses = [...data.doses]

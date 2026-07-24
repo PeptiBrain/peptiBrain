@@ -619,11 +619,16 @@ Clon mejorado de PeptiBuddy, con nombre propio **PeptiBrain**: app bilingüe (ES
 - Compartir en familia: el dueño de la cuenta decide, invitado por invitado, si esa persona ve "resumen" o "todo el detalle". Cada invitado tiene su propia cuenta vinculada al grupo (no solo un link de solo-lectura).
 - Pricing: igual al original — sin cambios en el número por ahora
 
-## Gamificación y retención (Sesión 3 — el loop central)
+## Gamificación y retención (Sesión 3 — el loop central; ampliado en la sesión de gamificación tipo Duolingo)
 - Loop del hábito: Gatillo (hora de la dosis / notificación) → Acción (registrar uso) → Recompensa (racha sube, check verde) → Inversión (historial + protocolo acumulado + familia conectada)
-- Mecánicas: racha diaria, resumen semanal, próxima dosis destacada
+- Patrón de uso = diario/frecuente → mecánicas núcleo elegidas (tabla de 24-GAMIFICACION.md): Racha + puntos "PB" + meta diaria + onboarding gamificado (ya existía)
+- Número mágico (hipótesis, sin datos aún — validar cuando haya usuarios reales): **3 dosis registradas en los primeros 3 días**
+- Explícitamente NO se construyen (decisión del usuario, para no sobre-gamificar): BioCoins/moneda virtual, ligas, amigos, retos en pareja, pase de temporada, quizzes, cofres de recompensa pagada — anotadas en el tablero público de Ideas
+- **Racha real en servidor + streak freeze** (migración 0035_gamification.sql): tabla `user_progress` (pb_total, current_streak, longest_streak, freezes, daily_goal), trigger `sync_streak_progress()` (SECURITY DEFINER) en `doses` (al marcar done) y `health_logs` (al registrar peso/hidratación/ejercicio/efecto) — 1 congelador gastado por cada día perdido, se regala 1 congelador cada 7 días de racha (máx. 2). Nada de esto es editable desde el cliente; la única mutación permitida al cliente es `set_daily_goal()` (10/20/30/50)
+- `lib/app-data.ts`: nuevo tipo `Progress` + campo `AppData.progress`, poblado desde `user_progress` en `loadAppData()`. Se eliminó `computeStreak()` (cálculo en cliente) — ahora `data.progress.currentStreak` es la fuente de verdad
+- Pendiente (siguientes capas, con OK ya dado por el usuario): hitos de racha 7/30/100/365 con celebración de Pepti creciente; puntos "PB" otorgados por acción real (dosis, peso, foto, análisis) — nunca por repetir/farmear
 - Primera victoria (<60s): primera dosis programada en el onboarding de 3 pasos
-- Pendiente definir notificaciones de re-enganche en Sesión 3-4
+- Pendiente definir notificaciones de re-enganche (D1/D3/D7 + win-back) — no construido todavía
 
 ## Reglas que la app NUNCA debe romper (Constitución del Producto)
 - Nunca compartir datos de salud de un usuario sin su permiso explícito, ni siquiera con su propio grupo familiar (el nivel de detalle lo define el dueño, invitado por invitado)

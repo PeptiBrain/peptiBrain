@@ -140,7 +140,16 @@ export type Trip = {
   createdAt: string;
 };
 
+export type Progress = {
+  pbTotal: number;
+  currentStreak: number;
+  longestStreak: number;
+  freezes: number;
+  dailyGoal: number;
+};
+
 export type AppData = {
+  progress: Progress;
   peptides: Peptide[];
   vials: Vial[];
   doses: Dose[];
@@ -156,6 +165,7 @@ export type AppData = {
 };
 
 const EMPTY: AppData = {
+  progress: { pbTotal: 0, currentStreak: 0, longestStreak: 0, freezes: 0, dailyGoal: 20 },
   peptides: [],
   trips: [],
   vials: [],
@@ -215,6 +225,7 @@ export async function loadAppData(): Promise<AppData> {
     { data: trips },
     { data: family },
     { data: vialShares },
+    { data: userProgress },
   ] = await Promise.all([
     supabase.from("peptides").select("*").order("created_at", { ascending: true }),
     supabase.from("vials").select("*").order("created_at", { ascending: true }),
@@ -227,6 +238,7 @@ export async function loadAppData(): Promise<AppData> {
     supabase.from("trips").select("*").order("start_date", { ascending: false }),
     supabase.from("family_members").select("*").order("created_at", { ascending: true }),
     supabase.from("vial_shares").select("*"),
+    supabase.from("user_progress").select("*").eq("user_id", user.id).maybeSingle(),
   ]);
 
   // Bucket privado: hay que firmar cada URL (expira en 1h) — a diferencia de
@@ -253,6 +265,13 @@ export async function loadAppData(): Promise<AppData> {
   return {
     plan: (profile?.plan as AppData["plan"]) || "free",
     extraFamilySeats: extraFamilySeats || 0,
+    progress: {
+      pbTotal: userProgress?.pb_total ?? 0,
+      currentStreak: userProgress?.current_streak ?? 0,
+      longestStreak: userProgress?.longest_streak ?? 0,
+      freezes: userProgress?.freezes ?? 0,
+      dailyGoal: userProgress?.daily_goal ?? 20,
+    },
     peptides: (peptides || []).map((p) => ({
       id: p.id,
       name: p.name,
@@ -702,6 +721,16 @@ export async function removeLabResult(data: AppData, resultId: string): Promise<
   return loadAppData();
 }
 
+// La meta diaria (10/20/30/50 puntos PB) es la única parte de user_progress
+// que el cliente puede cambiar — la racha, los congeladores y el total de
+// puntos solo los toca el trigger del servidor (ver migración 0035).
+export async function setDailyGoal(data: AppData, goal: 10 | 20 | 30 | 50): Promise<AppData> {
+  const { supabase } = await requireUser();
+  const { error } = await supabase.rpc("set_daily_goal", { new_goal: goal });
+  if (error) throw error;
+  return loadAppData();
+}
+
 export async function addFamilyMember(
   data: AppData,
   member: Omit<FamilyMember, "id" | "photoUrl">
@@ -996,23 +1025,3 @@ export async function leaveFamily(invitationId: string): Promise<void> {
   if (!res.ok) throw new Error("request_failed");
 }
 
-export function computeStreak(doses: Dose[]): number {
-  const doneDays = new Set(
-    doses.filter((d) => d.done).map((d) => new Date(d.scheduledAt).toDateString())
-  );
-
-  const cursor = new Date();
-  cursor.setHours(0, 0, 0, 0);
-  // Si hoy todavía no se marcó ninguna dosis, no rompemos la racha aún —
-  // empezamos a contar desde ayer (el usuario tiene hasta el fin del día).
-  if (!doneDays.has(cursor.toDateString())) {
-    cursor.setDate(cursor.getDate() - 1);
-  }
-
-  let streak = 0;
-  while (doneDays.has(cursor.toDateString())) {
-    streak++;
-    cursor.setDate(cursor.getDate() - 1);
-  }
-  return streak;
-}

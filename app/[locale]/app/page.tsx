@@ -6,7 +6,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { Check, Flame, Syringe, AlertTriangle, Scale, Droplets, Lock, Apple, CalendarDays, Sparkles, Wallet, Trophy, ArrowRight } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { loadOnboarding } from "@/lib/onboarding";
-import { computeStreak, loadAppData, markDoseDone, type AppData } from "@/lib/app-data";
+import { loadAppData, markDoseDone, type AppData } from "@/lib/app-data";
 import { computeStats } from "@/lib/stats";
 import { celebrateDoseLogged } from "@/lib/celebrate";
 import { CURRENCY, type Locale } from "@/i18n/routing";
@@ -67,7 +67,7 @@ export default function InicioPage() {
   const donePeptide = pendingDose
     ? data.peptides.find((p) => p.id === pendingDose.peptideId)
     : null;
-  const streak = computeStreak(data.doses);
+  const streak = data.progress.currentStreak;
   const allStats = computeStats(data, new Date());
   const { symbol } = CURRENCY[locale as Locale];
 
