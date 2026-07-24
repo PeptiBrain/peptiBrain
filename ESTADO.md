@@ -1,5 +1,5 @@
 # ESTADO — PeptiBrain
-Última actualización: 2026-07-23 | Sesión 11r (Tablero público de Ideas/Roadmap con votación — ⚠️ PENDIENTE correr migración 0031). Migraciones 0003-0030 corridas; **0031 (`ideas`) PENDIENTE de correr por el usuario**.
+Última actualización: 2026-07-24 | Gamificación completa (racha+freeze, hitos, PB, resumen del día) en rama `staging`, pendiente de merge a `main` tras verificar el preview. Migraciones 0003-0036 corridas y verificadas contra la DB real.
 
 ## ✅ Sesión 11r (2026-07-23) — Tablero de Ideas / Feature Request Board (⚠️ falta migración 0031)
 El usuario pidió un "feedback board / feature request board" tipo Canny. Decidido con él (AskUserQuestion): **solo usuarios registrados** proponen/votan (el tablero se VE sin login, para SEO), alcance **Ideas + Votar + Roadmap** (sin Changelog por ahora), y vive en una **página pública `/ideas`**.
@@ -626,9 +626,11 @@ Clon mejorado de PeptiBuddy, con nombre propio **PeptiBrain**: app bilingüe (ES
 - Explícitamente NO se construyen (decisión del usuario, para no sobre-gamificar): BioCoins/moneda virtual, ligas, amigos, retos en pareja, pase de temporada, quizzes, cofres de recompensa pagada — anotadas en el tablero público de Ideas
 - **Racha real en servidor + streak freeze** (migración 0035_gamification.sql): tabla `user_progress` (pb_total, current_streak, longest_streak, freezes, daily_goal), trigger `sync_streak_progress()` (SECURITY DEFINER) en `doses` (al marcar done) y `health_logs` (al registrar peso/hidratación/ejercicio/efecto) — 1 congelador gastado por cada día perdido, se regala 1 congelador cada 7 días de racha (máx. 2). Nada de esto es editable desde el cliente; la única mutación permitida al cliente es `set_daily_goal()` (10/20/30/50)
 - `lib/app-data.ts`: nuevo tipo `Progress` + campo `AppData.progress`, poblado desde `user_progress` en `loadAppData()`. Se eliminó `computeStreak()` (cálculo en cliente) — ahora `data.progress.currentStreak` es la fuente de verdad
-- Pendiente (siguientes capas, con OK ya dado por el usuario): hitos de racha 7/30/100/365 con celebración de Pepti creciente; puntos "PB" otorgados por acción real (dosis, peso, foto, análisis) — nunca por repetir/farmear
+- **Hitos de racha** (`lib/milestones.ts`): 7/30/100/365 días, `MilestoneModal.tsx` con Pepti celebrando + confeti más intenso (`celebrateBig`, 3 ráfagas) — se dispara comparando racha antes/después de cada acción que puede subirla (dosis, salud)
+- **Puntos "PB"** (migración 0036_pb_points.sql, `award_pb()` + triggers): +10 dosis, +10 primer registro de salud del día, +15 foto de progreso, +20 análisis de sangre — todos `AFTER INSERT` (nunca `UPDATE`) donde aplica, para que editar el mismo día no vuelva a premiar. Chip de PB visible en Inicio y en Cuenta (junto a racha/congeladores/meta diaria)
+- **Resumen del día** (`components/app/shell/DailySummaryModal.tsx`, capa 4): tarjeta que resume las acciones reales de hoy (dosis/peso/hidratación) + racha + PB, se muestra una vez por tarde/noche (desde las 18:00 hora local del navegador) en Inicio, dedupe por `localStorage` (fecha del día). Elegido en vez del re-enganche por notificación porque ese ya existe (`app/api/cron/daily/route.ts`, win-back a 3+ días inactivo con cooldown de 7 días) — este es 100% cliente, sin cron ni infraestructura nueva
 - Primera victoria (<60s): primera dosis programada en el onboarding de 3 pasos
-- Pendiente definir notificaciones de re-enganche (D1/D3/D7 + win-back) — no construido todavía
+- Re-enganche por notificación: YA EXISTE (`app/api/cron/daily/route.ts`, win-back D3+ con cooldown 7 días) + recordatorios de dosis (`app/api/cron/dose-reminders/route.ts`, cada ~15 min vía cron-job.org externo)
 
 ## Reglas que la app NUNCA debe romper (Constitución del Producto)
 - Nunca compartir datos de salud de un usuario sin su permiso explícito, ni siquiera con su propio grupo familiar (el nivel de detalle lo define el dueño, invitado por invitado)
