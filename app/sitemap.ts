@@ -11,6 +11,8 @@ const PUBLIC_PATHS = [
   "/calculadora",
   "/calculadora-semaglutida",
   "/comparador",
+  "/calculadora-eliminacion",
+  "/calculadora-costo-mg",
   "/protocolos",
   "/ideas",
   "/login",

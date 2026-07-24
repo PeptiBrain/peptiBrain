@@ -1219,6 +1219,8 @@
     "navSemaglutide": "Calculadora de semaglutida",
     "navProtocols": "Protocolos de péptidos",
     "navComparador": "Comparador de péptidos",
+    "navClearance": "Calculadora de eliminación",
+    "navCostPerMg": "Calculadora de costo por mg",
     "navIdeas": "Ideas y Roadmap"
   },
   "Calculadora": {
@@ -1417,6 +1419,54 @@
       {
         "q": "¿Puedo usar estos datos para decidir qué péptido usar?",
         "a": "Esta comparación es informativa y educativa. La decisión de qué péptido usar, en qué dosis y bajo qué circunstancias corresponde siempre a un profesional de la salud."
+      }
+    ]
+  },
+  "Eliminacion": {
+    "metaTitle": "Calculadora de eliminación de péptidos: cuánto tarda en salir de tu cuerpo | PeptiBrain",
+    "metaDescription": "Estima cuánto tiempo tarda un péptido en eliminarse de tu cuerpo según su vida media (5 vidas medias = eliminación casi completa). Gratis, sin registro. En español.",
+    "kicker": "Herramienta gratuita",
+    "h1": "Calculadora de eliminación",
+    "subtitle": "Elige un péptido y te mostramos cuánto tarda en eliminarse de tu cuerpo, según su vida media conocida.",
+    "selectLabel": "Péptido",
+    "selectPlaceholder": "— Selecciona —",
+    "halfLifeLabel": "Vida media",
+    "estimateLabel": "Tiempo estimado de eliminación",
+    "methodNote": "Estimado como 5 vidas medias (~97% eliminado). Varía según metabolismo, dosis acumulada y otros factores individuales — no es un dato exacto para ti.",
+    "noDataMessage": "No hay dato confiable de vida media para calcular esto en este péptido.",
+    "faq": [
+      {
+        "q": "¿Por qué 5 vidas medias?",
+        "a": "Es la regla estándar de farmacología: tras 5 vidas medias, un compuesto se considera prácticamente eliminado del organismo (~97%). Es la misma referencia que usan calculadoras clínicas, no un dato inventado."
+      },
+      {
+        "q": "¿Por qué algunos péptidos no muestran una estimación?",
+        "a": "Cuando no existe un dato de vida media confiable en humanos (o el disponible es demasiado disperso), preferimos decírtelo con honestidad en vez de inventar un número."
+      }
+    ]
+  },
+  "CostoPorMg": {
+    "metaTitle": "Calculadora de costo por mg de péptidos | PeptiBrain",
+    "metaDescription": "Calcula cuánto te cuesta cada mg de un péptido según el precio que pagaste por el vial, y el costo de cada dosis. Gratis, sin registro. En español.",
+    "kicker": "Herramienta gratuita",
+    "h1": "Calculadora de costo por mg",
+    "subtitle": "Mete el precio que pagaste y el contenido del vial, y te decimos cuánto te cuesta cada mg (y cada dosis).",
+    "peptideLabel": "Péptido (opcional)",
+    "peptidePlaceholder": "— Selecciona para autocompletar el vial —",
+    "priceLabel": "Precio pagado",
+    "vialLabel": "Contenido del vial (mg)",
+    "doseLabel": "Tu dosis (mg)",
+    "doseOptional": "Opcional",
+    "perMgLabel": "Costo por mg",
+    "perDoseLabel": "Costo por dosis",
+    "faq": [
+      {
+        "q": "¿En qué moneda es el cálculo?",
+        "a": "En la que tú metas — la calculadora solo divide el precio entre el contenido del vial, sin convertir monedas."
+      },
+      {
+        "q": "¿Por qué no todos los péptidos aparecen en el selector?",
+        "a": "Solo incluimos los que se dosifican en mg. Los que se dosifican en UI (como la hormona de crecimiento) no comparten la misma unidad de costo, así que no aplican aquí."
       }
     ]
   },

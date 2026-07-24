@@ -1219,6 +1219,8 @@
     "navSemaglutide": "Semaglutide calculator",
     "navProtocols": "Peptide protocols",
     "navComparador": "Peptide comparator",
+    "navClearance": "Clearance calculator",
+    "navCostPerMg": "Cost per mg calculator",
     "navIdeas": "Ideas & Roadmap"
   },
   "Calculadora": {
@@ -1417,6 +1419,54 @@
       {
         "q": "Can I use this to decide which peptide to use?",
         "a": "This comparison is informational and educational. The decision of which peptide to use, at what dose, and under what circumstances is always a healthcare professional's call."
+      }
+    ]
+  },
+  "Eliminacion": {
+    "metaTitle": "Peptide clearance calculator: how long until it's out of your system | PeptiBrain",
+    "metaDescription": "Estimate how long a peptide takes to clear your system based on its half-life (5 half-lives = nearly fully cleared). Free, no signup.",
+    "kicker": "Free tool",
+    "h1": "Clearance calculator",
+    "subtitle": "Pick a peptide and we'll show you how long it takes to clear your system, based on its known half-life.",
+    "selectLabel": "Peptide",
+    "selectPlaceholder": "— Select —",
+    "halfLifeLabel": "Half-life",
+    "estimateLabel": "Estimated clearance time",
+    "methodNote": "Estimated as 5 half-lives (~97% cleared). Varies by metabolism, accumulated dose and other individual factors — not an exact figure for you specifically.",
+    "noDataMessage": "There's no reliable half-life data to calculate this for this peptide.",
+    "faq": [
+      {
+        "q": "Why 5 half-lives?",
+        "a": "It's the standard pharmacology rule of thumb: after 5 half-lives, a compound is considered practically cleared from the body (~97%). It's the same reference clinical calculators use, not a made-up figure."
+      },
+      {
+        "q": "Why don't some peptides show an estimate?",
+        "a": "When there's no reliable human half-life data (or what's available is too scattered), we'd rather tell you honestly than invent a number."
+      }
+    ]
+  },
+  "CostoPorMg": {
+    "metaTitle": "Peptide cost per mg calculator | PeptiBrain",
+    "metaDescription": "Calculate how much each mg of a peptide costs you based on what you paid for the vial, and the cost of each dose. Free, no signup.",
+    "kicker": "Free tool",
+    "h1": "Cost per mg calculator",
+    "subtitle": "Enter what you paid and the vial's content, and we'll tell you the cost per mg (and per dose).",
+    "peptideLabel": "Peptide (optional)",
+    "peptidePlaceholder": "— Select to autofill the vial —",
+    "priceLabel": "Price paid",
+    "vialLabel": "Vial content (mg)",
+    "doseLabel": "Your dose (mg)",
+    "doseOptional": "Optional",
+    "perMgLabel": "Cost per mg",
+    "perDoseLabel": "Cost per dose",
+    "faq": [
+      {
+        "q": "What currency is the calculation in?",
+        "a": "Whatever you enter — the calculator just divides the price by the vial's content, without converting currencies."
+      },
+      {
+        "q": "Why don't all peptides show up in the selector?",
+        "a": "We only include ones dosed in mg. Ones dosed in IU (like growth hormone) don't share the same cost unit, so they don't apply here."
       }
     ]
   },

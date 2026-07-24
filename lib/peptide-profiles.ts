@@ -38,6 +38,11 @@ export type PeptideProfile = {
   description: string;
   halfLife: string;
   halfLifeConfidence: HalfLifeConfidence;
+  // Estimación numérica en horas para la Calculadora de eliminación — null
+  // cuando el texto de halfLife es demasiado vago para un cálculo honesto
+  // (ej. "sin dato confiable" o "variable"). Nunca se inventa un número aquí
+  // que no esté ya respaldado por el texto de halfLife de arriba.
+  halfLifeHoursEstimate: number | null;
   // Los 5 campos de abajo son contenido editorial de la Biblioteca (no del
   // formulario de dosis). Nunca se inventa un dato concreto: si no hay
   // evidencia confiable se dice explícitamente en evidenceLevel.
@@ -66,6 +71,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
       "Pentadecapéptido derivado de una proteína gástrica. Conocido por sus propiedades de reparación tisular y salud digestiva.",
     halfLife: "~15 min (estudios en animales; sin dato humano formal)",
     halfLifeConfidence: "bajo",
+    halfLifeHoursEstimate: 0.25,
     howItWorks:
       "Estabiliza y protege el revestimiento gástrico e intestinal, y favorece la formación de nuevos vasos sanguíneos en tejido dañado (tendón, ligamento, músculo, intestino).",
     mostReported: [
@@ -94,6 +100,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
       "Fragmento sintético de la timosina beta-4. Promueve la cicatrización, regeneración celular y movilidad.",
     halfLife: "~2-3 horas (estimado, sin PK humana formal)",
     halfLifeConfidence: "bajo",
+    halfLifeHoursEstimate: 2.5,
     howItWorks:
       "Versión sintética de la timosina beta-4; promueve la migración celular y la formación de nuevos vasos sanguíneos para acelerar la cicatrización de tejidos.",
     mostReported: ["Mejor movilidad articular", "Recuperación más rápida tras lesión", "Menos rigidez muscular"],
@@ -118,6 +125,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
       "Agonista del receptor GLP-1. Reduce el apetito, retrasa el vaciamiento gástrico y mejora la sensibilidad a la insulina.",
     halfLife: "~1 semana",
     halfLifeConfidence: "alto",
+    halfLifeHoursEstimate: 168,
     howItWorks:
       "Imita al GLP-1 natural: reduce el apetito, enlentece el vaciado del estómago y mejora cómo el cuerpo maneja el azúcar en sangre.",
     mostReported: ["Reducción notable del apetito", "Pérdida de peso sostenida semana a semana", "Menos antojos de comida"],
@@ -140,6 +148,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
       "Agonista dual GIP/GLP-1. Apoya el control de peso y mejora la sensibilidad a la insulina.",
     halfLife: "~5 días",
     halfLifeConfidence: "alto",
+    halfLifeHoursEstimate: 120,
     howItWorks:
       "Activa a la vez los receptores GIP y GLP-1, lo que potencia el control del apetito y la sensibilidad a la insulina más que un GLP-1 solo.",
     mostReported: ["Pérdida de peso mayor que con GLP-1 solo", "Apetito muy reducido", "Mejor control de glucosa"],
@@ -161,6 +170,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     description: "Agonista triple GIP/GLP-1/glucagón, en investigación para control de peso.",
     halfLife: "~6 días",
     halfLifeConfidence: "alto",
+    halfLifeHoursEstimate: 144,
     howItWorks:
       "Activa tres receptores a la vez (GIP, GLP-1 y glucagón), sumando el efecto de quema de energía del glucagón al control de apetito de los otros dos.",
     mostReported: ["Pérdida de peso muy marcada en estudios", "Apetito muy controlado", "Más energía reportada por algunos usuarios"],
@@ -184,6 +194,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
       "Análogo de la amilina de acción prolongada. Suele combinarse con un GLP-1 para el control de peso.",
     halfLife: "~7 días",
     halfLifeConfidence: "alto",
+    halfLifeHoursEstimate: 168,
     howItWorks: "Imita a la amilina, una hormona que aumenta la saciedad y ayuda a comer porciones más pequeñas sin sentir tanta hambre.",
     mostReported: ["Mayor sensación de saciedad", "Complementa la pérdida de peso de un GLP-1", "Menos picoteo entre comidas"],
     evidenceLevel: "Ensayos clínicos en curso (incluida la combinación CagriSema); prometedor pero todavía no aprobado en solitario.",
@@ -204,6 +215,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     description: "Fragmento de la hormona de crecimiento asociado al metabolismo de las grasas.",
     halfLife: "~3-4 min (estudios preclínicos)",
     halfLifeConfidence: "bajo",
+    halfLifeHoursEstimate: 0.06,
     howItWorks:
       "Fragmento de la hormona de crecimiento diseñado para conservar el efecto quema-grasa sin elevar el azúcar en sangre ni el crecimiento de tejido.",
     mostReported: ["Reducción de grasa localizada (reportada, no siempre consistente)", "Sin efecto notorio en apetito"],
@@ -226,6 +238,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
       "Péptido pro-apoptótico dirigido a los vasos sanguíneos del tejido adiposo blanco. Reduce grasa abdominal.",
     halfLife: "Sin dato confiable en humanos",
     halfLifeConfidence: "sin-dato",
+    halfLifeHoursEstimate: null,
     howItWorks: "Induce la muerte de las células que alimentan los vasos sanguíneos del tejido graso blanco, cortando su aporte de sangre.",
     mostReported: ["Reducción de grasa abdominal (solo en estudios animales)"],
     evidenceLevel: "Sin dato confiable en humanos — solo estudios en monos y ratones; no hay ensayos clínicos en personas.",
@@ -247,6 +260,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
       "Inhibidor de la enzima NNMT (nicotinamida N-metiltransferasa). Aumenta los niveles celulares de NAD+.",
     halfLife: "~4-7 horas (estudios en animales)",
     halfLifeConfidence: "bajo",
+    halfLifeHoursEstimate: 5.5,
     howItWorks: "Bloquea la enzima NNMT, lo que deja más NAD+ disponible en la célula y acelera el metabolismo, sobre todo en el tejido graso.",
     mostReported: ["Apoyo al metabolismo", "Se reporta junto a rutinas de pérdida de grasa"],
     evidenceLevel:
@@ -269,6 +283,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
       "Secretagogo selectivo de hormona de crecimiento, con un perfil de efectos secundarios más suave que otros análogos.",
     halfLife: "~2 horas",
     halfLifeConfidence: "alto",
+    halfLifeHoursEstimate: 2,
     howItWorks: "Estimula la liberación de hormona de crecimiento de forma selectiva, sin tocar cortisol, prolactina ni otras hormonas.",
     mostReported: ["Mejor calidad de sueño", "Recuperación muscular", "Menos hambre que otros GHRP"],
     evidenceLevel: "Estudios clínicos moderados en humanos que confirman su selectividad frente a otros GHRP.",
@@ -289,6 +304,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     description: "Análogo de acción prolongada de la hormona liberadora de GH. Suele combinarse con Ipamorelina.",
     halfLife: "~30 min (sin DAC) — la versión con DAC llega a 6-8 días; confirma cuál tienes",
     halfLifeConfidence: "medio",
+    halfLifeHoursEstimate: 0.5,
     howItWorks: "Análogo de la hormona liberadora de GH (GHRH); hace que la pituitaria libere más hormona de crecimiento de forma pulsátil.",
     mostReported: ["Mejor recuperación", "Sueño más profundo", "Cambios en composición corporal a mediano plazo"],
     evidenceLevel: "Evidencia moderada a fuerte según la versión (con DAC tiene más respaldo por su uso prolongado).",
@@ -310,6 +326,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
       "Secretagogo no peptídico de GH activo por vía oral. Imita la acción de la grelina sobre los receptores de GH.",
     halfLife: "~4-6 horas (efecto sostenido reportado hasta 24 h)",
     halfLifeConfidence: "medio",
+    halfLifeHoursEstimate: 5,
     howItWorks: "Imita a la grelina y estimula la liberación de GH por vía oral, sin necesidad de inyección.",
     mostReported: ["Más apetito", "Mejor sueño", "Aumento de masa magra a mediano plazo"],
     evidenceLevel: "Evidencia clínica sólida en varios ensayos controlados en humanos.",
@@ -331,6 +348,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
       "Análogo de la hormona liberadora de GH. Suele usarse antes de dormir por su efecto sobre el sueño profundo.",
     halfLife: "~11-12 min",
     halfLifeConfidence: "alto",
+    halfLifeHoursEstimate: 0.19,
     howItWorks:
       "Versión corta de la GHRH natural; estimula al cuerpo a liberar su propia GH de forma pulsátil y fisiológica.",
     mostReported: ["Sueño más profundo", "Mejor recuperación nocturna", "Composición corporal a largo plazo"],
@@ -353,6 +371,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
       "Análogo de la hormona liberadora de GH, estudiado especialmente para la reducción de grasa visceral.",
     halfLife: "~8-11 min",
     halfLifeConfidence: "alto",
+    halfLifeHoursEstimate: 0.16,
     howItWorks:
       "Análogo de la GHRH aprobado clínicamente; estimula la liberación pulsátil de GH, con foco estudiado en la grasa visceral.",
     mostReported: ["Reducción de grasa abdominal/visceral", "Mejor definición muscular"],
@@ -375,6 +394,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
       "Complejo péptido-cobre presente naturalmente en el cuerpo. Muy usado en cosmética por su efecto en colágeno y cicatrización; también tópico.",
     halfLife: "~25-35 min (estimado, sin PK humana formal)",
     halfLifeConfidence: "bajo",
+    halfLifeHoursEstimate: 0.5,
     howItWorks: "Complejo natural péptido-cobre que activa genes de reparación de la piel y estimula la producción de colágeno.",
     mostReported: ["Piel más firme y con mejor textura", "Cicatrización más rápida", "Menos líneas finas (uso tópico)"],
     evidenceLevel: "Muy estudiado en cosmética (más de 40 años); en uso inyectado la evidencia es más limitada.",
@@ -397,6 +417,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
       "Péptido derivado de la mitocondria. En tendencia por su posible rol en el metabolismo de la glucosa y la respuesta al estrés celular.",
     halfLife: "Sin dato confiable en humanos",
     halfLifeConfidence: "sin-dato",
+    halfLifeHoursEstimate: null,
     howItWorks: "Péptido producido dentro de la mitocondria que ayuda a regular cómo el cuerpo usa la energía y la sensibilidad a la insulina.",
     mostReported: ["Más energía durante el ejercicio", "Apoyo al metabolismo de la glucosa"],
     evidenceLevel: "Sin dato confiable en humanos — descubierto en 2015, la mayoría de la evidencia es preclínica (animal/celular).",
@@ -418,6 +439,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
       "Péptido sintético derivado de la glándula pineal. Estudiado por su posible relación con la regulación del reloj biológico y la telomerasa.",
     halfLife: "Sin dato confiable en ninguna especie",
     halfLifeConfidence: "sin-dato",
+    halfLifeHoursEstimate: null,
     howItWorks:
       "Péptido sintético inspirado en un compuesto de la glándula pineal; se estudia su rol en el reloj biológico y la telomerasa.",
     mostReported: ["Mejor calidad de sueño", "Sensación de mayor energía tras el ciclo"],
@@ -440,6 +462,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     description: "Péptido inductor del sueño delta (Delta Sleep-Inducing Peptide). Se usa antes de dormir.",
     halfLife: "~15-25 min (estimado)",
     halfLifeConfidence: "medio",
+    halfLifeHoursEstimate: 0.33,
     howItWorks: "Péptido asociado al sueño profundo (delta); su mecanismo exacto en humanos no está del todo claro.",
     mostReported: ["Dormirse más rápido", "Sueño más profundo y reparador"],
     evidenceLevel:
@@ -462,6 +485,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
       "Péptido ansiolítico de origen ruso. Se asocia con calma mental y enfoque sin sedación.",
     halfLife: "Sin dato confiable (fuentes muy dispares)",
     halfLifeConfidence: "sin-dato",
+    halfLifeHoursEstimate: null,
     howItWorks: "Derivado de la tuftsina; actúa como ansiolítico sin la sedación típica de las benzodiazepinas.",
     mostReported: ["Menos ansiedad", "Mejor enfoque bajo estrés", "Sin sensación de sedación"],
     evidenceLevel: "Estudios clínicos moderados, mayormente rusos; poco replicados fuera de Rusia.",
@@ -482,6 +506,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     description: "Péptido nootrópico derivado de la ACTH. Estudiado por su efecto en memoria y concentración.",
     halfLife: "Sin dato confiable (fuentes muy dispares)",
     halfLifeConfidence: "sin-dato",
+    halfLifeHoursEstimate: null,
     howItWorks:
       "Derivado de un fragmento de la ACTH; se asocia con mayor factor neurotrófico (BDNF) y mejor plasticidad cerebral.",
     mostReported: ["Más concentración", "Mejor memoria de trabajo", "Sensación de mayor claridad mental"],
@@ -503,6 +528,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     description: "Activador de receptores de melanocortina. Usado para la libido y función sexual.",
     halfLife: "~2.7 horas",
     halfLifeConfidence: "alto",
+    halfLifeHoursEstimate: 2.7,
     howItWorks:
       "Activa receptores de melanocortina en el cerebro (no en el flujo sanguíneo), lo que estimula el deseo sexual de forma central.",
     mostReported: ["Mayor deseo sexual", "Efecto más notorio en mujeres (uso aprobado) que en hombres"],
@@ -525,6 +551,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     description: "Análogo de la hormona estimulante de melanocitos. Conocido por su efecto bronceador.",
     halfLife: "~1-2 horas",
     halfLifeConfidence: "medio",
+    halfLifeHoursEstimate: 1.5,
     howItWorks: "Activa varios receptores de melanocortina a la vez: broncea la piel y también puede estimular el deseo sexual.",
     mostReported: ["Bronceado más rápido y duradero", "Aumento del libido en algunos usuarios"],
     evidenceLevel: "Evidencia moderada; no tiene aprobación regulatoria (a diferencia de PT-141, que es su derivado aprobado).",
@@ -545,6 +572,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     description: "Péptido inmunomodulador natural del timo. Estudiado para el soporte del sistema inmune.",
     halfLife: "~2 horas",
     halfLifeConfidence: "alto",
+    halfLifeHoursEstimate: 2,
     howItWorks: "Péptido natural del timo que ayuda a regular y modular la respuesta del sistema inmune.",
     mostReported: ["Menos resfriados/infecciones reportadas", "Recuperación más rápida tras enfermedad"],
     evidenceLevel: "Evidencia moderada: aprobado en más de 35 países para hepatitis B, aunque no por la FDA en EE. UU.",
@@ -565,6 +593,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     description: "Fragmento de la alfa-MSH con propiedades antiinflamatorias. Usado en salud intestinal y de piel.",
     halfLife: "~1-2 horas (estimado, sin PK humana formal)",
     halfLifeConfidence: "bajo",
+    halfLifeHoursEstimate: 1.5,
     howItWorks: "Fragmento de la alfa-MSH con potente efecto antiinflamatorio, sin el efecto bronceador de la molécula completa.",
     mostReported: ["Menos inflamación intestinal", "Mejora en piel inflamada", "Cicatrización de heridas"],
     evidenceLevel:
@@ -586,6 +615,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     description: "Hexapéptido sintético estimulador de GH, potente y con menos efecto sobre el apetito que GHRP-6.",
     halfLife: "~15-30 min",
     halfLifeConfidence: "medio",
+    halfLifeHoursEstimate: 0.375,
     howItWorks: "Se une a receptores de grelina en la pituitaria y estimula una liberación potente de hormona de crecimiento.",
     mostReported: ["Aumento de masa magra", "Mejor recuperación", "Menos hambre que GHRP-6"],
     evidenceLevel: "Estudios pequeños y experiencia de clínicas; aprobado en Japón solo como agente diagnóstico, no terapéutico.",
@@ -606,6 +636,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     description: "Hexapéptido estimulador de GH, conocido por su fuerte efecto sobre el apetito.",
     halfLife: "~20-30 min",
     halfLifeConfidence: "medio",
+    halfLifeHoursEstimate: 0.42,
     howItWorks: "Igual que GHRP-2, pero con una señal de hambre mucho más marcada.",
     mostReported: ["Mucho apetito (útil en volumen)", "Apoyo muscular", "Recuperación"],
     evidenceLevel: "Estudios pequeños y experiencia de clínicas.",
@@ -626,6 +657,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     description: "El GHRP más potente para liberar GH; también estudiado por posibles efectos protectores del corazón.",
     halfLife: "~60-70 min",
     halfLifeConfidence: "medio",
+    halfLifeHoursEstimate: 1.08,
     howItWorks:
       "Estimula receptores de grelina de forma muy potente y activa también receptores CD36 con efecto cardioprotector reportado en estudios.",
     mostReported: ["Fuerte liberación de GH", "Recuperación muscular", "Efecto reportado sobre el corazón (preclínico)"],
@@ -647,6 +679,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     description: "Hormona de crecimiento recombinante, idéntica a la que produce tu propia pituitaria.",
     halfLife: "~2-4 horas",
     halfLifeConfidence: "alto",
+    halfLifeHoursEstimate: 3,
     howItWorks:
       "Actúa directamente sobre receptores de GH en todo el cuerpo, aumentando la producción de IGF-1 y el crecimiento/reparación de tejidos.",
     mostReported: ["Mejor composición corporal", "Recuperación más rápida", "Piel y sueño reportados como beneficio"],
@@ -668,6 +701,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     description: "Fragmento de la hormona de crecimiento enfocado en el efecto quema-grasa, sin el efecto sobre el crecimiento de tejidos.",
     halfLife: "Sin dato confiable en humanos",
     halfLifeConfidence: "sin-dato",
+    halfLifeHoursEstimate: null,
     howItWorks: "Actúa sobre el tejido graso imitando la parte de la GH que rompe grasa (lipólisis), sin activar IGF-1.",
     mostReported: ["Reducción de grasa localizada (reportada)", "Sin afectar el apetito"],
     evidenceLevel: "Estudios preclínicos y algunos en humanos, pero de baja calidad metodológica; evidencia limitada.",
@@ -688,6 +722,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     description: "Versión modificada del IGF-1 con vida media mucho más larga, usada para crecimiento y recuperación muscular.",
     halfLife: "~20-30 horas",
     halfLifeConfidence: "medio",
+    halfLifeHoursEstimate: 25,
     howItWorks: "Se une con menos afinidad a las proteínas transportadoras de IGF-1, quedando más tiempo libre y activo en el cuerpo.",
     mostReported: ["Aumento de masa muscular", "Mejor recuperación tras entreno intenso"],
     evidenceLevel: "Estudios pequeños y experiencia de clínicas/comunidad; sin ensayos clínicos grandes en humanos.",
@@ -708,6 +743,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     description: "Versión pegilada (de acción prolongada) del factor de crecimiento mecánico, activado naturalmente por el estiramiento o daño muscular.",
     halfLife: "~24-72 horas (versión pegilada)",
     halfLifeConfidence: "medio",
+    halfLifeHoursEstimate: 48,
     howItWorks:
       "Activa células satélite del músculo para reparar y hacer crecer fibras dañadas, por una vía distinta a la del IGF-1 clásico.",
     mostReported: ["Reparación muscular localizada", "Se usa tras entrenos de fuerza intensos"],
@@ -729,6 +765,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     description: "Versión sintética de la GnRH natural; estimula al cuerpo a producir sus propias hormonas sexuales.",
     halfLife: "~10-40 min",
     halfLifeConfidence: "medio",
+    halfLifeHoursEstimate: 0.42,
     howItWorks: "Estimula la pituitaria para liberar LH y FSH, lo que mantiene activa la producción natural de testosterona en los testículos.",
     mostReported: ["Mantiene la función testicular durante la terapia de testosterona", "Apoyo a la fertilidad"],
     evidenceLevel: "Uso clínico bien documentado para mantener el eje hormonal durante TRT; también aprobado para diagnóstico de función pituitaria.",
@@ -749,6 +786,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     description: "Hormona que imita a la LH; en hombres estimula la producción de testosterona en los testículos.",
     halfLife: "~24-36 horas",
     halfLifeConfidence: "alto",
+    halfLifeHoursEstimate: 30,
     howItWorks: "Se une a los mismos receptores que la LH en el testículo, manteniendo su tamaño y producción de testosterona activa.",
     mostReported: ["Mantiene el volumen testicular durante TRT", "Apoyo a la fertilidad", "Menos 'apagón' hormonal al parar TRT"],
     evidenceLevel: "Evidencia fuerte: aprobado por la FDA desde hace décadas para infertilidad e hipogonadismo.",
@@ -769,6 +807,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     description: "Neuropéptido regulador maestro del eje reproductivo; actúa por encima incluso de la GnRH.",
     halfLife: "~4-28 min (varía según el fragmento)",
     halfLifeConfidence: "medio",
+    halfLifeHoursEstimate: 0.27,
     howItWorks:
       "Activa las neuronas que liberan GnRH, iniciando toda la cascada hormonal reproductiva de forma más 'fisiológica' que un análogo directo.",
     mostReported: ["Apoyo a la fertilidad", "Interés en investigación como alternativa a la GnRH"],
@@ -790,6 +829,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     description: "Hormona conocida como la 'del vínculo'; en dosis intranasal se estudia su efecto en la conexión social y emocional.",
     halfLife: "~3-5 min",
     halfLifeConfidence: "alto",
+    halfLifeHoursEstimate: 0.067,
     howItWorks: "Actúa sobre receptores en el cerebro relacionados con el apego, la confianza y la regulación emocional.",
     mostReported: ["Mayor sensación de cercanía/conexión", "Menos ansiedad social reportada"],
     evidenceLevel:
@@ -811,6 +851,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     description: "Coenzima esencial para la producción de energía celular y la reparación del ADN; sus niveles bajan con la edad.",
     halfLife: "Variable (horas a días, según la vía)",
     halfLifeConfidence: "bajo",
+    halfLifeHoursEstimate: null,
     howItWorks: "Recarga el 'combustible' que usan las mitocondrias y ciertas enzimas (sirtuinas) relacionadas con el envejecimiento celular.",
     mostReported: ["Más energía y claridad mental", "Mejor recuperación reportada", "Interés por su rol en longevidad"],
     evidenceLevel:
@@ -832,6 +873,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     description: "Péptido que se concentra en la mitocondria y protege su membrana interna; muy en tendencia en la comunidad de longevidad.",
     halfLife: "~2-4 horas",
     halfLifeConfidence: "medio",
+    halfLifeHoursEstimate: 3,
     howItWorks:
       "Se acumula selectivamente en la membrana interna de la mitocondria, protegiéndola del daño oxidativo y mejorando su eficiencia energética.",
     mostReported: ["Más energía reportada", "Mejor resistencia física", "Interés en salud cardiovascular"],
@@ -854,6 +896,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     description: "Péptido producido dentro de la mitocondria con propiedades protectoras para el cerebro y el corazón.",
     halfLife: "Minutos a horas",
     halfLifeConfidence: "bajo",
+    halfLifeHoursEstimate: null,
     howItWorks: "Protege a las células del estrés y la muerte celular programada, con efecto documentado sobre todo en neuronas.",
     mostReported: ["Interés en protección neurológica", "Apoyo cardiovascular en investigación"],
     evidenceLevel: "Descubierto en 2001; evidencia mayormente preclínica, con niveles circulantes que bajan con la edad.",
@@ -874,6 +917,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     description: "Extracto polipeptídico del timo bovino, usado como inmunomodulador en protocolos de soporte inmune.",
     halfLife: "Minutos (extracto polipeptídico)",
     halfLifeConfidence: "bajo",
+    halfLifeHoursEstimate: 0.05,
     howItWorks: "Aporta pequeños péptidos que ayudan a regular y equilibrar la respuesta del sistema inmune, similar a la Timosina Alfa-1.",
     mostReported: ["Menos infecciones reportadas", "Recuperación más rápida tras enfermedad respiratoria"],
     evidenceLevel:
@@ -895,6 +939,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     description: "Tripéptido corto de la familia de bioreguladores de Khavinson, enfocado en el cerebro y la glándula pineal.",
     halfLife: "Minutos",
     halfLifeConfidence: "bajo",
+    halfLifeHoursEstimate: 0.05,
     howItWorks:
       "Es tan pequeño que puede entrar al núcleo de la célula, donde se cree que ayuda a regular la expresión de ciertos genes ligados al envejecimiento cerebral.",
     mostReported: ["Claridad mental reportada", "Interés en protección neurológica a largo plazo"],
@@ -916,6 +961,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     description: "Péptido senolítico diseñado para inducir la muerte selectiva de células 'zombie' (senescentes) que se acumulan con la edad.",
     halfLife: "Sin dato confiable en humanos",
     halfLifeConfidence: "sin-dato",
+    halfLifeHoursEstimate: null,
     howItWorks:
       "Interrumpe una interacción proteica (FOXO4-p53) que mantiene vivas a las células senescentes, provocando que mueran de forma controlada.",
     mostReported: ["Resultados llamativos en estudios animales (piel, riñón, resistencia física)"],
@@ -938,6 +984,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     description: "Extracto de péptidos derivado de cerebro porcino, con actividad similar a varios factores de crecimiento cerebral (BDNF, GDNF, NGF).",
     halfLife: "Sin dato confiable en humanos",
     halfLifeConfidence: "sin-dato",
+    halfLifeHoursEstimate: null,
     howItWorks: "Aporta fragmentos de péptidos con actividad neurotrófica, apoyando la reparación y comunicación entre neuronas.",
     mostReported: ["Mejor concentración reportada", "Uso en recuperación cognitiva tras lesión"],
     evidenceLevel:
@@ -959,6 +1006,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     description: "Extracto de péptidos de corteza cerebral bovina, similar en concepto a Cerebrolysin pero de aplicación intramuscular.",
     halfLife: "Sin dato confiable en humanos",
     halfLifeConfidence: "sin-dato",
+    halfLifeHoursEstimate: null,
     howItWorks: "Aporta péptidos neurotróficos de bajo peso molecular que apoyan la función y protección de las neuronas.",
     mostReported: ["Uso en recuperación cognitiva", "Más práctico que Cerebrolysin al no requerir vía IV"],
     evidenceLevel: "Usado principalmente en Rusia para distintas condiciones neurológicas; evidencia clínica limitada fuera de ese contexto.",
@@ -979,6 +1027,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     description: "Molécula derivada de la angiotensina IV con fuertes propiedades procognitivas en estudios preclínicos.",
     halfLife: "Sin dato confiable en humanos",
     halfLifeConfidence: "sin-dato",
+    halfLifeHoursEstimate: null,
     howItWorks: "Activa el sistema HGF/c-Met en el cerebro, promoviendo la formación de nuevas conexiones entre neuronas (sinaptogénesis).",
     mostReported: ["Interés como nootrópico potente en foros", "Resultados llamativos en estudios animales de memoria"],
     evidenceLevel:
@@ -1000,6 +1049,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     description: "Tetrapéptido natural derivado de la timosina beta-4, estudiado por su efecto anti-fibrótico y protector del corazón.",
     halfLife: "~4.5 min",
     halfLifeConfidence: "medio",
+    halfLifeHoursEstimate: 0.075,
     howItWorks: "Bloquea la proliferación de fibroblastos y la formación de tejido fibroso en corazón, riñón y otros órganos.",
     mostReported: ["Interés en protección cardíaca y renal", "Uso de nicho, poco reportado por la comunidad general"],
     evidenceLevel:
@@ -1021,6 +1071,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     description: "Péptido antimicrobiano natural del sistema inmune humano, con rol en la defensa contra bacterias, hongos y virus.",
     halfLife: "Variable",
     halfLifeConfidence: "sin-dato",
+    halfLifeHoursEstimate: null,
     howItWorks: "Ataca directamente la membrana de microorganismos y además regula la respuesta inflamatoria del sistema inmune.",
     mostReported: ["Interés en apoyo inmune general", "Uso de nicho en la comunidad de longevidad/inmunidad"],
     evidenceLevel:
@@ -1043,6 +1094,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
       "Éster de testosterona inyectable de acción prolongada, el más recetado en Estados Unidos para TRT (terapia de reemplazo de testosterona). Viene disuelto en aceite: no necesita agua bacteriostática.",
     halfLife: "~8 días",
     halfLifeConfidence: "alto",
+    halfLifeHoursEstimate: 192,
     howItWorks: "Libera testosterona de forma gradual desde el tejido muscular, manteniendo niveles estables con una inyección semanal o quincenal.",
     mostReported: ["Más energía y libido", "Mejor composición corporal", "Mejor ánimo en hipogonadismo diagnosticado"],
     evidenceLevel: "Evidencia fuerte: aprobado por la FDA y usado en TRT desde hace décadas, con farmacocinética muy bien documentada.",
@@ -1064,6 +1116,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
       "Éster de testosterona de acción prolongada, el más usado en Europa para TRT; farmacocinética casi idéntica al Cipionato. Viene disuelto en aceite: no necesita agua bacteriostática.",
     halfLife: "~4-5 días",
     halfLifeConfidence: "alto",
+    halfLifeHoursEstimate: 108,
     howItWorks: "Libera testosterona de forma gradual desde el músculo, con una vida media algo más corta que el Cipionato.",
     mostReported: ["Más energía y libido", "Mejor composición corporal"],
     evidenceLevel: "Evidencia fuerte: aprobado por la FDA, considerado clínicamente intercambiable con el Cipionato.",
