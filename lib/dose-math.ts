@@ -29,3 +29,28 @@ export function unitsToDraw({
   const volumeMl = doseMg / concentrationMgPerMl;
   return volumeMl * 100;
 }
+
+/**
+ * Inverso de unitsToDraw: dado cuántas unidades quieres cargar (targetUnits),
+ * calcula cuánta agua bacteriostática hay que agregar al vial para que esa
+ * dosis caiga exactamente en esa marca de la jeringa.
+ */
+export function waterForTargetUnits({
+  vialAmount,
+  vialUnit,
+  doseAmount,
+  doseUnit,
+  targetUnits,
+}: {
+  vialAmount: number;
+  vialUnit: string;
+  doseAmount: number;
+  doseUnit: string;
+  targetUnits: number;
+}): number | null {
+  const vialMg = toMg(vialAmount, vialUnit);
+  const doseMg = toMg(doseAmount, doseUnit);
+  if (vialMg === null || doseMg === null || !targetUnits || !doseMg) return null;
+  const volumeMl = targetUnits / 100;
+  return (volumeMl * vialMg) / doseMg;
+}

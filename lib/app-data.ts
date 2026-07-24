@@ -25,6 +25,22 @@ export type Vial = {
   shares: VialShare[]; // reparto con familiares — puede ser con varios a la vez
 };
 
+// Una línea de la calculadora: un péptido con su dosis deseada, dentro de un
+// protocolo que puede mezclar varios sobre el mismo vial/agua.
+export type CalculatorProtocolEntry = { peptideName: string; doseAmount: string; doseUnit: string };
+
+export type CalculatorProtocol = {
+  id: string;
+  name: string;
+  notes?: string;
+  vialAmount: string;
+  vialUnit: string;
+  bacWater: string;
+  syringeType: SyringeType;
+  entries: CalculatorProtocolEntry[];
+  createdAt: string;
+};
+
 export type Dose = {
   id: string;
   peptideId: string;
@@ -761,6 +777,55 @@ export async function resetTrackingData(data: AppData): Promise<AppData> {
   if (rpcError) throw rpcError;
 
   return loadAppData();
+}
+
+// Protocolos guardados de la calculadora (Premium) — no viven en loadAppData()
+// porque solo se usan dentro de la calculadora, no hace falta cargarlos en
+// cada pantalla de la app.
+export async function listCalculatorProtocols(): Promise<CalculatorProtocol[]> {
+  const { supabase, user } = await requireUser();
+  const { data, error } = await supabase
+    .from("calculator_protocols")
+    .select("*")
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return (data || []).map((p) => ({
+    id: p.id,
+    name: p.name,
+    notes: p.notes || undefined,
+    vialAmount: String(p.vial_amount),
+    vialUnit: p.vial_unit,
+    bacWater: String(p.bac_water),
+    syringeType: p.syringe_type as SyringeType,
+    entries: p.entries as CalculatorProtocolEntry[],
+    createdAt: p.created_at,
+  }));
+}
+
+export async function saveCalculatorProtocol(
+  protocol: Omit<CalculatorProtocol, "id" | "createdAt">
+): Promise<CalculatorProtocol[]> {
+  const { supabase, user } = await requireUser();
+  const { error } = await supabase.from("calculator_protocols").insert({
+    user_id: user.id,
+    name: protocol.name,
+    notes: protocol.notes || null,
+    vial_amount: Number(protocol.vialAmount),
+    vial_unit: protocol.vialUnit,
+    bac_water: Number(protocol.bacWater),
+    syringe_type: protocol.syringeType,
+    entries: protocol.entries,
+  });
+  if (error) throw error;
+  return listCalculatorProtocols();
+}
+
+export async function deleteCalculatorProtocol(protocolId: string): Promise<CalculatorProtocol[]> {
+  const { supabase } = await requireUser();
+  const { error } = await supabase.from("calculator_protocols").delete().eq("id", protocolId);
+  if (error) throw error;
+  return listCalculatorProtocols();
 }
 
 export async function addFamilyMember(
