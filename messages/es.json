@@ -1221,6 +1221,7 @@
     "navComparador": "Comparador de péptidos",
     "navClearance": "Calculadora de eliminación",
     "navCostPerMg": "Calculadora de costo por mg",
+    "navAllTools": "Ver todas las herramientas",
     "navIdeas": "Ideas y Roadmap"
   },
   "Calculadora": {
@@ -1468,6 +1469,27 @@
         "a": "Solo incluimos los que se dosifican en mg. Los que se dosifican en UI (como la hormona de crecimiento) no comparten la misma unidad de costo, así que no aplican aquí."
       }
     ]
+  },
+  "Herramientas": {
+    "metaTitle": "Todas las herramientas gratis para péptidos | PeptiBrain",
+    "metaDescription": "Calculadoras y herramientas gratuitas para péptidos, GLP-1 y TRT: reconstitución, semaglutida, comparador, biblioteca, eliminación y costo por mg. Sin registro.",
+    "kicker": "Herramientas gratuitas",
+    "h1": "Todas las herramientas",
+    "subtitle": "Todo lo que necesitas para tu protocolo, en un solo lugar. Gratis, sin registro, resultado al instante.",
+    "freeTag": "Gratis",
+    "openCta": "Abrir",
+    "calcTitle": "Calculadora de reconstitución",
+    "calcDesc": "Cuántas unidades cargar en la jeringa según tu vial y el agua bacteriostática.",
+    "semaTitle": "Calculadora de semaglutida",
+    "semaDesc": "Semaglutida y tirzepatida con la tabla de titulación completa.",
+    "comparadorTitle": "Comparador de péptidos",
+    "comparadorDesc": "Compara dos péptidos lado a lado: vía, dosis, evidencia y más.",
+    "protocolosTitle": "Biblioteca de péptidos",
+    "protocolosDesc": "48 péptidos con dosis, vida media y ficha completa.",
+    "eliminacionTitle": "Calculadora de eliminación",
+    "eliminacionDesc": "Cuánto tarda un péptido en salir de tu cuerpo, según su vida media.",
+    "costomgTitle": "Calculadora de costo por mg",
+    "costomgDesc": "Cuánto te cuesta cada mg y cada dosis, según lo que pagaste."
   },
   "FreeToolsSection": {
     "eyebrow": "Gratis · sin registro",

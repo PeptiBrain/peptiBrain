@@ -8,6 +8,7 @@ const BASE_URL = "https://peptibrain.com";
 // ni /onboarding ni /restablecer-password (páginas funcionales, no de contenido).
 const PUBLIC_PATHS = [
   "",
+  "/herramientas",
   "/calculadora",
   "/calculadora-semaglutida",
   "/comparador",

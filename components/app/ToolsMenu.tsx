@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { ChevronDown, Calculator, Syringe, Shuffle, ListChecks, Clock, Coins } from "lucide-react";
+import { ChevronDown, Calculator, Syringe, Shuffle, ListChecks, Clock, Coins, Wrench } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 
 const TOOLS = [
@@ -65,6 +65,15 @@ export function ToolsMenu({ triggerLabel }: { triggerLabel: string }) {
               {t(tool.labelKey)}
             </Link>
           ))}
+          <Link
+            href="/herramientas"
+            role="menuitem"
+            onClick={() => setOpen(false)}
+            className="mt-1 flex items-center gap-2.5 rounded-lg border-t border-border px-3 py-2.5 pt-3.5 text-sm font-semibold text-primary hover:bg-muted"
+          >
+            <Wrench className="size-4 shrink-0" aria-hidden />
+            {t("navAllTools")}
+          </Link>
         </div>
       )}
     </div>

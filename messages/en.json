@@ -1221,6 +1221,7 @@
     "navComparador": "Peptide comparator",
     "navClearance": "Clearance calculator",
     "navCostPerMg": "Cost per mg calculator",
+    "navAllTools": "See all tools",
     "navIdeas": "Ideas & Roadmap"
   },
   "Calculadora": {
@@ -1468,6 +1469,27 @@
         "a": "We only include ones dosed in mg. Ones dosed in IU (like growth hormone) don't share the same cost unit, so they don't apply here."
       }
     ]
+  },
+  "Herramientas": {
+    "metaTitle": "All free peptide tools | PeptiBrain",
+    "metaDescription": "Free calculators and tools for peptides, GLP-1 and TRT: reconstitution, semaglutide, comparator, library, clearance and cost per mg. No signup.",
+    "kicker": "Free tools",
+    "h1": "All tools",
+    "subtitle": "Everything you need for your protocol, in one place. Free, no signup, instant results.",
+    "freeTag": "Free",
+    "openCta": "Open",
+    "calcTitle": "Reconstitution calculator",
+    "calcDesc": "How many units to draw into the syringe based on your vial and bacteriostatic water.",
+    "semaTitle": "Semaglutide calculator",
+    "semaDesc": "Semaglutide and tirzepatide with the full titration schedule.",
+    "comparadorTitle": "Peptide comparator",
+    "comparadorDesc": "Compare two peptides side by side: route, dose, evidence and more.",
+    "protocolosTitle": "Peptide library",
+    "protocolosDesc": "48 peptides with dose, half-life and full profile.",
+    "eliminacionTitle": "Clearance calculator",
+    "eliminacionDesc": "How long a peptide takes to clear your system, based on its half-life.",
+    "costomgTitle": "Cost per mg calculator",
+    "costomgDesc": "How much each mg and each dose costs you, based on what you paid."
   },
   "FreeToolsSection": {
     "eyebrow": "Free · no signup",

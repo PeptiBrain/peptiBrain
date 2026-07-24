@@ -54,6 +54,7 @@ export function Footer() {
             </div>
 
             <FooterColumn title={t("colProduct")}>
+              <FooterLink href="/herramientas">{tt("navAllTools")}</FooterLink>
               <FooterLink href="/calculadora">{tt("navCalculator")}</FooterLink>
               <FooterLink href="/calculadora-semaglutida">{tt("navSemaglutide")}</FooterLink>
               <FooterLink href="/comparador">{tt("navComparador")}</FooterLink>
