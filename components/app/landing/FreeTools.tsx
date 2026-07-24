@@ -51,6 +51,12 @@ export function FreeTools() {
                 </Link>
               </Reveal>
             ))}
+            <Link
+              href="/herramientas"
+              className="flex h-11 items-center justify-center gap-1.5 rounded-lg border border-border text-sm font-semibold text-foreground transition-colors hover:bg-muted"
+            >
+              {t("seeAllCta")} <ArrowRight className="size-4" aria-hidden />
+            </Link>
             <p className="pt-1 text-center text-xs text-muted-foreground lg:text-left">{t("noSignup")}</p>
           </div>
 
