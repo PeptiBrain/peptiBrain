@@ -4,12 +4,14 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { Link } from "@/i18n/navigation";
-import { Sparkles, Camera, Check, Eye, EyeOff, Download, Trash2, Mail } from "lucide-react";
+import { Sparkles, Camera, Check, Eye, EyeOff, Download, Trash2, Mail, Flame, Snowflake } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { CancelOfferModal } from "@/components/app/cuenta/CancelOfferModal";
 import { ModalShell } from "@/components/app/shell/ModalShell";
 import { track } from "@/lib/mixpanel";
-import { loadAppData } from "@/lib/app-data";
+import { loadAppData, setDailyGoal, type AppData } from "@/lib/app-data";
+
+const DAILY_GOALS = [10, 20, 30, 50] as const;
 
 const COUNTRIES = [
   { flag: "🇪🇸", code: "+34" },
@@ -61,6 +63,9 @@ export default function CuentaPage() {
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState(false);
 
+  const [appData, setAppData] = useState<AppData | null>(null);
+  const [savingGoal, setSavingGoal] = useState(false);
+
   useEffect(() => {
     const supabase = createClient();
     supabase.auth.getUser().then(async ({ data: { user } }) => {
@@ -80,9 +85,22 @@ export default function CuentaPage() {
         setAvatarUrl(p.avatar_url);
       }
     });
+    loadAppData().then(setAppData);
   }, []);
 
   if (!profile) return null;
+
+  async function handleSetGoal(goal: (typeof DAILY_GOALS)[number]) {
+    if (!appData || savingGoal) return;
+    setSavingGoal(true);
+    try {
+      const next = await setDailyGoal(appData, goal);
+      setAppData(next);
+      track("daily_goal_set", { goal });
+    } finally {
+      setSavingGoal(false);
+    }
+  }
 
   const initial = (name || profile.name || "?").trim().charAt(0).toUpperCase();
   const planLabel = { free: t("planFree"), premium: t("planPremium"), family: t("planFamily") }[profile.plan];
@@ -263,6 +281,42 @@ export default function CuentaPage() {
         )}
         <p className="mt-2 text-center text-xs text-muted-foreground">{t("boughtOtherEmail")}</p>
       </div>
+
+      {/* Racha y meta diaria */}
+      {appData && (
+        <div className="mt-4 rounded-xl border border-border bg-card p-4">
+          <div className="flex items-center justify-between">
+            <p className="text-sm font-semibold text-foreground">{t("streakTitle")}</p>
+            <div className="flex items-center gap-3 text-sm">
+              <span className="flex items-center gap-1 font-semibold text-foreground">
+                <Flame className="size-4 text-primary" aria-hidden /> {appData.progress.currentStreak}
+              </span>
+              <span className="flex items-center gap-1 text-muted-foreground">
+                <Snowflake className="size-4" aria-hidden /> {appData.progress.freezes}
+              </span>
+            </div>
+          </div>
+          <p className="mt-2 text-sm font-semibold text-foreground">{t("dailyGoalTitle")}</p>
+          <p className="text-xs text-muted-foreground">{t("dailyGoalDesc")}</p>
+          <div className="mt-2 grid grid-cols-4 gap-2">
+            {DAILY_GOALS.map((goal) => (
+              <button
+                key={goal}
+                type="button"
+                disabled={savingGoal}
+                onClick={() => handleSetGoal(goal)}
+                className={`h-11 rounded-lg border text-sm font-semibold transition-colors disabled:opacity-50 ${
+                  appData.progress.dailyGoal === goal
+                    ? "border-primary bg-accent text-accent-foreground"
+                    : "border-border bg-background text-foreground hover:bg-muted"
+                }`}
+              >
+                {goal}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Avatar */}
       <div className="mt-5 flex justify-center">
