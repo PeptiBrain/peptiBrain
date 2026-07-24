@@ -21,7 +21,8 @@ export function computeBodyLevels(data: AppData, now: Date): BodyLevelEntry[] {
   const entries: BodyLevelEntry[] = [];
 
   for (const peptide of data.peptides) {
-    const profile = PEPTIDE_PROFILES.find((p) => p.name === peptide.name);
+    const normalizedName = peptide.name.trim().toLowerCase();
+    const profile = PEPTIDE_PROFILES.find((p) => p.name.trim().toLowerCase() === normalizedName);
     if (!profile || profile.halfLifeHoursEstimate == null) continue;
 
     const lastDose = data.doses
