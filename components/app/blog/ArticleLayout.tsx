@@ -44,6 +44,17 @@ export function ArticleLayout({ post, locale, children }: { post: BlogPost; loca
     mainEntityOfPage: `${BASE}${locale === "en" ? "/en" : ""}/blog/${post.slug}`,
   };
 
+  const localePrefix = locale === "en" ? "/en" : "";
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: locale === "en" ? "Home" : "Inicio", item: `${BASE}${localePrefix}` },
+      { "@type": "ListItem", position: 2, name: "Blog", item: `${BASE}${localePrefix}/blog` },
+      { "@type": "ListItem", position: 3, name: title, item: `${BASE}${localePrefix}/blog/${post.slug}` },
+    ],
+  };
+
   return (
     <>
       <Header />
@@ -105,6 +116,7 @@ export function ArticleLayout({ post, locale, children }: { post: BlogPost; loca
       </main>
       <Footer />
       <JsonLd data={articleLd} />
+      <JsonLd data={breadcrumbLd} />
     </>
   );
 }
