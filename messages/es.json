@@ -594,6 +594,11 @@
     "hydration": "Hidratación registrada",
     "cta": "Buenas noches 🌙"
   },
+  "BodyLevel": {
+    "title": "Nivel estimado en tu cuerpo",
+    "sinceLastDose": "Última dosis hace {time}",
+    "methodNote": "Estimación farmacocinética según vida media conocida — no es una medición real."
+  },
   "Providers": {
     "modalTitle": "Nuevo proveedor",
     "close": "Cerrar",

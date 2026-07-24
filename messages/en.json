@@ -594,6 +594,11 @@
     "hydration": "Hydration logged",
     "cta": "Good night 🌙"
   },
+  "BodyLevel": {
+    "title": "Estimated level in your body",
+    "sinceLastDose": "Last dose {time} ago",
+    "methodNote": "Pharmacokinetic estimate based on known half-life — not a real measurement."
+  },
   "Providers": {
     "modalTitle": "New supplier",
     "close": "Close",

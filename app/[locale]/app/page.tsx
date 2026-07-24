@@ -20,6 +20,7 @@ import { PeptideIcon } from "@/components/app/peptidos/PeptideIcon";
 import { Mascot } from "@/components/app/shell/Mascot";
 import { FirstStepsChecklist } from "@/components/app/shell/FirstStepsChecklist";
 import { DailySummaryModal } from "@/components/app/shell/DailySummaryModal";
+import { BodyLevelWidget } from "@/components/app/shell/BodyLevelWidget";
 import { isWithinRange, type CustomRange, type DateRangeKey } from "@/lib/date-range";
 import { suggestNextInjectionSite, lastInjectionSite, type InjectionSiteId } from "@/lib/injection-sites";
 
@@ -273,6 +274,8 @@ export default function InicioPage() {
           </p>
         </div>
       </motion.div>
+
+      <BodyLevelWidget data={data} />
 
       {(allStats.totalDosesDone > 0 || allStats.totalInvested > 0) && (
         <motion.div
