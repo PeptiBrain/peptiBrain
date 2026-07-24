@@ -1,11 +1,13 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
-import { Search, ArrowRight, ChevronDown } from "lucide-react";
+import { useRouter } from "@/i18n/navigation";
+import { Search, ArrowRight, ChevronDown, Star } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { getPeptideBottleImage } from "@/lib/vial-visual";
+import { loadFavoritePeptides, toggleFavoritePeptide } from "@/lib/favorites";
 import {
   PEPTIDE_PROFILES,
   PEPTIDE_CATEGORY_IDS,
@@ -23,9 +25,16 @@ const CONFIDENCE_DOT: Record<HalfLifeConfidence, string> = {
 export function PeptideLibraryGrid() {
   const t = useTranslations("Protocolos");
   const tc = useTranslations("PeptideCategories");
+  const router = useRouter();
   const [query, setQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState<PeptideCategoryId | "all">("all");
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
+  const [favorites, setFavorites] = useState<Set<string>>(new Set());
+  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+
+  useEffect(() => {
+    loadFavoritePeptides().then(setFavorites);
+  }, []);
 
   function toggleExpanded(name: string) {
     setExpanded((prev) => {
@@ -36,14 +45,30 @@ export function PeptideLibraryGrid() {
     });
   }
 
+  async function handleToggleFavorite(name: string) {
+    const isFavorite = favorites.has(name);
+    const result = await toggleFavoritePeptide(name, isFavorite);
+    if (result === null) {
+      router.push("/login");
+      return;
+    }
+    setFavorites((prev) => {
+      const next = new Set(prev);
+      if (result) next.add(name);
+      else next.delete(name);
+      return next;
+    });
+  }
+
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return PEPTIDE_PROFILES.filter((p) => {
       const matchesCategory = activeCategory === "all" || p.categories.includes(activeCategory);
       const matchesQuery = !q || p.name.toLowerCase().includes(q);
-      return matchesCategory && matchesQuery;
+      const matchesFavorites = !showFavoritesOnly || favorites.has(p.name);
+      return matchesCategory && matchesQuery && matchesFavorites;
     });
-  }, [query, activeCategory]);
+  }, [query, activeCategory, showFavoritesOnly, favorites]);
 
   return (
     <div>
@@ -67,6 +92,12 @@ export function PeptideLibraryGrid() {
             {tc(cat)}
           </FilterPill>
         ))}
+        <FilterPill active={showFavoritesOnly} onClick={() => setShowFavoritesOnly((s) => !s)}>
+          <span className="flex items-center gap-1">
+            <Star className={`size-3.5 ${showFavoritesOnly ? "fill-current" : ""}`} aria-hidden />
+            {t("filterFavorites")}
+          </span>
+        </FilterPill>
       </div>
 
       <p className="mt-3 text-xs text-muted-foreground">
@@ -91,10 +122,22 @@ export function PeptideLibraryGrid() {
                     height={40}
                     className="h-10 w-auto shrink-0"
                   />
-                  <div className="min-w-0">
+                  <div className="min-w-0 flex-1">
                     <h3 className="truncate font-display text-base font-bold text-foreground">{p.name}</h3>
                     <p className="text-xs text-muted-foreground">{p.route}</p>
                   </div>
+                  <button
+                    type="button"
+                    onClick={() => handleToggleFavorite(p.name)}
+                    aria-label={favorites.has(p.name) ? t("removeFavorite") : t("addFavorite")}
+                    aria-pressed={favorites.has(p.name)}
+                    className="flex size-8 shrink-0 items-center justify-center rounded-full text-muted-foreground hover:bg-secondary hover:text-foreground"
+                  >
+                    <Star
+                      className={`size-4 ${favorites.has(p.name) ? "fill-amber-400 text-amber-400" : ""}`}
+                      aria-hidden
+                    />
+                  </button>
                 </div>
                 <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-muted-foreground">{p.description}</p>
                 <dl className="mt-3 grid grid-cols-2 gap-x-3 gap-y-1.5 text-xs">
