@@ -1433,15 +1433,14 @@
     "halfLifeLabel": "Vida media",
     "estimateLabel": "Tiempo estimado de eliminación",
     "methodNote": "Estimado como 5 vidas medias (~97% eliminado). Varía según metabolismo, dosis acumulada y otros factores individuales — no es un dato exacto para ti.",
-    "noDataMessage": "No hay dato confiable de vida media para calcular esto en este péptido.",
     "faq": [
       {
         "q": "¿Por qué 5 vidas medias?",
         "a": "Es la regla estándar de farmacología: tras 5 vidas medias, un compuesto se considera prácticamente eliminado del organismo (~97%). Es la misma referencia que usan calculadoras clínicas, no un dato inventado."
       },
       {
-        "q": "¿Por qué algunos péptidos no muestran una estimación?",
-        "a": "Cuando no existe un dato de vida media confiable en humanos (o el disponible es demasiado disperso), preferimos decírtelo con honestidad en vez de inventar un número."
+        "q": "¿Por qué no aparecen todos los péptidos de la Biblioteca aquí?",
+        "a": "Solo incluimos los que tienen un dato de vida media confiable. Cuando ese dato no existe (o es demasiado disperso), preferimos no mostrar el péptido en vez de darte una estimación inventada."
       }
     ]
   },

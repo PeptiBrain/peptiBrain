@@ -13,12 +13,16 @@ const CONFIDENCE_DOT: Record<HalfLifeConfidence, string> = {
   "sin-dato": "",
 };
 
+// Solo péptidos con un estimado real calculable — mostrar los que dicen
+// "sin dato confiable" aquí sería un callejón sin salida para el usuario.
+const CALCULABLE_PEPTIDES = PEPTIDE_PROFILES.filter((p) => p.halfLifeHoursEstimate != null);
+
 export function ClearanceTool() {
   const t = useTranslations("Eliminacion");
   const tc = useTranslations("PeptideCategories");
   const [name, setName] = useState("");
 
-  const profile = useMemo(() => PEPTIDE_PROFILES.find((p) => p.name === name), [name]);
+  const profile = useMemo(() => CALCULABLE_PEPTIDES.find((p) => p.name === name), [name]);
   const clearance = profile?.halfLifeHoursEstimate != null ? estimateClearance(profile.halfLifeHoursEstimate) : null;
 
   return (
@@ -32,7 +36,7 @@ export function ClearanceTool() {
         >
           <option value="">{t("selectPlaceholder")}</option>
           {PEPTIDE_CATEGORY_IDS.map((cat) => {
-            const items = PEPTIDE_PROFILES.filter((p) => p.categories[0] === cat);
+            const items = CALCULABLE_PEPTIDES.filter((p) => p.categories[0] === cat);
             if (items.length === 0) return null;
             return (
               <optgroup key={cat} label={tc(cat)}>
@@ -47,33 +51,23 @@ export function ClearanceTool() {
         </select>
       </label>
 
-      {profile && (
+      {profile && clearance && (
         <div className="mt-5 rounded-xl border border-border bg-background p-4">
           <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             <Clock className="size-3.5" aria-hidden /> {t("halfLifeLabel")}
           </div>
           <p className="mt-1 flex items-center gap-1.5 text-sm text-foreground">
-            {profile.halfLifeConfidence !== "sin-dato" && (
-              <span className={`size-1.5 shrink-0 rounded-full ${CONFIDENCE_DOT[profile.halfLifeConfidence]}`} aria-hidden />
-            )}
-            <span className={profile.halfLifeConfidence === "sin-dato" ? "italic text-muted-foreground" : ""}>
-              {profile.halfLife}
-            </span>
+            <span className={`size-1.5 shrink-0 rounded-full ${CONFIDENCE_DOT[profile.halfLifeConfidence]}`} aria-hidden />
+            {profile.halfLife}
           </p>
 
-          {clearance ? (
-            <div className="mt-4 rounded-lg bg-accent p-4 text-center">
-              <p className="text-xs font-medium text-accent-foreground">{t("estimateLabel")}</p>
-              <p className="mt-1 font-display text-3xl font-bold tabular-nums text-accent-foreground">
-                {clearance.label}
-              </p>
-              <p className="mt-2 text-xs text-muted-foreground">{t("methodNote")}</p>
-            </div>
-          ) : (
-            <p className="mt-4 rounded-lg border border-dashed border-border p-4 text-center text-sm italic text-muted-foreground">
-              {t("noDataMessage")}
+          <div className="mt-4 rounded-lg bg-accent p-4 text-center">
+            <p className="text-xs font-medium text-accent-foreground">{t("estimateLabel")}</p>
+            <p className="mt-1 font-display text-3xl font-bold tabular-nums text-accent-foreground">
+              {clearance.label}
             </p>
-          )}
+            <p className="mt-2 text-xs text-muted-foreground">{t("methodNote")}</p>
+          </div>
         </div>
       )}
     </div>

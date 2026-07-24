@@ -1433,15 +1433,14 @@
     "halfLifeLabel": "Half-life",
     "estimateLabel": "Estimated clearance time",
     "methodNote": "Estimated as 5 half-lives (~97% cleared). Varies by metabolism, accumulated dose and other individual factors — not an exact figure for you specifically.",
-    "noDataMessage": "There's no reliable half-life data to calculate this for this peptide.",
     "faq": [
       {
         "q": "Why 5 half-lives?",
         "a": "It's the standard pharmacology rule of thumb: after 5 half-lives, a compound is considered practically cleared from the body (~97%). It's the same reference clinical calculators use, not a made-up figure."
       },
       {
-        "q": "Why don't some peptides show an estimate?",
-        "a": "When there's no reliable human half-life data (or what's available is too scattered), we'd rather tell you honestly than invent a number."
+        "q": "Why don't all the Library's peptides show up here?",
+        "a": "We only include ones with reliable half-life data. When that data doesn't exist (or is too scattered), we'd rather leave the peptide out than give you a made-up estimate."
       }
     ]
   },
