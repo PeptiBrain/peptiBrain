@@ -49,3 +49,34 @@ export async function celebrate() {
     confetti({ particleCount: 50, spread: 100, origin: { y: 0.5 }, colors, zIndex: 9999 });
   }, 200);
 }
+
+// Hito de racha (7/30/100/365 días): confeti más intenso que el de una dosis
+// normal (3 ráfagas en vez de 2) + el modal de Pepti que escucha este evento.
+export const MILESTONE_CELEBRATION_EVENT = "peptibrain:milestone-celebration";
+export type MilestoneCelebration = { milestone: number };
+
+export function celebrateMilestone(milestone: number) {
+  celebrateBig();
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent(MILESTONE_CELEBRATION_EVENT, { detail: { milestone } }));
+  }
+}
+
+async function celebrateBig() {
+  if (typeof window === "undefined") return;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  if (!confettiModule) {
+    confettiModule = (await import("canvas-confetti")).default as unknown as typeof import("canvas-confetti");
+  }
+  const confetti = confettiModule as unknown as (opts?: Record<string, unknown>) => void;
+
+  const colors = ["#3fae7d", "#6bc79b", "#f4a340"];
+  confetti({ particleCount: 140, spread: 100, startVelocity: 45, origin: { y: 0.5 }, colors, zIndex: 9999 });
+  setTimeout(() => {
+    confetti({ particleCount: 90, spread: 120, origin: { y: 0.4 }, colors, zIndex: 9999 });
+  }, 200);
+  setTimeout(() => {
+    confetti({ particleCount: 60, spread: 140, origin: { y: 0.3 }, colors, zIndex: 9999 });
+  }, 400);
+}

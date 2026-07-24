@@ -9,6 +9,7 @@ import { AppTour } from "@/components/app/shell/AppTour";
 import { NextDosesWidget } from "@/components/app/shell/NextDosesWidget";
 import { NotificationBell } from "@/components/app/shell/NotificationBell";
 import { DoseCelebrationToast } from "@/components/app/shell/DoseCelebrationToast";
+import { MilestoneModal } from "@/components/app/shell/MilestoneModal";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
@@ -74,6 +75,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         <AppTour />
         <NextDosesWidget />
         <DoseCelebrationToast />
+        <MilestoneModal />
       </div>
     </div>
   );

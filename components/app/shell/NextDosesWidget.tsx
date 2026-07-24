@@ -7,6 +7,7 @@ import { Link } from "@/i18n/navigation";
 import { Syringe, Check, X, ChevronRight, AlertTriangle } from "lucide-react";
 import { loadAppData, markDoseDone, type AppData, type Dose } from "@/lib/app-data";
 import { celebrateDoseLogged } from "@/lib/celebrate";
+import { checkStreakMilestone } from "@/lib/milestones";
 import { PeptideIcon } from "@/components/app/peptidos/PeptideIcon";
 import { InjectionSiteModal } from "@/components/app/shell/InjectionSiteModal";
 import { suggestNextInjectionSite, lastInjectionSite, type InjectionSiteId } from "@/lib/injection-sites";
@@ -49,9 +50,11 @@ export function NextDosesWidget() {
   }
 
   async function markDone(doseId: string, injectionSite?: string) {
+    const prev = data!;
     const next = await markDoseDone(data!, doseId, injectionSite);
     setData(next);
     celebrateDoseLogged(next);
+    checkStreakMilestone(prev, next);
     setSiteDose(null);
   }
 

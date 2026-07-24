@@ -578,6 +578,14 @@
     "adherence": "{pct}% adherence",
     "weight": "{delta} kg"
   },
+  "Milestones": {
+    "title": "🔥 {days}-day streak!",
+    "body_7": "A whole week without missing a day. Pepti is proud of you.",
+    "body_30": "A full month. This is a real habit now.",
+    "body_100": "100 days. You're officially unstoppable.",
+    "body_365": "A whole year. Pepti is speechless — just applauding.",
+    "cta": "Keep it up"
+  },
   "Providers": {
     "modalTitle": "New supplier",
     "close": "Close",

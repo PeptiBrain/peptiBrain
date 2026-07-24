@@ -20,6 +20,7 @@ import {
   type LabResult,
 } from "@/lib/app-data";
 import { LAB_MARKER_IDS, LAB_MARKER_DEFAULT_UNIT, type LabMarkerId } from "@/lib/lab-markers";
+import { checkStreakMilestone } from "@/lib/milestones";
 import { SubTabs, type SubTabItem } from "@/components/app/shell/SubTabs";
 import { PremiumLocked } from "@/components/app/shell/PremiumLocked";
 import { ModalShell } from "@/components/app/shell/ModalShell";
@@ -65,8 +66,10 @@ export default function SaludPage() {
 
   async function handleSaveExercise() {
     if (!data || !exerciseMin.trim()) return;
+    const prev = data;
     const next = await addHealthLog(data, { date: todayIso(), exerciseMin: exerciseMin.trim() });
     setData(next);
+    checkStreakMilestone(prev, next);
     setExerciseMin("");
     setShowExerciseForm(false);
   }
@@ -305,6 +308,7 @@ export default function SaludPage() {
         onSave={async (payload) => {
           const next = await addHealthLog(data, payload);
           setData(next);
+          checkStreakMilestone(data, next);
           setShowWeightModal(false);
         }}
       />
@@ -325,6 +329,7 @@ export default function SaludPage() {
         onSave={async (payload) => {
           const next = await addHealthLog(data, payload);
           setData(next);
+          checkStreakMilestone(data, next);
           setShowHydrationModal(false);
         }}
       />
@@ -335,6 +340,7 @@ export default function SaludPage() {
         onSave={async (payload) => {
           const next = await addHealthLog(data, payload);
           setData(next);
+          checkStreakMilestone(data, next);
           setShowSideEffectModal(false);
         }}
       />

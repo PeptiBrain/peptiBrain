@@ -9,6 +9,7 @@ import { loadOnboarding } from "@/lib/onboarding";
 import { loadAppData, markDoseDone, type AppData } from "@/lib/app-data";
 import { computeStats } from "@/lib/stats";
 import { celebrateDoseLogged } from "@/lib/celebrate";
+import { checkStreakMilestone } from "@/lib/milestones";
 import { CURRENCY, type Locale } from "@/i18n/routing";
 import { track } from "@/lib/mixpanel";
 import { DateRangeTabs } from "@/components/app/shell/DateRangeTabs";
@@ -95,9 +96,11 @@ export default function InicioPage() {
   async function confirmMarkDone(injectionSite?: string) {
     if (!pendingDose || !data) return;
     setShowSiteModal(false);
+    const prev = data;
     const next = await markDoseDone(data, pendingDose.id, injectionSite);
     setData(next);
     celebrateDoseLogged(next);
+    checkStreakMilestone(prev, next);
     track("dose_logged", { peptide: donePeptide?.name });
   }
 

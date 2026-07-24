@@ -578,6 +578,14 @@
     "adherence": "{pct}% de adherencia",
     "weight": "{delta} kg"
   },
+  "Milestones": {
+    "title": "🔥 ¡{days} días de racha!",
+    "body_7": "Una semana entera sin fallar. Pepti está orgullosa de ti.",
+    "body_30": "Un mes completo. Esto ya es un hábito de verdad.",
+    "body_100": "100 días. Eres oficialmente imparable.",
+    "body_365": "Un año entero. Pepti no tiene palabras — solo aplausos.",
+    "cta": "Seguir así"
+  },
   "Providers": {
     "modalTitle": "Nuevo proveedor",
     "close": "Cerrar",
