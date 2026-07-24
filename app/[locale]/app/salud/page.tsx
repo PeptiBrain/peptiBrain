@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import Image from "next/image";
-import { Plus, Scale, Droplets, Footprints, AlertTriangle, Apple, Trash2, Camera, X, FlaskConical } from "lucide-react";
+import { Plus, Scale, Droplets, Footprints, AlertTriangle, Apple, Trash2, Camera, X, FlaskConical, Moon, Smile } from "lucide-react";
 import {
   addHealthLog,
   addMeal,
@@ -25,7 +25,9 @@ import { SubTabs, type SubTabItem } from "@/components/app/shell/SubTabs";
 import { PremiumLocked } from "@/components/app/shell/PremiumLocked";
 import { ModalShell } from "@/components/app/shell/ModalShell";
 
-type Tab = "peso" | "ejercicio" | "comidas" | "fotos" | "labs" | "hidratacion" | "efectos";
+type Tab = "peso" | "ejercicio" | "comidas" | "fotos" | "labs" | "hidratacion" | "efectos" | "sueno" | "animo";
+
+const MOOD_EMOJI = ["😞", "😕", "😐", "🙂", "😄"] as const;
 
 function todayIso() {
   return new Date().toISOString().slice(0, 10);
@@ -45,6 +47,8 @@ export default function SaludPage() {
   const [showPhotoModal, setShowPhotoModal] = useState(false);
   const [lightboxPhoto, setLightboxPhoto] = useState<ProgressPhoto | null>(null);
   const [showLabModal, setShowLabModal] = useState(false);
+  const [showSleepModal, setShowSleepModal] = useState(false);
+  const [showMoodModal, setShowMoodModal] = useState(false);
 
   useEffect(() => {
     loadAppData().then(setData);
@@ -62,6 +66,8 @@ export default function SaludPage() {
     { key: "labs", label: t("tabLabs"), icon: FlaskConical, locked: !isPremium },
     { key: "hidratacion", label: t("tabHydration"), icon: Droplets, locked: !isPremium },
     { key: "efectos", label: t("tabSideEffects"), icon: AlertTriangle, locked: !isPremium },
+    { key: "sueno", label: t("tabSleep"), icon: Moon, locked: !isPremium },
+    { key: "animo", label: t("tabMood"), icon: Smile, locked: !isPremium },
   ];
 
   async function handleSaveExercise() {
@@ -82,6 +88,8 @@ export default function SaludPage() {
   const exerciseLogs = data.healthLogs.filter((h) => h.exerciseMin);
   const hydrationLogs = data.healthLogs.filter((h) => h.hydrationMl);
   const sideEffectLogs = data.healthLogs.filter((h) => h.sideEffect);
+  const sleepLogs = data.healthLogs.filter((h) => h.sleepHours);
+  const moodLogs = data.healthLogs.filter((h) => h.mood);
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-5">
@@ -155,6 +163,26 @@ export default function SaludPage() {
             type="button"
             onClick={() => setShowSideEffectModal(true)}
             aria-label={t("registerSideEffectAria")}
+            className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground transition-transform active:scale-97"
+          >
+            <Plus className="size-5" aria-hidden />
+          </button>
+        )}
+        {tab === "sueno" && isPremium && (
+          <button
+            type="button"
+            onClick={() => setShowSleepModal(true)}
+            aria-label={t("registerSleepAria")}
+            className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground transition-transform active:scale-97"
+          >
+            <Plus className="size-5" aria-hidden />
+          </button>
+        )}
+        {tab === "animo" && isPremium && (
+          <button
+            type="button"
+            onClick={() => setShowMoodModal(true)}
+            aria-label={t("registerMoodAria")}
             className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground transition-transform active:scale-97"
           >
             <Plus className="size-5" aria-hidden />
@@ -303,6 +331,43 @@ export default function SaludPage() {
           ) : (
             <PremiumLocked description={t("sideEffectsLockedDesc")} />
           ))}
+
+        {tab === "sueno" &&
+          (isPremium ? (
+            <HealthList
+              logs={sleepLogs}
+              emptyText={t("sleepEmptyState")}
+              emptyCta={t("registerSleepAria")}
+              onEmptyCta={() => setShowSleepModal(true)}
+              formatDate={formatLogDate}
+              render={(log) => (
+                <span className="flex items-center gap-1">
+                  <Moon className="size-3.5 text-muted-foreground" aria-hidden /> {t("sleepHoursInline", { hours: log.sleepHours || "" })}
+                </span>
+              )}
+            />
+          ) : (
+            <PremiumLocked description={t("sleepLockedDesc")} />
+          ))}
+
+        {tab === "animo" &&
+          (isPremium ? (
+            <HealthList
+              logs={moodLogs}
+              emptyText={t("moodEmptyState")}
+              emptyCta={t("registerMoodAria")}
+              onEmptyCta={() => setShowMoodModal(true)}
+              formatDate={formatLogDate}
+              render={(log) => (
+                <span className="flex items-center gap-2 text-base">
+                  <span aria-hidden>{MOOD_EMOJI[(log.mood || 3) - 1]}</span>
+                  <span className="text-sm text-muted-foreground">{t(`moodLabel_${log.mood}` as never)}</span>
+                </span>
+              )}
+            />
+          ) : (
+            <PremiumLocked description={t("moodLockedDesc")} />
+          ))}
       </div>
 
       <WeightModal
@@ -345,6 +410,28 @@ export default function SaludPage() {
           setData(next);
           checkStreakMilestone(data, next);
           setShowSideEffectModal(false);
+        }}
+      />
+
+      <SleepModal
+        open={showSleepModal}
+        onClose={() => setShowSleepModal(false)}
+        onSave={async (payload) => {
+          const next = await addHealthLog(data, payload);
+          setData(next);
+          checkStreakMilestone(data, next);
+          setShowSleepModal(false);
+        }}
+      />
+
+      <MoodModal
+        open={showMoodModal}
+        onClose={() => setShowMoodModal(false)}
+        onSave={async (payload) => {
+          const next = await addHealthLog(data, payload);
+          setData(next);
+          checkStreakMilestone(data, next);
+          setShowMoodModal(false);
         }}
       />
 
@@ -807,6 +894,142 @@ function SideEffectModal({
             type="button"
             disabled={!sideEffect.trim()}
             onClick={() => onSave({ date, sideEffect: sideEffect.trim() })}
+            className="h-11 flex-1 rounded-lg bg-primary text-sm font-semibold text-primary-foreground disabled:opacity-50"
+          >
+            {t("saveRecord")}
+          </button>
+          <button
+            type="button"
+            onClick={onClose}
+            className="h-11 rounded-lg border border-border px-4 text-sm font-medium text-foreground"
+          >
+            {t("cancel")}
+          </button>
+        </div>
+      </div>
+    </ModalShell>
+  );
+}
+
+function SleepModal({
+  open,
+  onClose,
+  onSave,
+}: {
+  open: boolean;
+  onClose: () => void;
+  onSave: (payload: Omit<HealthLog, "id">) => void;
+}) {
+  const t = useTranslations("Salud");
+  const [date, setDate] = useState(todayIso());
+  const [sleepHours, setSleepHours] = useState("");
+
+  useEffect(() => {
+    if (open) {
+      setDate(todayIso());
+      setSleepHours("");
+    }
+  }, [open]);
+
+  return (
+    <ModalShell open={open} onClose={onClose} title={t("registerSleepTitle")} icon={<Moon className="size-5 text-primary" aria-hidden />}>
+      <div className="space-y-3">
+        <div>
+          <label className="mb-1.5 block text-sm font-medium text-foreground">{t("dateLabel")}</label>
+          <input
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            className="h-11 w-full rounded-lg border border-input bg-background px-3 text-base text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          />
+        </div>
+        <div>
+          <label className="mb-1.5 block text-sm font-medium text-foreground">{t("sleepHoursLabel")}</label>
+          <input
+            value={sleepHours}
+            onChange={(e) => setSleepHours(e.target.value)}
+            inputMode="decimal"
+            placeholder="7.5"
+            className="h-11 w-full rounded-lg border border-input bg-background px-3 text-base text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          />
+        </div>
+        <div className="flex gap-2 pt-1">
+          <button
+            type="button"
+            disabled={!sleepHours.trim()}
+            onClick={() => onSave({ date, sleepHours: sleepHours.trim() })}
+            className="h-11 flex-1 rounded-lg bg-primary text-sm font-semibold text-primary-foreground disabled:opacity-50"
+          >
+            {t("saveRecord")}
+          </button>
+          <button
+            type="button"
+            onClick={onClose}
+            className="h-11 rounded-lg border border-border px-4 text-sm font-medium text-foreground"
+          >
+            {t("cancel")}
+          </button>
+        </div>
+      </div>
+    </ModalShell>
+  );
+}
+
+function MoodModal({
+  open,
+  onClose,
+  onSave,
+}: {
+  open: boolean;
+  onClose: () => void;
+  onSave: (payload: Omit<HealthLog, "id">) => void;
+}) {
+  const t = useTranslations("Salud");
+  const [date, setDate] = useState(todayIso());
+  const [mood, setMood] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (open) {
+      setDate(todayIso());
+      setMood(null);
+    }
+  }, [open]);
+
+  return (
+    <ModalShell open={open} onClose={onClose} title={t("registerMoodTitle")} icon={<Smile className="size-5 text-primary" aria-hidden />}>
+      <div className="space-y-3">
+        <div>
+          <label className="mb-1.5 block text-sm font-medium text-foreground">{t("dateLabel")}</label>
+          <input
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            className="h-11 w-full rounded-lg border border-input bg-background px-3 text-base text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          />
+        </div>
+        <div>
+          <label className="mb-1.5 block text-sm font-medium text-foreground">{t("moodLabel")}</label>
+          <div className="grid grid-cols-5 gap-2">
+            {MOOD_EMOJI.map((emoji, i) => (
+              <button
+                key={i}
+                type="button"
+                onClick={() => setMood(i + 1)}
+                aria-label={t(`moodLabel_${i + 1}` as never)}
+                className={`flex h-14 items-center justify-center rounded-lg border text-2xl ${
+                  mood === i + 1 ? "border-primary bg-accent" : "border-border bg-background"
+                }`}
+              >
+                {emoji}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="flex gap-2 pt-1">
+          <button
+            type="button"
+            disabled={mood == null}
+            onClick={() => mood != null && onSave({ date, mood })}
             className="h-11 flex-1 rounded-lg bg-primary text-sm font-semibold text-primary-foreground disabled:opacity-50"
           >
             {t("saveRecord")}

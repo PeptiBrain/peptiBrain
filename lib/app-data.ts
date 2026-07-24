@@ -62,6 +62,8 @@ export type HealthLog = {
   hydrationMl?: string;
   exerciseMin?: string;
   sideEffect?: string;
+  sleepHours?: string;
+  mood?: number; // 1-5
   notes?: string;
 };
 
@@ -327,6 +329,8 @@ export async function loadAppData(): Promise<AppData> {
       hydrationMl: h.hydration_ml != null ? String(h.hydration_ml) : undefined,
       exerciseMin: h.exercise_min != null ? String(h.exercise_min) : undefined,
       sideEffect: h.side_effect || undefined,
+      sleepHours: h.sleep_hours != null ? String(h.sleep_hours) : undefined,
+      mood: h.mood != null ? Number(h.mood) : undefined,
       notes: h.notes || undefined,
     })),
     meals: (meals || []).map((m) => ({
@@ -671,6 +675,9 @@ export async function addHealthLog(
       exercise_min:
         log.exerciseMin ?? existing?.exerciseMin ? Number(log.exerciseMin ?? existing?.exerciseMin) : null,
       side_effect: log.sideEffect ?? existing?.sideEffect ?? null,
+      sleep_hours:
+        log.sleepHours ?? existing?.sleepHours ? Number(log.sleepHours ?? existing?.sleepHours) : null,
+      mood: log.mood ?? existing?.mood ?? null,
       notes: log.notes ?? existing?.notes ?? null,
     },
     { onConflict: "user_id,log_date" }
@@ -1094,6 +1101,8 @@ export async function loadSharedOwnerData(ownerId: string): Promise<SharedOwnerD
       hydrationMl: h.hydration_ml != null ? String(h.hydration_ml) : undefined,
       exerciseMin: h.exercise_min != null ? String(h.exercise_min) : undefined,
       sideEffect: h.side_effect || undefined,
+      sleepHours: h.sleep_hours != null ? String(h.sleep_hours) : undefined,
+      mood: h.mood != null ? Number(h.mood) : undefined,
       notes: h.notes || undefined,
     })),
     meals: (meals || []).map((m) => ({
