@@ -2,8 +2,8 @@
 
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Beaker, ChevronDown, Plus, Printer, Lock } from "lucide-react";
-import { addVial, PlanLimitError, type AppData, type Peptide, type SyringeType } from "@/lib/app-data";
+import { Beaker, ChevronDown, Plus, Printer, Lock, Trash2 } from "lucide-react";
+import { addVial, deletePeptide, PlanLimitError, type AppData, type Peptide, type SyringeType } from "@/lib/app-data";
 import { Link } from "@/i18n/navigation";
 import { PEPTIDE_PROFILES } from "@/lib/peptide-profiles";
 import { unitsToDraw } from "@/lib/dose-math";
@@ -36,6 +36,8 @@ export function PeptideCard({
   const [doseAmount, setDoseAmount] = useState("");
   const [doseUnit, setDoseUnit] = useState("mcg");
   const [limitReached, setLimitReached] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const vials = data.vials.filter((v) => v.peptideId === peptide.id);
   const profile = PEPTIDE_PROFILES.find(
@@ -98,15 +100,26 @@ export function PeptideCard({
     }
   }
 
+  async function handleDeletePeptide() {
+    setDeleting(true);
+    try {
+      const next = await deletePeptide(data, peptide.id);
+      onChange(next);
+    } finally {
+      setDeleting(false);
+      setConfirmDelete(false);
+    }
+  }
+
   return (
     <div className="rounded-xl border border-border bg-card p-4">
-      <button
-        type="button"
-        onClick={() => setExpanded((e) => !e)}
-        className="flex w-full items-center justify-between gap-2 text-left"
-        aria-expanded={expanded}
-      >
-        <div className="flex min-w-0 items-center gap-3">
+      <div className="flex w-full items-center justify-between gap-2">
+        <button
+          type="button"
+          onClick={() => setExpanded((e) => !e)}
+          className="flex min-w-0 flex-1 items-center gap-3 text-left"
+          aria-expanded={expanded}
+        >
           <PeptideIcon peptideName={peptide.name} />
           <div className="min-w-0">
             <p className="truncate font-display text-base font-bold text-foreground">{peptide.name}</p>
@@ -114,12 +127,50 @@ export function PeptideCard({
               {peptide.route} · {vials.length} {vials.length === 1 ? t("vial") : t("vials")}
             </p>
           </div>
+        </button>
+        <button
+          type="button"
+          onClick={() => setConfirmDelete(true)}
+          aria-label={t("deletePeptideAria")}
+          className="flex size-8 shrink-0 items-center justify-center rounded-full text-muted-foreground hover:bg-secondary hover:text-destructive"
+        >
+          <Trash2 className="size-4" aria-hidden />
+        </button>
+        <button
+          type="button"
+          onClick={() => setExpanded((e) => !e)}
+          aria-label={expanded ? t("collapse") : t("expand")}
+          className="flex size-8 shrink-0 items-center justify-center"
+        >
+          <ChevronDown
+            className={`size-4 text-muted-foreground transition-transform ${expanded ? "rotate-180" : ""}`}
+            aria-hidden
+          />
+        </button>
+      </div>
+
+      {confirmDelete && (
+        <div className="mt-3 flex items-center justify-between gap-2 rounded-lg bg-secondary/60 px-3 py-2">
+          <p className="text-xs text-foreground">{t("confirmDeletePeptide")}</p>
+          <div className="flex shrink-0 gap-1.5">
+            <button
+              type="button"
+              onClick={() => setConfirmDelete(false)}
+              className="rounded-md px-2 py-1 text-xs font-medium text-muted-foreground hover:bg-secondary"
+            >
+              {t("cancel")}
+            </button>
+            <button
+              type="button"
+              disabled={deleting}
+              onClick={handleDeletePeptide}
+              className="rounded-md bg-destructive/10 px-2 py-1 text-xs font-semibold text-destructive hover:bg-destructive/20 disabled:opacity-50"
+            >
+              {t("deleteConfirm")}
+            </button>
+          </div>
         </div>
-        <ChevronDown
-          className={`size-4 shrink-0 text-muted-foreground transition-transform ${expanded ? "rotate-180" : ""}`}
-          aria-hidden
-        />
-      </button>
+      )}
 
       {expanded && (
         <div className="mt-3 space-y-2 border-t border-border pt-3">

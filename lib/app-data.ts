@@ -434,6 +434,15 @@ export async function addPeptide(
   return loadAppData();
 }
 
+// Borra el péptido y, por "on delete cascade" en la base de datos, también
+// sus viales y dosis asociadas — no queda nada huérfano.
+export async function deletePeptide(data: AppData, peptideId: string): Promise<AppData> {
+  const { supabase } = await requireUser();
+  const { error } = await supabase.from("peptides").delete().eq("id", peptideId);
+  if (error) throw error;
+  return loadAppData();
+}
+
 export async function addVial(
   data: AppData,
   vial: Omit<Vial, "id" | "createdAt" | "shares">
