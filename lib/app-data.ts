@@ -56,6 +56,25 @@ export type Meal = {
   createdAt: string;
 };
 
+export type ProgressPhoto = {
+  id: string;
+  date: string; // ISO yyyy-mm-dd
+  storagePath: string;
+  url: string; // URL firmada, válida por 1 hora desde loadAppData()
+  note?: string;
+  createdAt: string;
+};
+
+export type LabResult = {
+  id: string;
+  date: string; // ISO yyyy-mm-dd
+  marker: string;
+  value: string;
+  unit?: string;
+  note?: string;
+  createdAt: string;
+};
+
 export type FamilyRelationship =
   | "pareja"
   | "hermano"
@@ -127,6 +146,8 @@ export type AppData = {
   doses: Dose[];
   healthLogs: HealthLog[];
   meals: Meal[];
+  progressPhotos: ProgressPhoto[];
+  labResults: LabResult[];
   providers: Provider[];
   trips: Trip[];
   familyMembers: FamilyMember[];
@@ -141,6 +162,8 @@ const EMPTY: AppData = {
   doses: [],
   healthLogs: [],
   meals: [],
+  progressPhotos: [],
+  labResults: [],
   providers: [],
   familyMembers: [],
   plan: "free",
@@ -186,6 +209,8 @@ export async function loadAppData(): Promise<AppData> {
     { data: doses },
     { data: healthLogs },
     { data: meals },
+    { data: progressPhotos },
+    { data: labResults },
     { data: providers },
     { data: trips },
     { data: family },
@@ -196,11 +221,21 @@ export async function loadAppData(): Promise<AppData> {
     supabase.from("doses").select("*").order("created_at", { ascending: true }),
     supabase.from("health_logs").select("*").order("log_date", { ascending: false }),
     supabase.from("meals").select("*").order("log_date", { ascending: false }),
+    supabase.from("progress_photos").select("*").order("log_date", { ascending: false }),
+    supabase.from("lab_results").select("*").order("log_date", { ascending: false }),
     supabase.from("providers").select("*").order("created_at", { ascending: true }),
     supabase.from("trips").select("*").order("start_date", { ascending: false }),
     supabase.from("family_members").select("*").order("created_at", { ascending: true }),
     supabase.from("vial_shares").select("*"),
   ]);
+
+  // Bucket privado: hay que firmar cada URL (expira en 1h) — a diferencia de
+  // avatars, que es público y usa getPublicUrl.
+  const photoPaths = (progressPhotos || []).map((p) => p.storage_path);
+  const { data: signedPhotos } = photoPaths.length
+    ? await supabase.storage.from("progress-photos").createSignedUrls(photoPaths, 3600)
+    : { data: [] as { path: string | null; signedUrl: string }[] | null };
+  const signedUrlByPath = new Map((signedPhotos || []).map((s) => [s.path, s.signedUrl]));
 
   const { count: extraFamilySeats } = await supabase
     .from("family_extra_seats")
@@ -263,6 +298,23 @@ export async function loadAppData(): Promise<AppData> {
       description: m.description,
       calories: m.calories != null ? String(m.calories) : undefined,
       createdAt: m.created_at,
+    })),
+    progressPhotos: (progressPhotos || []).map((p) => ({
+      id: p.id,
+      date: p.log_date,
+      storagePath: p.storage_path,
+      url: signedUrlByPath.get(p.storage_path) || "",
+      note: p.note || undefined,
+      createdAt: p.created_at,
+    })),
+    labResults: (labResults || []).map((l) => ({
+      id: l.id,
+      date: l.log_date,
+      marker: l.marker,
+      value: String(l.value),
+      unit: l.unit || undefined,
+      note: l.note || undefined,
+      createdAt: l.created_at,
     })),
     providers: (providers || []).map((p) => ({
       id: p.id,
@@ -594,6 +646,58 @@ export async function addMeal(data: AppData, meal: Omit<Meal, "id" | "createdAt"
 export async function removeMeal(data: AppData, mealId: string): Promise<AppData> {
   const { supabase } = await requireUser();
   const { error } = await supabase.from("meals").delete().eq("id", mealId);
+  if (error) throw error;
+  return loadAppData();
+}
+
+export async function addProgressPhoto(
+  data: AppData,
+  photo: { date: string; file: File; note?: string }
+): Promise<AppData> {
+  const { supabase, user } = await requireUser();
+  const ext = (photo.file.name.split(".").pop() || "jpg").toLowerCase();
+  const path = `${user.id}/${photo.date}-${Date.now()}.${ext}`;
+  const { error: upErr } = await supabase.storage.from("progress-photos").upload(path, photo.file);
+  if (upErr) throw upErr;
+  const { error } = await supabase.from("progress_photos").insert({
+    user_id: user.id,
+    log_date: photo.date,
+    storage_path: path,
+    note: photo.note || null,
+  });
+  if (error) throw error;
+  return loadAppData();
+}
+
+export async function removeProgressPhoto(data: AppData, photoId: string): Promise<AppData> {
+  const { supabase } = await requireUser();
+  const photo = data.progressPhotos.find((p) => p.id === photoId);
+  const { error } = await supabase.from("progress_photos").delete().eq("id", photoId);
+  if (error) throw error;
+  if (photo) await supabase.storage.from("progress-photos").remove([photo.storagePath]);
+  return loadAppData();
+}
+
+export async function addLabResult(
+  data: AppData,
+  result: Omit<LabResult, "id" | "createdAt">
+): Promise<AppData> {
+  const { supabase, user } = await requireUser();
+  const { error } = await supabase.from("lab_results").insert({
+    user_id: user.id,
+    log_date: result.date,
+    marker: result.marker,
+    value: Number(result.value),
+    unit: result.unit || null,
+    note: result.note || null,
+  });
+  if (error) throw error;
+  return loadAppData();
+}
+
+export async function removeLabResult(data: AppData, resultId: string): Promise<AppData> {
+  const { supabase } = await requireUser();
+  const { error } = await supabase.from("lab_results").delete().eq("id", resultId);
   if (error) throw error;
   return loadAppData();
 }
