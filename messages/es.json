@@ -518,6 +518,7 @@
     "startStreak": "Empieza tu racha",
     "streakChip": "Racha: {count, plural, one {# día} other {# días}}",
     "pbChip": "{count} PB",
+    "shareProtocol": "Compartir",
     "weekProgress": "{done} de {total} dosis esta semana,",
     "weekTagPerfect": "¡VAS PERFECTO!",
     "weekTagCatchUp": "¡A REMONTAR!",
@@ -586,6 +587,12 @@
     "body_100": "100 días. Eres oficialmente imparable.",
     "body_365": "Un año entero. Pepti no tiene palabras — solo aplausos.",
     "cta": "Seguir así"
+  },
+  "ShareProtocol": {
+    "title": "Tu tarjeta de protocolo",
+    "close": "Cerrar",
+    "download": "Descargar",
+    "share": "Compartir"
   },
   "DailySummary": {
     "title": "Resumen de tu día",

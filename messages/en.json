@@ -518,6 +518,7 @@
     "startStreak": "Start your streak",
     "streakChip": "Streak: {count, plural, one {# day} other {# days}}",
     "pbChip": "{count} PB",
+    "shareProtocol": "Share",
     "weekProgress": "{done} of {total} doses this week,",
     "weekTagPerfect": "PERFECT RUN!",
     "weekTagCatchUp": "TIME TO CATCH UP!",
@@ -586,6 +587,12 @@
     "body_100": "100 days. You're officially unstoppable.",
     "body_365": "A whole year. Pepti is speechless — just applauding.",
     "cta": "Keep it up"
+  },
+  "ShareProtocol": {
+    "title": "Your protocol card",
+    "close": "Close",
+    "download": "Download",
+    "share": "Share"
   },
   "DailySummary": {
     "title": "Your day, summed up",

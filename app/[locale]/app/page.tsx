@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "motion/react";
 import { useLocale, useTranslations } from "next-intl";
-import { Check, Flame, Syringe, AlertTriangle, Scale, Droplets, Lock, Apple, CalendarDays, Sparkles, Wallet, Trophy, ArrowRight, Gem } from "lucide-react";
+import { Check, Flame, Syringe, AlertTriangle, Scale, Droplets, Lock, Apple, CalendarDays, Sparkles, Wallet, Trophy, ArrowRight, Gem, Share2 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { loadOnboarding } from "@/lib/onboarding";
 import { loadAppData, markDoseDone, type AppData } from "@/lib/app-data";
@@ -21,6 +21,7 @@ import { Mascot } from "@/components/app/shell/Mascot";
 import { FirstStepsChecklist } from "@/components/app/shell/FirstStepsChecklist";
 import { DailySummaryModal } from "@/components/app/shell/DailySummaryModal";
 import { BodyLevelWidget } from "@/components/app/shell/BodyLevelWidget";
+import { ProtocolShareCard } from "@/components/app/shell/ProtocolShareCard";
 import { isWithinRange, type CustomRange, type DateRangeKey } from "@/lib/date-range";
 import { suggestNextInjectionSite, lastInjectionSite, type InjectionSiteId } from "@/lib/injection-sites";
 
@@ -36,6 +37,7 @@ export default function InicioPage() {
   const [showCalendar, setShowCalendar] = useState(false);
   const [showAssistant, setShowAssistant] = useState(false);
   const [showSiteModal, setShowSiteModal] = useState(false);
+  const [showShareCard, setShowShareCard] = useState(false);
 
   useEffect(() => {
     loadAppData().then(setData);
@@ -150,6 +152,15 @@ export default function InicioPage() {
         <span className="flex items-center gap-1.5 rounded-full border border-border bg-secondary px-3 py-1.5 text-xs font-medium text-muted-foreground">
           <Gem className="size-3.5 text-primary" aria-hidden /> {t("pbChip", { count: data.progress.pbTotal })}
         </span>
+        {data.peptides.length > 0 && (
+          <button
+            type="button"
+            onClick={() => setShowShareCard(true)}
+            className="flex items-center gap-1.5 rounded-full border border-border bg-secondary px-3 py-1.5 text-xs font-medium text-muted-foreground hover:text-foreground"
+          >
+            <Share2 className="size-3.5" aria-hidden /> {t("shareProtocol")}
+          </button>
+        )}
       </div>
       <motion.p
         initial={{ opacity: 0, y: 8 }}
@@ -457,6 +468,7 @@ export default function InicioPage() {
       )}
 
       <DailySummaryModal data={data} />
+      {showShareCard && <ProtocolShareCard data={data} name={name} onClose={() => setShowShareCard(false)} />}
     </div>
   );
 }
