@@ -1,4 +1,27 @@
 # ESTADO — PeptiBrain
+
+## 🚦 CERTIFICACIÓN PRE-LANZAMIENTO (2026-07-25) — veredicto: **NO APTO todavía** (1 bloqueante, igual que el 2026-07-21)
+Repetida la auditoría de venta a 8 días del lanzamiento (2 de agosto). Esta sesión además: (a) corrida y cerrada la auditoría de seguridad/rendimiento de Supabase vía MCP (revocado el farmeo de PB por RPC directo, RPCs sin sesión cerradas, 8 índices de FK agregados, políticas RLS duplicadas fusionadas), (b) corregidos 10+ bugs reales de una auditoría de código (doble-submit en 6 modales de Salud, orden de "Próxima dosis", límite superior de fecha reaparecido en Inicio, timezone en fechas solo-día y en Modo viaje, reenvío de confirmación de email, cupos de Familia no bloqueados al invitar, viaje con fechas invertidas, CSV en idioma fijo, header desbordado a 375px, modo oscuro filtrado a la web pública), (c) `MANUAL-DEL-DUEÑO.md` actualizado (estaba desactualizado: no mencionaba el panel /panel ya construido, y decía OpenRouter en vez de Gemini).
+
+| # | Bloque | Estado | Detalle |
+|---|---|---|---|
+| 1 | Seguridad | ✅ | RLS en todas las tablas, IDOR probado (sesión previa), headers/CSP en vivo, webhook con firma timing-safe. Farmeo de PB por RPC cerrado hoy. Quedan 2 ⚠️ menores aceptados: "leaked password protection" requiere plan Pago de Supabase (no crítico), bucket `avatars` permite listar archivos (riesgo bajo, patrón común). |
+| 2 | Datos | ✅ RLS/índices, ❌ **backups**: confirmado que el plan Free de Supabase no tiene backups ni restore — sin red de seguridad si algo se corrompe. |
+| 3 | Escala | ✅ para 300-500 usuarios. Mismo Supabase Free: pausa a los 7 días de inactividad + egress 5GB — ligado al punto de backups. |
+| 4 | IA | ✅ Gemini funcionando, probado con preguntas reales, kill-switch + límites activos, costo ~0%. |
+| 5 | Pago | ❌ **BLOQUEANTE — el único que de verdad detiene el lanzamiento**: nunca se probó un pago real de punta a punta (pagar → plan activo → features). Código listo, falta la prueba real (solo la puede hacer el usuario). |
+| 6 | Legal | ✅ 5 páginas reales (LLC verificada), enlaces del footer confirmados apuntando a rutas que existen. |
+| 7 | Economía | ✅ costo IA ~0% del precio (modelo gratis). |
+| 8 | Operación | ✅ panel /panel (sustituto de Sentry) + error_log + Error Boundaries activos, MANUAL-DEL-DUEÑO.md actualizado hoy. ⚠️ sin status page pública (no crítico a esta escala). |
+| 9 | Producto enriquecido | ⚠️ **no verificado con evidencia fresca esta sesión** — no puedo iniciar sesión en la app (regla dura), así que no pude renderizar/puntuar /40 las pantallas internas post-fixes. Lo público (landing, calculadora, protocolos) sí se miró a 375px. Pendiente que el usuario confirme visualmente el estado vacío rediseñado de Inicio. |
+| 10 | Rigor de entrega | ✅ invariantes de dinero/datos, IDOR probado, circuit-breaker IA, export de datos, borrado de cuenta real. ⚠️ auto-QA end-to-end como usuario real: no lo pude hacer yo (requiere login), pendiente del usuario. |
+
+**Acciones que solo el usuario puede hacer antes de vender** (sin cambios desde el 2026-07-22, siguen abiertas):
+1. ❌ **Prueba de pago real de punta a punta** — el único bloqueante duro.
+2. ⚠️ Decidir cuándo subir a Supabase Pro (backups + sin pausa) — recomendado antes del primer cliente real, no antes de eso.
+3. ⚠️ Mirar el estado vacío rediseñado de Inicio ("No tienes dosis pendientes") y confirmar que se ve bien.
+4. ⚠️ Activar "Leaked password protection" si en algún momento sube a Supabase Pro (opcional, no bloqueante).
+
 Última actualización: 2026-07-24 | Sesión de análisis de competencia (Dose Track, PepCalc, Peptides Calculator, PeptideCalc.io) + features de producto resultantes: borrar péptido, nivel estimado en el cuerpo, restablecer datos, calculadora con Water Solver/mezclas/protocolos guardados, % grasa corporal, tarjeta de protocolo compartible, sueño/ánimo, vista previa de titulación al crear protocolo, importar dosis desde CSV. Migraciones 0037-0040 corridas y verificadas. Titulación e import CSV no necesitaron migración nueva.
 
 ## 🔮 Pendiente a futuro (NO construir sin pedirlo explícitamente)

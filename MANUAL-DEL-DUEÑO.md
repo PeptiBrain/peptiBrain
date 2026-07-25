@@ -11,7 +11,7 @@ Guía en simple para operar la app sin necesitar ayuda técnica para cada cosa. 
 | **Hotmart** | Donde la gente paga y se genera el acceso | hotmart.com |
 | **Cloudflare** | Dueño del dominio `peptibrain.com` y protección anti-bots | cloudflare.com |
 | **Resend** | Envía los correos (bienvenida, confirmación) | resend.com |
-| **OpenRouter** | Le da "cerebro" al Asistente IA (opcional) | openrouter.ai |
+| **Google Gemini** | Le da "cerebro" al Asistente IA (gratis, plan `gemini-flash-latest`) | aistudio.google.com |
 | **Mixpanel** | Estadísticas de uso de la app | mixpanel.com |
 
 Todas las claves de estas cuentas viven en **Vercel → tu proyecto → Settings → Environment Variables**. Si alguna vez cambias una clave (por ejemplo, la regeneras porque se expuso), la actualizas ahí y le das **Redeploy** al último deploy para que tome el cambio.
@@ -20,15 +20,19 @@ Todas las claves de estas cuentas viven en **Vercel → tu proyecto → Settings
 
 Cada vez que se sube código nuevo al repositorio (a la rama principal), Vercel lo despliega solo — no tienes que hacer nada manualmente. Si algo se ve mal después de un despliegue, en **Vercel → Deployments** puedes volver a un despliegue anterior con un clic ("Redeploy" en la versión de antes).
 
-## 3. Cómo ver qué está pasando (no hay panel de administración propio todavía)
+## 3. Cómo ver qué está pasando
 
-PeptiBrain **no tiene un panel de administración propio** — para ver ventas, usuarios o corregir algo, usas directamente los paneles de cada proveedor:
+PeptiBrain **sí tiene un panel de administración propio**: entra a `https://peptibrain.com/panel` con tu cuenta (`josepovedaedinar@gmail.com`, la única marcada como `role='admin'`). Ahí ves de un vistazo: ventas/altas/churn, actividad real de la app (usuarios activos, adherencia, dinero rastreado por los usuarios), uso y costo del Asistente IA, salud del sistema (errores recientes agrupados), e Integraciones (Google Analytics, Mixpanel). Úsalo como primera parada antes de ir a Supabase/Hotmart directamente.
 
-- **Ventas y pagos**: entra a tu cuenta de **Hotmart** → verás cada compra, reembolso, y el estado de cada cliente.
+Si necesitas algo que el panel no muestra, o corregir un dato puntual, entras directo a los paneles de cada proveedor:
+
+- **Ventas y pagos (detalle exacto)**: tu cuenta de **Hotmart** → cada compra, reembolso, y el estado de cada cliente.
 - **Usuarios de la app**: en **Supabase → Table Editor → tabla `profiles`** — ahí ves cada persona registrada, su plan (`free`/`premium`/`family`) y su estado (`plan_status`).
 - **Dar acceso Premium manualmente** (por ejemplo, si alguien pagó pero el sistema no lo activó solo): en Supabase, busca a esa persona en `profiles` por su correo, y cambia la columna `plan` a `premium` (o `family`) y `plan_status` a `active`.
 - **Procesar un reembolso**: lo inicias desde Hotmart. El sistema debería bajar el plan de esa persona a `free` automáticamente (vía el webhook) — si no lo hizo, cámbialo tú a mano igual que arriba.
-- **Uso del Asistente IA**: en Supabase → Table Editor → tabla `assistant_usage` (por persona) o `assistant_global_usage` (total de todos, por día).
+- **Uso del Asistente IA**: en Supabase → Table Editor → tabla `assistant_usage` (por persona) o `assistant_global_usage` (total de todos, por día) — o directo en el panel, pestaña "Actividad".
+
+**Nota para sesiones futuras con Claude Code**: este proyecto tiene conectado un MCP de Supabase (herramientas `mcp__supabase__*`) que le permite a Claude ver tablas, corridas de seguridad/rendimiento, y aplicar migraciones directo, sin que tengas que pegar SQL tú mismo en el dashboard. Si en una sesión nueva esas herramientas no aparecen, basta con cerrar y volver a abrir Claude Code.
 
 ## 4. Tareas comunes, paso a paso
 
@@ -52,9 +56,9 @@ PeptiBrain **no tiene un panel de administración propio** — para ver ventas, 
 2. Ve a Supabase → tabla `profiles`, busca su correo. Si no aparece con plan premium/family, dáselo manualmente (ver punto 3).
 3. Si el correo con el que compró es distinto al que usó para registrarse en la app, ese es el problema más común — pídele que use el mismo correo, o actualízalo tú a mano.
 
-**La factura de la IA (OpenRouter) se ve alta / quieres pausarla ya**:
+**La factura de la IA (Gemini) se ve alta / quieres pausarla ya** (hoy el modelo configurado es gratis, así que no debería pasar, pero por si cambias de modelo):
 1. El Asistente tiene un tope diario automático (`ASSISTANT_GLOBAL_DAILY_LIMIT`, hoy en 500 mensajes/día entre todos) que lo pausa solo si se supera — y si configuraste `RESEND_API_KEY` + `OWNER_ALERT_EMAIL`, te llega un correo cuando eso pasa.
-2. Para pausarlo tú manualmente ya mismo: en Vercel, borra el valor de `OPENROUTER_API_KEY` (o pon uno inválido) y redeploy — el Asistente mostrará "no disponible" pero el resto de la app sigue funcionando normal.
+2. Para pausarlo tú manualmente ya mismo: en Vercel, borra el valor de `GEMINI_API_KEY` (o pon uno inválido) y redeploy — el Asistente mostrará "no disponible" pero el resto de la app sigue funcionando normal.
 3. Para bajar el tope diario, cambia `ASSISTANT_GLOBAL_DAILY_LIMIT` a un número menor en Vercel y redeploy.
 
 **Un cliente dice que no puede entrar (login)**:
@@ -70,13 +74,17 @@ PeptiBrain **no tiene un panel de administración propio** — para ver ventas, 
 
 - **Rotar claves/API keys**: cada vez que una se exponga (por ejemplo, si se pegó por error en un chat), regenérala en el panel del proveedor y actualízala en Vercel.
 - **Renovar el dominio**: revisa la fecha de vencimiento en Cloudflare/tu registrador — si se vence, se cae la app y el correo.
-- **Backups**: Supabase hace backups automáticos en los planes pagos — confirma en tu plan de Supabase que estén activos y que puedas restaurar uno de prueba.
+- **Backups**: confirmado que el plan **Free** de Supabase (el que usa hoy PeptiBrain) **NO incluye backups** ni restauración — si se borra o corrompe algo, no hay forma de recuperarlo. Decisión anotada: subir a **Supabase Pro (~$25/mes)** justo antes de tener clientes reales pagando (da backups diarios + quita la pausa automática por 7 días de inactividad). Mientras solo haya cuentas de prueba, se puede dejar en gratis — pero antes de cobrarle al primer cliente real, esto debería estar resuelto.
 - **Actualizar dependencias**: cada tanto (cada 2-3 meses) pide que se revisen actualizaciones de seguridad (`npm audit`).
 - **Revisar costos vs ingresos**: una vez al mes, compara lo que gastas en Supabase + Vercel + OpenRouter + Hotmart contra lo que factura la app.
 - **Revisar péptidos nuevos**: cada 2-3 meses, pide que se investigue si hay péptidos nuevos populares para agregar a la base de datos de la app.
 
 ## 7. Lo que TODAVÍA no está construido (para que no asumas que sí)
 
-- **Panel de administración propio** (backoffice) — hoy se opera todo desde los paneles de Supabase/Hotmart/Vercel directamente (ver punto 3).
-- **Borrar la cuenta propia desde la app** (derecho al olvido / GDPR) — YA EXISTE: en Mi cuenta hay un botón "Eliminar mi cuenta" que borra todo (péptidos, viales, dosis, salud) de forma permanente, con confirmación escribiendo "ELIMINAR".
-- **Encuesta de cancelación** (por qué se fue el usuario) — no existe todavía.
+- **Encuesta de cancelación** (por qué se fue el usuario) — no existe todavía. A veces Hotmart la pregunta al cancelar, revisa ahí.
+- **Backups de la base de datos** — ver punto 6, requiere subir a Supabase Pro antes de vender en serio.
+
+## 8. ⚠️ Antes de cobrarle al primer cliente real
+
+- **Nunca se probó un pago real de punta a punta** (pagar de verdad en Hotmart → que el plan se active solo → que las funciones Premium se desbloqueen). El código está listo, pero nadie hizo la prueba con una tarjeta real. Antes de anunciar el lanzamiento, hazla tú mismo (comprando tu propio plan y pidiendo el reembolso después) para confirmar que todo el camino funciona.
+- **Backups desactivados** (ver punto 6) — considera subir a Supabase Pro antes de tener clientes de verdad.
