@@ -4,9 +4,10 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { Link } from "@/i18n/navigation";
-import { Sparkles, Camera, Check, Eye, EyeOff, Download, Trash2, Mail, Flame, Snowflake, Gem } from "lucide-react";
+import { Sparkles, Camera, Check, Eye, EyeOff, Download, Upload, Trash2, Mail, Flame, Snowflake, Gem } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { CancelOfferModal } from "@/components/app/cuenta/CancelOfferModal";
+import { ImportCsvModal } from "@/components/app/cuenta/ImportCsvModal";
 import { ModalShell } from "@/components/app/shell/ModalShell";
 import { track } from "@/lib/mixpanel";
 import { loadAppData, setDailyGoal, resetTrackingData, type AppData } from "@/lib/app-data";
@@ -69,6 +70,7 @@ export default function CuentaPage() {
   const [resetError, setResetError] = useState(false);
 
   const [appData, setAppData] = useState<AppData | null>(null);
+  const [showImportCsv, setShowImportCsv] = useState(false);
   const [savingGoal, setSavingGoal] = useState(false);
 
   useEffect(() => {
@@ -499,6 +501,22 @@ export default function CuentaPage() {
         </div>
       </button>
 
+      {appData && (
+        <button
+          type="button"
+          onClick={() => setShowImportCsv(true)}
+          className="mt-2 flex w-full items-center gap-3 rounded-xl border border-border bg-card p-4 text-left hover:bg-secondary"
+        >
+          <div className="flex size-11 items-center justify-center rounded-full bg-primary/15">
+            <Upload className="size-5 text-primary" aria-hidden />
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-primary">{t("importCsvTitle")}</p>
+            <p className="text-xs text-muted-foreground">{t("importCsvButtonDesc")}</p>
+          </div>
+        </button>
+      )}
+
       {/* Zona de peligro */}
       <p className="mt-6 text-xs font-semibold uppercase tracking-wide text-destructive">{t("dangerZoneTitle")}</p>
 
@@ -628,6 +646,18 @@ export default function CuentaPage() {
           </button>
         </div>
       </ModalShell>
+
+      {appData && (
+        <ImportCsvModal
+          open={showImportCsv}
+          onClose={() => setShowImportCsv(false)}
+          data={appData}
+          onImported={async () => {
+            const next = await loadAppData();
+            setAppData(next);
+          }}
+        />
+      )}
     </div>
   );
 }

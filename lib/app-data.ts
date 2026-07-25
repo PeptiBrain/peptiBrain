@@ -687,6 +687,89 @@ export async function addTitrationProtocol(
   return loadAppData();
 }
 
+export type CsvImportRow = {
+  peptideName: string;
+  dateIso: string; // yyyy-mm-dd
+  time: string; // HH:mm
+  amount: string;
+  unit: string;
+  done: boolean;
+};
+
+// Importación masiva desde CSV (propio export o de otro tracker/hoja de
+// cálculo). No reutiliza addPeptide/addDose fila por fila (sería una vuelta
+// completa a la base de datos por cada fila) — inserta directo y devuelve un
+// resumen; el llamador hace un único loadAppData() al final.
+export async function importCsvDoses(
+  data: AppData,
+  rows: CsvImportRow[]
+): Promise<{ imported: number; newPeptides: number; failed: number }> {
+  const { supabase, user } = await requireUser();
+  let imported = 0;
+  let newPeptides = 0;
+  let failed = 0;
+  let peptideCount = data.peptides.length;
+
+  const peptideIdByName = new Map<string, string>();
+  data.peptides.forEach((p) => peptideIdByName.set(p.name.trim().toLowerCase(), p.id));
+
+  for (const row of rows) {
+    const key = row.peptideName.trim().toLowerCase();
+    if (!key) {
+      failed++;
+      continue;
+    }
+    let peptideId = peptideIdByName.get(key);
+    if (!peptideId) {
+      if (data.plan === "free" && peptideCount >= 1) {
+        failed++;
+        continue;
+      }
+      const { data: inserted, error: pErr } = await supabase
+        .from("peptides")
+        .insert({ user_id: user.id, name: row.peptideName.trim(), route: "Subcutánea", typical_unit: row.unit || "mg" })
+        .select("id")
+        .single();
+      if (pErr || !inserted?.id) {
+        failed++;
+        continue;
+      }
+      peptideId = inserted.id as string;
+      peptideIdByName.set(key, peptideId);
+      peptideCount++;
+      newPeptides++;
+    }
+
+    const scheduled = new Date(`${row.dateIso}T${row.time || "08:00"}:00`);
+    if (Number.isNaN(scheduled.getTime())) {
+      failed++;
+      continue;
+    }
+    const { error: dErr } = await supabase.from("doses").insert({
+      user_id: user.id,
+      peptide_id: peptideId,
+      amount: Number(row.amount) || 0,
+      unit: row.unit || "mg",
+      when_label: new Intl.DateTimeFormat(undefined, {
+        weekday: "short",
+        day: "numeric",
+        month: "short",
+        hour: "numeric",
+        minute: "2-digit",
+      }).format(scheduled),
+      scheduled_at: scheduled.toISOString(),
+      done: row.done,
+    });
+    if (dErr) {
+      failed++;
+      continue;
+    }
+    imported++;
+  }
+
+  return { imported, newPeptides, failed };
+}
+
 export async function addDose(
   data: AppData,
   dose: Omit<Dose, "id" | "done" | "createdAt">
