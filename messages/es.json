@@ -981,7 +981,7 @@
     "cancelRemove": "Cancelar",
     "confirmRemoveCta": "Quitar",
     "exportData": "Descargar mis datos (JSON)",
-    "seatsFullNote": "Usaste los {used} de {max} cupos de tu plan Family.",
+    "seatsFullNote": "Tienes {used} personas conectadas, pero tu plan Family solo incluye {max}. Añade un asiento extra para no perder acceso a nadie.",
     "addExtraSeatCta": "Añadir un asiento extra (5€/mes)",
     "sharedWithMeTitle": "Compartido conmigo",
     "statusPending": "Pendiente",

@@ -260,12 +260,17 @@ export function doseBuckets(
 
   let start: Date | null =
     key === "custom" && custom ? new Date(`${custom.start}T00:00:00`) : rangeStart(key);
-  const end = key === "custom" && custom ? new Date(`${custom.end}T23:59:59`) : now;
+  let end = key === "custom" && custom ? new Date(`${custom.end}T23:59:59`) : now;
 
   if (!start) {
     // "all": usar la fecha de la dosis más antigua
     const times = done.map((d) => new Date(d.scheduledAt).getTime());
     start = times.length ? new Date(Math.min(...times)) : new Date(now);
+    // Si alguna dosis quedó programada a futuro (o el reloj del dispositivo
+    // se adelantó), extender el final hasta ahí — si no, esa dosis cuenta en
+    // los totales pero desaparece de esta gráfica sin explicación.
+    const maxTime = times.length ? Math.max(...times) : now.getTime();
+    if (maxTime > end.getTime()) end = new Date(maxTime);
   }
 
   const spanDays = Math.max(1, (end.getTime() - start.getTime()) / 86400000);
