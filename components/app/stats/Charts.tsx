@@ -38,6 +38,67 @@ export function BarChart({ data }: { data: Bucket[] }) {
   );
 }
 
+// Gráfica de línea (nivel activo en el cuerpo a lo largo del tiempo). Solo
+// color de marca, se dibuja de izquierda a derecha al aparecer.
+export function LineChart({
+  points,
+  labels,
+}: {
+  points: { x: number; y: number }[];
+  labels?: string[];
+}) {
+  const reduce = useReducedMotion();
+  if (points.length < 2) return null;
+
+  const width = 320;
+  const height = 140;
+  const padding = 8;
+  const maxY = Math.max(1, ...points.map((p) => p.y));
+
+  const path = points
+    .map((p, i) => {
+      const x = padding + (i / (points.length - 1)) * (width - padding * 2);
+      const y = height - padding - (p.y / maxY) * (height - padding * 2);
+      return `${i === 0 ? "M" : "L"}${x.toFixed(1)},${y.toFixed(1)}`;
+    })
+    .join(" ");
+
+  const areaPath = `${path} L${width - padding},${height - padding} L${padding},${height - padding} Z`;
+
+  return (
+    <div>
+      <svg viewBox={`0 0 ${width} ${height}`} className="w-full" preserveAspectRatio="none">
+        <motion.path
+          d={areaPath}
+          fill="var(--primary)"
+          fillOpacity={0.08}
+          initial={reduce ? false : { opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6 }}
+        />
+        <motion.path
+          d={path}
+          fill="none"
+          stroke="var(--primary)"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          initial={reduce ? false : { pathLength: 0 }}
+          animate={{ pathLength: 1 }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        />
+      </svg>
+      {labels && (
+        <div className="mt-1 flex justify-between text-[10px] text-muted-foreground">
+          {labels.map((l, i) => (
+            <span key={i}>{l}</span>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 type Slice = { label: string; value: number };
 
 // Donut / "quesito": reparto por péptido. Tonos del color de marca.

@@ -20,6 +20,7 @@ import { computeStats, filterDataByRange, doseBuckets, totalInvested, doneDoses 
 import { PeptideIcon } from "@/components/app/peptidos/PeptideIcon";
 import { AnimatedNumber } from "@/components/app/shell/AnimatedNumber";
 import { BarChart, DonutChart } from "@/components/app/stats/Charts";
+import { BodyLevelChartSection } from "@/components/app/stats/BodyLevelChartSection";
 import { STATS_RANGE_KEYS, type DateRangeKey, type CustomRange } from "@/lib/date-range";
 import { CURRENCY, type Locale } from "@/i18n/routing";
 
@@ -247,6 +248,8 @@ export default function EstadisticasPage() {
               <p className="py-6 text-center text-sm text-muted-foreground">{t("noDosesInRange")}</p>
             )}
           </motion.div>
+
+          <BodyLevelChartSection data={data} />
 
           {/* DONUT: reparto por péptido */}
           {stats.usage.length > 0 && (
