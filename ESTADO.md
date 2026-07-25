@@ -1,5 +1,9 @@
 # ESTADO — PeptiBrain
-Última actualización: 2026-07-24 | Gamificación completa (racha+freeze, hitos, PB, resumen del día) en rama `staging`, pendiente de merge a `main` tras verificar el preview. Migraciones 0003-0036 corridas y verificadas contra la DB real.
+Última actualización: 2026-07-24 | Sesión de análisis de competencia (Dose Track, PepCalc, Peptides Calculator) + features de producto resultantes en `staging`: borrar péptido, nivel estimado en el cuerpo, restablecer datos, calculadora con Water Solver/mezclas/protocolos guardados, % grasa corporal, tarjeta de protocolo compartible, sueño/ánimo. **⚠️ Faltan correr en Supabase: 0039 (body_fat_pct) y 0040 (sleep_hours/mood)** — el resto de migraciones de esta sesión (0037, 0038) ya se corrieron y verificaron.
+
+## 🔮 Pendiente a futuro (NO construir sin pedirlo explícitamente)
+- **OCR de análisis de laboratorio con IA**: escanear foto del resultado y extraer los marcadores automáticamente (en vez de tipear a mano). Encontrado en 2 competidores (Dose Track, Peptides Calculator) — validación de mercado real. Pausado porque tiene costo real por uso (llamada a modelo de visión) — el usuario pidió "apuntalo para un futuro", no construirlo ahora. Diseño ya pensado: nunca autoguardar, siempre mostrar lo que la IA leyó para que el usuario confirme/corrija antes de guardar; límite de uso por plan para controlar costo.
+- **Comprar a proveedores dentro de la app** (afiliación): necesita decisión de negocio (con qué proveedor, cómo se declara la afiliación) antes de poder construirse — no es solo una decisión técnica.
 
 ## ✅ Sesión 11r (2026-07-23) — Tablero de Ideas / Feature Request Board (⚠️ falta migración 0031)
 El usuario pidió un "feedback board / feature request board" tipo Canny. Decidido con él (AskUserQuestion): **solo usuarios registrados** proponen/votan (el tablero se VE sin login, para SEO), alcance **Ideas + Votar + Roadmap** (sin Changelog por ahora), y vive en una **página pública `/ideas`**.
