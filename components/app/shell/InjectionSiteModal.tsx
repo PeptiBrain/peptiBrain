@@ -4,7 +4,8 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Syringe, Check } from "lucide-react";
 import { ModalShell } from "@/components/app/shell/ModalShell";
-import { INJECTION_SITE_IDS, type InjectionSiteId } from "@/lib/injection-sites";
+import { BodySiteSelector } from "@/components/app/shell/BodySiteSelector";
+import type { InjectionSiteId } from "@/lib/injection-sites";
 
 export function InjectionSiteModal({
   open,
@@ -34,24 +35,8 @@ export function InjectionSiteModal({
       <p className="text-sm leading-relaxed text-muted-foreground">{t("subtitle")}</p>
       {lastUsed && <p className="mt-1 text-xs text-muted-foreground">{t("lastUsed", { site: t(`site_${lastUsed}`) })}</p>}
 
-      <div className="mt-4 grid grid-cols-3 gap-2">
-        {INJECTION_SITE_IDS.map((site) => (
-          <button
-            key={site}
-            type="button"
-            onClick={() => setSelected(site)}
-            className={`relative flex h-16 flex-col items-center justify-center gap-0.5 rounded-xl border px-2 text-xs font-semibold transition-colors ${
-              selected === site
-                ? "border-primary bg-primary/10 text-primary"
-                : "border-border bg-card text-foreground hover:bg-muted"
-            }`}
-          >
-            {t(`site_${site}`)}
-            {site === suggested && (
-              <span className="text-[10px] font-normal text-muted-foreground">{t("suggested")}</span>
-            )}
-          </button>
-        ))}
+      <div className="mt-4">
+        <BodySiteSelector selected={selected} suggested={suggested} onSelect={setSelected} />
       </div>
 
       <div className="mt-5 flex flex-col gap-2">
