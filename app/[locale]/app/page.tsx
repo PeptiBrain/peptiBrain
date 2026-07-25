@@ -19,6 +19,7 @@ import { InjectionSiteModal } from "@/components/app/shell/InjectionSiteModal";
 import { PeptideIcon } from "@/components/app/peptidos/PeptideIcon";
 import { Mascot } from "@/components/app/shell/Mascot";
 import { FirstStepsChecklist } from "@/components/app/shell/FirstStepsChecklist";
+import { PageSkeleton } from "@/components/app/shell/PageSkeleton";
 import { DailySummaryModal } from "@/components/app/shell/DailySummaryModal";
 import { BodyLevelWidget } from "@/components/app/shell/BodyLevelWidget";
 import { OPEN_CALENDAR_EVENT } from "@/components/app/shell/ProfileMenu";
@@ -75,7 +76,7 @@ export default function InicioPage() {
     };
   }, [data, range, customRange]);
 
-  if (!data || !stats) return null;
+  if (!data || !stats) return <PageSkeleton cards={4} />;
 
   const pendingDose = [...data.doses]
     .filter((d) => !d.done)

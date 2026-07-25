@@ -34,6 +34,7 @@ import { WeekSchedule } from "@/components/app/peptidos/WeekSchedule";
 import { ShoppingList } from "@/components/app/peptidos/ShoppingList";
 import { SubTabs, type SubTabItem } from "@/components/app/shell/SubTabs";
 import { PremiumLocked } from "@/components/app/shell/PremiumLocked";
+import { PageSkeleton } from "@/components/app/shell/PageSkeleton";
 import { DateRangeTabs } from "@/components/app/shell/DateRangeTabs";
 import { isWithinRange, type CustomRange, type DateRangeKey } from "@/lib/date-range";
 import { celebrate } from "@/lib/celebrate";
@@ -63,7 +64,7 @@ export default function PeptidosPage() {
     loadAppData().then(setData);
   }, []);
 
-  if (!data) return null;
+  if (!data) return <PageSkeleton tabs cards={3} />;
 
   const isPremium = data.plan !== "free";
 

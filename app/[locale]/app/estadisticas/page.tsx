@@ -23,6 +23,7 @@ import { PeptideIcon } from "@/components/app/peptidos/PeptideIcon";
 import { AnimatedNumber } from "@/components/app/shell/AnimatedNumber";
 import { BarChart, DonutChart } from "@/components/app/stats/Charts";
 import { BodyLevelChartSection } from "@/components/app/stats/BodyLevelChartSection";
+import { PageSkeleton } from "@/components/app/shell/PageSkeleton";
 import { STATS_RANGE_KEYS, type DateRangeKey, type CustomRange } from "@/lib/date-range";
 import { CURRENCY, type Locale } from "@/i18n/routing";
 
@@ -103,7 +104,7 @@ export default function EstadisticasPage() {
     return rows;
   }, [data, familyData, range, custom, t]);
 
-  if (!data || !filtered || !stats) return null;
+  if (!data || !filtered || !stats) return <PageSkeleton tabs cards={4} />;
 
   const hasData = data.peptides.length > 0 || data.doses.length > 0;
   const maxDoses = stats.usage[0]?.doseCount || 1;

@@ -9,6 +9,7 @@ import { createClient } from "@/lib/supabase/client";
 import { CancelOfferModal } from "@/components/app/cuenta/CancelOfferModal";
 import { ImportCsvModal } from "@/components/app/cuenta/ImportCsvModal";
 import { ModalShell } from "@/components/app/shell/ModalShell";
+import { PageSkeleton } from "@/components/app/shell/PageSkeleton";
 import { track } from "@/lib/mixpanel";
 import { loadAppData, setDailyGoal, resetTrackingData, type AppData } from "@/lib/app-data";
 
@@ -96,7 +97,7 @@ export default function CuentaPage() {
     loadAppData().then(setAppData);
   }, []);
 
-  if (!profile) return null;
+  if (!profile) return <PageSkeleton narrow cards={3} />;
 
   async function handleSetGoal(goal: (typeof DAILY_GOALS)[number]) {
     if (!appData || savingGoal) return;

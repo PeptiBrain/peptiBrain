@@ -1,5 +1,51 @@
 # ESTADO — PeptiBrain
 
+## ⚡ PERFORMANCE (2026-07-25) — capas A y D aplicadas; B y C pendientes de decisión
+
+**Línea base** (Lighthouse móvil con throttling de red+CPU, contra servidor de producción local):
+
+| Pantalla | Score | LCP (meta <2.5s) | CLS (meta <0.1) | TBT | Speed Index |
+|---|---|---|---|---|---|
+| Landing | 58 | ❌ 5.6s | ✅ 0 | 490ms | 8.6s |
+| Login | 66 | ❌ 6.9s | ✅ 0 | 250ms | 6.2s |
+| Paywall | 77 | ❌ 5.0s | ✅ 0.012 | 220ms | 3.1s |
+| Calculadora | 73 | ❌ 5.0s | ✅ 0 | 350ms | 2.8s |
+
+**Capa A aplicada — Mixpanel bajo demanda**: `lib/mixpanel.ts` importaba `mixpanel-browser` de forma
+estática desde el layout raíz → 119 KB de JS en TODAS las páginas, 79% sin ejecutarse, incluso para
+visitantes que no aceptaron cookies (y sin consentimiento la librería no puede trackear igualmente).
+Ahora se carga con `import()` dinámico y SOLO con consentimiento. Resultado medido en BYTES
+(determinista, no afectado por la carga de la máquina):
+
+| Pantalla | JS antes | JS después | Ahorro |
+|---|---|---|---|
+| Landing | 475 KB | 353 KB | −122 KB (−26%) |
+| Login | 476 KB | 361 KB | −115 KB (−24%) |
+| Paywall | 446 KB | 324 KB | −122 KB (−27%) |
+| Calculadora | 447 KB | 325 KB | −122 KB (−27%) |
+
+Verificado en vivo que la analítica NO se rompió: sin consentimiento el chunk de Mixpanel (411 KB sin
+comprimir) no se descarga; al pulsar "Aceptar todas" se descarga y el tracking queda activo.
+
+**Capa D aplicada — skeletons**: 6 pantallas hacían `return null` mientras cargaban → pantalla en blanco.
+Nuevo `components/app/shell/PageSkeleton.tsx` (forma del contenido real, respeta `prefers-reduced-motion`,
+CLS 0) conectado en Inicio, Péptidos, Salud, Estadísticas, Familia y Cuenta.
+
+⚠️ **Las mediciones de TIEMPO "después" NO son válidas**: al repetirlas la máquina estaba con load average
+57 (CapCut + indexación del sistema + agentes en segundo plano), lo que infla LCP/TBT artificialmente.
+Solo los bytes son evidencia de esta tanda. **Pendiente: repetir la medición de tiempos con la máquina en
+reposo** antes de dar por cerrado el capítulo de performance.
+
+**Pendiente de decisión (tocan la landing, NO ejecutado):**
+- **Capa B, la mayor ganancia**: toda la web pública se renderiza de cero en cada visita (no cacheable)
+  porque `components/app/Header.tsx` hace `await supabase.auth.getUser()` en servidor para decidir entre
+  "Empezar gratis" y "Ir a mi app" → ~739ms de TTFB por carga. Moviendo esa lectura al navegador la landing
+  puede ser estática/ISR → LCP estimado 5.6s → ~2s.
+- **Capa C**: `dynamic import` de las secciones bajo el pliegue de la landing (baja TBT y Speed Index).
+
+**Presupuesto para features nuevas (38)**: ninguna pantalla nueva debe pasar de ~350 KB de JS en la primera
+carga ni empeorar el CLS de 0. Se mide ANTES de declararla lista.
+
 ## 🚦 CERTIFICACIÓN PRE-LANZAMIENTO (2026-07-25) — veredicto: **NO APTO todavía** (1 bloqueante, igual que el 2026-07-21)
 Repetida la auditoría de venta a 8 días del lanzamiento (2 de agosto). Esta sesión además: (a) corrida y cerrada la auditoría de seguridad/rendimiento de Supabase vía MCP (revocado el farmeo de PB por RPC directo, RPCs sin sesión cerradas, 8 índices de FK agregados, políticas RLS duplicadas fusionadas), (b) corregidos 10+ bugs reales de una auditoría de código (doble-submit en 6 modales de Salud, orden de "Próxima dosis", límite superior de fecha reaparecido en Inicio, timezone en fechas solo-día y en Modo viaje, reenvío de confirmación de email, cupos de Familia no bloqueados al invitar, viaje con fechas invertidas, CSV en idioma fijo, header desbordado a 375px, modo oscuro filtrado a la web pública), (c) `MANUAL-DEL-DUEÑO.md` actualizado (estaba desactualizado: no mencionaba el panel /panel ya construido, y decía OpenRouter en vez de Gemini).
 

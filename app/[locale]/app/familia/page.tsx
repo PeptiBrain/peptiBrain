@@ -28,6 +28,7 @@ import { hotmartExtraSeatCheckoutUrl } from "@/lib/hotmart-links";
 import { loadOnboarding } from "@/lib/onboarding";
 import { CURRENCY, type Locale } from "@/i18n/routing";
 import { SharedDataModal } from "@/components/app/familia/SharedDataModal";
+import { PageSkeleton } from "@/components/app/shell/PageSkeleton";
 
 const COUNTRIES = [
   { flag: "🇪🇸", code: "+34" },
@@ -79,7 +80,7 @@ export default function FamiliaPage() {
     loadReceivedInvitations().then(setInvitations);
   }, []);
 
-  if (!data) return null;
+  if (!data) return <PageSkeleton cards={3} />;
 
   const canShare = data.plan === "family";
   const maxGuests = 2 + data.extraFamilySeats;

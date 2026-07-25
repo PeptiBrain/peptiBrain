@@ -24,6 +24,7 @@ import { checkStreakMilestone } from "@/lib/milestones";
 import { todayIso } from "@/lib/date-range";
 import { SubTabs, type SubTabItem } from "@/components/app/shell/SubTabs";
 import { PremiumLocked } from "@/components/app/shell/PremiumLocked";
+import { PageSkeleton } from "@/components/app/shell/PageSkeleton";
 import { ModalShell } from "@/components/app/shell/ModalShell";
 
 type Tab = "peso" | "ejercicio" | "comidas" | "fotos" | "labs" | "hidratacion" | "efectos" | "sueno" | "animo";
@@ -51,7 +52,7 @@ export default function SaludPage() {
     loadAppData().then(setData);
   }, []);
 
-  if (!data) return null;
+  if (!data) return <PageSkeleton tabs cards={3} />;
 
   const isPremium = data.plan !== "free";
 
