@@ -777,6 +777,7 @@ function UsosTab({
   const [amount, setAmount] = useState("");
   const [unit, setUnit] = useState("mg");
   const [forMemberId, setForMemberId] = useState("");
+  const [saving, setSaving] = useState(false);
 
   const sorted = [...data.doses]
     .filter((d) => isWithinRange(d.scheduledAt, range, customRange))
@@ -790,21 +791,26 @@ function UsosTab({
     .filter((m): m is NonNullable<typeof m> => Boolean(m));
 
   async function handleSave() {
-    if (!peptideId || !amount.trim()) return;
-    const label = formatWhenLabel(whenInput);
-    const scheduledAt = new Date(whenInput).toISOString();
-    const next = await addDose(data, {
-      peptideId,
-      amount,
-      unit,
-      when: label,
-      scheduledAt,
-      forMemberId: forMemberId || undefined,
-    });
-    onChange(next);
-    setAmount("");
-    setForMemberId("");
-    setShowForm(false);
+    if (!peptideId || !amount.trim() || saving) return;
+    setSaving(true);
+    try {
+      const label = formatWhenLabel(whenInput);
+      const scheduledAt = new Date(whenInput).toISOString();
+      const next = await addDose(data, {
+        peptideId,
+        amount,
+        unit,
+        when: label,
+        scheduledAt,
+        forMemberId: forMemberId || undefined,
+      });
+      onChange(next);
+      setAmount("");
+      setForMemberId("");
+      setShowForm(false);
+    } finally {
+      setSaving(false);
+    }
   }
 
   async function markDone(doseId: string) {
@@ -937,7 +943,7 @@ function UsosTab({
           )}
           <button
             type="button"
-            disabled={!peptideId || !amount.trim()}
+            disabled={!peptideId || !amount.trim() || saving}
             onClick={handleSave}
             className="h-11 w-full rounded-lg bg-primary text-sm font-semibold text-primary-foreground disabled:opacity-50"
           >

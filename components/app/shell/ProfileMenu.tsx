@@ -24,6 +24,12 @@ import { createClient } from "@/lib/supabase/client";
 import { resetMixpanel } from "@/lib/mixpanel";
 import { getStoredPref, setThemePref, type ThemePref } from "@/lib/theme";
 import { RESTART_EVENT } from "@/components/app/shell/AppTour";
+
+// El menú de perfil solo puede mostrar el estado de "Modo viaje" (vive en
+// user_progress/trips), no gestionarlo — la gestión real está en el
+// Calendario de Inicio. Este evento le pide a Inicio que lo abra directo,
+// en vez de dejar el estado como un dato muerto sin ninguna acción.
+export const OPEN_CALENDAR_EVENT = "peptibrain:calendar:open";
 import { HelpCenter } from "@/components/app/shell/HelpCenter";
 import { LocaleSwitcher } from "@/components/app/LocaleSwitcher";
 import { pushSupported, enablePushReminders, disablePushReminders } from "@/lib/push-client";
@@ -115,6 +121,12 @@ export function ProfileMenu({
     setOpen(false);
     router.push("/app");
     setTimeout(() => window.dispatchEvent(new Event(RESTART_EVENT)), 300);
+  }
+
+  function openTravelMode() {
+    setOpen(false);
+    router.push("/app");
+    setTimeout(() => window.dispatchEvent(new Event(OPEN_CALENDAR_EVENT)), 300);
   }
 
   const THEME_OPTIONS: { key: ThemePref; label: string; icon: typeof Monitor }[] = [
@@ -233,7 +245,11 @@ export function ProfileMenu({
             )}
             {reminderError && <p className="px-2.5 pb-1 text-xs text-destructive">{reminderError}</p>}
 
-            <div className="flex w-full items-center gap-3 rounded-lg px-2.5 py-2.5 text-sm font-medium text-muted-foreground">
+            <button
+              type="button"
+              onClick={openTravelMode}
+              className="flex w-full items-center gap-3 rounded-lg px-2.5 py-2.5 text-left text-sm font-medium text-muted-foreground hover:bg-secondary"
+            >
               <Plane className="size-4 shrink-0" aria-hidden />
               <span className="min-w-0 flex-1 truncate">{t("travelMode")}</span>
               <span
@@ -243,7 +259,7 @@ export function ProfileMenu({
               >
                 {travelModeActive ? t("travelModeActive") : t("travelModeInactive")}
               </span>
-            </div>
+            </button>
 
             <div className="my-1 border-t border-border" />
             <MenuItem icon={LogOut} label={t("signOut")} onClick={handleSignOut} destructive />

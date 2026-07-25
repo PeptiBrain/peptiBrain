@@ -971,7 +971,7 @@
     "sharedVialsTitle": "Shared vials",
     "chooseVial": "Choose a vial",
     "shareVialFromHere": "+ Share a vial",
-    "noVialsToShare": "You don't have any unshared vials yet.",
+    "noVialsToShare": "No vials available to share (add one in Peptides, or you've already shared all of yours).",
     "splitLabel": "Split: you {mine}% · {theirs}%",
     "theirPercentLabel": "Their share: {pct}%",
     "shareError": "Couldn't save. There might be a pending update — try again in a moment.",

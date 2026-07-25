@@ -81,7 +81,11 @@ export function isWithinRange(isoDate: string, key: DateRangeKey, custom?: Custo
     return value >= start && value <= end;
   }
   const start = rangeStart(key);
-  if (!start) return true;
-  const value = new Date(isoDate);
-  return value.getTime() >= start.getTime();
+  if (!start) return true; // "all": sin límite, ni pasado ni futuro
+  const value = new Date(isoDate).getTime();
+  // "today"/"7d"/"30d"/etc. representan actividad YA ocurrida hasta ahora —
+  // sin este límite superior, una dosis con fecha futura (reloj adelantado,
+  // dato de prueba, edición manual) contaba como "de hoy" o "de esta semana"
+  // en cualquier pantalla que usara estos rangos.
+  return value >= start.getTime() && value <= Date.now();
 }

@@ -971,7 +971,7 @@
     "sharedVialsTitle": "Viales compartidos",
     "chooseVial": "Elige un vial",
     "shareVialFromHere": "+ Compartir un vial",
-    "noVialsToShare": "No tienes viales sin compartir todavía.",
+    "noVialsToShare": "No hay viales disponibles para compartir (registra uno en Péptidos, o ya compartiste todos los tuyos).",
     "splitLabel": "Reparto: tú {mine}% · {theirs}%",
     "theirPercentLabel": "Su parte: {pct}%",
     "shareError": "No se pudo guardar. Puede que falte una actualización pendiente — inténtalo de nuevo en un momento.",

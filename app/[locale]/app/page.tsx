@@ -21,6 +21,7 @@ import { Mascot } from "@/components/app/shell/Mascot";
 import { FirstStepsChecklist } from "@/components/app/shell/FirstStepsChecklist";
 import { DailySummaryModal } from "@/components/app/shell/DailySummaryModal";
 import { BodyLevelWidget } from "@/components/app/shell/BodyLevelWidget";
+import { OPEN_CALENDAR_EVENT } from "@/components/app/shell/ProfileMenu";
 import { ProtocolShareCard } from "@/components/app/shell/ProtocolShareCard";
 import { isWithinRange, type CustomRange, type DateRangeKey } from "@/lib/date-range";
 import { suggestNextInjectionSite, lastInjectionSite, type InjectionSiteId } from "@/lib/injection-sites";
@@ -42,6 +43,14 @@ export default function InicioPage() {
   useEffect(() => {
     loadAppData().then(setData);
     setName(loadOnboarding().name);
+  }, []);
+
+  useEffect(() => {
+    function handleOpenCalendar() {
+      setShowCalendar(true);
+    }
+    window.addEventListener(OPEN_CALENDAR_EVENT, handleOpenCalendar);
+    return () => window.removeEventListener(OPEN_CALENDAR_EVENT, handleOpenCalendar);
   }, []);
 
   const stats = useMemo(() => {
