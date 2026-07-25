@@ -676,6 +676,13 @@ function ProvidersSection({
           </div>
           <p className="text-sm font-medium text-foreground">{t("providersEmptyTitle")}</p>
           <p className="mx-auto mt-1 max-w-[18rem] text-xs text-muted-foreground">{t("providersSectionEmpty")}</p>
+          <button
+            type="button"
+            onClick={() => setShowModal(true)}
+            className="mt-3 inline-flex h-9 items-center gap-1.5 rounded-full bg-primary px-4 text-xs font-semibold text-primary-foreground transition-transform active:scale-97"
+          >
+            <Plus className="size-3.5" aria-hidden /> {t("addProviderCta")}
+          </button>
         </div>
       ) : (
         <ul className="space-y-2">
@@ -943,6 +950,15 @@ function UsosTab({
         <div className="rounded-xl border border-dashed border-border p-8 text-center">
           <Syringe className="mx-auto mb-2 size-8 text-muted-foreground" aria-hidden />
           <p className="text-sm text-muted-foreground">{t("usesEmptyState")}</p>
+          {data.peptides.length > 0 && (
+            <button
+              type="button"
+              onClick={() => setShowForm(true)}
+              className="mt-3 inline-flex h-9 items-center gap-1.5 rounded-full bg-primary px-4 text-xs font-semibold text-primary-foreground transition-transform active:scale-97"
+            >
+              <Plus className="size-3.5" aria-hidden /> {t("registerUse")}
+            </button>
+          )}
         </div>
       ) : (
         <div className="space-y-2 sm:grid sm:grid-cols-2 sm:gap-2 sm:space-y-0">

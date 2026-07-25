@@ -14,7 +14,9 @@ import {
   AlertTriangle,
   PieChart,
   Users,
+  Plus,
 } from "lucide-react";
+import { Link } from "@/i18n/navigation";
 import { loadAppData, loadFamilySharedData, type AppData, type SharedOwnerData } from "@/lib/app-data";
 import { computeStats, filterDataByRange, doseBuckets, totalInvested, doneDoses } from "@/lib/stats";
 import { PeptideIcon } from "@/components/app/peptidos/PeptideIcon";
@@ -153,6 +155,12 @@ export default function EstadisticasPage() {
           <BarChart3 className="mx-auto mb-2 size-8 text-muted-foreground" aria-hidden />
           <p className="text-sm font-medium text-foreground">{t("emptyTitle")}</p>
           <p className="mt-1 text-xs text-muted-foreground">{t("emptyBody")}</p>
+          <Link
+            href="/app/peptidos"
+            className="mt-3 inline-flex h-9 items-center gap-1.5 rounded-full bg-primary px-4 text-xs font-semibold text-primary-foreground transition-transform active:scale-97"
+          >
+            <Plus className="size-3.5" aria-hidden /> {t("emptyCta")}
+          </Link>
         </div>
       ) : (
         <div className="space-y-3">

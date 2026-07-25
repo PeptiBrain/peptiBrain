@@ -105,9 +105,20 @@ export function PeptideLibraryGrid() {
       </p>
 
       {filtered.length === 0 ? (
-        <p className="mt-8 rounded-xl border border-dashed border-border bg-muted/40 p-5 text-center text-sm text-muted-foreground">
-          {t("noResults")}
-        </p>
+        <div className="mt-8 rounded-xl border border-dashed border-border bg-muted/40 p-5 text-center">
+          <p className="text-sm text-muted-foreground">{t("noResults")}</p>
+          <button
+            type="button"
+            onClick={() => {
+              setQuery("");
+              setActiveCategory("all");
+              setShowFavoritesOnly(false);
+            }}
+            className="mt-3 inline-flex h-9 items-center rounded-full border border-border px-4 text-xs font-semibold text-foreground hover:bg-secondary"
+          >
+            {t("clearFilters")}
+          </button>
+        </div>
       ) : (
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
           {filtered.map((p) => {

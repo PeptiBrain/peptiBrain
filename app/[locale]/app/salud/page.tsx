@@ -242,6 +242,8 @@ export default function SaludPage() {
           <HealthList
             logs={exerciseLogs}
             emptyText={t("exerciseEmptyState")}
+            emptyCta={t("addAria")}
+            onEmptyCta={() => setShowExerciseForm(true)}
             formatDate={formatLogDate}
             render={(log) => (
               <span className="flex items-center gap-1">

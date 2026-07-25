@@ -3,7 +3,7 @@
 
 ## 🔮 Pendiente a futuro (NO construir sin pedirlo explícitamente)
 - **OCR de análisis de laboratorio con IA**: escanear foto del resultado y extraer los marcadores automáticamente (en vez de tipear a mano). Encontrado en 2 competidores (Dose Track, Peptides Calculator) — validación de mercado real. Pausado porque tiene costo real por uso (llamada a modelo de visión) — el usuario pidió "apuntalo para un futuro", no construirlo ahora. Diseño ya pensado: nunca autoguardar, siempre mostrar lo que la IA leyó para que el usuario confirme/corrija antes de guardar; límite de uso por plan para controlar costo.
-- **Comprar a proveedores dentro de la app** (afiliación): necesita decisión de negocio (con qué proveedor, cómo se declara la afiliación) antes de poder construirse — no es solo una decisión técnica.
+- **Comprar a proveedores dentro de la app** (afiliación, comparador de precios entre tiendas): necesita decisión de negocio (con qué proveedor, cómo se declara la afiliación) antes de poder construirse — no es solo una decisión técnica. Visto en 3 competidores distintos (PepCalc, Peptides Calculator, Peptide Tracker and Library) — señal de mercado consistente, no una idea aislada. Anotado, sin construir hasta que el usuario decida el negocio.
 - **Sincronización con Apple Health / Google Fit** (peso, composición corporal, entrenamientos, sueño): visto en PeptideCalc.io (HealthKit, solo lectura). No aplica a la PWA web actual — requiere apps nativas de iOS/Android. El usuario pidió anotarlo para "cuando tengamos la app en Apple y Android", no construirlo ahora.
 
 ## ✅ Sesión 11r (2026-07-23) — Tablero de Ideas / Feature Request Board (⚠️ falta migración 0031)
