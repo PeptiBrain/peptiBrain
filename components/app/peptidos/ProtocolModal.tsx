@@ -5,10 +5,7 @@ import { useTranslations } from "next-intl";
 import { CalendarClock, Plus, X } from "lucide-react";
 import { ModalShell } from "@/components/app/shell/ModalShell";
 import type { Peptide, TitrationStep } from "@/lib/app-data";
-
-function todayIso() {
-  return new Date().toISOString().slice(0, 10);
-}
+import { todayIso } from "@/lib/date-range";
 
 const INTERVAL_OPTIONS = [1, 2, 3, 7, 14];
 const MAX_PROTOCOL_DOSES = 60;

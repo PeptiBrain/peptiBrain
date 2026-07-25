@@ -1,11 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import type { CustomRange, DateRangeKey } from "@/lib/date-range";
-
-function todayIso() {
-  return new Date().toISOString().slice(0, 10);
-}
+import { todayIso, type CustomRange, type DateRangeKey } from "@/lib/date-range";
 
 export function DateRangeTabs({
   value,

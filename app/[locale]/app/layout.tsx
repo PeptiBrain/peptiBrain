@@ -20,7 +20,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   let email = "";
   let plan: "free" | "premium" | "family" = "free";
   let remindersEnabled = false;
-  let travelModeActive = false;
+  let trips: { startDate: string; endDate: string }[] = [];
   if (user) {
     const { data: profile } = await supabase
       .from("profiles")
@@ -32,16 +32,15 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     plan = (profile?.plan as "free" | "premium" | "family") ?? "free";
     remindersEnabled = profile?.reminders_enabled ?? false;
 
-    const today = new Date().toISOString().slice(0, 10);
-    const { data: activeTrip } = await supabase
+    // El servidor no sabe la zona horaria del usuario — comparar "hoy" (UTC)
+    // contra start_date/end_date apagaba el badge de Modo viaje varias horas
+    // antes de lo esperado para quien vive al oeste de UTC. Se trae la lista
+    // completa (tabla pequeña) y el cliente decide con SU fecha local.
+    const { data: tripRows } = await supabase
       .from("trips")
-      .select("id")
-      .eq("user_id", user.id)
-      .lte("start_date", today)
-      .gte("end_date", today)
-      .limit(1)
-      .maybeSingle();
-    travelModeActive = !!activeTrip;
+      .select("start_date, end_date")
+      .eq("user_id", user.id);
+    trips = (tripRows || []).map((t) => ({ startDate: t.start_date, endDate: t.end_date }));
   }
 
   return (
@@ -63,7 +62,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             email={email}
             plan={plan}
             remindersEnabled={remindersEnabled}
-            travelModeActive={travelModeActive}
+            trips={trips}
           />
         </div>
       </header>

@@ -21,6 +21,7 @@ import {
 } from "@/lib/app-data";
 import { LAB_MARKER_IDS, LAB_MARKER_DEFAULT_UNIT, type LabMarkerId } from "@/lib/lab-markers";
 import { checkStreakMilestone } from "@/lib/milestones";
+import { todayIso } from "@/lib/date-range";
 import { SubTabs, type SubTabItem } from "@/components/app/shell/SubTabs";
 import { PremiumLocked } from "@/components/app/shell/PremiumLocked";
 import { ModalShell } from "@/components/app/shell/ModalShell";
@@ -28,10 +29,6 @@ import { ModalShell } from "@/components/app/shell/ModalShell";
 type Tab = "peso" | "ejercicio" | "comidas" | "fotos" | "labs" | "hidratacion" | "efectos" | "sueno" | "animo";
 
 const MOOD_EMOJI = ["😞", "😕", "😐", "🙂", "😄"] as const;
-
-function todayIso() {
-  return new Date().toISOString().slice(0, 10);
-}
 
 export default function SaludPage() {
   const t = useTranslations("Salud");

@@ -39,13 +39,13 @@ export function ProfileMenu({
   email,
   plan,
   remindersEnabled,
-  travelModeActive,
+  trips,
 }: {
   name: string;
   email: string;
   plan: "free" | "premium" | "family";
   remindersEnabled: boolean;
-  travelModeActive: boolean;
+  trips: { startDate: string; endDate: string }[];
 }) {
   const t = useTranslations("AppShell");
   const router = useRouter();
@@ -55,11 +55,18 @@ export function ProfileMenu({
   const [reminders, setReminders] = useState(remindersEnabled);
   const [reminderBusy, setReminderBusy] = useState(false);
   const [reminderError, setReminderError] = useState("");
+  const [travelModeActive, setTravelModeActive] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const initial = name.trim().charAt(0).toUpperCase() || "?";
   const isPremium = plan !== "free";
 
   useEffect(() => setPref(getStoredPref()), []);
+
+  useEffect(() => {
+    const d = new Date();
+    const todayLocal = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+    setTravelModeActive(trips.some((tr) => todayLocal >= tr.startDate && todayLocal <= tr.endDate));
+  }, [trips]);
 
   async function toggleReminders() {
     if (reminderBusy) return;

@@ -553,7 +553,8 @@
     "registerUseCta": "Log use",
     "sideEffectsPanelTitle": "Side effects",
     "noSideEffectsTitle": "No side effects",
-    "noSideEffectsPanel": "No effects in this range. Keep it up!"
+    "noSideEffectsPanel": "No effects in this range. Keep it up!",
+    "noDosesPendingHint": "Schedule your next dose and we'll remind you when it's time."
   },
   "InjectionSite": {
     "title": "Where did you inject it?",

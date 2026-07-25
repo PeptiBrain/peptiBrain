@@ -6,11 +6,7 @@ import { useTranslations } from "next-intl";
 import { Flame, Gem, Check } from "lucide-react";
 import { Mascot } from "@/components/app/shell/Mascot";
 import type { AppData } from "@/lib/app-data";
-
-function todayIso() {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-}
+import { todayIso } from "@/lib/date-range";
 
 const STORAGE_PREFIX = "peptibrain_daily_summary_";
 const EVENING_HOUR = 18; // solo aparece de esta hora en adelante, hora local del navegador

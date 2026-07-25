@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "motion/react";
 import { useLocale, useTranslations } from "next-intl";
-import { Check, Flame, Syringe, AlertTriangle, Scale, Droplets, Lock, Apple, CalendarDays, Sparkles, Wallet, Trophy, ArrowRight, Gem, Share2 } from "lucide-react";
+import { Check, Flame, Syringe, AlertTriangle, Scale, Droplets, Lock, Apple, CalendarDays, Sparkles, Wallet, Trophy, ArrowRight, Gem, Share2, Plus } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { loadOnboarding } from "@/lib/onboarding";
 import { loadAppData, markDoseDone, type AppData } from "@/lib/app-data";
@@ -266,17 +266,20 @@ export default function InicioPage() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="mt-4 rounded-xl border border-dashed border-border p-6 text-center"
+          className="mt-4 rounded-xl bg-accent p-4"
         >
-          <div className="mx-auto mb-1 flex justify-center">
-            <Mascot state="pointing" size={72} />
+          <div className="flex items-center gap-3">
+            <Mascot state="pointing" size={56} />
+            <div className="min-w-0">
+              <p className="text-sm font-semibold text-foreground">{t("noDosesPending")}</p>
+              <p className="text-xs text-muted-foreground">{t("noDosesPendingHint")}</p>
+            </div>
           </div>
-          <p className="text-sm text-muted-foreground">{t("noDosesPending")}</p>
           <Link
             href="/app/peptidos"
-            className="mt-2 inline-block text-sm font-medium text-primary underline-offset-2 hover:underline"
+            className="mt-3 inline-flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-primary text-sm font-semibold text-primary-foreground transition-transform active:scale-97"
           >
-            {t("scheduleDose")}
+            <Plus className="size-4" aria-hidden /> {t("scheduleDose")}
           </Link>
         </motion.div>
       )}

@@ -553,7 +553,8 @@
     "registerUseCta": "Registrar uso",
     "sideEffectsPanelTitle": "Efectos secundarios",
     "noSideEffectsTitle": "Sin efectos secundarios",
-    "noSideEffectsPanel": "Sin efectos en este rango. ¡Sigue así!"
+    "noSideEffectsPanel": "Sin efectos en este rango. ¡Sigue así!",
+    "noDosesPendingHint": "Programa tu próxima dosis y te avisamos cuando toque."
   },
   "InjectionSite": {
     "title": "¿En qué zona te la aplicaste?",

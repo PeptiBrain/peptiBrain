@@ -1,3 +1,13 @@
+// Fecha de HOY en la hora local del navegador, formato yyyy-mm-dd.
+// `new Date().toISOString().slice(0,10)` (usado antes en varios sitios) da
+// la fecha UTC: para cualquier huso al oeste de UTC, por la tarde/noche ya
+// cae en "mañana" — un formulario de peso/comida/protocolo se abría con la
+// fecha equivocada precargada.
+export function todayIso(): string {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
 export type DateRangeKey =
   | "today"
   | "7d"
