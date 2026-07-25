@@ -10,6 +10,7 @@ import {
   addDose,
   addPeptide,
   addProtocol,
+  addTitrationProtocol,
   addProvider,
   loadAppData,
   markDoseDone,
@@ -834,6 +835,11 @@ function UsosTab({
         peptides={data.peptides}
         onSave={async (payload) => {
           const next = await addProtocol(data, payload);
+          onChange(next);
+          setShowProtocol(false);
+        }}
+        onSaveTitration={async (payload) => {
+          const next = await addTitrationProtocol(data, payload);
           onChange(next);
           setShowProtocol(false);
         }}

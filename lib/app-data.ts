@@ -625,6 +625,68 @@ export async function addProtocol(
   return loadAppData();
 }
 
+export type TitrationStep = { amount: string; weeks: number };
+
+// Protocolo de titulación: varios "escalones" de dosis creciente (ej. semaglutida
+// 0.25mg x 4 sem -> 0.5mg x 4 sem -> 1mg x 4 sem), generado todo de una vez en
+// vez de programar cada tramo por separado.
+export async function addTitrationProtocol(
+  data: AppData,
+  protocol: {
+    peptideId: string;
+    unit: string;
+    startDate: string; // yyyy-mm-dd
+    time: string; // HH:mm
+    intervalDays: number;
+    steps: TitrationStep[];
+  }
+): Promise<AppData> {
+  const { supabase, user } = await requireUser();
+  const [hours, minutes] = protocol.time.split(":").map(Number);
+  const cursor = new Date(`${protocol.startDate}T00:00:00`);
+  const rows: {
+    user_id: string;
+    peptide_id: string;
+    amount: number;
+    unit: string;
+    when_label: string;
+    scheduled_at: string;
+    done: boolean;
+  }[] = [];
+
+  for (const step of protocol.steps) {
+    const stepDays = Math.max(1, step.weeks) * 7;
+    const stepDoseCount = Math.max(1, Math.ceil(stepDays / protocol.intervalDays));
+    for (let i = 0; i < stepDoseCount && rows.length < MAX_PROTOCOL_DOSES; i++) {
+      const scheduled = new Date(cursor);
+      scheduled.setDate(scheduled.getDate() + i * protocol.intervalDays);
+      scheduled.setHours(hours || 0, minutes || 0, 0, 0);
+      rows.push({
+        user_id: user.id,
+        peptide_id: protocol.peptideId,
+        amount: Number(step.amount),
+        unit: protocol.unit,
+        when_label: new Intl.DateTimeFormat(undefined, {
+          weekday: "short",
+          day: "numeric",
+          month: "short",
+          hour: "numeric",
+          minute: "2-digit",
+        }).format(scheduled),
+        scheduled_at: scheduled.toISOString(),
+        done: false,
+      });
+    }
+    cursor.setDate(cursor.getDate() + stepDoseCount * protocol.intervalDays);
+    if (rows.length >= MAX_PROTOCOL_DOSES) break;
+  }
+
+  if (rows.length === 0) return loadAppData();
+  const { error } = await supabase.from("doses").insert(rows);
+  if (error) throw error;
+  return loadAppData();
+}
+
 export async function addDose(
   data: AppData,
   dose: Omit<Dose, "id" | "done" | "createdAt">
