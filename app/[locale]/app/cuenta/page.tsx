@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { Link } from "@/i18n/navigation";
 import { Sparkles, Camera, Check, Eye, EyeOff, Download, Upload, Trash2, Mail, Flame, Snowflake, Gem } from "lucide-react";
@@ -39,6 +39,7 @@ type Profile = {
 
 export default function CuentaPage() {
   const t = useTranslations("Cuenta");
+  const locale = useLocale();
   const router = useRouter();
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -168,6 +169,10 @@ export default function CuentaPage() {
           setSaving(false);
           return;
         }
+        // Sin esto, profile.email seguía siendo el viejo y el próximo "Guardar"
+        // (aunque solo tocara nombre/contraseña) volvía a disparar el cambio
+        // de email y reenviaba el correo de confirmación sin que se pidiera.
+        setProfile((p) => (p ? { ...p, email: email.trim() } : p));
       }
       if (password) {
         const { error: pErr } = await supabase.auth.updateUser({ password });
@@ -207,7 +212,17 @@ export default function CuentaPage() {
 
   async function handleExportCsv() {
     const data = await loadAppData();
-    const rows = [["Fecha", "Hora", "Péptido", "Cantidad", "Unidad", "Aplicada", "Sitio de inyección"]];
+    const rows = [
+      [
+        t("csvHeaderDate"),
+        t("csvHeaderTime"),
+        t("csvHeaderPeptide"),
+        t("csvHeaderAmount"),
+        t("csvHeaderUnit"),
+        t("csvHeaderDone"),
+        t("csvHeaderInjectionSite"),
+      ],
+    ];
     const sorted = [...data.doses].sort(
       (a, b) => new Date(b.scheduledAt).getTime() - new Date(a.scheduledAt).getTime()
     );
@@ -215,12 +230,12 @@ export default function CuentaPage() {
       const peptide = data.peptides.find((p) => p.id === d.peptideId);
       const when = new Date(d.scheduledAt);
       rows.push([
-        when.toLocaleDateString("es-ES"),
-        when.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" }),
+        when.toLocaleDateString(locale),
+        when.toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit" }),
         peptide?.name || "—",
         d.amount,
         d.unit,
-        d.done ? "Sí" : "No",
+        d.done ? t("csvYes") : t("csvNo"),
         d.injectionSite || "",
       ]);
     }

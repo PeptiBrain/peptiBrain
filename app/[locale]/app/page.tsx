@@ -77,7 +77,9 @@ export default function InicioPage() {
 
   if (!data || !stats) return null;
 
-  const pendingDose = data.doses.find((d) => !d.done);
+  const pendingDose = [...data.doses]
+    .filter((d) => !d.done)
+    .sort((a, b) => new Date(a.scheduledAt).getTime() - new Date(b.scheduledAt).getTime())[0];
   const donePeptide = pendingDose
     ? data.peptides.find((p) => p.id === pendingDose.peptideId)
     : null;
@@ -88,7 +90,11 @@ export default function InicioPage() {
   // Progreso de la semana (para el saludo gamificado)
   const weekAgo = new Date();
   weekAgo.setDate(weekAgo.getDate() - 7);
-  const weekDoses = data.doses.filter((d) => new Date(d.scheduledAt) >= weekAgo);
+  const nowMs = Date.now();
+  const weekDoses = data.doses.filter((d) => {
+    const t = new Date(d.scheduledAt).getTime();
+    return t >= weekAgo.getTime() && t <= nowMs;
+  });
   const weekDone = weekDoses.filter((d) => d.done).length;
   const weekTag =
     weekDoses.length > 0 && weekDone >= weekDoses.length

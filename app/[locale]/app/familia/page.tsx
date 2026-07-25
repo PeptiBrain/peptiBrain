@@ -82,6 +82,8 @@ export default function FamiliaPage() {
   if (!data) return null;
 
   const canShare = data.plan === "family";
+  const maxGuests = 2 + data.extraFamilySeats;
+  const seatsFull = data.familyMembers.length >= maxGuests;
 
   function selectedPeptideIds(memberId: string): Set<string> {
     const member = data!.familyMembers.find((m) => m.id === memberId);
@@ -109,7 +111,7 @@ export default function FamiliaPage() {
   }
 
   async function handleInvite() {
-    if (!canShare || !name.trim() || !email.trim() || !data) return;
+    if (!canShare || seatsFull || !name.trim() || !email.trim() || !data) return;
     const next = await addFamilyMember(data, {
       name: name.trim(),
       email: email.trim(),
@@ -138,7 +140,7 @@ export default function FamiliaPage() {
   }
 
   async function handleCsvFile(file: File) {
-    if (!data || !canShare) return;
+    if (!data || !canShare || seatsFull) return;
     setImporting(true);
     setImportResult(null);
     try {
@@ -196,7 +198,7 @@ export default function FamiliaPage() {
             <button
               type="button"
               onClick={() => csvInputRef.current?.click()}
-              disabled={importing}
+              disabled={importing || seatsFull}
               aria-label={t("importCsvAria")}
               className="flex h-10 items-center gap-1.5 rounded-full border border-border bg-card px-3.5 text-xs font-semibold text-foreground transition-transform active:scale-97 disabled:opacity-50"
             >
@@ -223,8 +225,9 @@ export default function FamiliaPage() {
             <button
               type="button"
               onClick={() => setShowForm((s) => !s)}
+              disabled={seatsFull}
               aria-label={t("inviteAria")}
-              className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground transition-transform active:scale-97"
+              className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground transition-transform active:scale-97 disabled:opacity-50"
             >
               <Plus className="size-5" aria-hidden />
             </button>
@@ -239,22 +242,24 @@ export default function FamiliaPage() {
       )}
 
       {canShare &&
+        seatsFull &&
         (() => {
-          const maxGuests = 2 + data.extraFamilySeats;
-          const seatsUsed = data.familyMembers.length;
           const extraSeatUrl = hotmartExtraSeatCheckoutUrl();
-          if (seatsUsed < maxGuests || !extraSeatUrl) return null;
           return (
             <div className="mt-3 flex items-center justify-between gap-3 rounded-xl border border-dashed border-border bg-secondary/40 p-3">
-              <p className="text-xs text-muted-foreground">{t("seatsFullNote", { used: seatsUsed, max: maxGuests })}</p>
-              <a
-                href={extraSeatUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="shrink-0 rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground"
-              >
-                {t("addExtraSeatCta")}
-              </a>
+              <p className="text-xs text-muted-foreground">
+                {t("seatsFullNote", { used: data.familyMembers.length, max: maxGuests })}
+              </p>
+              {extraSeatUrl && (
+                <a
+                  href={extraSeatUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="shrink-0 rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground"
+                >
+                  {t("addExtraSeatCta")}
+                </a>
+              )}
             </div>
           );
         })()}
@@ -532,16 +537,24 @@ export default function FamiliaPage() {
                     <button
                       key={key}
                       type="button"
-                      onClick={async () =>
+                      onClick={async () => {
+                        // "Compartir dosis" sin "Compartir péptidos" deja
+                        // dosis huérfanas (sin nombre de péptido para
+                        // mostrar) en la ficha del familiar y en
+                        // Estadísticas — se mantiene la dependencia siempre.
+                        let sharePeptides = key === "sharePeptides" ? !active : member.sharePeptides;
+                        let shareDoses = key === "shareDoses" ? !active : member.shareDoses;
+                        const shareHealth = key === "shareHealth" ? !active : member.shareHealth;
+                        if (key === "sharePeptides" && !sharePeptides) shareDoses = false;
+                        if (key === "shareDoses" && shareDoses) sharePeptides = true;
                         setData(
                           await updateFamilySharing(data, member.id, {
-                            sharePeptides: member.sharePeptides,
-                            shareDoses: member.shareDoses,
-                            shareHealth: member.shareHealth,
-                            [key]: !active,
+                            sharePeptides,
+                            shareDoses,
+                            shareHealth,
                           })
-                        )
-                      }
+                        );
+                      }}
                       className={`h-8 rounded-full px-3 text-xs font-medium transition-colors ${
                         active ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"
                       }`}

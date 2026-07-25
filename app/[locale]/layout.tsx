@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { MixpanelProvider } from "@/components/app/MixpanelProvider";
 import { ServiceWorkerRegister } from "@/components/app/ServiceWorkerRegister";
+import { ThemeScope } from "@/components/app/ThemeScope";
 import { CookieConsentBanner } from "@/components/app/CookieConsentBanner";
 import { GoogleAnalytics } from "@/components/app/GoogleAnalytics";
 import { MicrosoftClarity } from "@/components/app/MicrosoftClarity";
@@ -86,13 +87,14 @@ export default async function LocaleLayout({
         <script
           dangerouslySetInnerHTML={{
             __html:
-              "try{if(localStorage.getItem('peptibrain_theme')==='dark'){document.documentElement.classList.add('dark')}}catch(e){}",
+              "try{var p=location.pathname;var inApp=/^\\/(en\\/)?app(\\/|$)/.test(p);if(inApp&&localStorage.getItem('peptibrain_theme')==='dark'){document.documentElement.classList.add('dark')}}catch(e){}",
           }}
         />
       </head>
       <body className="min-h-dvh flex flex-col bg-background text-foreground">
         <ServiceWorkerRegister />
         <NextIntlClientProvider messages={messages}>
+          <ThemeScope />
           <MixpanelProvider>{children}</MixpanelProvider>
           <CookieConsentBanner />
           {gaId && <GoogleAnalytics gaId={gaId} />}

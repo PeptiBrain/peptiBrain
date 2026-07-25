@@ -612,13 +612,14 @@ function WeightModal({
 }: {
   open: boolean;
   onClose: () => void;
-  onSave: (payload: Omit<HealthLog, "id">) => void;
+  onSave: (payload: Omit<HealthLog, "id">) => void | Promise<void>;
 }) {
   const t = useTranslations("Salud");
   const [date, setDate] = useState(todayIso());
   const [weightKg, setWeightKg] = useState("");
   const [bodyFatPct, setBodyFatPct] = useState("");
   const [notes, setNotes] = useState("");
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (open) {
@@ -626,8 +627,24 @@ function WeightModal({
       setWeightKg("");
       setBodyFatPct("");
       setNotes("");
+      setSaving(false);
     }
   }, [open]);
+
+  async function handleSave() {
+    if (!weightKg.trim() || saving) return;
+    setSaving(true);
+    try {
+      await onSave({
+        date,
+        weightKg: weightKg.trim(),
+        bodyFatPct: bodyFatPct.trim() || undefined,
+        notes: notes.trim() || undefined,
+      });
+    } finally {
+      setSaving(false);
+    }
+  }
 
   return (
     <ModalShell open={open} onClose={onClose} title={t("registerWeightTitle")} icon={<Scale className="size-5 text-primary" aria-hidden />}>
@@ -673,15 +690,8 @@ function WeightModal({
         <div className="flex gap-2 pt-1">
           <button
             type="button"
-            disabled={!weightKg.trim()}
-            onClick={() =>
-              onSave({
-                date,
-                weightKg: weightKg.trim(),
-                bodyFatPct: bodyFatPct.trim() || undefined,
-                notes: notes.trim() || undefined,
-              })
-            }
+            disabled={!weightKg.trim() || saving}
+            onClick={handleSave}
             className="h-11 flex-1 rounded-lg bg-primary text-sm font-semibold text-primary-foreground disabled:opacity-50"
           >
             {t("saveRecord")}
@@ -706,20 +716,32 @@ function MealModal({
 }: {
   open: boolean;
   onClose: () => void;
-  onSave: (payload: Omit<Meal, "id" | "createdAt">) => void;
+  onSave: (payload: Omit<Meal, "id" | "createdAt">) => void | Promise<void>;
 }) {
   const t = useTranslations("Salud");
   const [date, setDate] = useState(todayIso());
   const [description, setDescription] = useState("");
   const [calories, setCalories] = useState("");
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (open) {
       setDate(todayIso());
       setDescription("");
       setCalories("");
+      setSaving(false);
     }
   }, [open]);
+
+  async function handleSave() {
+    if (!description.trim() || saving) return;
+    setSaving(true);
+    try {
+      await onSave({ date, description: description.trim(), calories: calories.trim() || undefined });
+    } finally {
+      setSaving(false);
+    }
+  }
 
   return (
     <ModalShell open={open} onClose={onClose} title={t("registerMealTitle")} icon={<Apple className="size-5 text-primary" aria-hidden />}>
@@ -755,10 +777,8 @@ function MealModal({
         <div className="flex gap-2 pt-1">
           <button
             type="button"
-            disabled={!description.trim()}
-            onClick={() =>
-              onSave({ date, description: description.trim(), calories: calories.trim() || undefined })
-            }
+            disabled={!description.trim() || saving}
+            onClick={handleSave}
             className="h-11 flex-1 rounded-lg bg-primary text-sm font-semibold text-primary-foreground disabled:opacity-50"
           >
             {t("saveRecord")}
@@ -783,18 +803,30 @@ function HydrationModal({
 }: {
   open: boolean;
   onClose: () => void;
-  onSave: (payload: Omit<HealthLog, "id">) => void;
+  onSave: (payload: Omit<HealthLog, "id">) => void | Promise<void>;
 }) {
   const t = useTranslations("Salud");
   const [date, setDate] = useState(todayIso());
   const [hydrationMl, setHydrationMl] = useState("");
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (open) {
       setDate(todayIso());
       setHydrationMl("");
+      setSaving(false);
     }
   }, [open]);
+
+  async function handleSave() {
+    if (!hydrationMl.trim() || saving) return;
+    setSaving(true);
+    try {
+      await onSave({ date, hydrationMl: hydrationMl.trim() });
+    } finally {
+      setSaving(false);
+    }
+  }
 
   return (
     <ModalShell
@@ -826,8 +858,8 @@ function HydrationModal({
         <div className="flex gap-2 pt-1">
           <button
             type="button"
-            disabled={!hydrationMl.trim()}
-            onClick={() => onSave({ date, hydrationMl: hydrationMl.trim() })}
+            disabled={!hydrationMl.trim() || saving}
+            onClick={handleSave}
             className="h-11 flex-1 rounded-lg bg-primary text-sm font-semibold text-primary-foreground disabled:opacity-50"
           >
             {t("saveRecord")}
@@ -852,18 +884,30 @@ function SideEffectModal({
 }: {
   open: boolean;
   onClose: () => void;
-  onSave: (payload: Omit<HealthLog, "id">) => void;
+  onSave: (payload: Omit<HealthLog, "id">) => void | Promise<void>;
 }) {
   const t = useTranslations("Salud");
   const [date, setDate] = useState(todayIso());
   const [sideEffect, setSideEffect] = useState("");
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (open) {
       setDate(todayIso());
       setSideEffect("");
+      setSaving(false);
     }
   }, [open]);
+
+  async function handleSave() {
+    if (!sideEffect.trim() || saving) return;
+    setSaving(true);
+    try {
+      await onSave({ date, sideEffect: sideEffect.trim() });
+    } finally {
+      setSaving(false);
+    }
+  }
 
   return (
     <ModalShell
@@ -894,8 +938,8 @@ function SideEffectModal({
         <div className="flex gap-2 pt-1">
           <button
             type="button"
-            disabled={!sideEffect.trim()}
-            onClick={() => onSave({ date, sideEffect: sideEffect.trim() })}
+            disabled={!sideEffect.trim() || saving}
+            onClick={handleSave}
             className="h-11 flex-1 rounded-lg bg-primary text-sm font-semibold text-primary-foreground disabled:opacity-50"
           >
             {t("saveRecord")}
@@ -920,18 +964,30 @@ function SleepModal({
 }: {
   open: boolean;
   onClose: () => void;
-  onSave: (payload: Omit<HealthLog, "id">) => void;
+  onSave: (payload: Omit<HealthLog, "id">) => void | Promise<void>;
 }) {
   const t = useTranslations("Salud");
   const [date, setDate] = useState(todayIso());
   const [sleepHours, setSleepHours] = useState("");
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (open) {
       setDate(todayIso());
       setSleepHours("");
+      setSaving(false);
     }
   }, [open]);
+
+  async function handleSave() {
+    if (!sleepHours.trim() || saving) return;
+    setSaving(true);
+    try {
+      await onSave({ date, sleepHours: sleepHours.trim() });
+    } finally {
+      setSaving(false);
+    }
+  }
 
   return (
     <ModalShell open={open} onClose={onClose} title={t("registerSleepTitle")} icon={<Moon className="size-5 text-primary" aria-hidden />}>
@@ -958,8 +1014,8 @@ function SleepModal({
         <div className="flex gap-2 pt-1">
           <button
             type="button"
-            disabled={!sleepHours.trim()}
-            onClick={() => onSave({ date, sleepHours: sleepHours.trim() })}
+            disabled={!sleepHours.trim() || saving}
+            onClick={handleSave}
             className="h-11 flex-1 rounded-lg bg-primary text-sm font-semibold text-primary-foreground disabled:opacity-50"
           >
             {t("saveRecord")}
@@ -984,18 +1040,30 @@ function MoodModal({
 }: {
   open: boolean;
   onClose: () => void;
-  onSave: (payload: Omit<HealthLog, "id">) => void;
+  onSave: (payload: Omit<HealthLog, "id">) => void | Promise<void>;
 }) {
   const t = useTranslations("Salud");
   const [date, setDate] = useState(todayIso());
   const [mood, setMood] = useState<number | null>(null);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (open) {
       setDate(todayIso());
       setMood(null);
+      setSaving(false);
     }
   }, [open]);
+
+  async function handleSave() {
+    if (mood == null || saving) return;
+    setSaving(true);
+    try {
+      await onSave({ date, mood });
+    } finally {
+      setSaving(false);
+    }
+  }
 
   return (
     <ModalShell open={open} onClose={onClose} title={t("registerMoodTitle")} icon={<Smile className="size-5 text-primary" aria-hidden />}>
@@ -1030,8 +1098,8 @@ function MoodModal({
         <div className="flex gap-2 pt-1">
           <button
             type="button"
-            disabled={mood == null}
-            onClick={() => mood != null && onSave({ date, mood })}
+            disabled={mood == null || saving}
+            onClick={handleSave}
             className="h-11 flex-1 rounded-lg bg-primary text-sm font-semibold text-primary-foreground disabled:opacity-50"
           >
             {t("saveRecord")}
@@ -1115,7 +1183,7 @@ function PhotoModal({
 }: {
   open: boolean;
   onClose: () => void;
-  onSave: (payload: { date: string; file: File; note?: string }) => void;
+  onSave: (payload: { date: string; file: File; note?: string }) => void | Promise<void>;
 }) {
   const t = useTranslations("Salud");
   const [date, setDate] = useState(todayIso());
@@ -1142,10 +1210,10 @@ function PhotoModal({
   }
 
   async function handleSave() {
-    if (!file) return;
+    if (!file || saving) return;
     setSaving(true);
     try {
-      onSave({ date, file, note: note.trim() || undefined });
+      await onSave({ date, file, note: note.trim() || undefined });
     } finally {
       setSaving(false);
     }
@@ -1290,7 +1358,7 @@ function LabModal({
 }: {
   open: boolean;
   onClose: () => void;
-  onSave: (payload: { date: string; marker: string; value: string; unit?: string; note?: string }) => void;
+  onSave: (payload: { date: string; marker: string; value: string; unit?: string; note?: string }) => void | Promise<void>;
 }) {
   const t = useTranslations("Salud");
   const [date, setDate] = useState(todayIso());
@@ -1298,6 +1366,7 @@ function LabModal({
   const [customMarker, setCustomMarker] = useState("");
   const [value, setValue] = useState("");
   const [unit, setUnit] = useState(LAB_MARKER_DEFAULT_UNIT[LAB_MARKER_IDS[0]]);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (open) {
@@ -1306,11 +1375,27 @@ function LabModal({
       setCustomMarker("");
       setValue("");
       setUnit(LAB_MARKER_DEFAULT_UNIT[LAB_MARKER_IDS[0]]);
+      setSaving(false);
     }
   }, [open]);
 
   const markerName = marker === "otro" ? customMarker.trim() : t(`marker_${marker}`);
   const canSave = value.trim().length > 0 && markerName.length > 0;
+
+  async function handleSave() {
+    if (!canSave || saving) return;
+    setSaving(true);
+    try {
+      await onSave({
+        date,
+        marker: marker === "otro" ? customMarker.trim() : marker,
+        value: value.trim(),
+        unit: unit.trim() || undefined,
+      });
+    } finally {
+      setSaving(false);
+    }
+  }
 
   return (
     <ModalShell open={open} onClose={onClose} title={t("registerLabTitle")} icon={<FlaskConical className="size-5 text-primary" aria-hidden />}>
@@ -1374,15 +1459,8 @@ function LabModal({
         <div className="flex gap-2 pt-1">
           <button
             type="button"
-            disabled={!canSave}
-            onClick={() =>
-              onSave({
-                date,
-                marker: marker === "otro" ? customMarker.trim() : marker,
-                value: value.trim(),
-                unit: unit.trim() || undefined,
-              })
-            }
+            disabled={!canSave || saving}
+            onClick={handleSave}
             className="h-11 flex-1 rounded-lg bg-primary text-sm font-semibold text-primary-foreground disabled:opacity-50"
           >
             {t("saveRecord")}

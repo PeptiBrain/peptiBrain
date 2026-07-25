@@ -114,7 +114,11 @@ export function CalendarModal({
 
   async function saveTrip() {
     if (!onDataChange) return;
-    const end = tripEnd || selectedIso;
+    // El input de fecha de fin solo SUGIERE un mínimo (atributo `min`), no lo
+    // impone — sin este chequeo, una fecha de fin tecleada a mano anterior a
+    // la de inicio creaba un viaje que no aparecía marcado en ningún día del
+    // calendario (el bucle que pinta el rango nunca corre si fin < inicio).
+    const end = tripEnd && tripEnd >= selectedIso ? tripEnd : selectedIso;
     const next = await addTrip(data, { startDate: selectedIso, endDate: end, destination: tripDest });
     onDataChange(next);
     setAddingTrip(false);

@@ -24,7 +24,7 @@ export async function Header() {
             PeptiBrain
           </span>
         </Link>
-        <nav aria-label="Navegación principal" className="flex shrink-0 items-center gap-3 sm:gap-4">
+        <nav aria-label="Navegación principal" className="flex shrink-0 items-center gap-2 sm:gap-4">
           <Link
             href="/"
             className="hidden text-sm font-medium text-muted-foreground hover:text-foreground sm:inline"
@@ -32,7 +32,10 @@ export async function Header() {
             {t("home")}
           </Link>
           <ToolsMenu triggerLabel={t("tools")} />
-          <Link href="/blog" className="text-sm font-medium text-muted-foreground hover:text-foreground">
+          <Link
+            href="/blog"
+            className="hidden text-sm font-medium text-muted-foreground hover:text-foreground sm:inline"
+          >
             Blog
           </Link>
           <LocaleSwitcher />
