@@ -592,7 +592,8 @@
     "title": "Tu tarjeta de protocolo",
     "close": "Cerrar",
     "download": "Descargar",
-    "share": "Compartir"
+    "share": "Compartir",
+    "shareDesktopHint": "Tu navegador no puede compartir directo desde la computadora — descargamos la imagen, súbela desde WhatsApp o Instagram."
   },
   "DailySummary": {
     "title": "Resumen de tu día",

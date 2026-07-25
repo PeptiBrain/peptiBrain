@@ -7,11 +7,21 @@ import type { AppData } from "@/lib/app-data";
 
 const WIDTH = 1080;
 const HEIGHT = 1350;
+const LOGO_SIZE = 56;
+
+function loadImage(src: string): Promise<HTMLImageElement | null> {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => resolve(null);
+    img.src = src;
+  });
+}
 
 // Genera una tarjeta de protocolo como imagen (canvas nativo, sin librerías
 // nuevas) — solo péptidos/dosis/racha, nunca peso ni datos de salud, para no
 // filtrar de más en algo pensado para compartir en redes/con amigos.
-function drawCard(canvas: HTMLCanvasElement, data: AppData, name: string) {
+async function drawCard(canvas: HTMLCanvasElement, data: AppData, name: string) {
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
   canvas.width = WIDTH;
@@ -61,9 +71,16 @@ function drawCard(canvas: HTMLCanvasElement, data: AppData, name: string) {
     y += 160;
   });
 
-  ctx.fillStyle = "rgba(255,255,255,0.5)";
-  ctx.font = "400 30px system-ui, sans-serif";
-  ctx.fillText("peptibrain.com", 64, HEIGHT - 64);
+  const logo = await loadImage("/icon-192.png");
+  const logoY = HEIGHT - 64 - LOGO_SIZE / 2;
+  if (logo) {
+    ctx.drawImage(logo, 64, logoY - LOGO_SIZE / 2, LOGO_SIZE, LOGO_SIZE);
+  }
+  ctx.fillStyle = "#ffffff";
+  ctx.font = "700 34px system-ui, sans-serif";
+  ctx.textBaseline = "middle";
+  ctx.fillText("PeptiBrain", 64 + (logo ? LOGO_SIZE + 16 : 0), logoY);
+  ctx.textBaseline = "alphabetic";
 }
 
 function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
@@ -80,12 +97,12 @@ export function ProtocolShareCard({ data, name, onClose }: { data: AppData; name
   const t = useTranslations("ShareProtocol");
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [ready, setReady] = useState(false);
+  const [shareHint, setShareHint] = useState(false);
 
   function handleCanvasRef(node: HTMLCanvasElement | null) {
     canvasRef.current = node;
     if (node) {
-      drawCard(node, data, name);
-      setReady(true);
+      drawCard(node, data, name).then(() => setReady(true));
     }
   }
 
@@ -109,8 +126,19 @@ export function ProtocolShareCard({ data, name, onClose }: { data: AppData; name
     if (!blob) return;
     const file = new File([blob], "peptibrain-protocolo.png", { type: "image/png" });
     if (navigator.canShare?.({ files: [file] })) {
-      await navigator.share({ files: [file], title: "PeptiBrain" });
+      // En el celular esto abre el panel nativo de compartir — WhatsApp,
+      // Instagram, etc. aparecen ahí solos, según lo que el usuario tenga
+      // instalado. No hay forma de "enviar directo" a una app desde la web
+      // sin pasar por ese panel del sistema.
+      try {
+        await navigator.share({ files: [file], title: "PeptiBrain" });
+      } catch {
+        // el usuario canceló el panel de compartir — no es un error real
+      }
     } else {
+      // En computadora no existe ese panel — se descarga la imagen y se
+      // avisa que hay que subirla a mano.
+      setShareHint(true);
       handleDownload();
     }
   }
@@ -150,6 +178,7 @@ export function ProtocolShareCard({ data, name, onClose }: { data: AppData; name
             <Share2 className="size-4" aria-hidden /> {t("share")}
           </button>
         </div>
+        {shareHint && <p className="mt-2 text-center text-xs text-muted-foreground">{t("shareDesktopHint")}</p>}
       </div>
     </div>
   );

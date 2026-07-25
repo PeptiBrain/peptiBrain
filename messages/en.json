@@ -592,7 +592,8 @@
     "title": "Your protocol card",
     "close": "Close",
     "download": "Download",
-    "share": "Share"
+    "share": "Share",
+    "shareDesktopHint": "Your browser can't share directly from a computer — we downloaded the image, upload it from WhatsApp or Instagram."
   },
   "DailySummary": {
     "title": "Your day, summed up",
