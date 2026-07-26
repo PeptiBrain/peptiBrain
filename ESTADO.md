@@ -2,71 +2,166 @@
 
 ## 🐞 BACKLOG DE BUGS — lista viva (2026-07-25)
 
-> Origen: recorrido completo de la app hecho por Claude con la extensión de Chrome (Inicio,
-> Péptidos ×4 pestañas + 4 calculadoras, Salud ×9 pestañas, Estadísticas, Familia), probando
-> formularios y revisando consola y red. **Los cálculos de las calculadoras se verificaron
-> correctos** (reconstitución, GLP-1 sema/tirze, conversor mg↔mcg y dosis→mL/U).
-> El dueño irá añadiendo más bugs a esta lista. NO borrar entradas al arreglarlas: marcarlas ✅.
+> **Origen**: dos rondas de QA exhaustivo hechas por Claude con la extensión de Chrome, usando la
+> app como usuario real (creó péptidos, viales, dosis, protocolo de 60 dosis, salud, foto,
+> proveedor, viaje) y forzando límites (0, negativos, texto, fechas imposibles, nombres de 229
+> caracteres, triple clic). **84 hallazgos numerados.** Numeración original conservada.
+> **Lo que SÍ está bien**: los cálculos de las 4 calculadoras se verificaron correctos
+> (reconstitución, GLP-1 sema/tirze, conversor mg↔mcg, dosis→mL/U); el importador CSV es el ÚNICO
+> formulario que valida y avisa bien (patrón a copiar); los exports están bien formados; sin
+> errores de consola al cargar.
+> **Regla**: no borrar entradas al arreglarlas — marcarlas ✅ con el commit.
 
-### ✅ Críticos — ARREGLADOS y desplegados (commit 916b291)
-1. ✅ **Filtro "Personalizado" mostraba datos falsos.** `DateRangeTabs` MOSTRABA hoy–hoy en las
-   cajas de fecha pero el estado del padre seguía `null`, y en `isWithinRange()` un rango
-   personalizado vacío significa "no filtres nada" → la pantalla decía 26/07–26/07 mientras
-   contaba el peso del 25/07. Se sube el rango por defecto al padre al entrar en "Personalizado".
-2. ✅ **"1.00 ml/mL" en el vial** (el más peligroso: concentración sin sentido en app de dosis).
-   "ml" es unidad legítima para viales que ya vienen líquidos (Cerebrolysin); el fallo era
-   calcular cantidad/agua también ahí. Ahora solo se muestra si la unidad es masa (mg/mcg/UI).
-3. ✅ **Dosis negativa aceptada** en "Registrar uso" → ahora exige > 0 con aviso.
-4. ✅ **Aviso falso "tu plan Family solo incluye 2"**: el 503 hacía leer 0 asientos extra.
-   Ahora se distingue "0 asientos" de "no se pudo comprobar" (`extraSeatsUnknown`).
-5. ✅ **Péptidos duplicados** (dos "Semaglutida" idénticos) → valida nombre repetido.
-   ⚠️ Los duplicados YA existentes no se borran solos: hay que eliminarlos a mano.
+### 🎯 LEER PRIMERO — 4 causas raíz que explican ~30 de los 84
+Atacar estas cuatro mata la mayoría del backlog. Arreglar bug a bug es el error aquí.
 
-### 🟠 Importantes — PENDIENTES
-- **Notificación incoherente**: "Llevas 12 días sin registrar" (22 jul) con racha de 1 día y
-  registros del 25 jul. Revisar el cron de re-enganche (`/api/cron/daily`, `winback_sent_at`).
-- **"Programar una dosis" no abre formulario**: solo navega a Péptidos › Resumen. Debería abrir
-  el formulario de registro directamente (mismo patrón que el botón de Agregar péptido).
-- **Header fijo solapa y recorta el contenido** al hacer scroll: la fila de pestañas queda
-  cortada por la mitad. Falta `scroll-mt` / padding compensando la altura del header sticky.
-- **Estadísticas: "Cambio de peso — Sin datos aún"** habiendo un registro. Con un solo peso no
-  hay "cambio", pero debería mostrar el peso actual en vez de decir que no hay datos.
+- **CR-1 · No hay capa de validación en cliente.** El backend rechaza con HTTP 400 y la UI **no dice
+  nada**: el modal no se cierra, el botón sigue verde, el usuario cree que guardó. Y donde no hay
+  regla en base, entra cualquier cosa. Explica: 1, 2, 3, 4, 7, 14, 15, 21, 22, 53, 55, 67, 77.
+  → Copiar el patrón del importador CSV (aviso inline en rojo) y el de "Editar perfil" (validación
+  inline "Correo válido"/"Número válido"), que YA existen y funcionan bien.
+- **CR-2 · No se puede borrar ni editar casi nada de Salud.** Un dato mal metido es permanente.
+  Explica: 6, 23, 68 — y bloquea la limpieza de los datos de prueba que quedaron.
+- **CR-3 · Refetch duplicado de 12 tablas en cada navegación (~24 peticiones).** Explica: 12, 32,
+  57, 58, 59 (503 intermitentes, lentitud de 5-8 s, badge que no se actualiza).
+- **CR-4 · Fechas mezclando UTC y hora local, y sin año.** Explica: 9, 52, 61, 79, 82.
 
-### 🟡 Interfaz y textos — PENDIENTES (bajo riesgo, agrupables en una tanda)
-- Capitalización rota en Calendario: "Julio De 2026", "Domingo, 26 De Julio" (el `capitalize`
-  de CSS afecta también a "de" → usar formato correcto, no `capitalize` sobre la frase entera).
-- Botón con doble signo: "+ + Agregar otro péptido (mezcla)".
-- El Asistente no renderiza listas: "1. x 2. y 3. z" sale todo en una línea (falta formatear
-  saltos de línea / markdown básico en la respuesta).
-- CTA inconsistente en Salud: pestaña Ejercicio dice "Registrar salud" y el resto "Registrar
-  comida / hidratación / sueño / ánimo".
-- Emojis 3º y 4º de la escala de ánimo casi idénticos.
-- Filtro por defecto distinto entre secciones: Inicio "Últimos 7 días" vs Péptidos "Histórico".
-- Botón de icono junto a "Importar CSV" en Familia sin etiqueta visible (parece exportar).
-- Calculadora: el campo "Agua bacteriostática (ml)" pierde su etiqueta al rellenarse porque
-  solo usa placeholder (falta `<label>` visible).
-- "Modo viaje" en el menú de perfil sale truncado ("Pausa los recordatorios…").
-- En "Comparar", las filas de las dos columnas no quedan alineadas entre sí.
+### 🔴 CRÍTICOS — riesgo de dosificación, pérdida de datos o bloqueo
+1. **Concentración `Infinity mg/mL` guardada en base.** Vial 10 mg + agua `0` → guarda y muestra
+   `10 mg · Infinity mg/mL`. Lo más grave del informe. Validar agua > 0 y no renderizar nunca
+   `Infinity`/`NaN`.
+2. **Calculadora dice "Extraer hasta 0.0 unidades" sin avisar.** 10 mg + 0.01 ml + 250 mcg → `0.0 U`
+   (real 0,025 U, no medible). Existe aviso para "supera la jeringa" pero no para el defecto.
+3. **"Resolver agua" da resultado físicamente imposible.** Vial 1 mg, dosis 2000 mcg, 20 U → `0.10 mL`.
+   No se pueden sacar 2 mg de un vial de 1 mg, y 20 U son el doble del volumen total.
+4. **Fallos silenciosos en 5 formularios** (400 sin mensaje): nombre de péptido de 229 caracteres
+   (input sin `maxlength`), vial `-10` mg, peso `-50` kg / grasa `500 %`, comida `-5000` kcal,
+   sueño `48` h.
+5. **"Eliminar foto" borra sin confirmación** (los demás borrados sí confirman). Ver también 56.
+6. **No hay forma de borrar dosis ni protocolos programados.** Un protocolo generó 60 dosis y solo
+   se pueden quitar borrando el péptido entero o "Restablecer todos mis datos".
+7. **Ningún control de plausibilidad, y encima se celebra.** Aceptó 500 kg, 99 % grasa, 999.999 kcal,
+   999.999 ml, 99.999 min, testosterona 99.999, dosis 999.999 mg. El toast felicitó con **"-427 kg"**.
+8. **Dosis en el futuro se puede marcar como Aplicada** (registrada el 01/01/2030).
+9. **Fechas sin año** (`mar 1 de ene`, `26 jul`): un registro de 1900 o 2030 parece de este año.
+   Peligroso en un historial clínico.
+50. **El modal "Centro de ayuda" queda ATRAPADO y no se puede cerrar.** X y título fuera de pantalla,
+   `Escape` no cierra, clic fuera tampoco y además **atraviesa** el modal activando lo de debajo.
+   Solo se sale recargando. **Causa exacta ya diagnosticada**: el overlay `fixed inset-0` se
+   renderiza DENTRO del `<header sticky backdrop-blur>`; el `backdrop-filter` crea un containing
+   block para `position:fixed`, así que `inset-0` mide 57 px en vez del viewport → el panel queda en
+   `top:-264px`. **Arreglo: `createPortal(document.body)`** (los demás modales sí se centran bien).
+51. **Doble/triple clic en "Guardar péptido" crea duplicados.** 3 clics → 3 POST 201 → 3 péptidos.
+   No se desactiva el botón durante el envío. **Es el origen real de los dos "Semaglutida"**
+   (el arreglo por nombre del commit 916b291 no cubre la carrera de clics rápidos).
+52. **Desfase de un día app vs informe.** Salud "25 jul", informe "24 jul". Peso del 1 ene sale como
+   "31 dic 1899". Mezcla de UTC con hora local al formatear.
+53. **El importador CSV acepta fechas y cantidades imposibles**: `01/01/1800` y `999999999 mg` se
+   importan (201). Ese registro rompe el gráfico "Dosis en el tiempo" y provoca scroll horizontal
+   en toda la página.
+54. **El icono de descarga sin etiqueta de Familia exporta TODOS tus datos** (`peptibrain-datos.json`,
+   todo el historial) sin tooltip, sin `aria-label`, sin confirmación. Parece un export de familia.
 
-### 🔵 Estructural — PENDIENTE, requiere OK explícito (cambio único, alto riesgo)
-- **Refetch duplicado de las 12 tablas en CADA cambio de sección** (cada página hace su propio
-  `loadAppData()` al montar, sin caché compartida). Consecuencias medidas: lentitud de varios
-  segundos al pulsar "Péptidos" (la URL cambia pero la vista tarda), y **503 intermitentes**
-  en `family_extra_seats`, en los prefetch de `/app`, `/app/salud`, `/app/estadisticas`.
-  La tabla `family_extra_seats` y su política RLS se verificaron CORRECTAS contra la base real
-  → el 503 no viene de la consulta, sino de saturar el plan gratuito de Supabase.
-  Arreglo: caché en memoria de `AppData` con invalidación en cada mutación. Toca la capa de
-  datos de toda la app → hacerlo solo, con verificación, y nunca mezclado con otros cambios.
-- (Relacionado) 503 en `cdn.growthbook.io` — servicio externo, revisar si se usa de verdad.
+### 🟠 ALTOS — funcionalidad
+10. Asistente responde cortado y con **markdown crudo** (`**6 péptidos**`), y trunca la respuesta.
+11. **"Programar una dosis" no programa nada**: navega a Péptidos › Resumen sin abrir formulario.
+12. Navegación lenta o perdida: pulsar "Péptidos" a veces no hace nada; cuando funciona tarda 5-8 s
+    mostrando el dashboard viejo. (Ver CR-3.)
+13. **Badge rojo de dosis pendientes no se actualiza** al aplicar una dosis (seguía en 60), y cuenta
+    las 60 futuras en vez de solo las vencidas/de hoy.
+14. Duración del protocolo sin tope visible: 9999 semanas → "creará 60 dosis" sin explicar el límite.
+15. **Viaje con fecha fin anterior al inicio se guarda** (26 jul → 1 jul).
+16. Pide zona de inyección para un péptido **ORAL**.
+17. Lista de la compra incoherente: "Añade un vial" cuando sí lo tiene; sugiere jeringas para oral.
+18. Confirmación equivocada: al borrar un **proveedor** pregunta "¿Eliminar este **vial**?".
+19. Protocolo guardado en la calculadora se lista con un "—" en vez de un resumen.
+20. Péptidos duplicados indistinguibles en el desplegable de "Registrar uso". (Ver 51 y 74.)
+21. Campos "(opcional)" que son obligatorios: "Nombre del péptido (opcional)", "Efecto secundario — opcional".
+22. Proveedores sin validación: web `javascript:alert(1)`, teléfono `abcdefg`, email inválido.
+    Hoy se pintan como texto plano (no hay XSS) — **pero si algún día se convierten en `<a href>`
+    sí lo habría**. "Editar perfil" YA tiene el patrón correcto: reutilizarlo.
+23. **Peso y Ejercicio no se pueden editar ni borrar.** (Ver CR-2 y 68.)
+24. Métricas que se contradicen: Estadísticas "Adherencia — Sin datos" con 1 dosis aplicada;
+    Inicio "Dosis cumplidas 0 de 0" mientras Estadísticas dice 1.
+25. Gráfica "Dosis en el tiempo" etiqueta el eje con horas (`10h`) aunque el periodo sea "Histórico".
+26. ✅ Filtro "Personalizado" tras recarga mostraba datos fuera de rango — **ARREGLADO** (916b291).
+27. Notificación incoherente: "Llevas 12 días sin registrar" con racha de 1 día.
+28. "Vencida hace 0 días" (debería ser "vence hoy").
+29. Tour guiado estático: dice "vamos a verlas una por una" pero no navega ni resalta, sin botón
+    Atrás, y menciona "Con Premium" en una calculadora que el usuario ya tiene.
+30. Contradicción de plan: "Mi plan: Family — el más completo" vs "tu plan Family solo incluye 2".
+31. En modo oscuro el botón "Invitar" deshabilitado se ve idéntico a uno activo.
+32. Red: `family_extra_seats` 503 siempre, prefetch RSC 503 intermitentes, growthbook 503. (Ver CR-3.)
+55. **El viaje con fechas invertidas activó "Modo viaje: Activo"** y pausó los recordatorios sin avisar.
+56. Borrar un viaje no pide confirmación.
+57. `HEAD family_extra_seats` 503 en cada carga (×2) → el banner del límite del plan puede mentir.
+    ⚠️ Mitigado en 916b291 (`extraSeatsUnknown` ya no bloquea), pero la causa sigue.
+58. `cdn.growthbook.io` 503 ×3 por carga → feature flags a valores por defecto; probable origen del
+    texto incoherente de "Premium".
+59. **Todas las tablas se piden DOS veces por carga** (~24 peticiones en vez de 12). (Ver CR-3.)
+60. Al cambiar a inglés **la moneda pasa de € a $** con los mismos números. Eso no es traducir.
+61. En la UI inglesa las fechas siguen en español ("Next dose lun 27 de jul").
+62. El `<title>` sigue en español en `/en/`.
+63. La tarjeta de "Compartir" mezcla idiomas: en español pone "jose's protocol", "1 day streak".
+64. "1 días" / "1 days" — falta singular/plural (Inicio e informe).
+65. "1 dosis importadas · 1 péptidos nuevos creados · 1 filas con error" — sin plurales, y no dice
+    QUÉ fila falló.
+66. El informe solo incluye péptidos, dosis, viales y peso. **Faltan** comidas, hidratación, sueño,
+    ánimo, efectos secundarios, análisis y fotos.
+67. El desplegable de "Cantidad" del vial permite "ml" como unidad del péptido.
+    ⚠️ Parcialmente mitigado en 916b291 (ya no se pinta la concentración absurda), pero **la opción
+    sigue ahí**; decidir si se restringe a mg/mcg/UI salvo viales líquidos.
+68. **Peso, Ejercicio, Hidratación, Sueño, Ánimo y Efectos no tienen borrar ni editar.** (CR-2.)
+69. El 404 es el por defecto de Next.js: en inglés, sin marca, sin cabecera, sin enlace de vuelta.
+70. "Instalar la app" abre `/descargar` a pantalla completa sin cabecera; no usa el prompt nativo
+    de instalación y no cubre escritorio.
+71. **Móvil (372 px):** el icono de sincronizar se solapa con el logotipo "PeptiBrain".
+72. **Móvil:** en Familia el subtítulo se solapa con los botones y el banner del plan queda en una
+    columna de ~10 caracteres.
+73. **Móvil:** el FAB tapa "+ Registrar uso" en Péptidos y el contador de Efectos en Inicio.
+74. "Elegir péptidos específicos" muestra dos "Semaglutida" idénticos.
+75. El acordeón del Centro de ayuda recorta la respuesta (solo 2 líneas visibles).
+76. La FAQ dice "Calculadora (Premium)" aunque el plan Family ya la incluye.
+77. El teléfono de un familiar acepta 12 dígitos sin validar, mientras Editar perfil sí valida.
+78. Resumen pinta las 60 dosis de golpe, sin paginación ni "cargar más".
 
-### 🌐 i18n — DECISIÓN NECESARIA ANTES DE LANZAR (no después)
-- En `/en/app` el título de pestaña sigue en español y las rutas mantienen `/peptidos`, `/salud`.
-- ⚠️ Cambiar las rutas a `/peptides`, `/health` DESPUÉS del lanzamiento rompería enlaces
-  guardados y perdería posicionamiento. Decidir antes del 2 de agosto.
+### 🟡 MENORES — copy y UI
+33. Capitalización: "Julio De 2026", "Domingo, 26 De Julio" (`capitalize` afecta también a "de").
+34. Doble símbolo: "+ + Agregar otro péptido (mezcla)".
+35. Números sin separador de miles: "999999 kcal" desborda la tarjeta.
+36. "2000.0 unidades" se pinta en verde (color de éxito) cuando es un error.
+37. "Agua bacteriostática (ml)" solo existe como placeholder: al escribir desaparece la etiqueta.
+38. Emojis de ánimo 2.º y 4.º casi idénticos; los botones sin texto ni `aria-label`.
+39. La nota de la foto solo se ve en el lightbox, no en la tarjeta; la imagen sin `alt`.
+40. El "+" de Salud a veces abre modal (Peso) y a veces un formulario inline (Ejercicio).
+41. CTA inconsistentes en estados vacíos: "Registrar salud" en Ejercicio vs "Registrar comida"…
+42. Botón sin etiqueta junto a "Importar CSV" en Familia (es exportar). Ver 54.
+43. "Modo viaje / Pausa los recordatorios…" truncado en el menú de perfil.
+44. Avatar vacío en "Editar perfil"; en Familia un miembro muestra una foto de vial como avatar.
+45. Filtros por defecto distintos: Inicio "Últimos 7 días" vs Péptidos "Histórico".
+46. La cabecera sticky solapa y recorta contenido al hacer scroll.
+47. `/en/` mantiene `<title>` y slugs en español. ⚠️ **Decidir `/peptidos` → `/peptides` ANTES de
+    lanzar**: cambiarlo después rompe enlaces guardados y SEO.
+48. Calculadora con agua = 0 o unidades = 0: no calcula y no explica por qué.
+49. "Pendiente" / "Marcar como aplicada" a veces necesita dos clics (el primero solo enfoca).
+79. El CSV exporta fechas sin cero: `23/9/2026`.
+80. Ninguna descarga (JSON, CSV, PNG) muestra aviso de "descargado".
+81. El botón "Recargar" del header no da ninguna señal.
+82. "Caduca en 29 d (24 ago)" se lee como "hace 24".
+83. Cambiar de idioma te devuelve a la pestaña Resumen.
+84. Los modales no usan `role="dialog"` ni atrapan el foco.
 
-### 🚫 No probado por el QA (queda por cubrir)
-- Compartir vial / permisos familiares · botón "Añadir asiento extra (5€/mes)" · descarga de
-  PDF e informe · **diseño móvil** (el navegador de la extensión no bajaba de ~1180 px).
+### ⚪ NO PROBADO — requiere OK explícito del dueño
+Compartir progreso y viales · cambiar permisos de familia · "Añadir asiento extra (5€/mes)" ·
+descargas (PDF calculadora, informe, JSON, CSV) · Importar CSV con archivo propio · cambiar
+nombre/email/teléfono/contraseña · "Restablecer todos mis datos" / "Eliminar mi cuenta" /
+"Cancelar suscripción".
+
+### 🧹 DATOS DE PRUEBA QUE QUEDAN EN LA CUENTA REAL
+El QA limpió lo que pudo. **Sigue ahí porque la app no ofrece forma de borrarlo** (bug 68):
+peso 500 kg / 99 % con fecha **1 ene 1900**, ejercicio 99.999 min, hidratación 999.999 ml,
+sueño 12 h, ánimo Normal, efecto "Náusea severa QA" (26 jul), y **59 dosis pendientes** del
+protocolo de "prueba de peptido". Contaminan estadísticas y gráficos hasta que se borren.
 
 ## 📋 SESIÓN 2026-07-25 (larga) — resumen de lo desplegado
 
