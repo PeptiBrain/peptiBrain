@@ -466,6 +466,62 @@ export function AdminDashboard({ data, alerts }: { data: AdminOverview; alerts: 
           </Section>
         )}
 
+        {/* EMBUDO DE ACTIVACIÓN — dónde se pierde la gente */}
+        {showUsers && (
+          <Section
+            title="Embudo · Dónde se pierde la gente"
+            note="Calculado con los datos reales de la app, no con clics. Cada barra es cuánta gente llegó a ese paso."
+            delay={0.3}
+          >
+            <div className="rounded-2xl p-5" style={{ background: ADMIN.surface, border: `1px solid ${ADMIN.border}` }}>
+              {data.funnelBottleneck && data.funnelBottleneck.dropFromPrev > 0 && (
+                <p
+                  className="mb-4 rounded-xl px-3 py-2 text-sm"
+                  style={{
+                    background: ADMIN.surfaceHover,
+                    border: `1px solid ${ADMIN.warning}44`,
+                    color: ADMIN.warning,
+                  }}
+                >
+                  Donde más gente se cae: <strong>{data.funnelBottleneck.label}</strong> — se pierden{" "}
+                  {data.funnelBottleneck.dropFromPrev} persona
+                  {data.funnelBottleneck.dropFromPrev === 1 ? "" : "s"} respecto al paso anterior. Es el
+                  primer sitio que conviene arreglar.
+                </p>
+              )}
+              <div className="space-y-2.5">
+                {data.activationFunnel.map((step) => {
+                  const isWorst = data.funnelBottleneck?.label === step.label;
+                  return (
+                    <div key={step.label}>
+                      <div className="mb-1 flex items-baseline justify-between gap-3">
+                        <span className="text-sm" style={{ color: isWorst ? ADMIN.warning : ADMIN.text }}>
+                          {step.label}
+                        </span>
+                        <span className="shrink-0 text-sm tabular-nums" style={{ color: ADMIN.textMuted }}>
+                          {step.users} · {step.pct}%
+                          {step.dropFromPrev > 0 && (
+                            <span style={{ color: ADMIN.negative }}> (−{step.dropFromPrev})</span>
+                          )}
+                        </span>
+                      </div>
+                      <div className="h-2 w-full overflow-hidden rounded-full" style={{ background: ADMIN.border }}>
+                        <div
+                          className="h-full rounded-full"
+                          style={{
+                            width: `${step.pct}%`,
+                            background: isWorst ? "#fbbf24" : ADMIN.accent,
+                          }}
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </Section>
+        )}
+
         {/* SALUD DEL SISTEMA */}
         {showHealth && (
           <Section title="Salud del sistema" delay={0.35}>

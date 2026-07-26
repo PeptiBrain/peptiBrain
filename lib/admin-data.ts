@@ -53,6 +53,16 @@ export type AdminUser = {
 
 export type ActivityStat = { label: string; value: number; pct?: number };
 
+export type FunnelStep = {
+  label: string;
+  /** Personas distintas que llegaron a este paso. */
+  users: number;
+  /** % sobre el total de registrados. */
+  pct: number;
+  /** Personas perdidas entre el paso anterior y este. */
+  dropFromPrev: number;
+};
+
 export type AdminOverview = {
   totalUsers: number;
   usersByPlan: Record<string, number>;
@@ -89,6 +99,10 @@ export type AdminOverview = {
   retentionD30: number | null;
   // Ganancia real
   hotmartFeeEstimate: number;
+  /** Embudo de activación calculado desde las tablas reales (no desde eventos). */
+  activationFunnel: FunnelStep[];
+  /** El paso con mayor caída respecto al anterior — dónde arreglar primero. */
+  funnelBottleneck: FunnelStep | null;
   aiCostEstimate: number;
   /** Costo real de IA de HOY (USD), sumado de ai_calls. */
   aiCostToday: number;
@@ -262,6 +276,55 @@ export async function loadAdminOverview(): Promise<AdminOverview> {
   const signups30d = profiles.filter((p) => p.created_at >= since30d);
   const activated30d = signups30d.filter((p) => p.onboarding_completed_at).length;
   const activationPct = signups30d.length > 0 ? Math.round((activated30d / signups30d.length) * 100) : 0;
+
+  // --- Funnel de activación: de registrarse a volverse usuario habitual ---
+  // Se calcula desde las tablas que YA existen (profiles/peptides/vials/doses),
+  // no desde una tabla de eventos nueva. Dos ventajas grandes: funciona con el
+  // historial completo desde el día 1 (una tabla de eventos empezaría vacía y
+  // no diría nada hasta dentro de semanas) y no añade una escritura extra en
+  // cada acción del usuario. Mide HECHOS ("tiene un péptido"), no clics.
+  const uniqueUsers = (rows: { user_id?: string | null }[]) =>
+    new Set(rows.filter((r) => r.user_id).map((r) => r.user_id as string)).size;
+
+  const peptidesRows = allPeptides || [];
+  const vialsRows = allVials || [];
+  const dosesRows = doseActivity || [];
+  const funnelHealthRows = allHealthLogs || [];
+  const totalSignups = profiles.length;
+
+  const funnelRaw: { label: string; users: number }[] = [
+    { label: "Se registran", users: totalSignups },
+    {
+      label: "Completan el onboarding",
+      users: profiles.filter((p) => p.onboarding_completed_at).length,
+    },
+    { label: "Añaden su primer péptido", users: uniqueUsers(peptidesRows) },
+    { label: "Registran un vial", users: uniqueUsers(vialsRows) },
+    { label: "Programan una dosis", users: uniqueUsers(dosesRows) },
+    { label: "Marcan una dosis como aplicada", users: uniqueUsers(dosesRows.filter((d) => d.done)) },
+    { label: "Anotan peso o salud", users: uniqueUsers(funnelHealthRows) },
+    { label: "Pagan", users: profiles.filter((p) => p.plan !== "free").length },
+  ];
+
+  const activationFunnel: FunnelStep[] = funnelRaw.map((step, i) => {
+    const prev = i === 0 ? step.users : funnelRaw[i - 1].users;
+    return {
+      label: step.label,
+      users: step.users,
+      pct: totalSignups > 0 ? Math.round((step.users / totalSignups) * 100) : 0,
+      // Cuánta gente se pierde ENTRE este paso y el anterior: es lo que dice
+      // dónde está el agujero, no el porcentaje absoluto.
+      dropFromPrev: i === 0 ? 0 : prev - step.users,
+    };
+  });
+
+  // El paso con la mayor caída respecto al anterior — el que hay que arreglar
+  // primero. Se ignora el último ("Pagan"), que cae por precio, no por UX.
+  const funnelBottleneck =
+    activationFunnel.slice(1, -1).reduce<FunnelStep | null>(
+      (worst, s) => (!worst || s.dropFromPrev > worst.dropFromPrev ? s : worst),
+      null
+    ) || null;
 
   // --- Retención D1/D7/D30: ¿volvió a registrar algo después de ese punto? ---
   const doses = doseActivity || [];
@@ -505,6 +568,8 @@ export async function loadAdminOverview(): Promise<AdminOverview> {
     retentionD7,
     retentionD30,
     hotmartFeeEstimate,
+    activationFunnel,
+    funnelBottleneck,
     aiCostEstimate,
     aiCostToday,
     aiCallsToday,
