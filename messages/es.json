@@ -792,7 +792,7 @@
     "calculatorModeDraw": "Calcular dosis",
     "calculatorModeWater": "Resolver agua",
     "removeEntryAria": "Quitar péptido",
-    "addPeptideEntry": "+ Agregar otro péptido (mezcla)",
+    "addPeptideEntry": "Agregar otro péptido (mezcla)",
     "targetUnitsLabel": "Unidades que quieres cargar",
     "targetUnitsPlaceholder": "ej: 20",
     "waterResultLabel": "Agua bacteriostática a agregar",
@@ -838,7 +838,8 @@
     "vialAmountInvalid": "La cantidad debe ser mayor que 0.",
     "vialWaterInvalid": "El agua debe ser mayor que 0 (o déjalo vacío si aún no lo reconstituiste).",
     "underMeasurable": "Esa dosis es demasiado pequeña para medirla en esta jeringa. Usa más agua bacteriostática o una jeringa más pequeña.",
-    "waterImpossible": "Con esos datos no sale: la dosis que pides es mayor que todo el contenido del vial. Revisa la cantidad del vial o la dosis."
+    "waterImpossible": "Con esos datos no sale: la dosis que pides es mayor que todo el contenido del vial. Revisa la cantidad del vial o la dosis.",
+    "confirmDeleteProvider": "¿Eliminar este proveedor?"
   },
   "Salud": {
     "title": "Salud",

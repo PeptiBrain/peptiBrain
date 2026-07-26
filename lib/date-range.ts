@@ -8,6 +8,23 @@ export function todayIso(): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
 
+// Formatea una fecha "solo día" (yyyy-mm-dd) en la zona horaria del usuario.
+//
+// `new Date("2026-01-01")` se interpreta como medianoche UTC, así que al
+// mostrarla en hora local (España o América) cae en el día ANTERIOR: por eso el
+// informe decía "24 jul" para un registro del 25, y un peso del 1 de enero
+// salía como "31 dic 1899". Añadir "T00:00:00" fuerza que se lea como hora
+// local, que es lo que el usuario escribió.
+export function formatDateOnly(
+  iso: string,
+  locale: string,
+  options: Intl.DateTimeFormatOptions = { day: "numeric", month: "short", year: "numeric" }
+): string {
+  const d = /^\d{4}-\d{2}-\d{2}$/.test(iso) ? new Date(`${iso}T00:00:00`) : new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso;
+  return d.toLocaleDateString(locale, options);
+}
+
 export type DateRangeKey =
   | "today"
   | "7d"

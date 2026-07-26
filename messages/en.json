@@ -792,7 +792,7 @@
     "calculatorModeDraw": "Calculate dose",
     "calculatorModeWater": "Solve for water",
     "removeEntryAria": "Remove peptide",
-    "addPeptideEntry": "+ Add another peptide (blend)",
+    "addPeptideEntry": "Add another peptide (blend)",
     "targetUnitsLabel": "Units you want to draw",
     "targetUnitsPlaceholder": "e.g. 20",
     "waterResultLabel": "Bacteriostatic water to add",
@@ -838,7 +838,8 @@
     "vialAmountInvalid": "Amount must be greater than 0.",
     "vialWaterInvalid": "Water must be greater than 0 (or leave it empty if not reconstituted yet).",
     "underMeasurable": "That dose is too small to measure on this syringe. Use more bacteriostatic water or a smaller syringe.",
-    "waterImpossible": "That doesn't add up: the dose you want is larger than the entire vial. Check the vial amount or the dose."
+    "waterImpossible": "That doesn't add up: the dose you want is larger than the entire vial. Check the vial amount or the dose.",
+    "confirmDeleteProvider": "Delete this provider?"
   },
   "Salud": {
     "title": "Health",

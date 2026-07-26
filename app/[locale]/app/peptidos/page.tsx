@@ -837,7 +837,7 @@ function ProvidersSection({
               </div>
               {confirmId === p.id && (
                 <div className="mt-2 flex items-center justify-between gap-2 rounded-lg bg-secondary/60 px-3 py-2">
-                  <p className="text-xs text-foreground">{t("confirmDeleteVial")}</p>
+                  <p className="text-xs text-foreground">{t("confirmDeleteProvider")}</p>
                   <div className="flex shrink-0 gap-1.5">
                     <button
                       type="button"

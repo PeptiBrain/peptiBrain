@@ -5,6 +5,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Printer, ArrowLeft } from "lucide-react";
 import Image from "next/image";
+import { formatDateOnly } from "@/lib/date-range";
 import { createClient } from "@/lib/supabase/client";
 import { loadAppData, type AppData } from "@/lib/app-data";
 import { computeStats } from "@/lib/stats";
@@ -214,7 +215,7 @@ export default function InformePage() {
                 {recentWeights.map((h) => (
                   <tr key={h.id} className="border-b border-border/60">
                     <td className="py-1.5 text-muted-foreground">
-                      {new Date(h.date).toLocaleDateString(locale, { day: "numeric", month: "short", year: "numeric" })}
+                      {formatDateOnly(h.date, locale)}
                     </td>
                     <td className="py-1.5 text-foreground">{h.weightKg} kg</td>
                   </tr>

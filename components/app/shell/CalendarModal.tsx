@@ -20,6 +20,10 @@ function doseStatus(dose: Dose): DoseStatus {
   return new Date(dose.scheduledAt).getTime() < Date.now() ? "atrasada" : "programada";
 }
 
+function upperFirst(text: string): string {
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
 export function CalendarModal({
   open,
   onClose,
@@ -84,7 +88,11 @@ export function CalendarModal({
     return map;
   }, [data.trips]);
 
-  const monthLabel = new Intl.DateTimeFormat(locale, { month: "long", year: "numeric" }).format(cursor);
+  // upperFirst en vez de la clase CSS `capitalize`: esa pone mayúscula en CADA
+  // palabra y producía "Julio De 2026" / "Domingo, 26 De Julio".
+  const monthLabel = upperFirst(
+    new Intl.DateTimeFormat(locale, { month: "long", year: "numeric" }).format(cursor)
+  );
 
   const cells = useMemo(() => {
     const year = cursor.getFullYear();
@@ -102,11 +110,13 @@ export function CalendarModal({
   const selectedTrip = tripDays.has(selectedIso);
   const selectedDestination = tripDays.get(selectedIso);
   const selectedDate = new Date(`${selectedIso}T00:00:00`);
-  const selectedLabel = new Intl.DateTimeFormat(locale, {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-  }).format(selectedDate);
+  const selectedLabel = upperFirst(
+    new Intl.DateTimeFormat(locale, {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+    }).format(selectedDate)
+  );
 
   const selectedTripObj = (data.trips || []).find(
     (tr) => selectedIso >= tr.startDate && selectedIso <= tr.endDate
@@ -207,7 +217,7 @@ export function CalendarModal({
                 <ChevronLeft className="size-4 text-foreground" aria-hidden />
               </button>
               <div className="flex items-center gap-2">
-                <p className="text-sm font-semibold capitalize text-foreground">{monthLabel}</p>
+                <p className="text-sm font-semibold text-foreground">{monthLabel}</p>
                 <button
                   type="button"
                   onClick={() => {
@@ -300,7 +310,7 @@ export function CalendarModal({
 
             <div className="mt-4 border-t border-border pt-4">
               <div className="flex items-center justify-between">
-                <p className="text-sm font-semibold capitalize text-foreground">{selectedLabel}</p>
+                <p className="text-sm font-semibold text-foreground">{selectedLabel}</p>
                 {onDataChange && !selectedTripObj && (
                   <button
                     type="button"

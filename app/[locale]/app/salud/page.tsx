@@ -91,7 +91,16 @@ export default function SaludPage() {
   }
 
   function formatLogDate(iso: string) {
-    return new Date(`${iso}T00:00:00`).toLocaleDateString(locale, { day: "numeric", month: "short" });
+    // El año solo se muestra si NO es el actual: así "26 jul" sigue siendo
+    // corto para lo de este año, pero un registro de 1900 o de 2030 se ve tal
+    // cual y no se confunde con uno reciente (historial clínico).
+    const d = new Date(`${iso}T00:00:00`);
+    const sameYear = d.getFullYear() === new Date().getFullYear();
+    return d.toLocaleDateString(locale, {
+      day: "numeric",
+      month: "short",
+      ...(sameYear ? {} : { year: "numeric" }),
+    });
   }
 
   const weightLogs = data.healthLogs.filter((h) => h.weightKg);
