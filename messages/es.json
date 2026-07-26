@@ -831,7 +831,9 @@
     "shoppingNote": "Estimación según tus dosis programadas. No es consejo médico.",
     "suggestionsFound": "Encontré {count} sugerencias",
     "emptyPeptidesTitle": "Aún no tienes péptidos",
-    "emptyPeptidesBody": "Añade el primero (GLP-1, péptidos o TRT) y empieza a registrar tus dosis."
+    "emptyPeptidesBody": "Añade el primero (GLP-1, péptidos o TRT) y empieza a registrar tus dosis.",
+    "amountInvalid": "Escribe una cantidad mayor que 0.",
+    "duplicatePeptide": "Ya tienes un péptido con ese nombre."
   },
   "Salud": {
     "title": "Salud",

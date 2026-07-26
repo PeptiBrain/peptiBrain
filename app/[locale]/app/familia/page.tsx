@@ -84,7 +84,11 @@ export default function FamiliaPage() {
 
   const canShare = data.plan === "family";
   const maxGuests = 2 + data.extraFamilySeats;
-  const seatsFull = data.familyMembers.length >= maxGuests;
+  // Si no se pudo comprobar cuántos asientos extra hay (503 intermitente del
+  // servidor), NO se da por lleno: acusar en falso a alguien que pagó asientos
+  // de más es peor que dejarle intentar invitar — el límite real se aplica
+  // igualmente en el servidor al aceptar la invitación.
+  const seatsFull = !data.extraSeatsUnknown && data.familyMembers.length >= maxGuests;
 
   function selectedPeptideIds(memberId: string): Set<string> {
     const member = data!.familyMembers.find((m) => m.id === memberId);

@@ -44,12 +44,20 @@ export function PeptideCard({
     (p) => p.name.toLowerCase() === peptide.name.trim().toLowerCase()
   );
 
+  // La "concentración" solo tiene sentido si la cantidad del vial es una MASA
+  // (mg/mcg/UI) disuelta en un volumen de agua. Si el vial ya viene líquido
+  // (unidad "ml", p.ej. Cerebrolysin), dividir volumen entre volumen daba
+  // cosas como "1.00 ml/mL", que no significa nada — y en una app de dosis eso
+  // es peligroso, no solo feo.
+  const isVolumeUnit = (u: string) => u.trim().toLowerCase() === "ml";
+
   const concentration = useMemo(() => {
+    if (isVolumeUnit(unit)) return null;
     const a = parseFloat(amount);
     const b = parseFloat(bacWater);
     if (!a || !b) return null;
     return (a / b).toFixed(2);
-  }, [amount, bacWater]);
+  }, [amount, bacWater, unit]);
 
   const draw = useMemo(() => {
     const a = parseFloat(amount);
@@ -183,7 +191,7 @@ export function PeptideCard({
               <span className="text-foreground">
                 {v.amount} {v.unit}
               </span>
-              {v.bacWater && (
+              {v.bacWater && !isVolumeUnit(v.unit) && (
                 <span className="text-muted-foreground">
                   · {(parseFloat(v.amount) / parseFloat(v.bacWater)).toFixed(2)} {v.unit}/mL
                 </span>

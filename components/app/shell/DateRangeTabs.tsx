@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { todayIso, type CustomRange, type DateRangeKey } from "@/lib/date-range";
 
@@ -26,6 +27,19 @@ export function DateRangeTabs({
   ];
 
   const range = customRange || { start: todayIso(), end: todayIso() };
+
+  // BUG DE DATOS FALSOS: al pulsar "Personalizado", los recuadros MOSTRABAN
+  // hoy–hoy pero el estado del padre seguía en null, y un rango personalizado
+  // vacío significa "no filtres nada" en isWithinRange(). Resultado: la
+  // pantalla decía "26/07–26/07" mientras seguía contando registros de otros
+  // días. Solo se corregía si el usuario tocaba una fecha a mano.
+  // Aquí se sube el rango por defecto en cuanto se entra en "Personalizado",
+  // para que lo que se VE y lo que se APLICA sean siempre lo mismo.
+  useEffect(() => {
+    if (value === "custom" && !customRange && onCustomRangeChange) {
+      onCustomRangeChange({ start: todayIso(), end: todayIso() });
+    }
+  }, [value, customRange, onCustomRangeChange]);
 
   return (
     <div>

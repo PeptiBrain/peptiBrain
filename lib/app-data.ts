@@ -181,6 +181,9 @@ export type AppData = {
   familyMembers: FamilyMember[];
   plan: "free" | "premium" | "family";
   extraFamilySeats: number;
+  /** true = no se pudo comprobar cuántos asientos extra hay (error de red/servidor).
+   *  En ese caso NO se debe bloquear ni avisar de cupos llenos. */
+  extraSeatsUnknown: boolean;
 };
 
 const EMPTY: AppData = {
@@ -197,6 +200,7 @@ const EMPTY: AppData = {
   familyMembers: [],
   plan: "free",
   extraFamilySeats: 0,
+  extraSeatsUnknown: false,
 };
 
 export class PlanLimitError extends Error {
@@ -268,7 +272,14 @@ export async function loadAppData(): Promise<AppData> {
     : { data: [] as { path: string | null; signedUrl: string }[] | null };
   const signedUrlByPath = new Map((signedPhotos || []).map((s) => [s.path, s.signedUrl]));
 
-  const { count: extraFamilySeats } = await supabase
+  // Si esta consulta falla (se ven 503 intermitentes cuando el plan gratuito de
+  // Supabase se satura), antes se caía a 0 asientos extra y la app le decía al
+  // usuario "tus cupos están llenos", bloqueándole invitar aunque hubiera
+  // PAGADO asientos de más. Ahora se distingue "0 asientos" de "no se pudo
+  // comprobar": si no se pudo, no se bloquea nada. No se regala nada, porque el
+  // límite real se sigue aplicando en el servidor al ACEPTAR la invitación —
+  // solo se evita acusar en falso a un cliente que sí pagó.
+  const { count: extraFamilySeats, error: extraSeatsError } = await supabase
     .from("family_extra_seats")
     .select("id", { count: "exact", head: true })
     .eq("owner_id", user.id)
@@ -284,6 +295,7 @@ export async function loadAppData(): Promise<AppData> {
   return {
     plan: (profile?.plan as AppData["plan"]) || "free",
     extraFamilySeats: extraFamilySeats || 0,
+    extraSeatsUnknown: !!extraSeatsError,
     progress: {
       pbTotal: userProgress?.pb_total ?? 0,
       currentStreak: userProgress?.current_streak ?? 0,

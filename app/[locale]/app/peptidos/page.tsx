@@ -99,8 +99,16 @@ export default function PeptidosPage() {
     },
   ];
 
+  // Se podían crear dos péptidos idénticos ("Semaglutida" y "Semaglutida"),
+  // indistinguibles en el desplegable de "Registrar uso" — el usuario no sabe
+  // en cuál está registrando, y las estadísticas se parten en dos.
+  const duplicateName =
+    !!data &&
+    name.trim().length > 0 &&
+    data.peptides.some((p) => p.name.trim().toLowerCase() === name.trim().toLowerCase());
+
   async function handleAdd() {
-    if (!name.trim() || !data) return;
+    if (!name.trim() || !data || duplicateName) return;
     const wasFirstPeptide = data.peptides.length === 0;
     try {
       const next = await addPeptide(data, { name: name.trim(), route, typicalDose: "", typicalUnit: "mg" });
@@ -261,9 +269,12 @@ export default function PeptidosPage() {
                     </Link>
                   </div>
                 )}
+                {duplicateName && (
+                  <p className="mb-2 text-xs text-destructive">{t("duplicatePeptide")}</p>
+                )}
                 <button
                   type="button"
-                  disabled={!name.trim()}
+                  disabled={!name.trim() || duplicateName}
                   onClick={handleAdd}
                   className="h-11 w-full rounded-lg bg-primary text-sm font-semibold text-primary-foreground disabled:opacity-50"
                 >
@@ -882,8 +893,15 @@ function UsosTab({
     .map((s) => data.familyMembers.find((m) => m.id === s.memberId))
     .filter((m): m is NonNullable<typeof m> => Boolean(m));
 
+  // Una dosis negativa o cero no existe. Antes solo se comprobaba que el campo
+  // no estuviera vacío, así que "-5" se podía guardar — en una app de
+  // dosificación eso contamina las estadísticas y el nivel estimado en el
+  // cuerpo con datos imposibles.
+  const amountValue = parseFloat(amount.replace(",", "."));
+  const amountIsValid = Number.isFinite(amountValue) && amountValue > 0;
+
   async function handleSave() {
-    if (!peptideId || !amount.trim() || saving) return;
+    if (!peptideId || !amountIsValid || saving) return;
     setSaving(true);
     try {
       const label = formatWhenLabel(whenInput);
@@ -1033,9 +1051,12 @@ function UsosTab({
               </div>
             </div>
           )}
+          {amount.trim() && !amountIsValid && (
+            <p className="mt-2 text-xs text-destructive">{t("amountInvalid")}</p>
+          )}
           <button
             type="button"
-            disabled={!peptideId || !amount.trim() || saving}
+            disabled={!peptideId || !amountIsValid || saving}
             onClick={handleSave}
             className="h-11 w-full rounded-lg bg-primary text-sm font-semibold text-primary-foreground disabled:opacity-50"
           >
