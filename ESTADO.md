@@ -1,5 +1,64 @@
 # ESTADO — PeptiBrain
 
+## 📋 SESIÓN 2026-07-25 (larga) — resumen de lo desplegado
+
+Todo lo de abajo está EN PRODUCCIÓN y verificado (tsc + build + navegador + consultas a la DB real).
+
+**Bugs graves corregidos**
+- **8 de 10 tarjetas invisibles en la landing**: cada tarjeta del carrusel "Péptidos populares" iba
+  envuelta en `<Reveal>` (aparecer al entrar en pantalla). Como el carrusel se desplaza en HORIZONTAL,
+  las de la derecha nunca entraban en viewport y quedaban en `opacity:0` para siempre — incluso tras
+  deslizar. Lo veía TODO visitante. Regla que queda: **nunca `<Reveal>` dentro de un scroll horizontal**.
+  Verificado 8 invisibles → 0. Ningún otro carrusel tiene el patrón.
+- Farmeo de puntos PB: `award_pb*` eran llamables por RPC directo → EXECUTE revocado (migración 0041).
+- 10+ bugs de auditoría de código: doble-submit en 6 modales de Salud, "Próxima dosis" sin ordenar por
+  fecha, límite superior de rango reaparecido en Inicio, timezone en fechas solo-día y en Modo viaje,
+  reenvío de confirmación de email al guardar perfil, cupos de Familia no bloqueados al invitar, viaje
+  con fechas invertidas invisible, CSV siempre en español, header desbordando a 375px.
+- Modo oscuro se colaba en la web pública (nuevo `ThemeScope`: la web pública siempre en claro).
+
+**Usabilidad — añadir un péptido (el dueño no encontraba cómo)**
+- De 1 camino escondido (`Péptidos > Inventario > "+" mudo`) a **4 vías**: botón con TEXTO arriba junto
+  al título visible desde cualquier pestaña, estado vacío con CTA, pestaña Resumen sin péptidos, y
+  "Primeros pasos" de Inicio.
+- Sugerencias al escribir (el formulario NO las tenía; el onboarding sí): desde 2 letras, busca por
+  nombre Y POR ETIQUETAS. Se añadió la etiqueta `"GLP-1"` a Semaglutida/Tirzepatida/Retatrutida/
+  Cagrilintide porque **escribir "glp" no devolvía nada** pese a ser el término con el que se anuncia
+  la app. "TRT" ya estaba etiquetado pero no se buscaba.
+
+**Rendimiento** (línea base y detalle en la sección de abajo)
+- Mixpanel bajo demanda: −122 KB de JS en CADA primera visita (era import estático en el layout raíz).
+- Web pública vuelve a ser pre-generada: el Header hacía `supabase.auth.getUser()` en servidor, lo que
+  volvía dinámica toda la web (~739 ms por visita). Movido a `HeaderAuthCta` (cliente). Rutas que
+  pasaron de `ƒ` a `●`: landing, blog, blog/[slug], comparador, protocolos, herramientas, descargar y
+  3 calculadoras. `/calculadora` sigue dinámica A PROPÓSITO (usa parámetros de URL para prerrellenarse).
+- `PageSkeleton` en 6 pantallas que hacían `return null` (pantalla en blanco).
+
+**Panel de administración (3 capas)**
+1. Seguridad: había **8 cuentas con `role='admin'`**, incluidas desechables de prueba. Reducidas a 1.
+2. Costo real de IA: `lib/admin-data.ts` tenía `const aiCostEstimate = 0` escrito a mano. Migración
+   0044 (`ai_calls`) + registro por llamada con tokens reales + precio por env var
+   (`AI_PRICE_INPUT_PER_1M`/`AI_PRICE_OUTPUT_PER_1M`, 0 por defecto = modelo gratis actual).
+   Aviso automático si la IA supera el 20% de lo facturado.
+3. Embudo de activación: **calculado desde las tablas reales, NO desde un `event_log`** — un log de
+   eventos empezaría vacío y añadiría escrituras por cada acción; esto funciona con el historial
+   completo y mide hechos, no clics. Resalta el paso con mayor caída.
+   Cuello de botella hoy: "programan una dosis" (4) → "marcan dosis aplicada" (1).
+
+**Decisiones deliberadas de NO hacer** (para que no se relean como olvidos)
+- Capa C de performance (partir la landing con dynamic import): ganancia pequeña (casi todas las
+  secciones ya son de servidor) frente al riesgo de tocar el SEO de la landing.
+- LTV/CAC/payback por canal: requieren gasto en publicidad, que hoy es 0 → se marcan "no medido".
+- Cambiar la tipografía de marca (Inter está prohibida por `16-DIRECCION-DE-ARTE`): afecta a TODA la
+  app; a 8 días del lanzamiento se enseña primero al dueño en una pantalla, no se aplica a ciegas.
+- Páginas legales siguen dinámicas (les falta `setRequestLocale`): arreglo de 1 línea, tráfico mínimo.
+
+**⚠️ Pendiente de decisión del usuario**
+- Renombrar pestañas de Péptidos: Resumen → "Mis dosis", Inventario → "Mis péptidos" (propuesto, sin OK).
+- Rescate visual de las capturas: racha duplicada (chip arriba + tarjeta abajo), los 5 chips mezclan
+  datos y botones con la misma forma, checks grises del "Resumen de tu día" que parecen pendientes,
+  nombre en minúscula, escritorio con mucho aire a los lados.
+
 ## ⚡ PERFORMANCE (2026-07-25) — capas A y D aplicadas; B y C pendientes de decisión
 
 **Línea base** (Lighthouse móvil con throttling de red+CPU, contra servidor de producción local):
