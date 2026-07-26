@@ -22,7 +22,7 @@ import {
   type AppData,
   type Vial,
 } from "@/lib/app-data";
-import { CURRENCY, type Locale } from "@/i18n/routing";
+import { USER_DATA_CURRENCY, type Locale } from "@/i18n/routing";
 import { PeptideCard } from "@/components/app/peptidos/PeptideCard";
 import { ProtocolModal } from "@/components/app/peptidos/ProtocolModal";
 import { ReconstitutionCalculator } from "@/components/app/peptidos/ReconstitutionCalculator";
@@ -607,7 +607,7 @@ function VialShareControl({
   t: (key: string, values?: Record<string, string | number>) => string;
 }) {
   const locale = useLocale();
-  const symbol = CURRENCY[locale as Locale].symbol;
+  const symbol = USER_DATA_CURRENCY.symbol;
   const [adding, setAdding] = useState(false);
   const [memberId, setMemberId] = useState("");
   const [pct, setPct] = useState(20);

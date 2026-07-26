@@ -575,10 +575,17 @@ export async function addTrip(
   trip: { startDate: string; endDate: string; destination?: string }
 ): Promise<AppData> {
   const { supabase, user } = await requireUser();
+  // Un viaje con la fecha de fin ANTES que la de inicio no existe. Se colaba
+  // hasta la base y tenía dos efectos feos: no se pintaba en ningún día del
+  // calendario (invisible), y aun así activaba "Modo viaje: Activo", que pausa
+  // los recordatorios de dosis SIN avisar al usuario (bugs #15 y #55 del QA).
+  // Se corrige en el ÚLTIMO punto antes de guardar, para que ninguna pantalla
+  // pueda saltárselo.
+  const endDate = trip.endDate && trip.endDate >= trip.startDate ? trip.endDate : trip.startDate;
   const { error } = await supabase.from("trips").insert({
     user_id: user.id,
     start_date: trip.startDate,
-    end_date: trip.endDate,
+    end_date: endDate,
     destination: trip.destination?.trim() || null,
   });
   if (error) throw error;

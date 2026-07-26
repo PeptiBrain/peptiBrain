@@ -9,7 +9,7 @@ import { formatDateOnly } from "@/lib/date-range";
 import { createClient } from "@/lib/supabase/client";
 import { loadAppData, type AppData } from "@/lib/app-data";
 import { computeStats } from "@/lib/stats";
-import { CURRENCY, type Locale } from "@/i18n/routing";
+import { USER_DATA_CURRENCY, type Locale } from "@/i18n/routing";
 import { PremiumLocked } from "@/components/app/shell/PremiumLocked";
 
 export default function InformePage() {
@@ -49,7 +49,7 @@ export default function InformePage() {
     );
   }
 
-  const symbol = CURRENCY[locale as Locale].symbol;
+  const symbol = USER_DATA_CURRENCY.symbol;
   const stats = computeStats(data, new Date());
   const streak = data.progress.currentStreak;
   const generatedOn = new Date().toLocaleDateString(locale, { day: "numeric", month: "long", year: "numeric" });

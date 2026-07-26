@@ -26,7 +26,7 @@ import {
 import { csvToFamilyRows } from "@/lib/csv";
 import { hotmartExtraSeatCheckoutUrl } from "@/lib/hotmart-links";
 import { loadOnboarding } from "@/lib/onboarding";
-import { CURRENCY, type Locale } from "@/i18n/routing";
+import { USER_DATA_CURRENCY, type Locale } from "@/i18n/routing";
 import { SharedDataModal } from "@/components/app/familia/SharedDataModal";
 import { PageSkeleton } from "@/components/app/shell/PageSkeleton";
 
@@ -635,7 +635,7 @@ function MemberVialShare({
   t: (key: string, values?: Record<string, string | number>) => string;
 }) {
   const locale = useLocale() as Locale;
-  const symbol = CURRENCY[locale].symbol;
+  const symbol = USER_DATA_CURRENCY.symbol;
   const [adding, setAdding] = useState(false);
   const [vialId, setVialId] = useState("");
   const [pct, setPct] = useState(20);

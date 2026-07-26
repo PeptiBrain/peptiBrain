@@ -25,7 +25,7 @@ import { BarChart, DonutChart } from "@/components/app/stats/Charts";
 import { BodyLevelChartSection } from "@/components/app/stats/BodyLevelChartSection";
 import { PageSkeleton } from "@/components/app/shell/PageSkeleton";
 import { STATS_RANGE_KEYS, type DateRangeKey, type CustomRange } from "@/lib/date-range";
-import { CURRENCY, type Locale } from "@/i18n/routing";
+import { USER_DATA_CURRENCY, type Locale } from "@/i18n/routing";
 
 const RANGE_LABEL_KEY: Record<DateRangeKey, string> = {
   today: "today",
@@ -46,7 +46,7 @@ export default function EstadisticasPage() {
   const t = useTranslations("Stats");
   const tr = useTranslations("DateRange");
   const locale = useLocale() as Locale;
-  const { symbol } = CURRENCY[locale];
+  const { symbol } = USER_DATA_CURRENCY;
   const [data, setData] = useState<AppData | null>(null);
   const [familyData, setFamilyData] = useState<SharedOwnerData[] | null>(null);
   const [range, setRange] = useState<DateRangeKey>("all");

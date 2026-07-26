@@ -6,7 +6,7 @@ import { Users, Package, Beaker, Syringe, Scale, Apple, Wallet } from "lucide-re
 import { ModalShell } from "@/components/app/shell/ModalShell";
 import { loadSharedOwnerData, type SharedOwnerData } from "@/lib/app-data";
 import { adherence, doneDoses } from "@/lib/stats";
-import { CURRENCY, type Locale } from "@/i18n/routing";
+import { USER_DATA_CURRENCY, type Locale } from "@/i18n/routing";
 
 export function SharedDataModal({
   open,
@@ -19,7 +19,7 @@ export function SharedDataModal({
 }) {
   const t = useTranslations("Familia");
   const locale = useLocale() as Locale;
-  const symbol = CURRENCY[locale].symbol;
+  const symbol = USER_DATA_CURRENCY.symbol;
   const [data, setData] = useState<SharedOwnerData | null>(null);
 
   useEffect(() => {

@@ -46,6 +46,7 @@ export function CalendarModal({
   const [addingTrip, setAddingTrip] = useState(false);
   const [tripEnd, setTripEnd] = useState("");
   const [tripDest, setTripDest] = useState("");
+  const [confirmDeleteTrip, setConfirmDeleteTrip] = useState<string | null>(null);
 
   function toggle(f: Filter) {
     setFilters((prev) => ({ ...prev, [f]: !prev[f] }));
@@ -361,16 +362,39 @@ export function CalendarModal({
                     <Plane className="size-4 text-sky-500" aria-hidden />
                     {selectedDestination || t("tripLabel")}
                   </span>
-                  {onDataChange && (
-                    <button
-                      type="button"
-                      onClick={() => deleteTrip(selectedTripObj.id)}
-                      aria-label={t("deleteTrip")}
-                      className="text-muted-foreground hover:text-destructive"
-                    >
-                      <Trash2 className="size-3.5" aria-hidden />
-                    </button>
-                  )}
+                  {onDataChange &&
+                    (confirmDeleteTrip === selectedTripObj.id ? (
+                      // Borrar un viaje NO pedía confirmación, a diferencia del
+                      // resto de borrados de la app (bug #56).
+                      <span className="flex shrink-0 items-center gap-1.5">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            deleteTrip(selectedTripObj.id);
+                            setConfirmDeleteTrip(null);
+                          }}
+                          className="rounded-md bg-destructive px-2 py-1 text-xs font-semibold text-white"
+                        >
+                          {t("confirmDelete")}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setConfirmDeleteTrip(null)}
+                          className="rounded-md px-2 py-1 text-xs font-medium text-muted-foreground"
+                        >
+                          {t("cancel")}
+                        </button>
+                      </span>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => setConfirmDeleteTrip(selectedTripObj.id)}
+                        aria-label={t("deleteTrip")}
+                        className="text-muted-foreground hover:text-destructive"
+                      >
+                        <Trash2 className="size-3.5" aria-hidden />
+                      </button>
+                    ))}
                 </div>
               )}
 

@@ -493,7 +493,9 @@
     "legendScheduled": "Scheduled",
     "legendLate": "Late",
     "noDosesThisDay": "No doses this day.",
-    "openCalendar": "Calendar"
+    "openCalendar": "Calendar",
+    "confirmDelete": "Yes, delete",
+    "cancel": "Cancel"
   },
   "Premium": {
     "title": "Premium feature",

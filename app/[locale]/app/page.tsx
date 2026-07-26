@@ -10,7 +10,7 @@ import { loadAppData, markDoseDone, type AppData } from "@/lib/app-data";
 import { computeStats } from "@/lib/stats";
 import { celebrateDoseLogged } from "@/lib/celebrate";
 import { checkStreakMilestone } from "@/lib/milestones";
-import { CURRENCY, type Locale } from "@/i18n/routing";
+import { USER_DATA_CURRENCY, type Locale } from "@/i18n/routing";
 import { track } from "@/lib/mixpanel";
 import { DateRangeTabs } from "@/components/app/shell/DateRangeTabs";
 import { CalendarModal } from "@/components/app/shell/CalendarModal";
@@ -86,7 +86,7 @@ export default function InicioPage() {
     : null;
   const streak = data.progress.currentStreak;
   const allStats = computeStats(data, new Date());
-  const { symbol } = CURRENCY[locale as Locale];
+  const { symbol } = USER_DATA_CURRENCY;
 
   // Progreso de la semana (para el saludo gamificado)
   const weekAgo = new Date();
