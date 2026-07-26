@@ -58,6 +58,8 @@ export default function PeptidosPage() {
   const [name, setName] = useState("");
   const [route, setRoute] = useState("Subcutánea");
   const [limitReached, setLimitReached] = useState(false);
+  const [savingPeptide, setSavingPeptide] = useState(false);
+  const [saveError, setSaveError] = useState(false);
   const [suggestionsHidden, setSuggestionsHidden] = useState(false);
   const [range, setRange] = useState<DateRangeKey>("all");
   const [customRange, setCustomRange] = useState<CustomRange | null>(null);
@@ -108,7 +110,11 @@ export default function PeptidosPage() {
     data.peptides.some((p) => p.name.trim().toLowerCase() === name.trim().toLowerCase());
 
   async function handleAdd() {
-    if (!name.trim() || !data || duplicateName) return;
+    // Sin este guard, 3 clics rápidos disparaban 3 POST y creaban 3 péptidos
+    // idénticos — es el origen REAL de los "Semaglutida" duplicados. La
+    // comprobación por nombre no basta: el estado no se actualiza entre clics.
+    if (!name.trim() || !data || duplicateName || savingPeptide) return;
+    setSavingPeptide(true);
     const wasFirstPeptide = data.peptides.length === 0;
     try {
       const next = await addPeptide(data, { name: name.trim(), route, typicalDose: "", typicalUnit: "mg" });
@@ -121,8 +127,12 @@ export default function PeptidosPage() {
       if (err instanceof PlanLimitError) {
         setLimitReached(true);
       } else {
-        throw err;
+        // Antes esto relanzaba el error y la pantalla se quedaba muda: el modal
+        // seguía abierto y el usuario creía que había guardado (bug #4).
+        setSaveError(true);
       }
+    } finally {
+      setSavingPeptide(false);
     }
   }
 
@@ -205,7 +215,11 @@ export default function PeptidosPage() {
                   onChange={(e) => {
                     setName(e.target.value);
                     setSuggestionsHidden(false);
+                    setSaveError(false);
                   }}
+                  // Sin tope, un nombre de 229 caracteres llegaba al servidor,
+                  // lo rechazaba con 400 y la pantalla no decía nada.
+                  maxLength={60}
                   placeholder={t("peptideNamePlaceholder")}
                   className="h-11 w-full rounded-lg border border-input bg-background px-3 text-base text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 />
@@ -272,9 +286,10 @@ export default function PeptidosPage() {
                 {duplicateName && (
                   <p className="mb-2 text-xs text-destructive">{t("duplicatePeptide")}</p>
                 )}
+                {saveError && <p className="mb-2 text-xs text-destructive">{t("saveError")}</p>}
                 <button
                   type="button"
-                  disabled={!name.trim() || duplicateName}
+                  disabled={!name.trim() || duplicateName || savingPeptide}
                   onClick={handleAdd}
                   className="h-11 w-full rounded-lg bg-primary text-sm font-semibold text-primary-foreground disabled:opacity-50"
                 >

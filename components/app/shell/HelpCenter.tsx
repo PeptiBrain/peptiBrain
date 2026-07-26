@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
 import { useTranslations } from "next-intl";
 import { LifeBuoy, Search, ChevronDown, X } from "lucide-react";
@@ -47,13 +48,36 @@ export function HelpCenter({ open, onClose }: { open: boolean; onClose: () => vo
     );
   }, [query, t]);
 
-  return (
+  // Escape cierra: antes NO cerraba de ninguna forma (ni X, ni clic fuera, ni
+  // Escape) y el usuario quedaba atrapado hasta recargar la página.
+  useEffect(() => {
+    if (!open) return;
+    function onEsc(e: KeyboardEvent) {
+      if (e.key === "Escape") onClose();
+    }
+    document.addEventListener("keydown", onEsc);
+    return () => document.removeEventListener("keydown", onEsc);
+  }, [open, onClose]);
+
+  // El modal se monta en <body>, NO donde vive el componente. Este panel se
+  // renderizaba dentro del <header sticky backdrop-blur>, y `backdrop-filter`
+  // crea un containing block para `position:fixed`: por eso `inset-0` medía los
+  // 57px del header en vez del viewport, el panel quedaba en top:-264px (X y
+  // título fuera de pantalla) y el fondo solo tapaba la franja del header, así
+  // que los clics lo atravesaban y activaban lo de debajo.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  if (!mounted) return null;
+
+  return createPortal(
     <AnimatePresence>
       {open && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
+          role="dialog"
+          aria-modal="true"
           className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 sm:items-center sm:p-4"
           onClick={onClose}
         >
@@ -169,6 +193,7 @@ export function HelpCenter({ open, onClose }: { open: boolean; onClose: () => vo
           </motion.div>
         </motion.div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 }

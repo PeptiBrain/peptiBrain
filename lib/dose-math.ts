@@ -51,6 +51,13 @@ export function waterForTargetUnits({
   const vialMg = toMg(vialAmount, vialUnit);
   const doseMg = toMg(doseAmount, doseUnit);
   if (vialMg === null || doseMg === null || !targetUnits || !doseMg) return null;
+  // Entradas imposibles: sin esto, "vial de 1 mg + dosis de 2000 mcg" devolvía
+  // 0.10 mL como si fuera válido — pero no se pueden sacar 2 mg de un vial que
+  // solo contiene 1 mg. En una app de dosificación devolver un número para algo
+  // físicamente imposible es peor que no responder.
+  if (vialMg <= 0 || doseMg <= 0 || targetUnits <= 0) return null;
+  if (doseMg > vialMg) return null;
   const volumeMl = targetUnits / 100;
-  return (volumeMl * vialMg) / doseMg;
+  const water = (volumeMl * vialMg) / doseMg;
+  return Number.isFinite(water) && water > 0 ? water : null;
 }

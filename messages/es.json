@@ -833,7 +833,12 @@
     "emptyPeptidesTitle": "Aún no tienes péptidos",
     "emptyPeptidesBody": "Añade el primero (GLP-1, péptidos o TRT) y empieza a registrar tus dosis.",
     "amountInvalid": "Escribe una cantidad mayor que 0.",
-    "duplicatePeptide": "Ya tienes un péptido con ese nombre."
+    "duplicatePeptide": "Ya tienes un péptido con ese nombre.",
+    "saveError": "No se pudo guardar. Revisa los datos e inténtalo otra vez.",
+    "vialAmountInvalid": "La cantidad debe ser mayor que 0.",
+    "vialWaterInvalid": "El agua debe ser mayor que 0 (o déjalo vacío si aún no lo reconstituiste).",
+    "underMeasurable": "Esa dosis es demasiado pequeña para medirla en esta jeringa. Usa más agua bacteriostática o una jeringa más pequeña.",
+    "waterImpossible": "Con esos datos no sale: la dosis que pides es mayor que todo el contenido del vial. Revisa la cantidad del vial o la dosis."
   },
   "Salud": {
     "title": "Salud",

@@ -36,6 +36,8 @@ export function PeptideCard({
   const [doseAmount, setDoseAmount] = useState("");
   const [doseUnit, setDoseUnit] = useState("mcg");
   const [limitReached, setLimitReached] = useState(false);
+  const [savingVial, setSavingVial] = useState(false);
+  const [vialError, setVialError] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
@@ -51,12 +53,26 @@ export function PeptideCard({
   // es peligroso, no solo feo.
   const isVolumeUnit = (u: string) => u.trim().toLowerCase() === "ml";
 
+  // Validación del vial. Con agua = 0 se guardaba en base una concentración
+  // literal "Infinity mg/mL" (cantidad ÷ 0) — lo más grave del QA: un número
+  // sin sentido en la pantalla que la gente usa para calcular su dosis.
+  const vialAmountNum = parseFloat(amount.replace(",", "."));
+  const vialWaterNum = parseFloat(bacWater.replace(",", "."));
+  const vialAmountOk = Number.isFinite(vialAmountNum) && vialAmountNum > 0;
+  // El agua es opcional (un vial sin reconstituir es válido), pero si se
+  // escribe algo tiene que ser un número mayor que 0.
+  const vialWaterOk = !bacWater.trim() || (Number.isFinite(vialWaterNum) && vialWaterNum > 0);
+  const vialIsValid = vialAmountOk && vialWaterOk;
+
   const concentration = useMemo(() => {
     if (isVolumeUnit(unit)) return null;
     const a = parseFloat(amount);
     const b = parseFloat(bacWater);
-    if (!a || !b) return null;
-    return (a / b).toFixed(2);
+    // Number.isFinite descarta 0, NaN e Infinity de una vez: nunca se pinta
+    // "Infinity" ni "NaN" en pantalla.
+    if (!Number.isFinite(a) || !Number.isFinite(b) || a <= 0 || b <= 0) return null;
+    const c = a / b;
+    return Number.isFinite(c) ? c.toFixed(2) : null;
   }, [amount, bacWater, unit]);
 
   const draw = useMemo(() => {
@@ -83,7 +99,8 @@ export function PeptideCard({
   }
 
   async function handleAddVial() {
-    if (!amount.trim()) return;
+    if (!vialIsValid || savingVial) return;
+    setSavingVial(true);
     try {
       const next = await addVial(data, {
         peptideId: peptide.id,
@@ -103,8 +120,12 @@ export function PeptideCard({
       if (err instanceof PlanLimitError) {
         setLimitReached(true);
       } else {
-        throw err;
+        // Antes relanzaba y la pantalla se quedaba muda: el formulario seguía
+        // abierto y el usuario creía que había guardado.
+        setVialError(true);
       }
+    } finally {
+      setSavingVial(false);
     }
   }
 
@@ -326,6 +347,12 @@ export function PeptideCard({
                 </div>
               )}
 
+              {amount.trim() && !vialAmountOk && (
+                <p className="mt-2 text-xs text-destructive">{t("vialAmountInvalid")}</p>
+              )}
+              {!vialWaterOk && <p className="mt-2 text-xs text-destructive">{t("vialWaterInvalid")}</p>}
+              {vialError && <p className="mt-2 text-xs text-destructive">{t("saveError")}</p>}
+
               <div className="mt-3 flex gap-2">
                 <button
                   type="button"
@@ -345,7 +372,7 @@ export function PeptideCard({
                 )}
                 <button
                   type="button"
-                  disabled={!amount.trim()}
+                  disabled={!vialIsValid || savingVial}
                   onClick={handleAddVial}
                   className="h-10 flex-1 rounded-lg bg-primary text-xs font-semibold text-primary-foreground disabled:opacity-50"
                 >

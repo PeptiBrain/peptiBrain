@@ -98,6 +98,11 @@ export function ReconstitutionCalculator({ data }: { data: AppData }) {
 
   const hasAnyDraw = draws.some((d) => d.draw !== null);
 
+  // ¿El usuario ya rellenó los 3 campos del solver? Sirve para distinguir "aún
+  // no has escrito nada" de "lo que escribiste es imposible".
+  const solverInputsFilled =
+    !!parseFloat(vialAmount) && !!parseFloat(targetUnits) && !!parseFloat(entries[0]?.doseAmount || "");
+
   const waterSolved = useMemo(() => {
     const a = parseFloat(vialAmount);
     const target = parseFloat(targetUnits);
@@ -305,6 +310,15 @@ export function ReconstitutionCalculator({ data }: { data: AppData }) {
                     {draws[i].draw! > SYRINGE_CAPACITY[syringeType] && (
                       <p className="mt-1 text-center text-xs text-destructive">{t("overCapacity")}</p>
                     )}
+                    {/* Existía aviso para "te pasas de la jeringa" pero NO para
+                        el caso contrario: con una concentración muy alta salía
+                        "Extraer hasta 0.0 unidades" sin decir nada, y esa dosis
+                        no se puede medir. En una app de dosificación callarse
+                        eso es peligroso. Umbral: por debajo de 1 unidad no hay
+                        marca fiable en una jeringa de insulina. */}
+                    {draws[i].draw! > 0 && draws[i].draw! < 1 && (
+                      <p className="mt-1 text-center text-xs text-destructive">{t("underMeasurable")}</p>
+                    )}
                   </div>
                 )}
               </div>
@@ -413,13 +427,23 @@ export function ReconstitutionCalculator({ data }: { data: AppData }) {
             className={inputClass}
           />
 
-          {waterSolved != null && (
+          {waterSolved != null ? (
             <div className="mt-3 rounded-lg bg-accent p-4 text-center">
               <p className="text-xs font-medium text-accent-foreground">{t("waterResultLabel")}</p>
               <p className="mt-1 font-display text-2xl font-bold tabular-nums text-accent-foreground">
                 {waterSolved.toFixed(2)} mL
               </p>
             </div>
+          ) : (
+            // Antes, con una dosis mayor que el contenido del vial, devolvía un
+            // número igualmente (0.10 mL para sacar 2 mg de un vial de 1 mg).
+            // Ahora la función devuelve null en ese caso y aquí se explica por
+            // qué, en vez de dejar al usuario sin respuesta ni motivo.
+            solverInputsFilled && (
+              <p className="mt-3 rounded-lg bg-secondary/60 px-3 py-2 text-center text-xs text-destructive">
+                {t("waterImpossible")}
+              </p>
+            )
           )}
         </div>
       )}

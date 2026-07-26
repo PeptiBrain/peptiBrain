@@ -833,7 +833,12 @@
     "emptyPeptidesTitle": "No peptides yet",
     "emptyPeptidesBody": "Add your first one (GLP-1, peptides or TRT) and start logging your doses.",
     "amountInvalid": "Enter an amount greater than 0.",
-    "duplicatePeptide": "You already have a peptide with that name."
+    "duplicatePeptide": "You already have a peptide with that name.",
+    "saveError": "Couldn't save. Check the values and try again.",
+    "vialAmountInvalid": "Amount must be greater than 0.",
+    "vialWaterInvalid": "Water must be greater than 0 (or leave it empty if not reconstituted yet).",
+    "underMeasurable": "That dose is too small to measure on this syringe. Use more bacteriostatic water or a smaller syringe.",
+    "waterImpossible": "That doesn't add up: the dose you want is larger than the entire vial. Check the vial amount or the dose."
   },
   "Salud": {
     "title": "Health",
