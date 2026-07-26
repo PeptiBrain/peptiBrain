@@ -937,7 +937,13 @@
     "moodLabel_3": "Okay",
     "moodLabel_4": "Good",
     "moodLabel_5": "Very good",
-    "moodEmptyState": "No mood records yet."
+    "moodEmptyState": "No mood records yet.",
+    "weightOutOfRange": "Enter a weight between 20 and 400 kg.",
+    "bodyFatOutOfRange": "Body fat must be between 1 and 70%.",
+    "caloriesOutOfRange": "Enter calories between 1 and 20,000.",
+    "hydrationOutOfRange": "Enter between 1 and 20,000 ml.",
+    "sleepOutOfRange": "Enter between 0.5 and 24 hours.",
+    "exerciseOutOfRange": "Enter between 1 and 1,440 minutes (one day)."
   },
   "Familia": {
     "title": "Family",

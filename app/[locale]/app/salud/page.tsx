@@ -22,6 +22,7 @@ import {
 import { LAB_MARKER_IDS, LAB_MARKER_DEFAULT_UNIT, type LabMarkerId } from "@/lib/lab-markers";
 import { checkStreakMilestone } from "@/lib/milestones";
 import { todayIso } from "@/lib/date-range";
+import { PLAUSIBLE, inRange, requiredInRange } from "@/lib/plausible";
 import { SubTabs, type SubTabItem } from "@/components/app/shell/SubTabs";
 import { PremiumLocked } from "@/components/app/shell/PremiumLocked";
 import { PageSkeleton } from "@/components/app/shell/PageSkeleton";
@@ -68,8 +69,11 @@ export default function SaludPage() {
     { key: "animo", label: t("tabMood"), icon: Smile, locked: !isPremium },
   ];
 
+  // 99.999 minutos de ejercicio se guardaban tal cual (son 69 días seguidos).
+  const exerciseOk = requiredInRange(exerciseMin, PLAUSIBLE.exerciseMin);
+
   async function handleSaveExercise() {
-    if (!data || !exerciseMin.trim()) return;
+    if (!data || !exerciseOk) return;
     const prev = data;
     const next = await addHealthLog(data, { date: todayIso(), exerciseMin: exerciseMin.trim() });
     setData(next);
@@ -205,10 +209,14 @@ export default function SaludPage() {
                 className="h-11 w-full rounded-lg border border-input bg-background px-3 text-base text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
               />
             </div>
+            {exerciseMin.trim() && !exerciseOk && (
+              <p className="mb-2 text-xs text-destructive">{t("exerciseOutOfRange")}</p>
+            )}
             <button
               type="button"
+              disabled={!exerciseOk}
               onClick={handleSaveExercise}
-              className="h-11 w-full rounded-lg bg-primary text-sm font-semibold text-primary-foreground"
+              className="h-11 w-full rounded-lg bg-primary text-sm font-semibold text-primary-foreground disabled:opacity-50"
             >
               {t("saveRecord")}
             </button>
@@ -629,8 +637,14 @@ function WeightModal({
     }
   }, [open]);
 
+  // Antes solo se pedía que el campo no estuviera vacío: entraban 500 kg y 99 %
+  // de grasa, que rompen gráficos y estadísticas (y el toast llegó a felicitar
+  // con "-427 kg"). Los topes son generosos: frenan lo imposible, no discuten.
+  const weightOk = requiredInRange(weightKg, PLAUSIBLE.weightKg);
+  const bodyFatOk = inRange(bodyFatPct, PLAUSIBLE.bodyFatPct);
+
   async function handleSave() {
-    if (!weightKg.trim() || saving) return;
+    if (!weightOk || !bodyFatOk || saving) return;
     setSaving(true);
     try {
       await onSave({
@@ -685,10 +699,14 @@ function WeightModal({
             className="w-full resize-none rounded-lg border border-input bg-background px-3 py-2 text-base text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
           />
         </div>
+        {!weightOk && weightKg.trim() && (
+          <p className="text-xs text-destructive">{t("weightOutOfRange")}</p>
+        )}
+        {!bodyFatOk && <p className="text-xs text-destructive">{t("bodyFatOutOfRange")}</p>}
         <div className="flex gap-2 pt-1">
           <button
             type="button"
-            disabled={!weightKg.trim() || saving}
+            disabled={!weightOk || !bodyFatOk || saving}
             onClick={handleSave}
             className="h-11 flex-1 rounded-lg bg-primary text-sm font-semibold text-primary-foreground disabled:opacity-50"
           >
@@ -731,8 +749,11 @@ function MealModal({
     }
   }, [open]);
 
+  // Se aceptaban 999.999 kcal, que desbordan la tarjeta y falsean el promedio.
+  const caloriesOk = inRange(calories, PLAUSIBLE.calories);
+
   async function handleSave() {
-    if (!description.trim() || saving) return;
+    if (!description.trim() || !caloriesOk || saving) return;
     setSaving(true);
     try {
       await onSave({ date, description: description.trim(), calories: calories.trim() || undefined });
@@ -772,10 +793,11 @@ function MealModal({
             className="h-11 w-full rounded-lg border border-input bg-background px-3 text-base text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
           />
         </div>
+        {!caloriesOk && <p className="text-xs text-destructive">{t("caloriesOutOfRange")}</p>}
         <div className="flex gap-2 pt-1">
           <button
             type="button"
-            disabled={!description.trim() || saving}
+            disabled={!description.trim() || !caloriesOk || saving}
             onClick={handleSave}
             className="h-11 flex-1 rounded-lg bg-primary text-sm font-semibold text-primary-foreground disabled:opacity-50"
           >
@@ -816,8 +838,10 @@ function HydrationModal({
     }
   }, [open]);
 
+  const hydrationOk = requiredInRange(hydrationMl, PLAUSIBLE.hydrationMl);
+
   async function handleSave() {
-    if (!hydrationMl.trim() || saving) return;
+    if (!hydrationOk || saving) return;
     setSaving(true);
     try {
       await onSave({ date, hydrationMl: hydrationMl.trim() });
@@ -853,10 +877,13 @@ function HydrationModal({
             className="h-11 w-full rounded-lg border border-input bg-background px-3 text-base text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
           />
         </div>
+        {hydrationMl.trim() && !hydrationOk && (
+          <p className="text-xs text-destructive">{t("hydrationOutOfRange")}</p>
+        )}
         <div className="flex gap-2 pt-1">
           <button
             type="button"
-            disabled={!hydrationMl.trim() || saving}
+            disabled={!hydrationOk || saving}
             onClick={handleSave}
             className="h-11 flex-1 rounded-lg bg-primary text-sm font-semibold text-primary-foreground disabled:opacity-50"
           >
@@ -977,8 +1004,11 @@ function SleepModal({
     }
   }, [open]);
 
+  // 48 h de sueño se guardaban tal cual. Un día tiene 24.
+  const sleepOk = requiredInRange(sleepHours, PLAUSIBLE.sleepHours);
+
   async function handleSave() {
-    if (!sleepHours.trim() || saving) return;
+    if (!sleepOk || saving) return;
     setSaving(true);
     try {
       await onSave({ date, sleepHours: sleepHours.trim() });
@@ -1009,10 +1039,13 @@ function SleepModal({
             className="h-11 w-full rounded-lg border border-input bg-background px-3 text-base text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
           />
         </div>
+        {sleepHours.trim() && !sleepOk && (
+          <p className="text-xs text-destructive">{t("sleepOutOfRange")}</p>
+        )}
         <div className="flex gap-2 pt-1">
           <button
             type="button"
-            disabled={!sleepHours.trim() || saving}
+            disabled={!sleepOk || saving}
             onClick={handleSave}
             className="h-11 flex-1 rounded-lg bg-primary text-sm font-semibold text-primary-foreground disabled:opacity-50"
           >
