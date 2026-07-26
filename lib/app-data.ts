@@ -855,6 +855,68 @@ export async function addMeal(data: AppData, meal: Omit<Meal, "id" | "createdAt"
   return loadAppData();
 }
 
+/**
+ * Borra UN dato concreto de un día de salud (el peso, el ejercicio, el sueño…),
+ * no el día entero.
+ *
+ * health_logs guarda una fila por fecha con varias columnas, así que "eliminar
+ * el peso del 25 de julio" es poner esa columna a null — si se borrara la fila
+ * se llevaría por delante la hidratación o el ánimo de ese mismo día. Cuando la
+ * fila se queda sin ningún dato, entonces sí se borra entera para no dejar
+ * registros fantasma que cuentan como "día con actividad" en la racha.
+ *
+ * Antes NO se podía borrar ni editar peso, ejercicio, hidratación, sueño, ánimo
+ * ni efectos secundarios: un dato mal metido era permanente (bug #68 del QA).
+ */
+export type HealthField =
+  | "weightKg"
+  | "bodyFatPct"
+  | "hydrationMl"
+  | "exerciseMin"
+  | "sideEffect"
+  | "sleepHours"
+  | "mood";
+
+const HEALTH_COLUMN: Record<HealthField, string> = {
+  weightKg: "weight_kg",
+  bodyFatPct: "body_fat_pct",
+  hydrationMl: "hydration_ml",
+  exerciseMin: "exercise_min",
+  sideEffect: "side_effect",
+  sleepHours: "sleep_hours",
+  mood: "mood",
+};
+
+export async function clearHealthField(
+  data: AppData,
+  logId: string,
+  field: HealthField
+): Promise<AppData> {
+  const { supabase } = await requireUser();
+  const log = data.healthLogs.find((h) => h.id === logId);
+  if (!log) return data;
+
+  // Al borrar el peso se borra también el % de grasa: es un dato del mismo
+  // pesaje y sin peso queda huérfano.
+  const fields: HealthField[] = field === "weightKg" ? ["weightKg", "bodyFatPct"] : [field];
+
+  const remaining = (Object.keys(HEALTH_COLUMN) as HealthField[]).filter(
+    (f) => !fields.includes(f) && log[f] != null && log[f] !== ""
+  );
+
+  if (remaining.length === 0 && !log.notes) {
+    const { error } = await supabase.from("health_logs").delete().eq("id", logId);
+    if (error) throw error;
+    return loadAppData();
+  }
+
+  const patch: Record<string, null> = {};
+  for (const f of fields) patch[HEALTH_COLUMN[f]] = null;
+  const { error } = await supabase.from("health_logs").update(patch).eq("id", logId);
+  if (error) throw error;
+  return loadAppData();
+}
+
 export async function removeMeal(data: AppData, mealId: string): Promise<AppData> {
   const { supabase } = await requireUser();
   const { error } = await supabase.from("meals").delete().eq("id", mealId);

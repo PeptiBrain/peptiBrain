@@ -943,7 +943,11 @@
     "caloriesOutOfRange": "Enter calories between 1 and 20,000.",
     "hydrationOutOfRange": "Enter between 1 and 20,000 ml.",
     "sleepOutOfRange": "Enter between 0.5 and 24 hours.",
-    "exerciseOutOfRange": "Enter between 1 and 1,440 minutes (one day)."
+    "exerciseOutOfRange": "Enter between 1 and 1,440 minutes (one day).",
+    "deleteRecord": "Delete entry",
+    "deleteRecordTitle": "Delete this entry?",
+    "deleteRecordBody": "Only this value will be removed from that day. Anything else you logged that day stays. This can't be undone.",
+    "deleteRecordConfirm": "Yes, delete"
   },
   "Familia": {
     "title": "Family",

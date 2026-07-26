@@ -12,8 +12,10 @@ import {
   removeProgressPhoto,
   addLabResult,
   removeLabResult,
+  clearHealthField,
   loadAppData,
   type AppData,
+  type HealthField,
   type HealthLog,
   type Meal,
   type ProgressPhoto,
@@ -48,6 +50,12 @@ export default function SaludPage() {
   const [showLabModal, setShowLabModal] = useState(false);
   const [showSleepModal, setShowSleepModal] = useState(false);
   const [showMoodModal, setShowMoodModal] = useState(false);
+  // Borrar SIEMPRE pregunta antes: el QA señaló que "Eliminar foto" borraba a
+  // la primera mientras el resto de borrados sí confirmaban.
+  const [confirmDelete, setConfirmDelete] = useState<{ log: HealthLog; field: HealthField } | null>(
+    null
+  );
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     loadAppData().then(setData);
@@ -226,6 +234,8 @@ export default function SaludPage() {
         {tab === "peso" && (
           <HealthList
             logs={weightLogs}
+            onDelete={(log) => setConfirmDelete({ log, field: "weightKg" })}
+            deleteLabel={t("deleteRecord")}
             emptyText={t("weightEmptyState")}
             emptyCta={t("registerWeightAria")}
             onEmptyCta={() => setShowWeightModal(true)}
@@ -247,6 +257,8 @@ export default function SaludPage() {
         {tab === "ejercicio" && (
           <HealthList
             logs={exerciseLogs}
+            onDelete={(log) => setConfirmDelete({ log, field: "exerciseMin" })}
+            deleteLabel={t("deleteRecord")}
             emptyText={t("exerciseEmptyState")}
             emptyCta={t("addAria")}
             onEmptyCta={() => setShowExerciseForm(true)}
@@ -308,6 +320,8 @@ export default function SaludPage() {
           (isPremium ? (
             <HealthList
               logs={hydrationLogs}
+            onDelete={(log) => setConfirmDelete({ log, field: "hydrationMl" })}
+            deleteLabel={t("deleteRecord")}
               emptyText={t("hydrationEmptyState")}
               emptyCta={t("registerHydrationAria")}
               onEmptyCta={() => setShowHydrationModal(true)}
@@ -326,6 +340,8 @@ export default function SaludPage() {
           (isPremium ? (
             <HealthList
               logs={sideEffectLogs}
+            onDelete={(log) => setConfirmDelete({ log, field: "sideEffect" })}
+            deleteLabel={t("deleteRecord")}
               emptyText={t("sideEffectsEmptyState")}
               emptyCta={t("registerSideEffectAria")}
               onEmptyCta={() => setShowSideEffectModal(true)}
@@ -344,6 +360,8 @@ export default function SaludPage() {
           (isPremium ? (
             <HealthList
               logs={sleepLogs}
+            onDelete={(log) => setConfirmDelete({ log, field: "sleepHours" })}
+            deleteLabel={t("deleteRecord")}
               emptyText={t("sleepEmptyState")}
               emptyCta={t("registerSleepAria")}
               onEmptyCta={() => setShowSleepModal(true)}
@@ -362,6 +380,8 @@ export default function SaludPage() {
           (isPremium ? (
             <HealthList
               logs={moodLogs}
+            onDelete={(log) => setConfirmDelete({ log, field: "mood" })}
+            deleteLabel={t("deleteRecord")}
               emptyText={t("moodEmptyState")}
               emptyCta={t("registerMoodAria")}
               onEmptyCta={() => setShowMoodModal(true)}
@@ -463,6 +483,41 @@ export default function SaludPage() {
         }}
       />
 
+      <ModalShell
+        open={!!confirmDelete}
+        onClose={() => setConfirmDelete(null)}
+        title={t("deleteRecordTitle")}
+        icon={<Trash2 className="size-5 text-destructive" aria-hidden />}
+      >
+        <p className="text-sm text-muted-foreground">{t("deleteRecordBody")}</p>
+        <div className="mt-4 flex gap-2">
+          <button
+            type="button"
+            disabled={deleting}
+            onClick={async () => {
+              if (!confirmDelete || !data) return;
+              setDeleting(true);
+              try {
+                setData(await clearHealthField(data, confirmDelete.log.id, confirmDelete.field));
+                setConfirmDelete(null);
+              } finally {
+                setDeleting(false);
+              }
+            }}
+            className="h-11 flex-1 rounded-lg bg-destructive text-sm font-semibold text-white disabled:opacity-50"
+          >
+            {t("deleteRecordConfirm")}
+          </button>
+          <button
+            type="button"
+            onClick={() => setConfirmDelete(null)}
+            className="h-11 rounded-lg border border-border px-4 text-sm font-medium text-foreground"
+          >
+            {t("cancel")}
+          </button>
+        </div>
+      </ModalShell>
+
       {lightboxPhoto && (
         <div
           className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-4 bg-black/90 p-4"
@@ -514,6 +569,8 @@ function HealthList({
   onEmptyCta,
   formatDate,
   render,
+  onDelete,
+  deleteLabel,
 }: {
   logs: HealthLog[];
   emptyText: string;
@@ -521,6 +578,10 @@ function HealthList({
   onEmptyCta?: () => void;
   formatDate: (iso: string) => string;
   render: (log: HealthLog) => React.ReactNode;
+  /** Borra SOLO este dato del día (no el día entero). Sin esto, un peso mal
+   *  tecleado era permanente — Comidas, Análisis y Fotos sí podían borrarse. */
+  onDelete?: (log: HealthLog) => void;
+  deleteLabel?: string;
 }) {
   if (logs.length === 0) {
     return (
@@ -542,9 +603,21 @@ function HealthList({
   return (
     <div className="space-y-2 sm:grid sm:grid-cols-2 sm:gap-2 sm:space-y-0">
       {logs.map((log) => (
-        <div key={log.id} className="rounded-xl border border-border bg-card p-3">
-          <span className="text-xs font-medium text-muted-foreground">{formatDate(log.date)}</span>
-          <div className="mt-1 text-sm text-foreground">{render(log)}</div>
+        <div key={log.id} className="flex items-start justify-between gap-2 rounded-xl border border-border bg-card p-3">
+          <div className="min-w-0">
+            <span className="text-xs font-medium text-muted-foreground">{formatDate(log.date)}</span>
+            <div className="mt-1 text-sm text-foreground">{render(log)}</div>
+          </div>
+          {onDelete && (
+            <button
+              type="button"
+              onClick={() => onDelete(log)}
+              aria-label={deleteLabel}
+              className="shrink-0 rounded-lg p-1.5 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
+            >
+              <Trash2 className="size-4" aria-hidden />
+            </button>
+          )}
         </div>
       ))}
     </div>

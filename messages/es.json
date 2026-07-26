@@ -943,7 +943,11 @@
     "caloriesOutOfRange": "Escribe unas calorías entre 1 y 20.000.",
     "hydrationOutOfRange": "Escribe entre 1 y 20.000 ml.",
     "sleepOutOfRange": "Escribe entre 0,5 y 24 horas.",
-    "exerciseOutOfRange": "Escribe entre 1 y 1.440 minutos (un día)."
+    "exerciseOutOfRange": "Escribe entre 1 y 1.440 minutos (un día).",
+    "deleteRecord": "Eliminar registro",
+    "deleteRecordTitle": "¿Eliminar este registro?",
+    "deleteRecordBody": "Se borrará solo este dato de ese día. El resto de lo que anotaste ese día se mantiene. No se puede deshacer.",
+    "deleteRecordConfirm": "Sí, eliminar"
   },
   "Familia": {
     "title": "Familia",
