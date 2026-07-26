@@ -1,5 +1,73 @@
 # ESTADO — PeptiBrain
 
+## 🐞 BACKLOG DE BUGS — lista viva (2026-07-25)
+
+> Origen: recorrido completo de la app hecho por Claude con la extensión de Chrome (Inicio,
+> Péptidos ×4 pestañas + 4 calculadoras, Salud ×9 pestañas, Estadísticas, Familia), probando
+> formularios y revisando consola y red. **Los cálculos de las calculadoras se verificaron
+> correctos** (reconstitución, GLP-1 sema/tirze, conversor mg↔mcg y dosis→mL/U).
+> El dueño irá añadiendo más bugs a esta lista. NO borrar entradas al arreglarlas: marcarlas ✅.
+
+### ✅ Críticos — ARREGLADOS y desplegados (commit 916b291)
+1. ✅ **Filtro "Personalizado" mostraba datos falsos.** `DateRangeTabs` MOSTRABA hoy–hoy en las
+   cajas de fecha pero el estado del padre seguía `null`, y en `isWithinRange()` un rango
+   personalizado vacío significa "no filtres nada" → la pantalla decía 26/07–26/07 mientras
+   contaba el peso del 25/07. Se sube el rango por defecto al padre al entrar en "Personalizado".
+2. ✅ **"1.00 ml/mL" en el vial** (el más peligroso: concentración sin sentido en app de dosis).
+   "ml" es unidad legítima para viales que ya vienen líquidos (Cerebrolysin); el fallo era
+   calcular cantidad/agua también ahí. Ahora solo se muestra si la unidad es masa (mg/mcg/UI).
+3. ✅ **Dosis negativa aceptada** en "Registrar uso" → ahora exige > 0 con aviso.
+4. ✅ **Aviso falso "tu plan Family solo incluye 2"**: el 503 hacía leer 0 asientos extra.
+   Ahora se distingue "0 asientos" de "no se pudo comprobar" (`extraSeatsUnknown`).
+5. ✅ **Péptidos duplicados** (dos "Semaglutida" idénticos) → valida nombre repetido.
+   ⚠️ Los duplicados YA existentes no se borran solos: hay que eliminarlos a mano.
+
+### 🟠 Importantes — PENDIENTES
+- **Notificación incoherente**: "Llevas 12 días sin registrar" (22 jul) con racha de 1 día y
+  registros del 25 jul. Revisar el cron de re-enganche (`/api/cron/daily`, `winback_sent_at`).
+- **"Programar una dosis" no abre formulario**: solo navega a Péptidos › Resumen. Debería abrir
+  el formulario de registro directamente (mismo patrón que el botón de Agregar péptido).
+- **Header fijo solapa y recorta el contenido** al hacer scroll: la fila de pestañas queda
+  cortada por la mitad. Falta `scroll-mt` / padding compensando la altura del header sticky.
+- **Estadísticas: "Cambio de peso — Sin datos aún"** habiendo un registro. Con un solo peso no
+  hay "cambio", pero debería mostrar el peso actual en vez de decir que no hay datos.
+
+### 🟡 Interfaz y textos — PENDIENTES (bajo riesgo, agrupables en una tanda)
+- Capitalización rota en Calendario: "Julio De 2026", "Domingo, 26 De Julio" (el `capitalize`
+  de CSS afecta también a "de" → usar formato correcto, no `capitalize` sobre la frase entera).
+- Botón con doble signo: "+ + Agregar otro péptido (mezcla)".
+- El Asistente no renderiza listas: "1. x 2. y 3. z" sale todo en una línea (falta formatear
+  saltos de línea / markdown básico en la respuesta).
+- CTA inconsistente en Salud: pestaña Ejercicio dice "Registrar salud" y el resto "Registrar
+  comida / hidratación / sueño / ánimo".
+- Emojis 3º y 4º de la escala de ánimo casi idénticos.
+- Filtro por defecto distinto entre secciones: Inicio "Últimos 7 días" vs Péptidos "Histórico".
+- Botón de icono junto a "Importar CSV" en Familia sin etiqueta visible (parece exportar).
+- Calculadora: el campo "Agua bacteriostática (ml)" pierde su etiqueta al rellenarse porque
+  solo usa placeholder (falta `<label>` visible).
+- "Modo viaje" en el menú de perfil sale truncado ("Pausa los recordatorios…").
+- En "Comparar", las filas de las dos columnas no quedan alineadas entre sí.
+
+### 🔵 Estructural — PENDIENTE, requiere OK explícito (cambio único, alto riesgo)
+- **Refetch duplicado de las 12 tablas en CADA cambio de sección** (cada página hace su propio
+  `loadAppData()` al montar, sin caché compartida). Consecuencias medidas: lentitud de varios
+  segundos al pulsar "Péptidos" (la URL cambia pero la vista tarda), y **503 intermitentes**
+  en `family_extra_seats`, en los prefetch de `/app`, `/app/salud`, `/app/estadisticas`.
+  La tabla `family_extra_seats` y su política RLS se verificaron CORRECTAS contra la base real
+  → el 503 no viene de la consulta, sino de saturar el plan gratuito de Supabase.
+  Arreglo: caché en memoria de `AppData` con invalidación en cada mutación. Toca la capa de
+  datos de toda la app → hacerlo solo, con verificación, y nunca mezclado con otros cambios.
+- (Relacionado) 503 en `cdn.growthbook.io` — servicio externo, revisar si se usa de verdad.
+
+### 🌐 i18n — DECISIÓN NECESARIA ANTES DE LANZAR (no después)
+- En `/en/app` el título de pestaña sigue en español y las rutas mantienen `/peptidos`, `/salud`.
+- ⚠️ Cambiar las rutas a `/peptides`, `/health` DESPUÉS del lanzamiento rompería enlaces
+  guardados y perdería posicionamiento. Decidir antes del 2 de agosto.
+
+### 🚫 No probado por el QA (queda por cubrir)
+- Compartir vial / permisos familiares · botón "Añadir asiento extra (5€/mes)" · descarga de
+  PDF e informe · **diseño móvil** (el navegador de la extensión no bajaba de ~1180 px).
+
 ## 📋 SESIÓN 2026-07-25 (larga) — resumen de lo desplegado
 
 Todo lo de abajo está EN PRODUCCIÓN y verificado (tsc + build + navegador + consultas a la DB real).
