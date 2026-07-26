@@ -35,6 +35,7 @@ import { ShoppingList } from "@/components/app/peptidos/ShoppingList";
 import { SubTabs, type SubTabItem } from "@/components/app/shell/SubTabs";
 import { PremiumLocked } from "@/components/app/shell/PremiumLocked";
 import { PageSkeleton } from "@/components/app/shell/PageSkeleton";
+import { PEPTIDE_PROFILES } from "@/lib/peptide-profiles";
 import { DateRangeTabs } from "@/components/app/shell/DateRangeTabs";
 import { isWithinRange, type CustomRange, type DateRangeKey } from "@/lib/date-range";
 import { celebrate } from "@/lib/celebrate";
@@ -57,12 +58,29 @@ export default function PeptidosPage() {
   const [name, setName] = useState("");
   const [route, setRoute] = useState("Subcutánea");
   const [limitReached, setLimitReached] = useState(false);
+  const [suggestionsHidden, setSuggestionsHidden] = useState(false);
   const [range, setRange] = useState<DateRangeKey>("all");
   const [customRange, setCustomRange] = useState<CustomRange | null>(null);
 
   useEffect(() => {
     loadAppData().then(setData);
   }, []);
+
+  // Sugerencias de la base de 48 péptidos a partir de 2 letras. Busca por
+  // nombre Y por etiquetas: nadie escribe "Semaglutida" cuando lo que tiene en
+  // la cabeza es "GLP-1", ni "Testosterona Cipionato" cuando piensa "TRT" —
+  // que son justo los términos con los que se anuncia la app.
+  // Se ocultan al elegir una para no tapar el resto del formulario.
+  const nameMatches =
+    name.trim().length >= 2 && !suggestionsHidden
+      ? PEPTIDE_PROFILES.filter((p) => {
+          const q = name.trim().toLowerCase();
+          return (
+            p.name.toLowerCase().includes(q) ||
+            p.tags.some((tag) => tag.toLowerCase().includes(q))
+          );
+        }).slice(0, 8)
+      : [];
 
   if (!data) return <PageSkeleton tabs cards={3} />;
 
@@ -102,9 +120,28 @@ export default function PeptidosPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-5">
-      <div className="mb-4">
-        <h1 className="text-balance font-display text-xl font-bold text-foreground">{t("title")}</h1>
-        <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
+      {/* La acción principal vive ARRIBA DEL TODO, junto al título y visible
+          desde cualquier pestaña — no escondida dentro de "Inventario".
+          "Péptidos > Inventario > Agregar" eran 3 niveles para la acción más
+          básica de la app, y nadie asocia "Inventario" con "crear". Al pulsarlo
+          desde otra pestaña salta a Inventario y abre el formulario. */}
+      <div className="mb-4 flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <h1 className="text-balance font-display text-xl font-bold text-foreground">{t("title")}</h1>
+          <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
+        </div>
+        {!(data.plan === "free" && data.peptides.length >= 1) && (
+          <button
+            type="button"
+            onClick={() => {
+              setTab("inventario");
+              setShowForm(true);
+            }}
+            className="flex h-10 shrink-0 items-center gap-1.5 rounded-full bg-primary px-3.5 text-xs font-semibold text-primary-foreground transition-transform active:scale-97 sm:px-4 sm:text-sm"
+          >
+            <Plus className="size-4" aria-hidden /> {t("addPeptideAria")}
+          </button>
+        )}
       </div>
 
       <SubTabs items={TABS} value={tab} onChange={(k) => setTab(k as Tab)} />
@@ -121,7 +158,18 @@ export default function PeptidosPage() {
       )}
 
       <div className="mt-4">
-        {tab === "resumen" && <UsosTab data={data} onChange={setData} range={range} customRange={customRange} />}
+        {tab === "resumen" && (
+          <UsosTab
+            data={data}
+            onChange={setData}
+            range={range}
+            customRange={customRange}
+            onAddPeptide={() => {
+              setTab("inventario");
+              setShowForm(true);
+            }}
+          />
+        )}
 
         {tab === "inventario" && (
           <>
@@ -137,22 +185,7 @@ export default function PeptidosPage() {
                   {t("planLimitCta")}
                 </Link>
               </div>
-            ) : (
-              <div className="mb-3 flex justify-end">
-                {/* Con TEXTO visible, no un "+" pelado: es la acción más
-                    importante de la app (sin péptido no hay nada que
-                    registrar) y en la misma pantalla "Agregar proveedor" ya
-                    llevaba etiqueta. Un círculo con "+" sin palabras no se
-                    reconoce como "añadir péptido". */}
-                <button
-                  type="button"
-                  onClick={() => setShowForm((s) => !s)}
-                  className="flex h-10 items-center gap-1.5 rounded-full bg-primary px-4 text-sm font-semibold text-primary-foreground transition-transform active:scale-97"
-                >
-                  <Plus className="size-4" aria-hidden /> {t("addPeptideAria")}
-                </button>
-              </div>
-            )}
+            ) : null}
 
             {showForm && (
               <div className="mb-4 rounded-xl border border-border bg-card p-4">
@@ -161,11 +194,48 @@ export default function PeptidosPage() {
                 </label>
                 <input
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={(e) => {
+                    setName(e.target.value);
+                    setSuggestionsHidden(false);
+                  }}
                   placeholder={t("peptideNamePlaceholder")}
-                  className="mb-3 h-11 w-full rounded-lg border border-input bg-background px-3 text-base text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  className="h-11 w-full rounded-lg border border-input bg-background px-3 text-base text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 />
-                <label className="mb-1.5 block text-sm font-medium text-foreground">{t("routeLabel")}</label>
+
+                {/* Sugerencias mientras escribe: no hay que saber deletrear
+                    "Tirzepatida" ni "Testosterona Cipionato". Al elegir una se
+                    rellena también la vía de administración. Mismo criterio
+                    (≥2 letras, coincidencia por substring) que el paso de
+                    péptido del onboarding, que ya lo tenía y este no. */}
+                {nameMatches.length > 0 && (
+                  <div className="mt-2 overflow-hidden rounded-lg border border-border">
+                    <p className="border-b border-border bg-secondary/50 px-3 py-1.5 text-xs font-medium text-muted-foreground">
+                      {t("suggestionsFound", { count: nameMatches.length })}
+                    </p>
+                    <ul className="max-h-52 overflow-y-auto">
+                      {nameMatches.map((p) => (
+                        <li key={p.name}>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setName(p.name);
+                              setRoute(p.route);
+                              setSuggestionsHidden(true);
+                            }}
+                            className="flex w-full flex-col items-start gap-0.5 border-b border-border px-3 py-2 text-left last:border-b-0 hover:bg-secondary/60"
+                          >
+                            <span className="text-sm font-medium text-foreground">{p.name}</span>
+                            <span className="line-clamp-1 text-xs text-muted-foreground">
+                              {p.route} · {p.commonDose} {p.doseUnit}
+                            </span>
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                <label className="mb-1.5 mt-3 block text-sm font-medium text-foreground">{t("routeLabel")}</label>
                 <div className="mb-3 grid grid-cols-2 gap-2">
                   {ROUTES.map((r) => (
                     <button
@@ -203,9 +273,22 @@ export default function PeptidosPage() {
             )}
 
             {data.peptides.length === 0 ? (
-              <div className="rounded-xl border border-dashed border-border p-8 text-center">
-                <Package className="mx-auto mb-2 size-8 text-muted-foreground" aria-hidden />
-                <p className="text-sm text-muted-foreground">{t("emptyState")}</p>
+              /* Segunda vía de entrada: el estado vacío es JUSTO el momento en
+                 que el usuario necesita el botón, y antes solo mostraba un
+                 icono y una frase, sin nada que pulsar. */
+              <div className="rounded-xl bg-accent p-6 text-center">
+                <Package className="mx-auto mb-2 size-8 text-primary" aria-hidden />
+                <p className="text-sm font-semibold text-foreground">{t("emptyPeptidesTitle")}</p>
+                <p className="mx-auto mt-1 max-w-xs text-xs text-muted-foreground">
+                  {t("emptyPeptidesBody")}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setShowForm(true)}
+                  className="mt-4 inline-flex h-11 items-center justify-center gap-1.5 rounded-lg bg-primary px-5 text-sm font-semibold text-primary-foreground transition-transform active:scale-97"
+                >
+                  <Plus className="size-4" aria-hidden /> {t("addPeptideAria")}
+                </button>
               </div>
             ) : (
               <div className="space-y-3 sm:grid sm:grid-cols-2 sm:gap-3 sm:space-y-0">
@@ -768,11 +851,15 @@ function UsosTab({
   onChange,
   range,
   customRange,
+  onAddPeptide,
 }: {
   data: AppData;
   onChange: (next: AppData) => void;
   range: DateRangeKey;
   customRange: CustomRange | null;
+  /** Sin péptidos no se puede registrar un uso: esto lleva a crear el primero
+      en vez de dejar la pantalla en un callejón sin salida. */
+  onAddPeptide: () => void;
 }) {
   const t = useTranslations("Peptidos");
   const [showForm, setShowForm] = useState(false);
@@ -961,15 +1048,14 @@ function UsosTab({
         <div className="rounded-xl border border-dashed border-border p-8 text-center">
           <Syringe className="mx-auto mb-2 size-8 text-muted-foreground" aria-hidden />
           <p className="text-sm text-muted-foreground">{t("usesEmptyState")}</p>
-          {data.peptides.length > 0 && (
-            <button
-              type="button"
-              onClick={() => setShowForm(true)}
-              className="mt-3 inline-flex h-9 items-center gap-1.5 rounded-full bg-primary px-4 text-xs font-semibold text-primary-foreground transition-transform active:scale-97"
-            >
-              <Plus className="size-3.5" aria-hidden /> {t("registerUse")}
-            </button>
-          )}
+          <button
+            type="button"
+            onClick={data.peptides.length > 0 ? () => setShowForm(true) : onAddPeptide}
+            className="mt-3 inline-flex h-9 items-center gap-1.5 rounded-full bg-primary px-4 text-xs font-semibold text-primary-foreground transition-transform active:scale-97"
+          >
+            <Plus className="size-3.5" aria-hidden />
+            {data.peptides.length > 0 ? t("registerUse") : t("addPeptideAria")}
+          </button>
         </div>
       ) : (
         <div className="space-y-2 sm:grid sm:grid-cols-2 sm:gap-2 sm:space-y-0">

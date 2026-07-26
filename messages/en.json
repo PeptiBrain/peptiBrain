@@ -828,7 +828,10 @@
     "shoppingBac": "{ml} mL water",
     "shoppingSyringes": "{count} insulin syringes",
     "shoppingBacTotal": "{ml} mL bacteriostatic water",
-    "shoppingNote": "Estimate based on your scheduled doses. Not medical advice."
+    "shoppingNote": "Estimate based on your scheduled doses. Not medical advice.",
+    "suggestionsFound": "Found {count} suggestions",
+    "emptyPeptidesTitle": "No peptides yet",
+    "emptyPeptidesBody": "Add your first one (GLP-1, peptides or TRT) and start logging your doses."
   },
   "Salud": {
     "title": "Health",

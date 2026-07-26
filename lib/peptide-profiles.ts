@@ -120,7 +120,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     bacWater: "2",
     frequency: "1x por semana",
     categories: ["peso"],
-    tags: ["Control de peso"],
+    tags: ["GLP-1", "Control de peso"],
     description:
       "Agonista del receptor GLP-1. Reduce el apetito, retrasa el vaciamiento gástrico y mejora la sensibilidad a la insulina.",
     halfLife: "~1 semana",
@@ -143,7 +143,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     bacWater: "2",
     frequency: "1x por semana",
     categories: ["peso"],
-    tags: ["Control de peso"],
+    tags: ["GLP-1", "Control de peso"],
     description:
       "Agonista dual GIP/GLP-1. Apoya el control de peso y mejora la sensibilidad a la insulina.",
     halfLife: "~5 días",
@@ -166,7 +166,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     bacWater: "2",
     frequency: "1x por semana",
     categories: ["peso"],
-    tags: ["Control de peso"],
+    tags: ["GLP-1", "Control de peso"],
     description: "Agonista triple GIP/GLP-1/glucagón, en investigación para control de peso.",
     halfLife: "~6 días",
     halfLifeConfidence: "alto",
@@ -189,7 +189,7 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     bacWater: "2",
     frequency: "1x por semana",
     categories: ["peso"],
-    tags: ["Control de peso"],
+    tags: ["GLP-1", "Control de peso"],
     description:
       "Análogo de la amilina de acción prolongada. Suele combinarse con un GLP-1 para el control de peso.",
     halfLife: "~7 días",

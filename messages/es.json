@@ -828,7 +828,10 @@
     "shoppingBac": "{ml} mL de agua",
     "shoppingSyringes": "{count} jeringas de insulina",
     "shoppingBacTotal": "{ml} mL de agua bacteriostática",
-    "shoppingNote": "Estimación según tus dosis programadas. No es consejo médico."
+    "shoppingNote": "Estimación según tus dosis programadas. No es consejo médico.",
+    "suggestionsFound": "Encontré {count} sugerencias",
+    "emptyPeptidesTitle": "Aún no tienes péptidos",
+    "emptyPeptidesBody": "Añade el primero (GLP-1, péptidos o TRT) y empieza a registrar tus dosis."
   },
   "Salud": {
     "title": "Salud",
