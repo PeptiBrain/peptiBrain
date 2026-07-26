@@ -3,14 +3,14 @@ import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { LocaleSwitcher } from "@/components/app/LocaleSwitcher";
 import { ToolsMenu } from "@/components/app/ToolsMenu";
-import { createClient } from "@/lib/supabase/server";
+import { HeaderAuthCta } from "@/components/app/HeaderAuthCta";
 
+// Sin lectura de sesión en servidor: eso volvía dinámica TODA la web pública
+// (leer cookies obliga a renderizar en cada visita). La decisión de mostrar
+// "Empezar gratis" o "Ir a mi app" vive ahora en HeaderAuthCta, del lado del
+// navegador, y la landing/blog/calculadoras pueden servirse cacheadas.
 export async function Header() {
   const t = await getTranslations("Header");
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
 
   return (
     <header
@@ -39,29 +39,11 @@ export async function Header() {
             Blog
           </Link>
           <LocaleSwitcher />
-          {user ? (
-            <Link
-              href="/app"
-              className="inline-flex h-11 items-center justify-center rounded-lg bg-primary px-3 text-sm font-semibold text-primary-foreground transition-transform active:scale-97 sm:px-4"
-            >
-              {t("goToApp")}
-            </Link>
-          ) : (
-            <>
-              <Link
-                href="/login"
-                className="hidden text-sm font-medium text-muted-foreground hover:text-foreground sm:inline"
-              >
-                {t("login")}
-              </Link>
-              <Link
-                href="/login"
-                className="inline-flex h-11 items-center justify-center rounded-lg bg-primary px-3 text-sm font-semibold text-primary-foreground transition-transform active:scale-97 sm:px-4"
-              >
-                {t("cta")}
-              </Link>
-            </>
-          )}
+          <HeaderAuthCta
+            loginLabel={t("login")}
+            ctaLabel={t("cta")}
+            goToAppLabel={t("goToApp")}
+          />
         </nav>
       </div>
     </header>
