@@ -128,11 +128,19 @@ export function PeptideLibrary() {
             onScroll={onScroll}
             className="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           >
-            {items.map((p, i) => {
+            {items.map((p) => {
             const Icon = CATEGORY_ICONS[p.categories[0]];
             return (
-              <Reveal key={p.name} delay={i * 0.04}>
-                <article className="flex w-64 shrink-0 snap-start flex-col rounded-2xl border border-border bg-card p-4">
+              // OJO: nada de <Reveal> aquí dentro. Estas tarjetas viven en un
+              // carrusel horizontal, así que las que están fuera de pantalla a
+              // la derecha nunca "entran en viewport" y se quedaban en
+              // opacity:0 PARA SIEMPRE — 8 de 10 tarjetas invisibles, incluso
+              // tras deslizar el carrusel. El reveal lo hace la cabecera de la
+              // sección; las tarjetas se muestran siempre.
+              <article
+                key={p.name}
+                className="flex w-64 shrink-0 snap-start flex-col rounded-2xl border border-border bg-card p-4"
+              >
                   <span className="w-fit rounded-full bg-secondary px-2.5 py-1 text-[11px] font-semibold text-secondary-foreground">
                     {tc(p.categories[0])}
                   </span>
@@ -157,7 +165,6 @@ export function PeptideLibrary() {
                     </Link>
                   </div>
                 </article>
-              </Reveal>
             );
             })}
           </div>

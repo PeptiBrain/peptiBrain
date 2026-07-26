@@ -252,19 +252,28 @@ export function ProfileMenu({
             )}
             {reminderError && <p className="px-2.5 pb-1 text-xs text-destructive">{reminderError}</p>}
 
+            {/* Va en text-foreground como el resto del menú: en gris parecía
+                desactivado y daba la impresión de estar roto. Y sin viaje
+                creado, el chip invita a programarlo en vez de limitarse a
+                informar "Inactivo", que no decía ni qué es ni qué hacer. */}
             <button
               type="button"
               onClick={openTravelMode}
-              className="flex w-full items-center gap-3 rounded-lg px-2.5 py-2.5 text-left text-sm font-medium text-muted-foreground hover:bg-secondary"
+              className="flex w-full items-center gap-3 rounded-lg px-2.5 py-2.5 text-left text-sm font-medium text-foreground transition-colors hover:bg-secondary"
             >
               <Plane className="size-4 shrink-0" aria-hidden />
-              <span className="min-w-0 flex-1 truncate">{t("travelMode")}</span>
+              <span className="min-w-0 flex-1">
+                <span className="block truncate">{t("travelMode")}</span>
+                <span className="block truncate text-xs font-normal text-muted-foreground">
+                  {t("travelModeHint")}
+                </span>
+              </span>
               <span
                 className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-semibold ${
-                  travelModeActive ? "bg-primary/15 text-primary" : "bg-secondary text-muted-foreground"
+                  travelModeActive ? "bg-primary/15 text-primary" : "bg-accent text-accent-foreground"
                 }`}
               >
-                {travelModeActive ? t("travelModeActive") : t("travelModeInactive")}
+                {travelModeActive ? t("travelModeActive") : t("travelModeSchedule")}
               </span>
             </button>
 

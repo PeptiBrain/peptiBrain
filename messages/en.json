@@ -38,7 +38,7 @@
     "cookies": "Cookies",
     "refunds": "Refunds",
     "legalEntity": "Legal Notice",
-    "tagline": "Your peptide and wellness diary: doses, vials, and progress in one place.",
+    "tagline": "Your GLP-1, peptide and TRT diary: doses, vials and progress in one place.",
     "colProduct": "Product",
     "colCommunity": "Community",
     "colLegal": "Legal",
@@ -359,7 +359,9 @@
     "travelModeInactive": "Inactive",
     "upgradeCta": "Upgrade to Premium",
     "language": "Language",
-    "installApp": "Install the app"
+    "installApp": "Install the app",
+    "travelModeHint": "Pause reminders while you travel",
+    "travelModeSchedule": "Schedule"
   },
   "Informe": {
     "title": "PeptiBrain report",
@@ -1004,7 +1006,8 @@
     "memberAdherence": "{name} has {count, plural, one {# dose} other {# doses}} · {pct}% adherence",
     "memberDoses": "{name} has {count, plural, one {# dose logged} other {# doses logged}}",
     "planRequired": "Sharing with family is part of the Family plan.",
-    "planRequiredCta": "Upgrade to Family"
+    "planRequiredCta": "Upgrade to Family",
+    "inviteShort": "Invite"
   },
   "Legal": {
     "termsTitle": "Terms of Service",

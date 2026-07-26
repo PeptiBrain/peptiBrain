@@ -139,13 +139,17 @@ export default function PeptidosPage() {
               </div>
             ) : (
               <div className="mb-3 flex justify-end">
+                {/* Con TEXTO visible, no un "+" pelado: es la acción más
+                    importante de la app (sin péptido no hay nada que
+                    registrar) y en la misma pantalla "Agregar proveedor" ya
+                    llevaba etiqueta. Un círculo con "+" sin palabras no se
+                    reconoce como "añadir péptido". */}
                 <button
                   type="button"
                   onClick={() => setShowForm((s) => !s)}
-                  aria-label={t("addPeptideAria")}
-                  className="flex size-10 items-center justify-center rounded-full bg-primary text-primary-foreground transition-transform active:scale-97"
+                  className="flex h-10 items-center gap-1.5 rounded-full bg-primary px-4 text-sm font-semibold text-primary-foreground transition-transform active:scale-97"
                 >
-                  <Plus className="size-5" aria-hidden />
+                  <Plus className="size-4" aria-hidden /> {t("addPeptideAria")}
                 </button>
               </div>
             )}

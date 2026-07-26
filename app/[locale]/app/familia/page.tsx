@@ -223,14 +223,15 @@ export default function FamiliaPage() {
                 if (file) handleCsvFile(file);
               }}
             />
+            {/* Con texto visible, igual que "Importar CSV" que tiene al lado:
+                un "+" pelado no se reconoce como "invitar a un familiar". */}
             <button
               type="button"
               onClick={() => setShowForm((s) => !s)}
               disabled={seatsFull}
-              aria-label={t("inviteAria")}
-              className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground transition-transform active:scale-97 disabled:opacity-50"
+              className="flex h-10 shrink-0 items-center gap-1.5 rounded-full bg-primary px-3.5 text-xs font-semibold text-primary-foreground transition-transform active:scale-97 disabled:opacity-50"
             >
-              <Plus className="size-5" aria-hidden />
+              <Plus className="size-3.5" aria-hidden /> {t("inviteShort")}
             </button>
           </div>
         )}
