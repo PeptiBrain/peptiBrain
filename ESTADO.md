@@ -27,34 +27,34 @@ Atacar estas cuatro mata la mayoría del backlog. Arreglar bug a bug es el error
 - **CR-4 · Fechas mezclando UTC y hora local, y sin año.** Explica: 9, 52, 61, 79, 82.
 
 ### 🔴 CRÍTICOS — riesgo de dosificación, pérdida de datos o bloqueo
-1. **Concentración `Infinity mg/mL` guardada en base.** Vial 10 mg + agua `0` → guarda y muestra
+1. ✅ **Concentración `Infinity mg/mL` guardada en base.** Vial 10 mg + agua `0` → guarda y muestra
    `10 mg · Infinity mg/mL`. Lo más grave del informe. Validar agua > 0 y no renderizar nunca
    `Infinity`/`NaN`.
-2. **Calculadora dice "Extraer hasta 0.0 unidades" sin avisar.** 10 mg + 0.01 ml + 250 mcg → `0.0 U`
+2. ✅ **Calculadora dice "Extraer hasta 0.0 unidades" sin avisar.** 10 mg + 0.01 ml + 250 mcg → `0.0 U`
    (real 0,025 U, no medible). Existe aviso para "supera la jeringa" pero no para el defecto.
-3. **"Resolver agua" da resultado físicamente imposible.** Vial 1 mg, dosis 2000 mcg, 20 U → `0.10 mL`.
+3. ✅ **"Resolver agua" da resultado físicamente imposible.** Vial 1 mg, dosis 2000 mcg, 20 U → `0.10 mL`.
    No se pueden sacar 2 mg de un vial de 1 mg, y 20 U son el doble del volumen total.
 4. **Fallos silenciosos en 5 formularios** (400 sin mensaje): nombre de péptido de 229 caracteres
    (input sin `maxlength`), vial `-10` mg, peso `-50` kg / grasa `500 %`, comida `-5000` kcal,
    sueño `48` h.
-5. **"Eliminar foto" borra sin confirmación** (los demás borrados sí confirman). Ver también 56.
-6. **No hay forma de borrar dosis ni protocolos programados.** Un protocolo generó 60 dosis y solo
+5. ⏳ **"Eliminar foto" borra sin confirmación** (los demás borrados sí confirman). Ver también 56.
+6. ⏳ (salud ✅, dosis pendiente) **No hay forma de borrar dosis ni protocolos programados.** Un protocolo generó 60 dosis y solo
    se pueden quitar borrando el péptido entero o "Restablecer todos mis datos".
-7. **Ningún control de plausibilidad, y encima se celebra.** Aceptó 500 kg, 99 % grasa, 999.999 kcal,
+7. ✅ **Ningún control de plausibilidad, y encima se celebra.** Aceptó 500 kg, 99 % grasa, 999.999 kcal,
    999.999 ml, 99.999 min, testosterona 99.999, dosis 999.999 mg. El toast felicitó con **"-427 kg"**.
 8. **Dosis en el futuro se puede marcar como Aplicada** (registrada el 01/01/2030).
-9. **Fechas sin año** (`mar 1 de ene`, `26 jul`): un registro de 1900 o 2030 parece de este año.
+9. ✅ **Fechas sin año** (`mar 1 de ene`, `26 jul`): un registro de 1900 o 2030 parece de este año.
    Peligroso en un historial clínico.
-50. **El modal "Centro de ayuda" queda ATRAPADO y no se puede cerrar.** X y título fuera de pantalla,
+50. ✅ **El modal "Centro de ayuda" queda ATRAPADO y no se puede cerrar.** X y título fuera de pantalla,
    `Escape` no cierra, clic fuera tampoco y además **atraviesa** el modal activando lo de debajo.
    Solo se sale recargando. **Causa exacta ya diagnosticada**: el overlay `fixed inset-0` se
    renderiza DENTRO del `<header sticky backdrop-blur>`; el `backdrop-filter` crea un containing
    block para `position:fixed`, así que `inset-0` mide 57 px en vez del viewport → el panel queda en
    `top:-264px`. **Arreglo: `createPortal(document.body)`** (los demás modales sí se centran bien).
-51. **Doble/triple clic en "Guardar péptido" crea duplicados.** 3 clics → 3 POST 201 → 3 péptidos.
+51. ✅ **Doble/triple clic en "Guardar péptido" crea duplicados.** 3 clics → 3 POST 201 → 3 péptidos.
    No se desactiva el botón durante el envío. **Es el origen real de los dos "Semaglutida"**
    (el arreglo por nombre del commit 916b291 no cubre la carrera de clics rápidos).
-52. **Desfase de un día app vs informe.** Salud "25 jul", informe "24 jul". Peso del 1 ene sale como
+52. ✅ **Desfase de un día app vs informe.** Salud "25 jul", informe "24 jul". Peso del 1 ene sale como
    "31 dic 1899". Mezcla de UTC con hora local al formatear.
 53. **El importador CSV acepta fechas y cantidades imposibles**: `01/01/1800` y `999999999 mg` se
    importan (201). Ese registro rompe el gráfico "Dosis en el tiempo" y provoca scroll horizontal
@@ -70,17 +70,17 @@ Atacar estas cuatro mata la mayoría del backlog. Arreglar bug a bug es el error
 13. **Badge rojo de dosis pendientes no se actualiza** al aplicar una dosis (seguía en 60), y cuenta
     las 60 futuras en vez de solo las vencidas/de hoy.
 14. Duración del protocolo sin tope visible: 9999 semanas → "creará 60 dosis" sin explicar el límite.
-15. **Viaje con fecha fin anterior al inicio se guarda** (26 jul → 1 jul).
+15. ✅ **Viaje con fecha fin anterior al inicio se guarda** (26 jul → 1 jul).
 16. Pide zona de inyección para un péptido **ORAL**.
 17. Lista de la compra incoherente: "Añade un vial" cuando sí lo tiene; sugiere jeringas para oral.
-18. Confirmación equivocada: al borrar un **proveedor** pregunta "¿Eliminar este **vial**?".
+18. ✅ Confirmación equivocada: al borrar un **proveedor** pregunta "¿Eliminar este **vial**?".
 19. Protocolo guardado en la calculadora se lista con un "—" en vez de un resumen.
 20. Péptidos duplicados indistinguibles en el desplegable de "Registrar uso". (Ver 51 y 74.)
 21. Campos "(opcional)" que son obligatorios: "Nombre del péptido (opcional)", "Efecto secundario — opcional".
 22. Proveedores sin validación: web `javascript:alert(1)`, teléfono `abcdefg`, email inválido.
     Hoy se pintan como texto plano (no hay XSS) — **pero si algún día se convierten en `<a href>`
     sí lo habría**. "Editar perfil" YA tiene el patrón correcto: reutilizarlo.
-23. **Peso y Ejercicio no se pueden editar ni borrar.** (Ver CR-2 y 68.)
+23. ✅ **Peso y Ejercicio no se pueden editar ni borrar.** (Ver CR-2 y 68.)
 24. Métricas que se contradicen: Estadísticas "Adherencia — Sin datos" con 1 dosis aplicada;
     Inicio "Dosis cumplidas 0 de 0" mientras Estadísticas dice 1.
 25. Gráfica "Dosis en el tiempo" etiqueta el eje con horas (`10h`) aunque el periodo sea "Histórico".
@@ -92,14 +92,14 @@ Atacar estas cuatro mata la mayoría del backlog. Arreglar bug a bug es el error
 30. Contradicción de plan: "Mi plan: Family — el más completo" vs "tu plan Family solo incluye 2".
 31. En modo oscuro el botón "Invitar" deshabilitado se ve idéntico a uno activo.
 32. Red: `family_extra_seats` 503 siempre, prefetch RSC 503 intermitentes, growthbook 503. (Ver CR-3.)
-55. **El viaje con fechas invertidas activó "Modo viaje: Activo"** y pausó los recordatorios sin avisar.
+55. ✅ **El viaje con fechas invertidas activó "Modo viaje: Activo"** y pausó los recordatorios sin avisar.
 56. Borrar un viaje no pide confirmación.
 57. `HEAD family_extra_seats` 503 en cada carga (×2) → el banner del límite del plan puede mentir.
     ⚠️ Mitigado en 916b291 (`extraSeatsUnknown` ya no bloquea), pero la causa sigue.
 58. `cdn.growthbook.io` 503 ×3 por carga → feature flags a valores por defecto; probable origen del
     texto incoherente de "Premium".
 59. **Todas las tablas se piden DOS veces por carga** (~24 peticiones en vez de 12). (Ver CR-3.)
-60. Al cambiar a inglés **la moneda pasa de € a $** con los mismos números. Eso no es traducir.
+60. ✅ Al cambiar a inglés **la moneda pasa de € a $** con los mismos números. Eso no es traducir.
 61. En la UI inglesa las fechas siguen en español ("Next dose lun 27 de jul").
 62. El `<title>` sigue en español en `/en/`.
 63. La tarjeta de "Compartir" mezcla idiomas: en español pone "jose's protocol", "1 day streak".
@@ -111,7 +111,7 @@ Atacar estas cuatro mata la mayoría del backlog. Arreglar bug a bug es el error
 67. El desplegable de "Cantidad" del vial permite "ml" como unidad del péptido.
     ⚠️ Parcialmente mitigado en 916b291 (ya no se pinta la concentración absurda), pero **la opción
     sigue ahí**; decidir si se restringe a mg/mcg/UI salvo viales líquidos.
-68. **Peso, Ejercicio, Hidratación, Sueño, Ánimo y Efectos no tienen borrar ni editar.** (CR-2.)
+68. ✅ **Peso, Ejercicio, Hidratación, Sueño, Ánimo y Efectos no tienen borrar ni editar.** (CR-2.)
 69. El 404 es el por defecto de Next.js: en inglés, sin marca, sin cabecera, sin enlace de vuelta.
 70. "Instalar la app" abre `/descargar` a pantalla completa sin cabecera; no usa el prompt nativo
     de instalación y no cubre escritorio.
@@ -126,8 +126,8 @@ Atacar estas cuatro mata la mayoría del backlog. Arreglar bug a bug es el error
 78. Resumen pinta las 60 dosis de golpe, sin paginación ni "cargar más".
 
 ### 🟡 MENORES — copy y UI
-33. Capitalización: "Julio De 2026", "Domingo, 26 De Julio" (`capitalize` afecta también a "de").
-34. Doble símbolo: "+ + Agregar otro péptido (mezcla)".
+33. ✅ Capitalización: "Julio De 2026", "Domingo, 26 De Julio" (`capitalize` afecta también a "de").
+34. ✅ Doble símbolo: "+ + Agregar otro péptido (mezcla)".
 35. Números sin separador de miles: "999999 kcal" desborda la tarjeta.
 36. "2000.0 unidades" se pinta en verde (color de éxito) cuando es un error.
 37. "Agua bacteriostática (ml)" solo existe como placeholder: al escribir desaparece la etiqueta.
