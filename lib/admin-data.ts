@@ -90,6 +90,15 @@ export type AdminOverview = {
   // Ganancia real
   hotmartFeeEstimate: number;
   aiCostEstimate: number;
+  /** Costo real de IA de HOY (USD), sumado de ai_calls. */
+  aiCostToday: number;
+  /** Llamadas al modelo hechas hoy. */
+  aiCallsToday: number;
+  /** Tokens consumidos en 30 días (volumen de uso, aunque el costo sea 0). */
+  aiTokens30d: number;
+  /** false = todavía no hay ninguna llamada registrada → mostrar "no medido"
+   *  en vez de dar a entender que el gasto es 0 porque se midió. */
+  aiCostMeasured: boolean;
   netProfitEstimate: number;
   marginPct: number | null;
   // Series para gráficos
@@ -222,12 +231,30 @@ export async function loadAdminOverview(): Promise<AdminOverview> {
   const involuntaryChurn30d = pastDue + refundedOrChargeback30d;
 
   // --- Ganancia real: MRR menos lo que de verdad se va en comisiones y costos ---
-  // Costo de IA: el modelo configurado (ASSISTANT_AI_MODEL) es gratuito hoy, así que
-  // el costo real es 0 — si algún día se cambia a un modelo de pago, esto debe leer
-  // el gasto real de una tabla de costos (ver 31-EVALS-OBSERVABILIDAD-OPERACION.md).
+  // Costo de IA: ya NO es un 0 escrito a mano. Se suma el costo real de cada
+  // llamada registrada en `ai_calls` (migración 0044). Con el modelo gratuito
+  // de hoy dará 0, que es la verdad; el día que se cambie a uno de pago, el
+  // gasto aparece aquí solo, sin esperar a la factura.
+  // Si la migración aún no se corrió, la query falla suave y se asume 0.
+  const { data: aiCalls } = await admin
+    .from("ai_calls")
+    .select("cost_usd, input_tokens, output_tokens, feature, created_at")
+    .gte("created_at", since30d);
+
+  const aiCallRows = aiCalls || [];
+  const aiCostEstimate = aiCallRows.reduce((sum, c) => sum + Number(c.cost_usd || 0), 0);
+  const aiCallsToday = aiCallRows.filter((c) => c.created_at >= todayIso()).length;
+  const aiCostToday = aiCallRows
+    .filter((c) => c.created_at >= todayIso())
+    .reduce((sum, c) => sum + Number(c.cost_usd || 0), 0);
+  const aiTokens30d = aiCallRows.reduce(
+    (sum, c) => sum + Number(c.input_tokens || 0) + Number(c.output_tokens || 0),
+    0
+  );
+  const aiCostMeasured = aiCallRows.length > 0;
+
   const HOTMART_FEE_PCT = 0.1;
   const hotmartFeeEstimate = estMrr * HOTMART_FEE_PCT;
-  const aiCostEstimate = 0;
   const netProfitEstimate = estMrr - hotmartFeeEstimate - aiCostEstimate;
   const marginPct = estMrr > 0 ? Math.round((netProfitEstimate / estMrr) * 100) : null;
 
@@ -479,6 +506,10 @@ export async function loadAdminOverview(): Promise<AdminOverview> {
     retentionD30,
     hotmartFeeEstimate,
     aiCostEstimate,
+    aiCostToday,
+    aiCallsToday,
+    aiTokens30d,
+    aiCostMeasured,
     netProfitEstimate,
     marginPct,
     signupsByDay,

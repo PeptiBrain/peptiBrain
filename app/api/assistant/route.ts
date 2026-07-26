@@ -14,6 +14,15 @@ const MAX_TOKENS = 512;
 // contra una factura sorpresa si el modelo pasa a ser de pago o el uso se dispara.
 const MAX_GLOBAL_MESSAGES_PER_DAY = Number(process.env.ASSISTANT_GLOBAL_DAILY_LIMIT) || 500;
 
+// Precio del modelo en USD por cada millón de tokens, para calcular el costo
+// REAL de cada llamada (antes el panel mostraba un 0 fijo escrito a mano).
+// El modelo de hoy (gemini-flash-latest) es GRATIS, así que por defecto es 0 y
+// el panel dirá 0 € — que es la verdad. Si algún día se cambia a un modelo de
+// pago, se ponen estas dos variables en Vercel y el gasto empieza a contarse
+// solo, sin tocar código ni esperar a la factura.
+const AI_PRICE_INPUT_PER_1M = Number(process.env.AI_PRICE_INPUT_PER_1M) || 0;
+const AI_PRICE_OUTPUT_PER_1M = Number(process.env.AI_PRICE_OUTPUT_PER_1M) || 0;
+
 function todayIso() {
   return new Date().toISOString().slice(0, 10);
 }
@@ -108,6 +117,8 @@ export async function POST(request: NextRequest) {
     : message.trim();
 
   let reply: string;
+  let inputTokens = 0;
+  let outputTokens = 0;
   try {
     const res = await fetch(AI_BASE_URL, {
       method: "POST",
@@ -129,6 +140,8 @@ export async function POST(request: NextRequest) {
     }
     const body = await res.json();
     reply = body.choices?.[0]?.message?.content || "";
+    inputTokens = Number(body.usage?.prompt_tokens) || 0;
+    outputTokens = Number(body.usage?.completion_tokens) || 0;
   } catch {
     return NextResponse.json({ error: "assistant_error" }, { status: 502 });
   }
@@ -144,6 +157,25 @@ export async function POST(request: NextRequest) {
       .from("assistant_global_usage")
       .upsert({ usage_date: date, message_count: globalCount + 1 }, { onConflict: "usage_date" }),
   ]);
+
+  // Registra el costo REAL de esta llamada para el panel. Como el de abajo,
+  // va aparte y tolera fallos: si la migración 0044 aún no se corrió, NO debe
+  // romper la respuesta que el usuario ya está esperando.
+  try {
+    const costUsd =
+      (inputTokens / 1_000_000) * AI_PRICE_INPUT_PER_1M +
+      (outputTokens / 1_000_000) * AI_PRICE_OUTPUT_PER_1M;
+    await admin.from("ai_calls").insert({
+      user_id: user.id,
+      feature: "assistant",
+      model: AI_MODEL,
+      input_tokens: inputTokens,
+      output_tokens: outputTokens,
+      cost_usd: costUsd,
+    });
+  } catch {
+    // medir el costo nunca puede romper la función que el usuario pagó
+  }
 
   // Registra la pregunta para que el dueño vea qué duda la gente (solo lectura admin).
   // Se guarda solo el texto de la pregunta, no el contexto de datos personales. Va

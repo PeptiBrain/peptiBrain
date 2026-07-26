@@ -52,6 +52,13 @@ export default async function AdminPage() {
       `${data.errorsToday} errores registrados hoy — revisa la sección Salud para ver cuáles se repiten más.`
     );
   }
+  // La IA no puede comerse el negocio: si pasa del 20% de lo facturado, deja de
+  // ser un costo y se vuelve el problema (regla de 40-UNIT-ECONOMICS).
+  if (data.estMrr > 0 && data.aiCostEstimate > data.estMrr * 0.2) {
+    alerts.push(
+      `La IA te está costando ${data.aiCostEstimate.toFixed(2)} de los ${data.estMrr.toFixed(0)} que facturas (más del 20%) — sube el precio, baja el tope diario de mensajes o cambia a un modelo más barato.`
+    );
+  }
 
   return <AdminDashboard data={data} alerts={alerts} />;
 }

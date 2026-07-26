@@ -150,7 +150,16 @@ export function AdminDashboard({ data, alerts }: { data: AdminOverview; alerts: 
                 De {s}
                 {data.estMrr.toLocaleString()} facturados: −{s}
                 {data.hotmartFeeEstimate.toFixed(0)} comisión Hotmart (~10%), −{s}
-                {data.aiCostEstimate.toFixed(0)} costo de IA (modelo gratuito hoy).
+                {data.aiCostEstimate.toFixed(2)} de IA{" "}
+                {data.aiCostMeasured ? (
+                  <>
+                    (medido de verdad: {data.aiCallsToday} consulta
+                    {data.aiCallsToday === 1 ? "" : "s"} hoy,{" "}
+                    {data.aiTokens30d.toLocaleString()} tokens en 30 días).
+                  </>
+                ) : (
+                  <>(aún sin consultas registradas — no hay nada que cobrar todavía).</>
+                )}
               </p>
             </div>
           </motion.div>
