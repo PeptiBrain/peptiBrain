@@ -1,5 +1,31 @@
 # ESTADO — PeptiBrain
 
+## ✅ Estados vacíos con CTA (2026-07-27)
+
+Barrido pedido por el usuario: toda pantalla que puede mostrarse "sin datos
+todavía" debe tener mensaje + botón a la acción, no solo un icono y una frase
+muerta. Se usó un agente Explore para mapear los ~18 puntos del código con
+`.length === 0`; se corrigieron los 5 que eran realmente bare (sin ningún
+botón):
+- Inventario de viales (`peptidos/page.tsx`, `ViatesTab`): CTA a agregar
+  péptido, o a bajar hasta las tarjetas de péptido si ya hay péptidos.
+- `ProtocolModal` sin péptidos: botón directo a crear uno.
+- `HelpCenter` sin resultados: "Limpiar búsqueda" + "Escribir a soporte".
+- `ShoppingList` sin dosis programadas: botón "Registrar uso" (reusa
+  `/app/peptidos?nuevo=uso`).
+- Informe médico completamente vacío: un aviso con CTA arriba en vez de
+  4 tablas mudas (no se puso CTA en cada tabla individual porque es un
+  documento imprimible para el médico, no una pantalla de acción).
+
+El resto de puntos encontrados (paneles de admin, vistas de solo-lectura de
+familia compartida, celdas de calendario/semana por día, ideas board) ya
+estaban bien así o no tienen ninguna acción sensata que ofrecer — se dejaron
+igual a propósito.
+
+Verificado: tsc ✓ · npm test (74/74) ✓ · npm run build ✓ · staging→main
+pusheado. **No verificado en navegador**: todas las pantallas tocadas viven
+tras el login y nunca inicio sesión — igual que el resto de la app interna.
+
 ## ✅ Programa de afiliados Hotmart + precios en USD (2026-07-27)
 
 Un tercero quiere vender PeptiBrain por afiliación. No hizo falta tocar código
