@@ -1,5 +1,27 @@
 # ESTADO — PeptiBrain
 
+## ✅ Encuesta de motivo de cancelación (2026-07-27)
+
+Capa 1 de `docs/sistema/PROMPT-RETENER-INGRESOS.txt` (ya la mencionaba como pendiente). Idea
+originada en un post compartido sobre encuestas de cancelación, adaptada a lo que Hotmart permite
+de verdad. Spec completa en `PROMPT-ENCUESTA-CANCELACION.md`.
+
+- Nueva encuesta de un clic entre "rechazó la oferta de descuento" y "instrucciones de cancelar":
+  `components/app/cuenta/CancelSurveyModal.tsx`. Motivos: no_esperaba, plan_gratis_basta,
+  no_entendi, miedo_cobro, muy_caro, no_tiempo, otro (con nota opcional).
+- Ruteo: "muy_caro" reabre el `CancelOfferModal` que ya existía; "no_entendi" ofrece un mailto a
+  soporte; el resto solo registra y sigue. **Nunca se ofrece pausar ni descuento automático por
+  cobro** — Hotmart no lo expone por API, prometerlo generaría cobros que igual llegan.
+- Tabla nueva `cancellation_feedback` (migración 0046, **aplicada y verificada contra la base
+  real** vía Supabase MCP), servidor-only con RLS activo sin políticas — mismo patrón que
+  `hotmart_events`/`ai_calls`. Endpoint `app/api/account/cancel-feedback/route.ts`.
+- Panel de admin: nueva tarjeta "Motivos de cancelación · últimos 30 días" en la sección Usuarios,
+  junto a "Cancelaciones (30d)" (`lib/admin-data.ts` + `AdminDashboard.tsx`).
+
+Verificado: tsc ✓ · npm test (74/74) ✓ · npm run build ✓ · migración aplicada y confirmada contra
+Supabase real · staging→main desplegado. **No verificado en navegador**: el flujo vive tras el
+login (Cuenta → Cancelar suscripción) y nunca inicio sesión.
+
 ## ✅ Bug #30, retry en 503 de family_extra_seats, decisión de rutas /en/ (2026-07-27)
 
 - **#30 resuelto**: no era una contradicción real. "Grupo de 3 cuentas" (marketing) cuenta al
