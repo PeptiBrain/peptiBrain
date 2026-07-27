@@ -1,8 +1,8 @@
 # ESTADO — PeptiBrain
 
-## ✅ Bloque C del PLAN-PRODUCTO.md — 10 de 12 (2026-07-27)
+## ✅ Bloque C del PLAN-PRODUCTO.md — COMPLETO, 12 de 12 (2026-07-27)
 
-Desplegado en 4 capas verificadas (commits 40d0d8a, eb918b4, 2a32692, 791d163).
+Desplegado en 5 capas verificadas (40d0d8a, eb918b4, 2a32692, 791d163, 481be53).
 
 **Decisión de producto tomada con el dueño**: C1 y C6 pedían que la app sugiriera
 dosis e interpretara análisis, lo que choca con la línea roja D2 del propio plan
@@ -27,22 +27,28 @@ la línea. Consecuencias concretas en el código:
 | C9 | Comparador de fotos antes/después | ✅ |
 | C10 | Coste por mg, semanal y proyección anual (10 tests) | ✅ |
 | C11 | Asistente: markdown legible + 1024 tokens + aviso si se corta | ✅ |
-| C1 | Plantillas de protocolo | ⏳ pendiente — ver nota |
-| C12 | Tour guiado con coachmarks reales | ⏳ pendiente |
+| C1 | "Repetir lo que venías haciendo" (`lib/protocol-history.ts`, 9 tests) | ✅ |
+| C12 | Tour con coachmarks anclados a elementos reales | ✅ |
 
-**Nota sobre C1**: despojado de las dosis sugeridas, "guardar la estructura de
-escalones" aporta poco (el valor estaba en los números, que es justo lo que no se
-puede dar). La versión que SÍ aporta y sigue siendo segura es **duplicar un
-protocolo propio anterior**: los números son del usuario, no de la app. Queda
-definido así para cuando se retome.
+**Cómo se resolvió C1 sin cruzar la línea**: en vez de plantillas con dosis
+típicas (que es recetar), la app deduce la pauta de las dosis que el usuario YA
+registró con ese péptido. Los números son suyos; la app solo se acuerda por él.
+Exige 3 dosis mínimo, usa la mediana de los intervalos (unas vacaciones no le
+cambian el "cada 7 días") y descarta el historial entero si encuentra una
+cantidad no numérica, en vez de rellenar basura en un formulario de dosis.
 
-**C12** es un rediseño de `AppTour` (hoy 9 pantallas de texto → coachmarks
-anclados a elementos reales). Es el mayor de los dos y no se empezó para no
-dejarlo a medias a 6 días del lanzamiento.
+**C12** pasó de 9 pantallas de texto a 5 pasos que iluminan el elemento real
+(anclados por `data-tour` en `TopNav`), con botón Atrás. Sigue las convenciones
+de overlay del proyecto: `createPortal` a `document.body` —el header tiene
+`backdrop-blur` y un `fixed` dentro de él se posiciona respecto al header, que
+fue el bug #50— y cierra con Escape, con la X y con clic fuera.
 
-Verificado en cada capa: tsc ✓ · npm test (65/65) ✓ · npm run build ✓ · deploys
+Verificado en cada capa: tsc ✓ · npm test (74/74) ✓ · npm run build ✓ · deploys
 confirmados. La migración 0045 se comprobó contra el esquema real de la base
 antes y después de aplicarla.
+⚠️ **No verificado en navegador**: la tarjeta "hoy toca esto", el tour y el resto
+de pantallas internas viven tras el login, y nunca inicio sesión. Están cubiertas
+por tsc/tests/build, no por inspección visual.
 
 ## ✅ Segunda tanda de bugs cosméticos del backlog QA (2026-07-27)
 
