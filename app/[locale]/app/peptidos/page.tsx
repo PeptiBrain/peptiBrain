@@ -1005,6 +1005,7 @@ function UsosTab({
         open={showProtocol}
         onClose={() => setShowProtocol(false)}
         peptides={data.peptides}
+        doses={data.doses}
         onSave={async (payload) => {
           const next = await addProtocol(data, payload);
           onChange(next);

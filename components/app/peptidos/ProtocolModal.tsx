@@ -2,9 +2,10 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { CalendarClock, Plus, X } from "lucide-react";
+import { CalendarClock, Plus, X, RotateCcw } from "lucide-react";
 import { ModalShell } from "@/components/app/shell/ModalShell";
-import type { Peptide, TitrationStep } from "@/lib/app-data";
+import type { Dose, Peptide, TitrationStep } from "@/lib/app-data";
+import { inferLastProtocol } from "@/lib/protocol-history";
 import { todayIso } from "@/lib/date-range";
 import { toMg } from "@/lib/dose-math";
 import { PLAUSIBLE, numberInRange } from "@/lib/plausible";
@@ -23,12 +24,15 @@ export function ProtocolModal({
   open,
   onClose,
   peptides,
+  doses,
   onSave,
   onSaveTitration,
 }: {
   open: boolean;
   onClose: () => void;
   peptides: Peptide[];
+  /** Historial del usuario, para poder ofrecerle repetir su última pauta. */
+  doses: Dose[];
   onSave: (payload: {
     peptideId: string;
     amount: string;
@@ -89,6 +93,28 @@ export function ProtocolModal({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, peptides]);
+
+  // Lo que el propio usuario venía haciendo con ESTE péptido. Solo se ofrece
+  // en modo dosis fija: una titulación son escalones distintos entre sí, y
+  // deducir "los escalones que usó" de un historial plano sería inventar.
+  const lastProtocol = useMemo(
+    () => (peptideId ? inferLastProtocol(doses, peptideId) : null),
+    [doses, peptideId]
+  );
+  // Si el formulario ya está relleno con esos mismos valores, el botón no
+  // aporta nada y solo estorba.
+  const alreadyApplied =
+    !!lastProtocol &&
+    amount.trim() === lastProtocol.amount &&
+    unit === lastProtocol.unit &&
+    intervalDays === lastProtocol.intervalDays;
+
+  function applyLastProtocol() {
+    if (!lastProtocol) return;
+    setAmount(lastProtocol.amount);
+    setUnit(lastProtocol.unit);
+    setIntervalDays(lastProtocol.intervalDays);
+  }
 
   const weeksNum = Math.max(1, Math.min(24, Number(weeks) || 1));
   const doseCount = Math.min(60, Math.max(1, Math.ceil((weeksNum * 7) / intervalDays)));
@@ -188,6 +214,23 @@ export function ProtocolModal({
                 ))}
               </select>
             </div>
+
+            {/* Sus propios números, no una plantilla nuestra: la app se acuerda
+                por él en vez de recetarle nada (ver lib/protocol-history.ts). */}
+            {mode === "fixed" && lastProtocol && !alreadyApplied && (
+              <button
+                type="button"
+                onClick={applyLastProtocol}
+                className="flex w-full items-center justify-center gap-1.5 rounded-lg border border-dashed border-primary/40 bg-accent/40 px-3 py-2.5 text-xs font-medium text-foreground hover:border-primary"
+              >
+                <RotateCcw className="size-3.5 shrink-0 text-primary" aria-hidden />
+                {t("repeatLastProtocol", {
+                  amount: lastProtocol.amount,
+                  unit: lastProtocol.unit,
+                  days: lastProtocol.intervalDays,
+                })}
+              </button>
+            )}
 
             {mode === "fixed" ? (
               <div>

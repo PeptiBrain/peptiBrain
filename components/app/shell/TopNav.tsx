@@ -27,6 +27,9 @@ export function TopNav() {
           <Link
             key={tab.href}
             href={tab.href}
+            // Ancla para el tour guiado: le permite señalar esta pestaña de
+            // verdad en lugar de describirla con palabras (ver AppTour).
+            data-tour={tab.href}
             aria-current={active ? "page" : undefined}
             className={`flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
               active ? "bg-accent text-primary" : "text-muted-foreground hover:bg-secondary hover:text-foreground"
