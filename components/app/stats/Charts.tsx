@@ -2,23 +2,30 @@
 
 import { motion, useReducedMotion } from "motion/react";
 import type { Bucket } from "@/lib/stats";
+import { chartScaleMax } from "@/lib/chart-scale";
 
 // Gráfica de barras vertical (dosis por periodo). Solo color de marca.
 export function BarChart({ data }: { data: Bucket[] }) {
   const reduce = useReducedMotion();
-  const max = Math.max(1, ...data.map((d) => d.value));
+  // Un solo valor disparatado aplastaba todas las demás barras a 0 px.
+  const { max } = chartScaleMax(data.map((d) => d.value));
   // Si hay muchas barras, mostrar etiquetas salteadas para que no se amontonen.
   const labelEvery = data.length > 8 ? Math.ceil(data.length / 6) : 1;
 
   return (
     <div className="flex h-40 items-end gap-1">
       {data.map((d, i) => {
-        const pct = (d.value / max) * 100;
+        const pct = Math.min(100, (d.value / max) * 100);
+        // La barra recortada se marca para que se vea que sigue subiendo: el
+        // número real siempre se muestra encima, no se oculta nada.
+        const isClipped = d.value > max;
         return (
           <div key={i} className="flex min-w-0 flex-1 flex-col items-center gap-1">
             <div className="relative flex h-32 w-full items-end justify-center">
               <motion.div
-                className="w-full max-w-[28px] rounded-t-md bg-primary"
+                className={`w-full max-w-[28px] bg-primary ${
+                  isClipped ? "rounded-t-none border-t-2 border-dashed border-background" : "rounded-t-md"
+                }`}
                 initial={reduce ? false : { height: 0 }}
                 animate={{ height: `${Math.max(pct, d.value > 0 ? 6 : 2)}%` }}
                 transition={{ duration: 0.5, delay: i * 0.03, ease: [0.16, 1, 0.3, 1] }}
@@ -53,12 +60,15 @@ export function LineChart({
   const width = 320;
   const height = 140;
   const padding = 8;
-  const maxY = Math.max(1, ...points.map((p) => p.y));
+  // Mismo problema que en las barras: un pico aislado dejaba la línea pegada
+  // al suelo. Se recorta la escala y el punto que se sale toca el techo.
+  const { max: maxY } = chartScaleMax(points.map((p) => p.y));
 
   const path = points
     .map((p, i) => {
       const x = padding + (i / (points.length - 1)) * (width - padding * 2);
-      const y = height - padding - (p.y / maxY) * (height - padding * 2);
+      const ratio = Math.min(1, p.y / maxY);
+      const y = height - padding - ratio * (height - padding * 2);
       return `${i === 0 ? "M" : "L"}${x.toFixed(1)},${y.toFixed(1)}`;
     })
     .join(" ");

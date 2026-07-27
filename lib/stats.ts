@@ -42,6 +42,60 @@ export function doneDoses(doses: Dose[]): Dose[] {
   return doses.filter((d) => d.done);
 }
 
+// ── Inteligencia de coste ────────────────────────────────────────────────────
+// Antes solo existía "total invertido" y "coste por dosis". Eso no responde la
+// pregunta que de verdad importa cuando alguien decide si seguir: ¿cuánto me
+// cuesta ESTO al mes/año al ritmo que voy? Y de paso reencuadra el precio de la
+// app: ante 1.240 € invertidos, la suscripción deja de ser la decisión cara.
+
+/** Coste medio por mg comprado. Solo cuenta viales con precio Y unidad de masa. */
+export function costPerMg(vials: Vial[]): number | null {
+  let cost = 0;
+  let mg = 0;
+  for (const v of vials) {
+    if (!v.cost) continue;
+    const vialMg = toMg(v.amount, v.unit);
+    if (vialMg <= 0) continue; // ml/UI: no se puede repartir el precio por peso
+    cost += myShareOfCost(v);
+    mg += vialMg;
+  }
+  if (mg <= 0 || cost <= 0) return null;
+  return cost / mg;
+}
+
+/**
+ * Ritmo de gasto semanal REAL: mg consumidos por semana × coste por mg.
+ * Se calcula sobre las dosis ya aplicadas, no sobre las programadas — un plan
+ * de 60 dosis futuras no es dinero gastado.
+ */
+export function weeklySpend(vials: Vial[], doses: Dose[], now: Date): number | null {
+  const perMg = costPerMg(vials);
+  if (perMg === null) return null;
+
+  const done = doneDoses(doses);
+  if (done.length < 2) return null; // con una sola dosis no hay "ritmo"
+
+  const times = done.map((d) => new Date(d.scheduledAt).getTime()).filter((t) => Number.isFinite(t));
+  if (times.length < 2) return null;
+  const first = Math.min(...times);
+  const last = Math.min(Math.max(...times), now.getTime());
+  const spanDays = (last - first) / DAY_MS;
+  // Menos de una semana de historial: extrapolar a un año sería inventar.
+  if (spanDays < 7) return null;
+
+  const usedMg = done.reduce((sum, d) => sum + toMg(d.amount, d.unit), 0);
+  if (usedMg <= 0) return null;
+  const mgPerWeek = (usedMg / spanDays) * 7;
+  return mgPerWeek * perMg;
+}
+
+/** Proyección a 12 meses al ritmo actual. Es una estimación, no una factura. */
+export function projectedYearlyCost(vials: Vial[], doses: Dose[], now: Date): number | null {
+  const weekly = weeklySpend(vials, doses, now);
+  if (weekly === null) return null;
+  return weekly * 52;
+}
+
 export type VialStatus = {
   totalMg: number;
   usedMg: number;

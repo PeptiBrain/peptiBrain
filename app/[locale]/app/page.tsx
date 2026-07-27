@@ -25,6 +25,7 @@ import { DailySummaryModal } from "@/components/app/shell/DailySummaryModal";
 import { BodyLevelWidget } from "@/components/app/shell/BodyLevelWidget";
 import { OPEN_CALENDAR_EVENT } from "@/components/app/shell/ProfileMenu";
 import { ProtocolShareCard } from "@/components/app/shell/ProtocolShareCard";
+import { TodayDoseCard } from "@/components/app/shell/TodayDoseCard";
 import { isWithinRange, type CustomRange, type DateRangeKey } from "@/lib/date-range";
 import { suggestNextInjectionSite, lastInjectionSite, type InjectionSiteId } from "@/lib/injection-sites";
 
@@ -228,40 +229,7 @@ export default function InicioPage() {
       </div>
 
       {pendingDose ? (
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="mt-4 rounded-xl bg-accent p-4"
-        >
-          <div className="flex items-center justify-between">
-            <p className="text-xs font-medium text-accent-foreground">{t("nextDose")}</p>
-            <span className="text-xs text-muted-foreground">{pendingDose.when}</span>
-          </div>
-          <div className="mt-2 flex items-center gap-3">
-            <PeptideIcon peptideName={donePeptide?.name || ""} />
-            <div>
-              <p className="font-display text-lg font-bold text-foreground">
-                {donePeptide?.name || t("peptideFallback")}
-              </p>
-              <p className="text-sm text-muted-foreground">
-                {pendingDose.amount} {pendingDose.unit}
-              </p>
-              {lastInjectionSite(data.doses, pendingDose.peptideId) && (
-                <p className="text-xs text-muted-foreground">
-                  {t("lastSite", { site: tSite(`site_${lastInjectionSite(data.doses, pendingDose.peptideId)}`) })}
-                </p>
-              )}
-            </div>
-          </div>
-          <button
-            type="button"
-            onClick={handleMarkDone}
-            className="mt-3 inline-flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-primary text-sm font-semibold text-primary-foreground transition-transform active:scale-97"
-          >
-            <Check className="size-4" aria-hidden /> {t("markDone")}
-          </button>
-        </motion.div>
+        <TodayDoseCard data={data} dose={pendingDose} onMarkDone={handleMarkDone} />
       ) : (
         <motion.div
           initial={{ opacity: 0, y: 12 }}

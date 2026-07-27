@@ -4,9 +4,10 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Sparkles, Send } from "lucide-react";
 import { ModalShell } from "@/components/app/shell/ModalShell";
+import { SimpleMarkdown } from "@/components/app/assistant/SimpleMarkdown";
 import type { AppData } from "@/lib/app-data";
 
-type ChatMessage = { role: "user" | "assistant"; text: string };
+type ChatMessage = { role: "user" | "assistant"; text: string; truncated?: boolean };
 
 function buildContext(data: AppData): string {
   const parts: string[] = [];
@@ -65,7 +66,7 @@ export function AssistantModal({
         );
         return;
       }
-      setMessages((m) => [...m, { role: "assistant", text: body.reply }]);
+      setMessages((m) => [...m, { role: "assistant", text: body.reply, truncated: body.truncated }]);
     } catch {
       setErrorKey("genericError");
     } finally {
@@ -95,7 +96,12 @@ export function AssistantModal({
                   : "bg-card text-foreground"
               }`}
             >
-              {m.text}
+              {m.role === "user" ? m.text : <SimpleMarkdown text={m.text} />}
+              {m.truncated && (
+                <p className="mt-1.5 border-t border-border pt-1.5 text-xs text-muted-foreground">
+                  {t("truncatedNote")}
+                </p>
+              )}
             </div>
           ))
         )}

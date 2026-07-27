@@ -9,7 +9,11 @@ const AI_MODEL = process.env.ASSISTANT_AI_MODEL || "gemini-flash-latest";
 const AI_BASE_URL =
   process.env.ASSISTANT_AI_BASE_URL || "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions";
 const MAX_MESSAGES_PER_DAY = 20;
-const MAX_TOKENS = 512;
+// 512 cortaba las respuestas a mitad de frase (bug #10 del QA). 1024 es el
+// tope por defecto del sistema: suficiente para una respuesta completa sin
+// abrir la puerta a respuestas kilométricas (que además cuestan y se leen mal
+// en móvil). Si aun así se corta, se avisa al usuario en vez de disimularlo.
+const MAX_TOKENS = 1024;
 // Kill-switch: tope de mensajes de TODOS los usuarios juntos, por día. Protege
 // contra una factura sorpresa si el modelo pasa a ser de pago o el uso se dispara.
 const MAX_GLOBAL_MESSAGES_PER_DAY = Number(process.env.ASSISTANT_GLOBAL_DAILY_LIMIT) || 500;
@@ -117,6 +121,7 @@ export async function POST(request: NextRequest) {
     : message.trim();
 
   let reply: string;
+  let truncated = false;
   let inputTokens = 0;
   let outputTokens = 0;
   try {
@@ -140,6 +145,11 @@ export async function POST(request: NextRequest) {
     }
     const body = await res.json();
     reply = body.choices?.[0]?.message?.content || "";
+    // Si el modelo se quedó sin espacio, decirlo: una respuesta cortada a
+    // media frase sin explicación parece un fallo de la app.
+    if (body.choices?.[0]?.finish_reason === "length" && reply) {
+      truncated = true;
+    }
     inputTokens = Number(body.usage?.prompt_tokens) || 0;
     outputTokens = Number(body.usage?.completion_tokens) || 0;
   } catch {
@@ -189,5 +199,9 @@ export async function POST(request: NextRequest) {
     // el registro es "nice to have"; nunca bloquea la respuesta al usuario
   }
 
-  return NextResponse.json({ reply, remaining: MAX_MESSAGES_PER_DAY - ((usage?.message_count || 0) + 1) });
+  return NextResponse.json({
+    reply,
+    truncated,
+    remaining: MAX_MESSAGES_PER_DAY - ((usage?.message_count || 0) + 1),
+  });
 }

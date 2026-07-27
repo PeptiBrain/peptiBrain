@@ -19,7 +19,16 @@ import {
 import { Link } from "@/i18n/navigation";
 import { loadFamilySharedData, type AppData, type SharedOwnerData } from "@/lib/app-data";
 import { useAppData } from "@/lib/hooks/useAppData";
-import { computeStats, filterDataByRange, doseBuckets, totalInvested, doneDoses } from "@/lib/stats";
+import {
+  computeStats,
+  filterDataByRange,
+  doseBuckets,
+  totalInvested,
+  doneDoses,
+  costPerMg,
+  weeklySpend,
+  projectedYearlyCost,
+} from "@/lib/stats";
 import { PeptideIcon } from "@/components/app/peptidos/PeptideIcon";
 import { AnimatedNumber } from "@/components/app/shell/AnimatedNumber";
 import { BarChart, DonutChart } from "@/components/app/stats/Charts";
@@ -60,6 +69,18 @@ export default function EstadisticasPage() {
 
   const hasFamilyData = (familyData?.length || 0) > 0;
   const combined = viewMode === "family" && hasFamilyData;
+
+  // Siempre sobre MIS viales y MIS dosis: el gasto de un familiar no es mi
+  // gasto, aunque en modo "yo + familia" se sumen las gráficas de actividad.
+  const costInsight = useMemo(() => {
+    if (!data) return null;
+    const now = new Date();
+    return {
+      perMg: costPerMg(data.vials),
+      weekly: weeklySpend(data.vials, data.doses, now),
+      yearly: projectedYearlyCost(data.vials, data.doses, now),
+    };
+  }, [data]);
 
   // En modo "yo + familia" se suman péptidos/viales/dosis/comidas de quienes
   // aceptaron compartir contigo. Peso y efectos secundarios se dejan solo
@@ -228,6 +249,42 @@ export default function EstadisticasPage() {
                 </span>
               )}
             </div>
+            {/* Al ritmo REAL de consumo, no sobre las dosis programadas. Es lo
+                que de verdad responde "¿cuánto me cuesta esto?". */}
+            {costInsight && (costInsight.perMg !== null || costInsight.yearly !== null) && (
+              <div className="mt-3 flex flex-wrap gap-x-6 gap-y-1 border-t border-primary/20 pt-3 text-xs text-muted-foreground">
+                {costInsight.perMg !== null && (
+                  <span>
+                    {t("costPerMg")}:{" "}
+                    <span className="font-semibold text-foreground">
+                      {symbol}
+                      {costInsight.perMg.toFixed(2)}
+                    </span>
+                  </span>
+                )}
+                {costInsight.weekly !== null && (
+                  <span>
+                    {t("costPerWeek")}:{" "}
+                    <span className="font-semibold text-foreground">
+                      {symbol}
+                      {costInsight.weekly.toFixed(2)}
+                    </span>
+                  </span>
+                )}
+                {costInsight.yearly !== null && (
+                  <span>
+                    {t("costPerYear")}:{" "}
+                    <span className="font-semibold text-foreground">
+                      {symbol}
+                      {costInsight.yearly.toFixed(0)}
+                    </span>
+                  </span>
+                )}
+              </div>
+            )}
+            {costInsight?.yearly !== null && costInsight?.yearly !== undefined && (
+              <p className="mt-1.5 text-[11px] text-muted-foreground">{t("costProjectionNote")}</p>
+            )}
             {stats.totalInvested === 0 && (
               <p className="mt-2 text-[11px] text-muted-foreground">{t("addCostHint")}</p>
             )}
