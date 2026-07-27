@@ -15,7 +15,11 @@ function toMg(amount: string, unit: string): number {
 function myShareOfCost(v: Vial): number {
   if (!v.cost) return 0;
   const cost = parseFloat(v.cost) || 0;
-  const sharedPct = v.shares.reduce((sum, s) => sum + s.percent, 0);
+  // `?? []` no es paranoia gratuita: esto calcula DINERO y se pinta en varias
+  // pantallas. Si algún día llega un vial sin la lista de repartos (una carga
+  // nueva, una respuesta parcial del servidor), antes reventaba la página
+  // entera de Estadísticas en vez de mostrar un número conservador.
+  const sharedPct = (v.shares ?? []).reduce((sum, s) => sum + s.percent, 0);
   const myPct = Math.max(0, 100 - sharedPct);
   return (cost * myPct) / 100;
 }
