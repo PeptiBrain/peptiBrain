@@ -60,10 +60,15 @@ No dar por buenas estas tres afirmaciones del documento estratégico:
 - [ ] **A6. Limpiar los datos de prueba** de la cuenta real (ya es posible desde Salud tras la capa 3):
       peso 500 kg del 1900, ejercicio 99.999 min, hidratación 999.999 ml, sueño, "Náusea severa QA",
       y las 59 dosis del protocolo de prueba.
-- [ ] **A7. Decidir las rutas en inglés** (`/peptidos` → `/peptides`). Cambiarlo DESPUÉS del
-      lanzamiento rompe enlaces guardados y posicionamiento. Barato ahora, caro después.
-- [ ] **A8. Corregir el texto "Calculadora (Premium)"** del Centro de ayuda y de la FAQ: la
-      calculadora pública es gratis y la de dentro la incluye el plan Family.
+- [x] **A7. Rutas en inglés — decidido: NO traducir por ahora (2026-07-26).** Se mantiene
+      `/en/app/peptidos` (mismo segmento en ambos idiomas) en vez de `/en/app/peptides`. Razón: a 6
+      días del lanzamiento el sitio no tiene enlaces externos ni posicionamiento que proteger todavía
+      — el riesgo real hoy es romper la generación de `<Link>` de next-intl (requiere un mapa
+      `pathnames` completo) sin ganar nada a cambio. Backlog post-lanzamiento (Bloque C): añadir
+      `pathnames` a `i18n/routing.ts` con el mapa es→en ANTES de que existan enlaces indexados.
+- [x] **A8. Corregido el texto "Calculadora (Premium)"** del Centro de ayuda (`Help.tools1A`, es/en):
+      ahora aclara que hay una calculadora pública gratis en `/calculadora` sin cuenta, y que la de
+      dentro de la app (Péptidos → Calculadora) está incluida en Premium.
 
 ## BLOQUE B — PRIMERAS 2 SEMANAS (calidad percibida)
 

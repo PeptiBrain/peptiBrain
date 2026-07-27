@@ -433,7 +433,7 @@
     "vials1Q": "How do I know how much is left in a vial?",
     "vials1A": "Each vial stores its amount and bacteriostatic water, so you see the exact concentration (mg/mL). The Vials tab shows its status (reconstituted or not) and your progress.",
     "tools1Q": "What are the calculator and converter?",
-    "tools1A": "In Peptides → Calculator (Premium) you get two tools: reconstitution tells you how much water to add and how many units to draw; the converter switches between mg, mcg and insulin units instantly.",
+    "tools1A": "There's a free calculator at peptibrain.com/calculadora, no account needed. Inside the app, in Peptides → Calculator (included in Premium), you get two tools: reconstitution tells you how much water to add and how many units to draw; the converter switches between mg, mcg and insulin units instantly.",
     "stats1Q": "Where do I see my progress and how much I invest?",
     "stats1A": "In the Statistics tab: charts of your doses over time, adherence, most-used peptide, weight change and money invested in peptides (if you add each vial's price). You can filter by day, week, month, year or a custom range.",
     "family1Q": "How do I share with my family?",
@@ -469,6 +469,7 @@
     "customTo": "to"
   },
   "Calendar": {
+    "saveError": "Couldn't save. Check the values and try again.",
     "title": "Calendar",
     "subtitle": "Your doses, day by day",
     "subtitleFull": "Your doses, trips and exercise",
@@ -613,6 +614,7 @@
     "methodNote": "Pharmacokinetic estimate based on known half-life — not a real measurement."
   },
   "Providers": {
+    "saveError": "Couldn't save. Check the values and try again.",
     "modalTitle": "New supplier",
     "close": "Close",
     "name": "Name",
@@ -834,16 +836,22 @@
     "suggestionsFound": "Found {count} suggestions",
     "emptyPeptidesTitle": "No peptides yet",
     "emptyPeptidesBody": "Add your first one (GLP-1, peptides or TRT) and start logging your doses.",
-    "amountInvalid": "Enter an amount greater than 0.",
+    "amountInvalid": "Enter an amount greater than 0 and realistic (check for an extra zero).",
     "duplicatePeptide": "You already have a peptide with that name.",
     "saveError": "Couldn't save. Check the values and try again.",
-    "vialAmountInvalid": "Amount must be greater than 0.",
-    "vialWaterInvalid": "Water must be greater than 0 (or leave it empty if not reconstituted yet).",
+    "vialAmountInvalid": "Amount must be greater than 0 and realistic (check for an extra zero).",
+    "vialWaterInvalid": "Water must be greater than 0 and realistic (or leave it empty if not reconstituted yet).",
+    "vialCostInvalid": "Check that price: it looks off.",
     "underMeasurable": "That dose is too small to measure on this syringe. Use more bacteriostatic water or a smaller syringe.",
     "waterImpossible": "That doesn't add up: the dose you want is larger than the entire vial. Check the vial amount or the dose.",
+    "amountOutOfRange": "Check that amount: it looks off.",
+    "waterOutOfRange": "Check that water amount: it looks off.",
+    "targetUnitsOutOfRange": "Check the target units: it looks off.",
     "confirmDeleteProvider": "Delete this provider?"
   },
   "Salud": {
+    "saveError": "Couldn't save. Check the values and try again.",
+    "labValueOutOfRange": "Check that value: it looks off.",
     "title": "Health",
     "subtitle": "How your body is responding to the protocol",
     "addAria": "Log health data",
@@ -953,6 +961,8 @@
     "deleteRecordConfirm": "Yes, delete"
   },
   "Familia": {
+    "saveError": "Couldn't save. Check the values and try again.",
+    "csvError": "Couldn't import the file. Check the format and try again.",
     "title": "Family",
     "subtitle": "Share your progress with whoever you choose",
     "inviteAria": "Invite a family member",

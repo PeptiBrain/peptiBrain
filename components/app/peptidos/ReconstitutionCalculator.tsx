@@ -11,7 +11,8 @@ import {
   type CalculatorProtocol,
   type CalculatorProtocolEntry,
 } from "@/lib/app-data";
-import { unitsToDraw, waterForTargetUnits } from "@/lib/dose-math";
+import { unitsToDraw, waterForTargetUnits, toMg } from "@/lib/dose-math";
+import { PLAUSIBLE, numberInRange } from "@/lib/plausible";
 import { SyringeVisual, SYRINGE_CAPACITY } from "@/components/app/calculator/SyringeVisual";
 import type { SyringeType } from "@/lib/app-data";
 
@@ -82,19 +83,48 @@ export function ReconstitutionCalculator({ data }: { data: AppData }) {
     return (a / b).toFixed(2);
   }, [vialAmount, bacWater]);
 
+  // El QA metió un vial de 99.999 mg y 99.999 mL de agua en esta calculadora y
+  // se calculó igual, sin ningún aviso. Estos topes son generosos (10 g, 100 mL)
+  // — frenan un cero de más, no discuten un protocolo real.
+  const vialAmountOutOfRange = useMemo(() => {
+    if (vialUnit.trim().toLowerCase() === "ml" || vialUnit.trim().toLowerCase() === "ui") return false;
+    const a = parseFloat(vialAmount);
+    if (!Number.isFinite(a) || a <= 0) return false;
+    const mg = toMg(a, vialUnit);
+    return mg !== null && !numberInRange(mg, PLAUSIBLE.vialMassMg);
+  }, [vialAmount, vialUnit]);
+
+  const bacWaterOutOfRange = useMemo(() => {
+    const b = parseFloat(bacWater);
+    if (!Number.isFinite(b) || b <= 0) return false;
+    return !numberInRange(b, PLAUSIBLE.bacWaterMl);
+  }, [bacWater]);
+
+  const targetUnitsOutOfRange = useMemo(() => {
+    const u = parseFloat(targetUnits);
+    if (!Number.isFinite(u) || u <= 0) return false;
+    return !numberInRange(u, PLAUSIBLE.targetUnitsRange);
+  }, [targetUnits]);
+
+  const vialInputsPlausible = !vialAmountOutOfRange && !bacWaterOutOfRange;
+
   const draws = useMemo(() => {
     const a = parseFloat(vialAmount);
     const b = parseFloat(bacWater);
-    if (!a || !b) return [];
+    if (!a || !b || !vialInputsPlausible) return [];
     return entries.map((e) => {
       const d = parseFloat(e.doseAmount);
       if (!d) return { id: e.id, draw: null as number | null };
+      const doseMg = toMg(d, e.doseUnit);
+      if (doseMg !== null && !numberInRange(doseMg, PLAUSIBLE.vialMassMg)) {
+        return { id: e.id, draw: null as number | null };
+      }
       return {
         id: e.id,
         draw: unitsToDraw({ vialAmount: a, vialUnit, bacWater: b, doseAmount: d, doseUnit: e.doseUnit }),
       };
     });
-  }, [entries, vialAmount, vialUnit, bacWater]);
+  }, [entries, vialAmount, vialUnit, bacWater, vialInputsPlausible]);
 
   const hasAnyDraw = draws.some((d) => d.draw !== null);
 
@@ -103,11 +133,18 @@ export function ReconstitutionCalculator({ data }: { data: AppData }) {
   const solverInputsFilled =
     !!parseFloat(vialAmount) && !!parseFloat(targetUnits) && !!parseFloat(entries[0]?.doseAmount || "");
 
+  const solverDoseOutOfRange = useMemo(() => {
+    const d = parseFloat(entries[0]?.doseAmount || "");
+    if (!Number.isFinite(d) || d <= 0) return false;
+    const doseMg = toMg(d, entries[0]?.doseUnit || "mcg");
+    return doseMg !== null && !numberInRange(doseMg, PLAUSIBLE.vialMassMg);
+  }, [entries]);
+
   const waterSolved = useMemo(() => {
     const a = parseFloat(vialAmount);
     const target = parseFloat(targetUnits);
     const d = parseFloat(entries[0]?.doseAmount || "");
-    if (!a || !target || !d) return null;
+    if (!a || !target || !d || vialAmountOutOfRange || targetUnitsOutOfRange || solverDoseOutOfRange) return null;
     return waterForTargetUnits({
       vialAmount: a,
       vialUnit,
@@ -115,7 +152,7 @@ export function ReconstitutionCalculator({ data }: { data: AppData }) {
       doseUnit: entries[0].doseUnit,
       targetUnits: target,
     });
-  }, [vialAmount, vialUnit, targetUnits, entries]);
+  }, [vialAmount, vialUnit, targetUnits, entries, vialAmountOutOfRange, targetUnitsOutOfRange, solverDoseOutOfRange]);
 
   async function handleSaveProtocol() {
     if (!protocolName.trim()) return;
@@ -224,6 +261,7 @@ export function ReconstitutionCalculator({ data }: { data: AppData }) {
           <option value="UI">UI</option>
         </select>
       </div>
+      {vialAmountOutOfRange && <p className="mt-1.5 text-xs text-destructive">{t("amountOutOfRange")}</p>}
 
       {mode === "draw" && (
         <>
@@ -234,6 +272,7 @@ export function ReconstitutionCalculator({ data }: { data: AppData }) {
             placeholder={t("bacWaterPlaceholder")}
             className="mt-2 h-11 w-full rounded-lg border border-input bg-background px-3 text-base text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
           />
+          {bacWaterOutOfRange && <p className="mt-1.5 text-xs text-destructive">{t("waterOutOfRange")}</p>}
           {concentration && (
             <p className="mt-2 rounded-lg bg-accent px-3 py-1.5 text-xs text-accent-foreground">
               {t("concentration")} <span className="tabular font-semibold">{concentration}</span> {vialUnit}/mL
@@ -298,6 +337,13 @@ export function ReconstitutionCalculator({ data }: { data: AppData }) {
                     <option value="mg">mg</option>
                   </select>
                 </div>
+                {(() => {
+                  const d = parseFloat(entry.doseAmount);
+                  if (!Number.isFinite(d) || d <= 0) return null;
+                  const doseMg = toMg(d, entry.doseUnit);
+                  if (doseMg === null || numberInRange(doseMg, PLAUSIBLE.vialMassMg)) return null;
+                  return <p className="mt-1.5 text-xs text-destructive">{t("amountOutOfRange")}</p>;
+                })()}
 
                 {draws[i]?.draw != null && (
                   <div className="mt-3 rounded-lg bg-secondary/60 p-3">
@@ -418,6 +464,7 @@ export function ReconstitutionCalculator({ data }: { data: AppData }) {
               <option value="mg">mg</option>
             </select>
           </div>
+          {solverDoseOutOfRange && <p className="mt-1.5 text-xs text-destructive">{t("amountOutOfRange")}</p>}
           <label className="mt-3 mb-1.5 block text-xs font-medium text-foreground">{t("targetUnitsLabel")}</label>
           <input
             value={targetUnits}
@@ -426,6 +473,7 @@ export function ReconstitutionCalculator({ data }: { data: AppData }) {
             placeholder={t("targetUnitsPlaceholder")}
             className={inputClass}
           />
+          {targetUnitsOutOfRange && <p className="mt-1.5 text-xs text-destructive">{t("targetUnitsOutOfRange")}</p>}
 
           {waterSolved != null ? (
             <div className="mt-3 rounded-lg bg-accent p-4 text-center">

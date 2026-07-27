@@ -1,5 +1,7 @@
 import { createClient } from "@/lib/supabase/client";
 import { loadOnboarding } from "@/lib/onboarding";
+import { toMg } from "@/lib/dose-math";
+import { PLAUSIBLE, numberInRange } from "@/lib/plausible";
 
 export type Peptide = {
   id: string;
@@ -764,10 +766,26 @@ export async function importCsvDoses(
       failed++;
       continue;
     }
+    // El QA importó "01/01/1800" y "999999999 mg" sin que nada lo rechazara:
+    // rompía el gráfico "Dosis en el tiempo" y provocaba scroll horizontal en
+    // toda la página. Topes generosos (25 años atrás, 3 adelante; misma masa
+    // que el resto de la app), no una fecha o cantidad exactas.
+    const rowYear = scheduled.getFullYear();
+    const thisYear = new Date().getFullYear();
+    if (rowYear < thisYear - 25 || rowYear > thisYear + 3) {
+      failed++;
+      continue;
+    }
+    const amountNum = Number(row.amount);
+    const amountMg = toMg(amountNum, row.unit || "mg");
+    if (!Number.isFinite(amountNum) || amountNum <= 0 || (amountMg !== null && !numberInRange(amountMg, PLAUSIBLE.vialMassMg))) {
+      failed++;
+      continue;
+    }
     const { error: dErr } = await supabase.from("doses").insert({
       user_id: user.id,
       peptide_id: peptideId,
-      amount: Number(row.amount) || 0,
+      amount: amountNum,
       unit: row.unit || "mg",
       when_label: new Intl.DateTimeFormat(undefined, {
         weekday: "short",

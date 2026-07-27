@@ -18,11 +18,23 @@ export const PLAUSIBLE: Record<string, Range> = {
   exerciseMin: { min: 1, max: 1440 }, // un día entero
   sleepHours: { min: 0.5, max: 24 },
   labValue: { min: 0, max: 1000000 },
+  // Vial/dosis: el QA metió viales de 99.999 mg y agua de 99.999 mL en la
+  // calculadora y se calcularon igual. 10 g es más que cualquier vial real
+  // de péptidos (que se miden en mg), y 100 mL más que cualquier reconstitución.
+  vialMassMg: { min: 0.001, max: 10000 },
+  bacWaterMl: { min: 0.05, max: 100 },
+  targetUnitsRange: { min: 0.1, max: 500 }, // 5 mL, más que cualquier jeringa
+  costAmount: { min: 0, max: 100000 },
 };
 
 /** Convierte a número aceptando coma decimal ("73,5"). */
 export function toNumber(value: string): number {
   return parseFloat(value.replace(",", "."));
+}
+
+/** Igual que inRange pero ya con el número calculado (no un string de un input). */
+export function numberInRange(n: number, range: Range): boolean {
+  return Number.isFinite(n) && n >= range.min && n <= range.max;
 }
 
 /**

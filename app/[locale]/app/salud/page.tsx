@@ -25,6 +25,7 @@ import { LAB_MARKER_IDS, LAB_MARKER_DEFAULT_UNIT, type LabMarkerId } from "@/lib
 import { checkStreakMilestone } from "@/lib/milestones";
 import { todayIso } from "@/lib/date-range";
 import { PLAUSIBLE, inRange, requiredInRange } from "@/lib/plausible";
+import { logError } from "@/lib/error-log";
 import { SubTabs, type SubTabItem } from "@/components/app/shell/SubTabs";
 import { PremiumLocked } from "@/components/app/shell/PremiumLocked";
 import { PageSkeleton } from "@/components/app/shell/PageSkeleton";
@@ -56,6 +57,7 @@ export default function SaludPage() {
     null
   );
   const [deleting, setDeleting] = useState(false);
+  const [exerciseSaveError, setExerciseSaveError] = useState(false);
 
   useEffect(() => {
     loadAppData().then(setData);
@@ -82,12 +84,18 @@ export default function SaludPage() {
 
   async function handleSaveExercise() {
     if (!data || !exerciseOk) return;
+    setExerciseSaveError(false);
     const prev = data;
-    const next = await addHealthLog(data, { date: todayIso(), exerciseMin: exerciseMin.trim() });
-    setData(next);
-    checkStreakMilestone(prev, next);
-    setExerciseMin("");
-    setShowExerciseForm(false);
+    try {
+      const next = await addHealthLog(data, { date: todayIso(), exerciseMin: exerciseMin.trim() });
+      setData(next);
+      checkStreakMilestone(prev, next);
+      setExerciseMin("");
+      setShowExerciseForm(false);
+    } catch (err) {
+      setExerciseSaveError(true);
+      logError(err instanceof Error ? err : new Error(String(err)), "salud/handleSaveExercise");
+    }
   }
 
   function formatLogDate(iso: string) {
@@ -229,6 +237,7 @@ export default function SaludPage() {
             {exerciseMin.trim() && !exerciseOk && (
               <p className="mb-2 text-xs text-destructive">{t("exerciseOutOfRange")}</p>
             )}
+            {exerciseSaveError && <p className="mb-2 text-xs text-destructive">{t("saveError")}</p>}
             <button
               type="button"
               disabled={!exerciseOk}
@@ -708,6 +717,7 @@ function WeightModal({
   const [bodyFatPct, setBodyFatPct] = useState("");
   const [notes, setNotes] = useState("");
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState(false);
 
   useEffect(() => {
     if (open) {
@@ -716,6 +726,7 @@ function WeightModal({
       setBodyFatPct("");
       setNotes("");
       setSaving(false);
+      setSaveError(false);
     }
   }, [open]);
 
@@ -728,6 +739,7 @@ function WeightModal({
   async function handleSave() {
     if (!weightOk || !bodyFatOk || saving) return;
     setSaving(true);
+    setSaveError(false);
     try {
       await onSave({
         date,
@@ -735,6 +747,9 @@ function WeightModal({
         bodyFatPct: bodyFatPct.trim() || undefined,
         notes: notes.trim() || undefined,
       });
+    } catch (err) {
+      setSaveError(true);
+      logError(err instanceof Error ? err : new Error(String(err)), "salud/WeightModal");
     } finally {
       setSaving(false);
     }
@@ -785,6 +800,7 @@ function WeightModal({
           <p className="text-xs text-destructive">{t("weightOutOfRange")}</p>
         )}
         {!bodyFatOk && <p className="text-xs text-destructive">{t("bodyFatOutOfRange")}</p>}
+        {saveError && <p className="text-xs text-destructive">{t("saveError")}</p>}
         <div className="flex gap-2 pt-1">
           <button
             type="button"
@@ -821,6 +837,7 @@ function MealModal({
   const [description, setDescription] = useState("");
   const [calories, setCalories] = useState("");
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState(false);
 
   useEffect(() => {
     if (open) {
@@ -828,6 +845,7 @@ function MealModal({
       setDescription("");
       setCalories("");
       setSaving(false);
+      setSaveError(false);
     }
   }, [open]);
 
@@ -837,8 +855,12 @@ function MealModal({
   async function handleSave() {
     if (!description.trim() || !caloriesOk || saving) return;
     setSaving(true);
+    setSaveError(false);
     try {
       await onSave({ date, description: description.trim(), calories: calories.trim() || undefined });
+    } catch (err) {
+      setSaveError(true);
+      logError(err instanceof Error ? err : new Error(String(err)), "salud/MealModal");
     } finally {
       setSaving(false);
     }
@@ -876,6 +898,7 @@ function MealModal({
           />
         </div>
         {!caloriesOk && <p className="text-xs text-destructive">{t("caloriesOutOfRange")}</p>}
+        {saveError && <p className="text-xs text-destructive">{t("saveError")}</p>}
         <div className="flex gap-2 pt-1">
           <button
             type="button"
@@ -911,12 +934,14 @@ function HydrationModal({
   const [date, setDate] = useState(todayIso());
   const [hydrationMl, setHydrationMl] = useState("");
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState(false);
 
   useEffect(() => {
     if (open) {
       setDate(todayIso());
       setHydrationMl("");
       setSaving(false);
+      setSaveError(false);
     }
   }, [open]);
 
@@ -925,8 +950,12 @@ function HydrationModal({
   async function handleSave() {
     if (!hydrationOk || saving) return;
     setSaving(true);
+    setSaveError(false);
     try {
       await onSave({ date, hydrationMl: hydrationMl.trim() });
+    } catch (err) {
+      setSaveError(true);
+      logError(err instanceof Error ? err : new Error(String(err)), "salud/HydrationModal");
     } finally {
       setSaving(false);
     }
@@ -962,6 +991,7 @@ function HydrationModal({
         {hydrationMl.trim() && !hydrationOk && (
           <p className="text-xs text-destructive">{t("hydrationOutOfRange")}</p>
         )}
+        {saveError && <p className="text-xs text-destructive">{t("saveError")}</p>}
         <div className="flex gap-2 pt-1">
           <button
             type="button"
@@ -997,20 +1027,26 @@ function SideEffectModal({
   const [date, setDate] = useState(todayIso());
   const [sideEffect, setSideEffect] = useState("");
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState(false);
 
   useEffect(() => {
     if (open) {
       setDate(todayIso());
       setSideEffect("");
       setSaving(false);
+      setSaveError(false);
     }
   }, [open]);
 
   async function handleSave() {
     if (!sideEffect.trim() || saving) return;
     setSaving(true);
+    setSaveError(false);
     try {
       await onSave({ date, sideEffect: sideEffect.trim() });
+    } catch (err) {
+      setSaveError(true);
+      logError(err instanceof Error ? err : new Error(String(err)), "salud/SideEffectModal");
     } finally {
       setSaving(false);
     }
@@ -1042,6 +1078,7 @@ function SideEffectModal({
             className="h-11 w-full rounded-lg border border-input bg-background px-3 text-base text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
           />
         </div>
+        {saveError && <p className="text-xs text-destructive">{t("saveError")}</p>}
         <div className="flex gap-2 pt-1">
           <button
             type="button"
@@ -1077,12 +1114,14 @@ function SleepModal({
   const [date, setDate] = useState(todayIso());
   const [sleepHours, setSleepHours] = useState("");
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState(false);
 
   useEffect(() => {
     if (open) {
       setDate(todayIso());
       setSleepHours("");
       setSaving(false);
+      setSaveError(false);
     }
   }, [open]);
 
@@ -1092,8 +1131,12 @@ function SleepModal({
   async function handleSave() {
     if (!sleepOk || saving) return;
     setSaving(true);
+    setSaveError(false);
     try {
       await onSave({ date, sleepHours: sleepHours.trim() });
+    } catch (err) {
+      setSaveError(true);
+      logError(err instanceof Error ? err : new Error(String(err)), "salud/SleepModal");
     } finally {
       setSaving(false);
     }
@@ -1124,6 +1167,7 @@ function SleepModal({
         {sleepHours.trim() && !sleepOk && (
           <p className="text-xs text-destructive">{t("sleepOutOfRange")}</p>
         )}
+        {saveError && <p className="text-xs text-destructive">{t("saveError")}</p>}
         <div className="flex gap-2 pt-1">
           <button
             type="button"
@@ -1159,20 +1203,26 @@ function MoodModal({
   const [date, setDate] = useState(todayIso());
   const [mood, setMood] = useState<number | null>(null);
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState(false);
 
   useEffect(() => {
     if (open) {
       setDate(todayIso());
       setMood(null);
       setSaving(false);
+      setSaveError(false);
     }
   }, [open]);
 
   async function handleSave() {
     if (mood == null || saving) return;
     setSaving(true);
+    setSaveError(false);
     try {
       await onSave({ date, mood });
+    } catch (err) {
+      setSaveError(true);
+      logError(err instanceof Error ? err : new Error(String(err)), "salud/MoodModal");
     } finally {
       setSaving(false);
     }
@@ -1208,6 +1258,7 @@ function MoodModal({
             ))}
           </div>
         </div>
+        {saveError && <p className="text-xs text-destructive">{t("saveError")}</p>}
         <div className="flex gap-2 pt-1">
           <button
             type="button"
@@ -1304,6 +1355,7 @@ function PhotoModal({
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState(false);
 
   useEffect(() => {
     if (open) {
@@ -1312,6 +1364,7 @@ function PhotoModal({
       setFile(null);
       setPreview(null);
       setSaving(false);
+      setSaveError(false);
     }
   }, [open]);
 
@@ -1325,8 +1378,12 @@ function PhotoModal({
   async function handleSave() {
     if (!file || saving) return;
     setSaving(true);
+    setSaveError(false);
     try {
       await onSave({ date, file, note: note.trim() || undefined });
+    } catch (err) {
+      setSaveError(true);
+      logError(err instanceof Error ? err : new Error(String(err)), "salud/PhotoModal");
     } finally {
       setSaving(false);
     }
@@ -1366,6 +1423,7 @@ function PhotoModal({
             className="w-full resize-none rounded-lg border border-input bg-background px-3 py-2 text-base text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
           />
         </div>
+        {saveError && <p className="text-xs text-destructive">{t("saveError")}</p>}
         <div className="flex gap-2 pt-1">
           <button
             type="button"
@@ -1480,6 +1538,7 @@ function LabModal({
   const [value, setValue] = useState("");
   const [unit, setUnit] = useState(LAB_MARKER_DEFAULT_UNIT[LAB_MARKER_IDS[0]]);
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState(false);
 
   useEffect(() => {
     if (open) {
@@ -1489,15 +1548,20 @@ function LabModal({
       setValue("");
       setUnit(LAB_MARKER_DEFAULT_UNIT[LAB_MARKER_IDS[0]]);
       setSaving(false);
+      setSaveError(false);
     }
   }, [open]);
 
   const markerName = marker === "otro" ? customMarker.trim() : t(`marker_${marker}`);
-  const canSave = value.trim().length > 0 && markerName.length > 0;
+  // El rango existía (labValue) pero no se usaba aquí: un valor de laboratorio
+  // solo se exigía "no vacío", sin ningún tope contra un dedo que resbala.
+  const valueOk = requiredInRange(value, PLAUSIBLE.labValue);
+  const canSave = valueOk && markerName.length > 0;
 
   async function handleSave() {
     if (!canSave || saving) return;
     setSaving(true);
+    setSaveError(false);
     try {
       await onSave({
         date,
@@ -1505,6 +1569,9 @@ function LabModal({
         value: value.trim(),
         unit: unit.trim() || undefined,
       });
+    } catch (err) {
+      setSaveError(true);
+      logError(err instanceof Error ? err : new Error(String(err)), "salud/LabModal");
     } finally {
       setSaving(false);
     }
@@ -1569,6 +1636,8 @@ function LabModal({
             />
           </div>
         </div>
+        {value.trim() && !valueOk && <p className="text-xs text-destructive">{t("labValueOutOfRange")}</p>}
+        {saveError && <p className="text-xs text-destructive">{t("saveError")}</p>}
         <div className="flex gap-2 pt-1">
           <button
             type="button"

@@ -38,6 +38,9 @@ import { PageSkeleton } from "@/components/app/shell/PageSkeleton";
 import { PEPTIDE_PROFILES } from "@/lib/peptide-profiles";
 import { DateRangeTabs } from "@/components/app/shell/DateRangeTabs";
 import { isWithinRange, type CustomRange, type DateRangeKey } from "@/lib/date-range";
+import { toMg } from "@/lib/dose-math";
+import { PLAUSIBLE, numberInRange } from "@/lib/plausible";
+import { logError } from "@/lib/error-log";
 import { celebrate } from "@/lib/celebrate";
 import { vialStatus, vialLifecycle } from "@/lib/stats";
 
@@ -130,6 +133,7 @@ export default function PeptidosPage() {
         // Antes esto relanzaba el error y la pantalla se quedaba muda: el modal
         // seguía abierto y el usuario creía que había guardado (bug #4).
         setSaveError(true);
+        logError(err instanceof Error ? err : new Error(String(err)), "peptidos/handleAdd");
       }
     } finally {
       setSavingPeptide(false);
@@ -896,6 +900,7 @@ function UsosTab({
   const [unit, setUnit] = useState("mg");
   const [forMemberId, setForMemberId] = useState("");
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState(false);
 
   const sorted = [...data.doses]
     .filter((d) => isWithinRange(d.scheduledAt, range, customRange))
@@ -913,11 +918,19 @@ function UsosTab({
   // dosificación eso contamina las estadísticas y el nivel estimado en el
   // cuerpo con datos imposibles.
   const amountValue = parseFloat(amount.replace(",", "."));
-  const amountIsValid = Number.isFinite(amountValue) && amountValue > 0;
+  // Más allá de "positivo": el QA metió una dosis de 999.999 mg y se guardó
+  // igual. Cuando la unidad es una masa (mg/mcg) se compara contra un tope
+  // generoso; "ml"/"UI" no tienen conversión y se dejan pasar sin este chequeo.
+  const amountMg = toMg(amountValue, unit);
+  const amountIsValid =
+    Number.isFinite(amountValue) &&
+    amountValue > 0 &&
+    (amountMg === null || numberInRange(amountMg, PLAUSIBLE.vialMassMg));
 
   async function handleSave() {
     if (!peptideId || !amountIsValid || saving) return;
     setSaving(true);
+    setSaveError(false);
     try {
       const label = formatWhenLabel(whenInput);
       const scheduledAt = new Date(whenInput).toISOString();
@@ -933,6 +946,9 @@ function UsosTab({
       setAmount("");
       setForMemberId("");
       setShowForm(false);
+    } catch (err) {
+      setSaveError(true);
+      logError(err instanceof Error ? err : new Error(String(err)), "peptidos/UsosTab.handleSave");
     } finally {
       setSaving(false);
     }
@@ -1069,6 +1085,7 @@ function UsosTab({
           {amount.trim() && !amountIsValid && (
             <p className="mt-2 text-xs text-destructive">{t("amountInvalid")}</p>
           )}
+          {saveError && <p className="mt-2 text-xs text-destructive">{t("saveError")}</p>}
           <button
             type="button"
             disabled={!peptideId || !amountIsValid || saving}

@@ -1,5 +1,5 @@
 // Convierte mg/mcg a mg (base común). Devuelve null si la unidad no es química (ml/UI).
-function toMg(amount: number, unit: string): number | null {
+export function toMg(amount: number, unit: string): number | null {
   if (unit === "mg") return amount;
   if (unit === "mcg") return amount / 1000;
   return null;

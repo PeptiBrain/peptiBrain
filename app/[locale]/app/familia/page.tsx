@@ -24,6 +24,7 @@ import {
   type ReceivedInvitation,
 } from "@/lib/app-data";
 import { csvToFamilyRows } from "@/lib/csv";
+import { logError } from "@/lib/error-log";
 import { hotmartExtraSeatCheckoutUrl } from "@/lib/hotmart-links";
 import { loadOnboarding } from "@/lib/onboarding";
 import { USER_DATA_CURRENCY, type Locale } from "@/i18n/routing";
@@ -72,6 +73,9 @@ export default function FamiliaPage() {
   const [seatLimitId, setSeatLimitId] = useState<string | null>(null);
   const [importResult, setImportResult] = useState<{ imported: number; skipped: number } | null>(null);
   const [importing, setImporting] = useState(false);
+  const [inviting, setInviting] = useState(false);
+  const [inviteError, setInviteError] = useState(false);
+  const [csvError, setCsvError] = useState(false);
   const fileRefs = useRef<Record<string, HTMLInputElement | null>>({});
   const csvInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -116,24 +120,33 @@ export default function FamiliaPage() {
   }
 
   async function handleInvite() {
-    if (!canShare || seatsFull || !name.trim() || !email.trim() || !data) return;
-    const next = await addFamilyMember(data, {
-      name: name.trim(),
-      email: email.trim(),
-      phone: phone.trim() || undefined,
-      phoneCode: phone.trim() ? phoneCode : undefined,
-      relationship,
-      sharePeptides: true,
-      shareDoses: true,
-      shareHealth: false,
-    });
-    setData(next);
-    notifyInviteEmail(email.trim(), name.trim());
-    setName("");
-    setEmail("");
-    setPhone("");
-    setRelationship("otro");
-    setShowForm(false);
+    if (!canShare || seatsFull || !name.trim() || !email.trim() || !data || inviting) return;
+    setInviting(true);
+    setInviteError(false);
+    try {
+      const next = await addFamilyMember(data, {
+        name: name.trim(),
+        email: email.trim(),
+        phone: phone.trim() || undefined,
+        phoneCode: phone.trim() ? phoneCode : undefined,
+        relationship,
+        sharePeptides: true,
+        shareDoses: true,
+        shareHealth: false,
+      });
+      setData(next);
+      notifyInviteEmail(email.trim(), name.trim());
+      setName("");
+      setEmail("");
+      setPhone("");
+      setRelationship("otro");
+      setShowForm(false);
+    } catch (err) {
+      setInviteError(true);
+      logError(err instanceof Error ? err : new Error(String(err)), "familia/handleInvite");
+    } finally {
+      setInviting(false);
+    }
   }
 
   function notifyInviteEmail(toEmail: string, toName: string) {
@@ -148,6 +161,7 @@ export default function FamiliaPage() {
     if (!data || !canShare || seatsFull) return;
     setImporting(true);
     setImportResult(null);
+    setCsvError(false);
     try {
       const text = await file.text();
       const rows = csvToFamilyRows(text);
@@ -155,6 +169,9 @@ export default function FamiliaPage() {
       setData(result.data);
       setImportResult({ imported: result.imported, skipped: result.skipped });
       for (const r of rows) notifyInviteEmail(r.email, r.name);
+    } catch (err) {
+      setCsvError(true);
+      logError(err instanceof Error ? err : new Error(String(err)), "familia/handleCsvFile");
     } finally {
       setImporting(false);
       if (csvInputRef.current) csvInputRef.current.value = "";
@@ -246,6 +263,7 @@ export default function FamiliaPage() {
           {t("importResult", { imported: importResult.imported, skipped: importResult.skipped })}
         </div>
       )}
+      {csvError && <p className="mt-2 text-xs text-destructive">{t("csvError")}</p>}
 
       {canShare &&
         seatsFull &&
@@ -343,9 +361,10 @@ export default function FamiliaPage() {
             </select>
           </div>
           <p className="text-xs text-muted-foreground">{t("inviteNote")}</p>
+          {inviteError && <p className="text-xs text-destructive">{t("saveError")}</p>}
           <button
             type="button"
-            disabled={!name.trim() || !email.trim()}
+            disabled={!name.trim() || !email.trim() || inviting}
             onClick={handleInvite}
             className="h-11 w-full rounded-lg bg-primary text-sm font-semibold text-primary-foreground disabled:opacity-50 sm:w-auto sm:px-8"
           >

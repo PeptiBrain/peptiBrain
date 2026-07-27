@@ -433,7 +433,7 @@
     "vials1Q": "¿Cómo sé cuánto me queda en un vial?",
     "vials1A": "Cada vial guarda su cantidad y el agua bacteriostática, así ves la concentración exacta (mg/mL). En la pestaña Viales aparece su estado (reconstituido o no) y cuánto llevas.",
     "tools1Q": "¿Qué son la calculadora y el conversor?",
-    "tools1A": "En Péptidos → Calculadora (Premium) tienes dos herramientas: la de reconstitución te dice cuánta agua poner y cuántas unidades extraer en la jeringa; el conversor pasa entre mg, mcg y unidades de insulina al instante.",
+    "tools1A": "Hay una calculadora gratis en peptibrain.com/calculadora, sin necesidad de cuenta. Dentro de la app, en Péptidos → Calculadora (incluida en Premium), tienes dos herramientas: la de reconstitución te dice cuánta agua poner y cuántas unidades extraer en la jeringa; el conversor pasa entre mg, mcg y unidades de insulina al instante.",
     "stats1Q": "¿Dónde veo mi progreso y cuánto invierto?",
     "stats1A": "En la pestaña Estadísticas: gráficas de tus dosis en el tiempo, tu adherencia, tu péptido más usado, tu cambio de peso y el dinero invertido en péptidos (si pones el precio de cada vial). Puedes filtrar por día, semana, mes, año o un rango personalizado.",
     "family1Q": "¿Cómo comparto con mi familia?",
@@ -469,6 +469,7 @@
     "customTo": "hasta"
   },
   "Calendar": {
+    "saveError": "No se pudo guardar. Revisa los datos e inténtalo otra vez.",
     "title": "Calendario",
     "subtitle": "Tus dosis, día por día",
     "subtitleFull": "Tus dosis, viajes y ejercicio",
@@ -613,6 +614,7 @@
     "methodNote": "Estimación farmacocinética según vida media conocida — no es una medición real."
   },
   "Providers": {
+    "saveError": "No se pudo guardar. Revisa los datos e inténtalo otra vez.",
     "modalTitle": "Nuevo proveedor",
     "close": "Cerrar",
     "name": "Nombre",
@@ -834,16 +836,22 @@
     "suggestionsFound": "Encontré {count} sugerencias",
     "emptyPeptidesTitle": "Aún no tienes péptidos",
     "emptyPeptidesBody": "Añade el primero (GLP-1, péptidos o TRT) y empieza a registrar tus dosis.",
-    "amountInvalid": "Escribe una cantidad mayor que 0.",
+    "amountInvalid": "Escribe una cantidad mayor que 0 y realista (revisa si sobra algún cero).",
     "duplicatePeptide": "Ya tienes un péptido con ese nombre.",
     "saveError": "No se pudo guardar. Revisa los datos e inténtalo otra vez.",
-    "vialAmountInvalid": "La cantidad debe ser mayor que 0.",
-    "vialWaterInvalid": "El agua debe ser mayor que 0 (o déjalo vacío si aún no lo reconstituiste).",
+    "vialAmountInvalid": "La cantidad debe ser mayor que 0 y realista (revisa si sobra algún cero).",
+    "vialWaterInvalid": "El agua debe ser mayor que 0 y realista (o déjalo vacío si aún no lo reconstituiste).",
+    "vialCostInvalid": "Revisa el precio: parece fuera de lo normal.",
     "underMeasurable": "Esa dosis es demasiado pequeña para medirla en esta jeringa. Usa más agua bacteriostática o una jeringa más pequeña.",
     "waterImpossible": "Con esos datos no sale: la dosis que pides es mayor que todo el contenido del vial. Revisa la cantidad del vial o la dosis.",
+    "amountOutOfRange": "Revisa esa cantidad: parece fuera de lo normal.",
+    "waterOutOfRange": "Revisa esa cantidad de agua: parece fuera de lo normal.",
+    "targetUnitsOutOfRange": "Revisa las unidades objetivo: parece fuera de lo normal.",
     "confirmDeleteProvider": "¿Eliminar este proveedor?"
   },
   "Salud": {
+    "saveError": "No se pudo guardar. Revisa los datos e inténtalo otra vez.",
+    "labValueOutOfRange": "Revisa ese valor: parece fuera de lo normal.",
     "title": "Salud",
     "subtitle": "Cómo va tu cuerpo con el protocolo",
     "addAria": "Registrar salud",
@@ -953,6 +961,8 @@
     "deleteRecordConfirm": "Sí, eliminar"
   },
   "Familia": {
+    "saveError": "No se pudo guardar. Revisa los datos e inténtalo otra vez.",
+    "csvError": "No se pudo importar el archivo. Revisa el formato e inténtalo otra vez.",
     "title": "Familia",
     "subtitle": "Comparte tu progreso con quien tú elijas",
     "inviteAria": "Invitar a un familiar",

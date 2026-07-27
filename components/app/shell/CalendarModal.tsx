@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { ChevronLeft, ChevronRight, X, Check, Clock, AlertTriangle, Pill, Plane, Dumbbell, Plus, Trash2 } from "lucide-react";
 import type { AppData, Dose } from "@/lib/app-data";
 import { addTrip, removeTrip } from "@/lib/app-data";
+import { logError } from "@/lib/error-log";
 
 function toIsoDate(d: Date) {
   const pad = (n: number) => String(n).padStart(2, "0");
@@ -47,6 +48,8 @@ export function CalendarModal({
   const [tripEnd, setTripEnd] = useState("");
   const [tripDest, setTripDest] = useState("");
   const [confirmDeleteTrip, setConfirmDeleteTrip] = useState<string | null>(null);
+  const [savingTrip, setSavingTrip] = useState(false);
+  const [tripSaveError, setTripSaveError] = useState(false);
 
   function toggle(f: Filter) {
     setFilters((prev) => ({ ...prev, [f]: !prev[f] }));
@@ -124,17 +127,26 @@ export function CalendarModal({
   );
 
   async function saveTrip() {
-    if (!onDataChange) return;
-    // El input de fecha de fin solo SUGIERE un mínimo (atributo `min`), no lo
-    // impone — sin este chequeo, una fecha de fin tecleada a mano anterior a
-    // la de inicio creaba un viaje que no aparecía marcado en ningún día del
-    // calendario (el bucle que pinta el rango nunca corre si fin < inicio).
-    const end = tripEnd && tripEnd >= selectedIso ? tripEnd : selectedIso;
-    const next = await addTrip(data, { startDate: selectedIso, endDate: end, destination: tripDest });
-    onDataChange(next);
-    setAddingTrip(false);
-    setTripEnd("");
-    setTripDest("");
+    if (!onDataChange || savingTrip) return;
+    setSavingTrip(true);
+    setTripSaveError(false);
+    try {
+      // El input de fecha de fin solo SUGIERE un mínimo (atributo `min`), no lo
+      // impone — sin este chequeo, una fecha de fin tecleada a mano anterior a
+      // la de inicio creaba un viaje que no aparecía marcado en ningún día del
+      // calendario (el bucle que pinta el rango nunca corre si fin < inicio).
+      const end = tripEnd && tripEnd >= selectedIso ? tripEnd : selectedIso;
+      const next = await addTrip(data, { startDate: selectedIso, endDate: end, destination: tripDest });
+      onDataChange(next);
+      setAddingTrip(false);
+      setTripEnd("");
+      setTripDest("");
+    } catch (err) {
+      setTripSaveError(true);
+      logError(err instanceof Error ? err : new Error(String(err)), "CalendarModal.saveTrip");
+    } finally {
+      setSavingTrip(false);
+    }
   }
 
   async function deleteTrip(id: string) {
@@ -345,10 +357,12 @@ export function CalendarModal({
                     placeholder={t("tripDestPlaceholder")}
                     className="h-9 w-full rounded-md border border-input bg-background px-2 text-sm text-foreground"
                   />
+                  {tripSaveError && <p className="text-xs text-destructive">{t("saveError")}</p>}
                   <button
                     type="button"
+                    disabled={savingTrip}
                     onClick={saveTrip}
-                    className="h-9 w-full rounded-md bg-primary text-xs font-semibold text-primary-foreground"
+                    className="h-9 w-full rounded-md bg-primary text-xs font-semibold text-primary-foreground disabled:opacity-50"
                   >
                     {t("saveTrip")}
                   </button>

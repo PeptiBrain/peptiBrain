@@ -6,6 +6,9 @@ import { CalendarClock, Plus, X } from "lucide-react";
 import { ModalShell } from "@/components/app/shell/ModalShell";
 import type { Peptide, TitrationStep } from "@/lib/app-data";
 import { todayIso } from "@/lib/date-range";
+import { toMg } from "@/lib/dose-math";
+import { PLAUSIBLE, numberInRange } from "@/lib/plausible";
+import { logError } from "@/lib/error-log";
 
 const INTERVAL_OPTIONS = [1, 2, 3, 7, 14];
 const MAX_PROTOCOL_DOSES = 60;
@@ -55,6 +58,7 @@ export function ProtocolModal({
   const [weeks, setWeeks] = useState("4");
   const [steps, setSteps] = useState<(TitrationStep & { id: string })[]>([newStep(), newStep()]);
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState(false);
 
   useEffect(() => {
     if (open) {
@@ -101,14 +105,25 @@ export function ProtocolModal({
   }, [steps, intervalDays]);
 
   const titrationTotalDoses = titrationPreview.reduce((sum, p) => sum + p.doseCount, 0);
-  const titrationValid = steps.every((s) => s.amount.trim()) && titrationTotalDoses > 0;
+  // Un escalón de 999.999 mg se guardaba igual que uno normal: el tope es el
+  // mismo generoso que en el resto de la app (frenar un cero de más).
+  function isAmountPlausible(value: string) {
+    const n = parseFloat(value.replace(",", "."));
+    if (!Number.isFinite(n) || n <= 0) return false;
+    const mg = toMg(n, unit);
+    return mg === null || numberInRange(mg, PLAUSIBLE.vialMassMg);
+  }
+  const fixedAmountPlausible = isAmountPlausible(amount);
+  const titrationValid =
+    steps.every((s) => s.amount.trim() && isAmountPlausible(s.amount)) && titrationTotalDoses > 0;
 
   async function handleSave() {
     if (!peptideId) return;
     setSaving(true);
+    setSaveError(false);
     try {
       if (mode === "fixed") {
-        if (!amount.trim()) return;
+        if (!amount.trim() || !fixedAmountPlausible) return;
         await onSave({ peptideId, amount: amount.trim(), unit, startDate, time, intervalDays, weeks: weeksNum });
       } else {
         if (!titrationValid) return;
@@ -121,6 +136,9 @@ export function ProtocolModal({
           steps: steps.map((s) => ({ amount: s.amount.trim(), weeks: Math.max(1, s.weeks) })),
         });
       }
+    } catch (err) {
+      setSaveError(true);
+      logError(err instanceof Error ? err : new Error(String(err)), "ProtocolModal.handleSave");
     } finally {
       setSaving(false);
     }
@@ -198,6 +216,9 @@ export function ProtocolModal({
                     <option value="UI">UI</option>
                   </select>
                 </div>
+                {amount.trim() && !fixedAmountPlausible && (
+                  <p className="mt-1.5 text-xs text-destructive">{t("amountOutOfRange")}</p>
+                )}
               </div>
             ) : (
               <div>
@@ -344,10 +365,11 @@ export function ProtocolModal({
               </div>
             )}
 
+            {saveError && <p className="text-xs text-destructive">{t("saveError")}</p>}
             <div className="flex gap-2 pt-1">
               <button
                 type="button"
-                disabled={(mode === "fixed" ? !amount.trim() : !titrationValid) || saving}
+                disabled={(mode === "fixed" ? !amount.trim() || !fixedAmountPlausible : !titrationValid) || saving}
                 onClick={handleSave}
                 className="h-11 flex-1 rounded-lg bg-primary text-sm font-semibold text-primary-foreground disabled:opacity-50"
               >

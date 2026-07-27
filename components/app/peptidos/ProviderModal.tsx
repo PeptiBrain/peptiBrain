@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { useTranslations } from "next-intl";
 import { X, Plus } from "lucide-react";
+import { logError } from "@/lib/error-log";
 
 const SOCIAL_NETWORKS = ["Instagram", "TikTok", "Telegram", "WhatsApp", "X (Twitter)", "Reddit", "Otra"];
 
@@ -38,6 +39,7 @@ export function ProviderModal({
   const [brandInput, setBrandInput] = useState("");
   const [notes, setNotes] = useState("");
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState(false);
 
   function reset() {
     setName("");
@@ -49,6 +51,7 @@ export function ProviderModal({
     setBrands([]);
     setBrandInput("");
     setNotes("");
+    setSaveError(false);
   }
 
   function addBrand() {
@@ -60,10 +63,14 @@ export function ProviderModal({
   async function handleSave() {
     if (!name.trim() || saving) return;
     setSaving(true);
+    setSaveError(false);
     try {
       await onSave({ name: name.trim(), website, socialNetwork, socialHandle, phone, email, brands, notes });
       reset();
       onClose();
+    } catch (err) {
+      setSaveError(true);
+      logError(err instanceof Error ? err : new Error(String(err)), "ProviderModal.handleSave");
     } finally {
       setSaving(false);
     }
@@ -193,6 +200,7 @@ export function ProviderModal({
               </div>
             </div>
 
+            {saveError && <p className="px-5 text-xs text-destructive">{t("saveError")}</p>}
             <div className="flex shrink-0 gap-2 border-t border-border p-4">
               <button
                 type="button"

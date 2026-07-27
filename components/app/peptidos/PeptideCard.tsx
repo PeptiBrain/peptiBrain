@@ -6,7 +6,9 @@ import { Beaker, ChevronDown, Plus, Printer, Lock, Trash2 } from "lucide-react";
 import { addVial, deletePeptide, PlanLimitError, type AppData, type Peptide, type SyringeType } from "@/lib/app-data";
 import { Link } from "@/i18n/navigation";
 import { PEPTIDE_PROFILES } from "@/lib/peptide-profiles";
-import { unitsToDraw } from "@/lib/dose-math";
+import { unitsToDraw, toMg } from "@/lib/dose-math";
+import { PLAUSIBLE, numberInRange, inRange } from "@/lib/plausible";
+import { logError } from "@/lib/error-log";
 import { SyringeVisual, SYRINGE_CAPACITY } from "@/components/app/calculator/SyringeVisual";
 import { PeptideIcon } from "@/components/app/peptidos/PeptideIcon";
 
@@ -58,11 +60,22 @@ export function PeptideCard({
   // sin sentido en la pantalla que la gente usa para calcular su dosis.
   const vialAmountNum = parseFloat(amount.replace(",", "."));
   const vialWaterNum = parseFloat(bacWater.replace(",", "."));
-  const vialAmountOk = Number.isFinite(vialAmountNum) && vialAmountNum > 0;
+  // Más allá de "es un número positivo": un vial de 99.999 mg o 99.999 mL de
+  // agua se aceptaba igual en la calculadora del QA. Cuando la unidad es una
+  // masa (mg/mcg) se compara contra un tope generoso; si es ml/UI (vial ya
+  // líquido) no hay conversión posible y se deja pasar sin este chequeo extra.
+  const vialAmountMg = isVolumeUnit(unit) ? null : toMg(vialAmountNum, unit);
+  const vialAmountOk =
+    Number.isFinite(vialAmountNum) &&
+    vialAmountNum > 0 &&
+    (vialAmountMg === null || numberInRange(vialAmountMg, PLAUSIBLE.vialMassMg));
   // El agua es opcional (un vial sin reconstituir es válido), pero si se
-  // escribe algo tiene que ser un número mayor que 0.
-  const vialWaterOk = !bacWater.trim() || (Number.isFinite(vialWaterNum) && vialWaterNum > 0);
-  const vialIsValid = vialAmountOk && vialWaterOk;
+  // escribe algo tiene que ser un número mayor que 0 y dentro de rango.
+  const vialWaterOk =
+    !bacWater.trim() ||
+    (Number.isFinite(vialWaterNum) && vialWaterNum > 0 && numberInRange(vialWaterNum, PLAUSIBLE.bacWaterMl));
+  const vialCostOk = inRange(cost, PLAUSIBLE.costAmount);
+  const vialIsValid = vialAmountOk && vialWaterOk && vialCostOk;
 
   const concentration = useMemo(() => {
     if (isVolumeUnit(unit)) return null;
@@ -123,6 +136,7 @@ export function PeptideCard({
         // Antes relanzaba y la pantalla se quedaba muda: el formulario seguía
         // abierto y el usuario creía que había guardado.
         setVialError(true);
+        logError(err instanceof Error ? err : new Error(String(err)), "PeptideCard.handleAddVial");
       }
     } finally {
       setSavingVial(false);
@@ -279,6 +293,7 @@ export function PeptideCard({
                 placeholder={t("costPlaceholder")}
                 className="mt-2 h-11 w-full rounded-lg border border-input bg-background px-3 text-base text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
               />
+              {!vialCostOk && <p className="mt-2 text-xs text-destructive">{t("vialCostInvalid")}</p>}
               {concentration && (
                 <p className="mt-2 rounded-lg bg-accent px-3 py-1.5 text-xs text-accent-foreground">
                   {t("concentration")} <span className="tabular font-semibold">{concentration}</span> {unit}/mL
