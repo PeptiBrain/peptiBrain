@@ -578,7 +578,8 @@
     "markDone": "Mark as taken",
     "viewAll": "See all in Peptides",
     "peptideFallback": "Your peptide",
-    "overdueBy": "Overdue by {days, plural, one {# day} other {# days}}"
+    "overdueBy": "Overdue by {days, plural, one {# day} other {# days}}",
+    "overdueToday": "Due today"
   },
   "DoseToast": {
     "title": "Dose logged!",
@@ -615,6 +616,9 @@
   },
   "Providers": {
     "saveError": "Couldn't save. Check the values and try again.",
+    "websiteInvalid": "Enter a valid website (or leave it empty).",
+    "phoneInvalid": "Enter a valid phone number (or leave it empty).",
+    "emailInvalid": "Enter a valid email (or leave it empty).",
     "modalTitle": "New supplier",
     "close": "Close",
     "name": "Name",
@@ -675,6 +679,7 @@
     "addPeptideAria": "Add peptide",
     "peptideNameLabel": "Peptide name",
     "peptideNamePlaceholder": "Peptide name (optional)",
+    "peptideNameRequiredPlaceholder": "e.g. Semaglutide",
     "routeLabel": "Route of administration",
     "savePeptide": "Save peptide",
     "emptyState": "You haven’t added any peptide yet.",
@@ -849,6 +854,7 @@
     "amountOutOfRange": "Check that amount: it looks off.",
     "waterOutOfRange": "Check that water amount: it looks off.",
     "targetUnitsOutOfRange": "Check the target units: it looks off.",
+    "mustBeGreaterThanZero": "It needs to be greater than 0 to calculate.",
     "confirmDeleteProvider": "Delete this provider?"
   },
   "Salud": {
@@ -906,6 +912,8 @@
     "choosePhoto": "Choose photo",
     "photoNoteLabel": "Note (optional)",
     "deletePhoto": "Delete photo",
+    "confirmDeletePhoto": "Delete this photo?",
+    "deleteConfirm": "Delete",
     "registerLabTitle": "Log blood work",
     "markerLabel": "Marker",
     "markerCustomLabel": "Which one?",
@@ -965,6 +973,7 @@
   "Familia": {
     "saveError": "Couldn't save. Check the values and try again.",
     "csvError": "Couldn't import the file. Check the format and try again.",
+    "phoneInvalid": "Enter a valid phone number (or leave it empty).",
     "title": "Family",
     "subtitle": "Share your progress with whoever you choose",
     "inviteAria": "Invite a family member",
@@ -1186,7 +1195,15 @@
     "importCsvPreview": "{count, plural, one {# row found} other {# rows found}}. Review the file before importing.",
     "importCsvCta": "Import",
     "importing": "Importing...",
-    "importCsvResult": "{imported} doses imported · {newPeptides} new peptides created · {failed} rows with errors",
+    "importCsvResult": "{imported, plural, one {# dose imported} other {# doses imported}} · {newPeptides, plural, =0 {no new peptides} one {# new peptide created} other {# new peptides created}} · {failed, plural, =0 {no rows with errors} one {# row with an error} other {# rows with errors}}",
+    "csvRowError": "Row {row}: {reason}",
+    "csvFail_missing_peptide_name": "missing peptide name",
+    "csvFail_free_plan_limit": "free plan: only 1 peptide",
+    "csvFail_peptide_create_failed": "couldn't create the peptide",
+    "csvFail_invalid_date": "invalid date",
+    "csvFail_date_out_of_range": "date out of range",
+    "csvFail_invalid_amount": "invalid amount",
+    "csvFail_save_failed": "save failed",
     "importCsvErrorEmpty": "The file is empty.",
     "importCsvErrorColumns": "We couldn't find date, peptide, and amount columns in the file.",
     "importCsvErrorNoRows": "No valid rows could be read from the file.",

@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { useTranslations } from "next-intl";
 import { X, Plus } from "lucide-react";
 import { useSaveAction } from "@/lib/hooks/useSaveAction";
+import { isValidEmail, isValidPhoneDigits, isValidWebsite } from "@/lib/validation";
 
 const SOCIAL_NETWORKS = ["Instagram", "TikTok", "Telegram", "WhatsApp", "X (Twitter)", "Reddit", "Otra"];
 
@@ -38,6 +39,13 @@ export function ProviderModal({
   const [brands, setBrands] = useState<string[]>([]);
   const [brandInput, setBrandInput] = useState("");
   const [notes, setNotes] = useState("");
+  // El QA metió `javascript:alert(1)` como web, `abcdefg` como teléfono, y un
+  // email inválido — se guardaban sin ningún aviso (bug #22). Los 3 campos
+  // son opcionales, así que vacío es válido; algo escrito tiene que tener
+  // forma correcta.
+  const websiteOk = isValidWebsite(website);
+  const phoneOk = phone.trim() === "" || isValidPhoneDigits(phone);
+  const emailOk = email.trim() === "" || isValidEmail(email);
   const save = useSaveAction(async () => {
     await onSave({ name: name.trim(), website, socialNetwork, socialHandle, phone, email, brands, notes });
     reset();
@@ -66,7 +74,7 @@ export function ProviderModal({
   }
 
   function handleSave() {
-    if (!name.trim()) return;
+    if (!name.trim() || !websiteOk || !phoneOk || !emailOk) return;
     save.run();
   }
 
@@ -112,6 +120,7 @@ export function ProviderModal({
               <div>
                 <label className={labelClass}>{t("website")}</label>
                 <input value={website} onChange={(e) => setWebsite(e.target.value)} placeholder="https://..." inputMode="url" className={inputClass} />
+                {!websiteOk && <p className="mt-1 text-xs text-destructive">{t("websiteInvalid")}</p>}
               </div>
               <div>
                 <label className={labelClass}>{t("social")}</label>
@@ -133,10 +142,12 @@ export function ProviderModal({
               <div>
                 <label className={labelClass}>{t("phone")}</label>
                 <input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+57 300 123 4567" inputMode="tel" className={inputClass} />
+                {!phoneOk && <p className="mt-1 text-xs text-destructive">{t("phoneInvalid")}</p>}
               </div>
               <div>
                 <label className={labelClass}>{t("email")}</label>
                 <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="contacto@proveedor.com" inputMode="email" className={inputClass} />
+                {!emailOk && <p className="mt-1 text-xs text-destructive">{t("emailInvalid")}</p>}
               </div>
               <div>
                 <label className={labelClass}>{t("brands")}</label>
@@ -198,7 +209,7 @@ export function ProviderModal({
             <div className="flex shrink-0 gap-2 border-t border-border p-4">
               <button
                 type="button"
-                disabled={!name.trim() || saving}
+                disabled={!name.trim() || !websiteOk || !phoneOk || !emailOk || saving}
                 onClick={handleSave}
                 className="h-11 flex-1 rounded-lg bg-primary text-sm font-semibold text-primary-foreground disabled:opacity-50"
               >

@@ -578,7 +578,8 @@
     "markDone": "Marcar como aplicada",
     "viewAll": "Ver todas en Péptidos",
     "peptideFallback": "Tu péptido",
-    "overdueBy": "Vencida hace {days, plural, one {# día} other {# días}}"
+    "overdueBy": "Vencida hace {days, plural, one {# día} other {# días}}",
+    "overdueToday": "Vence hoy"
   },
   "DoseToast": {
     "title": "¡Dosis registrada!",
@@ -615,6 +616,9 @@
   },
   "Providers": {
     "saveError": "No se pudo guardar. Revisa los datos e inténtalo otra vez.",
+    "websiteInvalid": "Escribe una dirección web válida (o déjalo vacío).",
+    "phoneInvalid": "Escribe un teléfono válido (o déjalo vacío).",
+    "emailInvalid": "Escribe un email válido (o déjalo vacío).",
     "modalTitle": "Nuevo proveedor",
     "close": "Cerrar",
     "name": "Nombre",
@@ -675,6 +679,7 @@
     "addPeptideAria": "Agregar péptido",
     "peptideNameLabel": "Nombre del péptido",
     "peptideNamePlaceholder": "Nombre del péptido (opcional)",
+    "peptideNameRequiredPlaceholder": "ej: Semaglutida",
     "routeLabel": "Vía de administración",
     "savePeptide": "Guardar péptido",
     "emptyState": "Aún no registraste ningún péptido.",
@@ -849,6 +854,7 @@
     "amountOutOfRange": "Revisa esa cantidad: parece fuera de lo normal.",
     "waterOutOfRange": "Revisa esa cantidad de agua: parece fuera de lo normal.",
     "targetUnitsOutOfRange": "Revisa las unidades objetivo: parece fuera de lo normal.",
+    "mustBeGreaterThanZero": "Tiene que ser mayor que 0 para poder calcular.",
     "confirmDeleteProvider": "¿Eliminar este proveedor?"
   },
   "Salud": {
@@ -906,6 +912,8 @@
     "choosePhoto": "Elegir foto",
     "photoNoteLabel": "Nota (opcional)",
     "deletePhoto": "Eliminar foto",
+    "confirmDeletePhoto": "¿Eliminar esta foto?",
+    "deleteConfirm": "Eliminar",
     "registerLabTitle": "Registrar análisis",
     "markerLabel": "Marcador",
     "markerCustomLabel": "¿Cuál?",
@@ -965,6 +973,7 @@
   "Familia": {
     "saveError": "No se pudo guardar. Revisa los datos e inténtalo otra vez.",
     "csvError": "No se pudo importar el archivo. Revisa el formato e inténtalo otra vez.",
+    "phoneInvalid": "Escribe un teléfono válido (o déjalo vacío).",
     "title": "Familia",
     "subtitle": "Comparte tu progreso con quien tú elijas",
     "inviteAria": "Invitar a un familiar",
@@ -1186,7 +1195,15 @@
     "importCsvPreview": "{count, plural, one {# fila detectada} other {# filas detectadas}}. Revisa el archivo antes de importar.",
     "importCsvCta": "Importar",
     "importing": "Importando...",
-    "importCsvResult": "{imported} dosis importadas · {newPeptides} péptidos nuevos creados · {failed} filas con error",
+    "importCsvResult": "{imported, plural, one {# dosis importada} other {# dosis importadas}} · {newPeptides, plural, =0 {ningún péptido nuevo} one {# péptido nuevo creado} other {# péptidos nuevos creados}} · {failed, plural, =0 {sin filas con error} one {# fila con error} other {# filas con error}}",
+    "csvRowError": "Fila {row}: {reason}",
+    "csvFail_missing_peptide_name": "sin nombre de péptido",
+    "csvFail_free_plan_limit": "plan gratis: solo 1 péptido",
+    "csvFail_peptide_create_failed": "no se pudo crear el péptido",
+    "csvFail_invalid_date": "fecha inválida",
+    "csvFail_date_out_of_range": "fecha fuera de rango",
+    "csvFail_invalid_amount": "cantidad inválida",
+    "csvFail_save_failed": "error al guardar",
     "importCsvErrorEmpty": "El archivo está vacío.",
     "importCsvErrorColumns": "No encontramos columnas de fecha, péptido y cantidad en el archivo.",
     "importCsvErrorNoRows": "No se pudo leer ninguna fila válida del archivo.",

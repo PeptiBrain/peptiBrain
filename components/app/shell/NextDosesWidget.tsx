@@ -47,7 +47,9 @@ export function NextDosesWidget() {
     const dateStr = time.toLocaleDateString(locale, { day: "numeric", month: "short" });
     const timeStr = time.toLocaleTimeString(locale, { hour: "numeric", minute: "2-digit" });
     if (time.getTime() < now) {
-      return { overdue: true, text: `${t("overdueBy", { days: diffDays })} · ${dateStr} · ${timeStr}` };
+      // "Vencida hace 0 días" no dice nada — si venció hoy mismo, decirlo así.
+      const overdueText = diffDays === 0 ? t("overdueToday") : t("overdueBy", { days: diffDays });
+      return { overdue: true, text: `${overdueText} · ${dateStr} · ${timeStr}` };
     }
     return { overdue: false, text: `${dateStr} · ${timeStr}` };
   }

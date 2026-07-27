@@ -48,6 +48,7 @@ export default function SaludPage() {
   const [showSideEffectModal, setShowSideEffectModal] = useState(false);
   const [showPhotoModal, setShowPhotoModal] = useState(false);
   const [lightboxPhoto, setLightboxPhoto] = useState<ProgressPhoto | null>(null);
+  const [confirmDeletePhoto, setConfirmDeletePhoto] = useState(false);
   const [showLabModal, setShowLabModal] = useState(false);
   const [showSleepModal, setShowSleepModal] = useState(false);
   const [showMoodModal, setShowMoodModal] = useState(false);
@@ -523,11 +524,17 @@ export default function SaludPage() {
       {lightboxPhoto && (
         <div
           className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-4 bg-black/90 p-4"
-          onClick={() => setLightboxPhoto(null)}
+          onClick={() => {
+            setLightboxPhoto(null);
+            setConfirmDeletePhoto(false);
+          }}
         >
           <button
             type="button"
-            onClick={() => setLightboxPhoto(null)}
+            onClick={() => {
+              setLightboxPhoto(null);
+              setConfirmDeletePhoto(false);
+            }}
             aria-label={t("cancel")}
             className="absolute right-4 top-4 flex size-10 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20"
           >
@@ -535,7 +542,7 @@ export default function SaludPage() {
           </button>
           <Image
             src={lightboxPhoto.url}
-            alt=""
+            alt={formatLogDate(lightboxPhoto.date)}
             width={800}
             height={1000}
             className="max-h-[75vh] w-auto rounded-xl object-contain"
@@ -546,18 +553,41 @@ export default function SaludPage() {
             <p>{formatLogDate(lightboxPhoto.date)}</p>
             {lightboxPhoto.note && <p className="mt-1 max-w-xs">{lightboxPhoto.note}</p>}
           </div>
-          <button
-            type="button"
-            onClick={async (e) => {
-              e.stopPropagation();
-              const next = await removeProgressPhoto(data, lightboxPhoto.id);
-              setData(next);
-              setLightboxPhoto(null);
-            }}
-            className="flex items-center gap-1.5 rounded-lg bg-white/10 px-4 py-2 text-sm font-medium text-white hover:bg-destructive/80"
-          >
-            <Trash2 className="size-4" aria-hidden /> {t("deletePhoto")}
-          </button>
+          {confirmDeletePhoto ? (
+            <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+              <p className="text-sm text-white/80">{t("confirmDeletePhoto")}</p>
+              <button
+                type="button"
+                onClick={() => setConfirmDeletePhoto(false)}
+                className="rounded-lg bg-white/10 px-3 py-2 text-sm font-medium text-white hover:bg-white/20"
+              >
+                {t("cancel")}
+              </button>
+              <button
+                type="button"
+                onClick={async () => {
+                  const next = await removeProgressPhoto(data, lightboxPhoto.id);
+                  setData(next);
+                  setLightboxPhoto(null);
+                  setConfirmDeletePhoto(false);
+                }}
+                className="flex items-center gap-1.5 rounded-lg bg-destructive px-4 py-2 text-sm font-semibold text-white"
+              >
+                <Trash2 className="size-4" aria-hidden /> {t("deleteConfirm")}
+              </button>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setConfirmDeletePhoto(true);
+              }}
+              className="flex items-center gap-1.5 rounded-lg bg-white/10 px-4 py-2 text-sm font-medium text-white hover:bg-destructive/80"
+            >
+              <Trash2 className="size-4" aria-hidden /> {t("deletePhoto")}
+            </button>
+          )}
         </div>
       )}
     </div>

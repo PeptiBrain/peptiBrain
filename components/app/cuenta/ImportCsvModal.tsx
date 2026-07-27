@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Upload } from "lucide-react";
 import { ModalShell } from "@/components/app/shell/ModalShell";
-import { importCsvDoses, type AppData, type CsvImportRow } from "@/lib/app-data";
+import { importCsvDoses, type AppData, type CsvImportRow, type CsvImportFailure } from "@/lib/app-data";
 
 // Parser CSV mínimo (sin librerías): soporta comillas y comas dentro de
 // campos entrecomillados, igual que el escape usado por handleExportCsv.
@@ -88,7 +88,12 @@ export function ImportCsvModal({
   const [rows, setRows] = useState<CsvImportRow[]>([]);
   const [parseError, setParseError] = useState("");
   const [importing, setImporting] = useState(false);
-  const [result, setResult] = useState<{ imported: number; newPeptides: number; failed: number } | null>(null);
+  const [result, setResult] = useState<{
+    imported: number;
+    newPeptides: number;
+    failed: number;
+    failedRows: CsvImportFailure[];
+  } | null>(null);
 
   function reset() {
     setFileName("");
@@ -211,6 +216,15 @@ export function ImportCsvModal({
             <p className="rounded-lg bg-accent px-3 py-3 text-sm text-accent-foreground">
               {t("importCsvResult", { imported: result.imported, newPeptides: result.newPeptides, failed: result.failed })}
             </p>
+            {result.failedRows.length > 0 && (
+              <ul className="mt-2 max-h-40 space-y-1 overflow-y-auto rounded-lg border border-border p-3 text-xs text-muted-foreground">
+                {result.failedRows.map((f) => (
+                  <li key={f.row}>
+                    {t("csvRowError", { row: f.row, reason: t(`csvFail_${f.reason}` as never) })}
+                  </li>
+                ))}
+              </ul>
+            )}
             <button
               type="button"
               onClick={handleClose}

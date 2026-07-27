@@ -25,6 +25,7 @@ import {
 } from "@/lib/app-data";
 import { csvToFamilyRows } from "@/lib/csv";
 import { logError } from "@/lib/error-log";
+import { isValidPhoneDigits } from "@/lib/validation";
 import { useSaveAction } from "@/lib/hooks/useSaveAction";
 import { useAppData } from "@/lib/hooks/useAppData";
 import { hotmartExtraSeatCheckoutUrl } from "@/lib/hotmart-links";
@@ -76,6 +77,9 @@ export default function FamiliaPage() {
   const [importResult, setImportResult] = useState<{ imported: number; skipped: number } | null>(null);
   const [importing, setImporting] = useState(false);
   const [csvError, setCsvError] = useState(false);
+  // El teléfono aceptaba cualquier cosa ("abcdefg", 12 dígitos) mientras
+  // "Editar perfil" sí valida el suyo — mismo campo, doble estándar (bug #77).
+  const familyPhoneOk = phone.trim() === "" || isValidPhoneDigits(phone);
   const inviteSave = useSaveAction(async () => {
     if (!data) return;
     const next = await addFamilyMember(data, {
@@ -139,7 +143,7 @@ export default function FamiliaPage() {
   }
 
   function handleInvite() {
-    if (!canShare || seatsFull || !name.trim() || !email.trim() || !data) return;
+    if (!canShare || seatsFull || !name.trim() || !email.trim() || !familyPhoneOk || !data) return;
     inviteSave.run();
   }
 
@@ -339,6 +343,7 @@ export default function FamiliaPage() {
                 className="h-11 flex-1 rounded-lg border border-input bg-background px-3 text-base text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
               />
             </div>
+            {!familyPhoneOk && <p className="mt-1 text-xs text-destructive">{t("phoneInvalid")}</p>}
           </div>
           <div className="sm:max-w-xs">
             <label className="mb-1.5 block text-sm font-medium text-foreground">{t("relationshipLabel")}</label>
@@ -358,9 +363,9 @@ export default function FamiliaPage() {
           {inviteSave.error && <p className="text-xs text-destructive">{t("saveError")}</p>}
           <button
             type="button"
-            disabled={!name.trim() || !email.trim() || inviteSave.saving}
+            disabled={!name.trim() || !email.trim() || !familyPhoneOk || inviteSave.saving}
             onClick={handleInvite}
-            className="h-11 w-full rounded-lg bg-primary text-sm font-semibold text-primary-foreground disabled:opacity-50 sm:w-auto sm:px-8"
+            className="h-11 w-full rounded-lg bg-primary text-sm font-semibold text-primary-foreground disabled:opacity-50 disabled:grayscale sm:w-auto sm:px-8"
           >
             {t("sendInvite")}
           </button>

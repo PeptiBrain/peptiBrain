@@ -1,5 +1,34 @@
 # ESTADO — PeptiBrain
 
+## ✅ Segunda tanda de bugs cosméticos del backlog QA (2026-07-27)
+
+Tras el Bloque B, se pidió explícitamente cerrar los ~25 bugs restantes. Cerrados en esta tanda:
+- **#5** — confirmación al borrar foto de progreso (antes borraba directo); de paso, `alt` real
+  en la imagen del lightbox en vez de `alt=""` (parte de #39).
+- **#21** — "Nombre del péptido (opcional)" decía opcional en el formulario donde SÍ es obligatorio
+  (crear péptido); nuevo placeholder `peptideNameRequiredPlaceholder` solo ahí. Los usos legítimamente
+  opcionales (calculadora) no se tocaron.
+- **#22** — Proveedores ahora valida formato de web/teléfono/email (`lib/validation.ts` nuevo,
+  compartido); antes aceptaba `javascript:alert(1)` como web sin avisar.
+- **#28** — "Vencida hace 0 días" → "Vence hoy" cuando la dosis venció el mismo día.
+- **#31** — botón "Invitar" deshabilitado ahora también aplica `grayscale` (señal que no depende
+  del contraste de color, más robusta en modo oscuro).
+- **#48** — la calculadora ahora explica por qué no calcula cuando agua/vial/unidades = 0 (antes
+  se quedaba en silencio).
+- **#56** — confirmado que ya estaba resuelto (capa anterior), solo se marca en el backlog.
+- **#65** — `importCsvResult` con plural ICU correcto + `importCsvDoses` ahora devuelve qué fila
+  falló y por qué (`failedRows`), mostrado en `ImportCsvModal`.
+- **#77** — teléfono de un familiar ahora se valida igual que en "Editar perfil" (antes aceptaba
+  cualquier texto).
+
+Verificado: tsc ✓ · npm test (40/40) ✓ · npm run build ✓.
+
+**Quedan sin tocar** (requieren decisión de producto o son de bajo impacto/alto riesgo de tocar a
+esta distancia del lanzamiento): #8 (marcar dosis futura como aplicada — podría romper el caso
+legítimo de registrar una dosis unas horas antes), #10/11/14/16/17/19/20/24/25/27/29/30/57/58/61-63/
+66/67/69-76/78-84 — sobre todo copy menor, i18n de detalle, o requieren ver la pantalla renderizada
+para no adivinar. Documentados en el backlog de abajo, no bloquean vender con seguridad.
+
 ## ✅ Bloque B del PLAN-PRODUCTO.md completo (2026-07-27)
 
 Los 6 puntos del Bloque B, incluyendo los 2 refactors grandes (B1/B2) que el usuario pidió
@@ -106,7 +135,7 @@ Atacar estas cuatro mata la mayoría del backlog. Arreglar bug a bug es el error
 4. ✅ **Fallos silenciosos en 5 formularios** (400 sin mensaje): nombre de péptido de 229 caracteres
    (input sin `maxlength`), vial `-10` mg, peso `-50` kg / grasa `500 %`, comida `-5000` kcal,
    sueño `48` h.
-5. ⏳ **"Eliminar foto" borra sin confirmación** (los demás borrados sí confirman). Ver también 56.
+5. ✅ **"Eliminar foto" borra sin confirmación** (los demás borrados sí confirman). Ver también 56.
 6. ✅ **No hay forma de borrar dosis ni protocolos programados.** Ahora se puede borrar una dosis
    individual (`removeDose` + confirmación) además del péptido entero o "Restablecer todos mis datos".
 7. ✅ **Ningún control de plausibilidad, y encima se celebra.** Aceptó 500 kg, 99 % grasa, 999.999 kcal,
@@ -148,8 +177,10 @@ Atacar estas cuatro mata la mayoría del backlog. Arreglar bug a bug es el error
 18. ✅ Confirmación equivocada: al borrar un **proveedor** pregunta "¿Eliminar este **vial**?".
 19. Protocolo guardado en la calculadora se lista con un "—" en vez de un resumen.
 20. Péptidos duplicados indistinguibles en el desplegable de "Registrar uso". (Ver 51 y 74.)
-21. Campos "(opcional)" que son obligatorios: "Nombre del péptido (opcional)", "Efecto secundario — opcional".
-22. Proveedores sin validación: web `javascript:alert(1)`, teléfono `abcdefg`, email inválido.
+21. ✅ Campos "(opcional)" que son obligatorios: "Nombre del péptido (opcional)" en crear péptido
+    (nuevo placeholder solo ahí). "Efecto secundario — opcional" no se encontró tal cual (ya no dice eso).
+22. ✅ Proveedores sin validación: web `javascript:alert(1)`, teléfono `abcdefg`, email inválido.
+    Ahora valida los 3 (bloquea guardar + avisa) con `lib/validation.ts`.
     Hoy se pintan como texto plano (no hay XSS) — **pero si algún día se convierten en `<a href>`
     sí lo habría**. "Editar perfil" YA tiene el patrón correcto: reutilizarlo.
 23. ✅ **Peso y Ejercicio no se pueden editar ni borrar.** (Ver CR-2 y 68.)
@@ -158,14 +189,15 @@ Atacar estas cuatro mata la mayoría del backlog. Arreglar bug a bug es el error
 25. Gráfica "Dosis en el tiempo" etiqueta el eje con horas (`10h`) aunque el periodo sea "Histórico".
 26. ✅ Filtro "Personalizado" tras recarga mostraba datos fuera de rango — **ARREGLADO** (916b291).
 27. Notificación incoherente: "Llevas 12 días sin registrar" con racha de 1 día.
-28. "Vencida hace 0 días" (debería ser "vence hoy").
+28. ✅ "Vencida hace 0 días" (debería ser "vence hoy").
 29. Tour guiado estático: dice "vamos a verlas una por una" pero no navega ni resalta, sin botón
     Atrás, y menciona "Con Premium" en una calculadora que el usuario ya tiene.
 30. Contradicción de plan: "Mi plan: Family — el más completo" vs "tu plan Family solo incluye 2".
-31. En modo oscuro el botón "Invitar" deshabilitado se ve idéntico a uno activo.
+31. ✅ En modo oscuro el botón "Invitar" deshabilitado se ve idéntico a uno activo (añadido
+    `disabled:grayscale`, señal que no depende del contraste de color).
 32. Red: `family_extra_seats` 503 siempre, prefetch RSC 503 intermitentes, growthbook 503. (Ver CR-3.)
 55. ✅ **El viaje con fechas invertidas activó "Modo viaje: Activo"** y pausó los recordatorios sin avisar.
-56. Borrar un viaje no pide confirmación.
+56. ✅ Borrar un viaje no pide confirmación (ya estaba resuelto en una capa anterior).
 57. `HEAD family_extra_seats` 503 en cada carga (×2) → el banner del límite del plan puede mentir.
     ⚠️ Mitigado en 916b291 (`extraSeatsUnknown` ya no bloquea), pero la causa sigue.
 58. `cdn.growthbook.io` 503 ×3 por carga → feature flags a valores por defecto; probable origen del
@@ -178,8 +210,9 @@ Atacar estas cuatro mata la mayoría del backlog. Arreglar bug a bug es el error
 63. La tarjeta de "Compartir" mezcla idiomas: en español pone "jose's protocol", "1 day streak".
 64. ✅ "1 días" / "1 days" — falta singular/plural (Inicio e informe). `Informe.streakDays` ahora
     usa plural ICU.
-65. "1 dosis importadas · 1 péptidos nuevos creados · 1 filas con error" — sin plurales, y no dice
-    QUÉ fila falló.
+65. ✅ "1 dosis importadas · 1 péptidos nuevos creados · 1 filas con error" — sin plurales, y no dice
+    QUÉ fila falló. `importCsvResult` con plural ICU + `importCsvDoses` devuelve `failedRows`
+    (número de fila + motivo), mostrado en `ImportCsvModal`.
 66. El informe solo incluye péptidos, dosis, viales y peso. **Faltan** comidas, hidratación, sueño,
     ánimo, efectos secundarios, análisis y fotos.
 67. El desplegable de "Cantidad" del vial permite "ml" como unidad del péptido.
@@ -196,7 +229,7 @@ Atacar estas cuatro mata la mayoría del backlog. Arreglar bug a bug es el error
 74. "Elegir péptidos específicos" muestra dos "Semaglutida" idénticos.
 75. El acordeón del Centro de ayuda recorta la respuesta (solo 2 líneas visibles).
 76. La FAQ dice "Calculadora (Premium)" aunque el plan Family ya la incluye.
-77. El teléfono de un familiar acepta 12 dígitos sin validar, mientras Editar perfil sí valida.
+77. ✅ El teléfono de un familiar acepta 12 dígitos sin validar, mientras Editar perfil sí valida.
 78. Resumen pinta las 60 dosis de golpe, sin paginación ni "cargar más".
 
 ### 🟡 MENORES — copy y UI
@@ -218,7 +251,7 @@ Atacar estas cuatro mata la mayoría del backlog. Arreglar bug a bug es el error
 46. La cabecera sticky solapa y recorta contenido al hacer scroll.
 47. `/en/` mantiene `<title>` y slugs en español. ⚠️ **Decidir `/peptidos` → `/peptides` ANTES de
     lanzar**: cambiarlo después rompe enlaces guardados y SEO.
-48. Calculadora con agua = 0 o unidades = 0: no calcula y no explica por qué.
+48. ✅ Calculadora con agua = 0 o unidades = 0: no calcula y no explica por qué.
 49. "Pendiente" / "Marcar como aplicada" a veces necesita dos clics (el primero solo enfoca).
 79. El CSV exporta fechas sin cero: `23/9/2026`.
 80. Ninguna descarga (JSON, CSV, PNG) muestra aviso de "descargado".

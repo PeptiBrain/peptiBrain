@@ -222,7 +222,7 @@ export default function PeptidosPage() {
                   // Sin tope, un nombre de 229 caracteres llegaba al servidor,
                   // lo rechazaba con 400 y la pantalla no decía nada.
                   maxLength={60}
-                  placeholder={t("peptideNamePlaceholder")}
+                  placeholder={t("peptideNameRequiredPlaceholder")}
                   className="h-11 w-full rounded-lg border border-input bg-background px-3 text-base text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 />
 

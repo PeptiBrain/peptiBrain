@@ -262,6 +262,7 @@ export function ReconstitutionCalculator({ data }: { data: AppData }) {
         </select>
       </div>
       {vialAmountOutOfRange && <p className="mt-1.5 text-xs text-destructive">{t("amountOutOfRange")}</p>}
+      {vialAmount.trim() === "0" && <p className="mt-1.5 text-xs text-destructive">{t("mustBeGreaterThanZero")}</p>}
 
       {mode === "draw" && (
         <>
@@ -273,6 +274,7 @@ export function ReconstitutionCalculator({ data }: { data: AppData }) {
             className="mt-2 h-11 w-full rounded-lg border border-input bg-background px-3 text-base text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
           />
           {bacWaterOutOfRange && <p className="mt-1.5 text-xs text-destructive">{t("waterOutOfRange")}</p>}
+          {bacWater.trim() === "0" && <p className="mt-1.5 text-xs text-destructive">{t("mustBeGreaterThanZero")}</p>}
           {concentration && (
             <p className="mt-2 rounded-lg bg-accent px-3 py-1.5 text-xs text-accent-foreground">
               {t("concentration")} <span className="tabular font-semibold">{concentration}</span> {vialUnit}/mL
@@ -482,6 +484,7 @@ export function ReconstitutionCalculator({ data }: { data: AppData }) {
             className={inputClass}
           />
           {targetUnitsOutOfRange && <p className="mt-1.5 text-xs text-destructive">{t("targetUnitsOutOfRange")}</p>}
+          {targetUnits.trim() === "0" && <p className="mt-1.5 text-xs text-destructive">{t("mustBeGreaterThanZero")}</p>}
 
           {waterSolved != null ? (
             <div className="mt-3 rounded-lg bg-accent p-4 text-center">

@@ -721,29 +721,39 @@ export type CsvImportRow = {
 // cálculo). No reutiliza addPeptide/addDose fila por fila (sería una vuelta
 // completa a la base de datos por cada fila) — inserta directo y devuelve un
 // resumen; el llamador hace un único loadAppData() al final.
+export type CsvImportFailure = { row: number; reason: string };
+
 export async function importCsvDoses(
   data: AppData,
   rows: CsvImportRow[]
-): Promise<{ imported: number; newPeptides: number; failed: number }> {
+): Promise<{ imported: number; newPeptides: number; failed: number; failedRows: CsvImportFailure[] }> {
   const { supabase, user } = await requireUser();
   let imported = 0;
   let newPeptides = 0;
-  let failed = 0;
+  // El QA reportó "1 filas con error" sin decir NUNCA cuál — el usuario tenía
+  // que adivinar qué línea del CSV revisar. Ahora cada fallo queda registrado
+  // con su número de fila (1-based) y el motivo exacto.
+  const failedRows: CsvImportFailure[] = [];
+  function fail(rowNumber: number, reason: string) {
+    failedRows.push({ row: rowNumber, reason });
+  }
   let peptideCount = data.peptides.length;
 
   const peptideIdByName = new Map<string, string>();
   data.peptides.forEach((p) => peptideIdByName.set(p.name.trim().toLowerCase(), p.id));
 
-  for (const row of rows) {
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i];
+    const rowNumber = i + 1;
     const key = row.peptideName.trim().toLowerCase();
     if (!key) {
-      failed++;
+      fail(rowNumber, "missing_peptide_name");
       continue;
     }
     let peptideId = peptideIdByName.get(key);
     if (!peptideId) {
       if (data.plan === "free" && peptideCount >= 1) {
-        failed++;
+        fail(rowNumber, "free_plan_limit");
         continue;
       }
       const { data: inserted, error: pErr } = await supabase
@@ -752,7 +762,7 @@ export async function importCsvDoses(
         .select("id")
         .single();
       if (pErr || !inserted?.id) {
-        failed++;
+        fail(rowNumber, "peptide_create_failed");
         continue;
       }
       peptideId = inserted.id as string;
@@ -763,7 +773,7 @@ export async function importCsvDoses(
 
     const scheduled = new Date(`${row.dateIso}T${row.time || "08:00"}:00`);
     if (Number.isNaN(scheduled.getTime())) {
-      failed++;
+      fail(rowNumber, "invalid_date");
       continue;
     }
     // El QA importó "01/01/1800" y "999999999 mg" sin que nada lo rechazara:
@@ -773,13 +783,13 @@ export async function importCsvDoses(
     const rowYear = scheduled.getFullYear();
     const thisYear = new Date().getFullYear();
     if (rowYear < thisYear - 25 || rowYear > thisYear + 3) {
-      failed++;
+      fail(rowNumber, "date_out_of_range");
       continue;
     }
     const amountNum = Number(row.amount);
     const amountMg = toMg(amountNum, row.unit || "mg");
     if (!Number.isFinite(amountNum) || amountNum <= 0 || (amountMg !== null && !numberInRange(amountMg, PLAUSIBLE.vialMassMg))) {
-      failed++;
+      fail(rowNumber, "invalid_amount");
       continue;
     }
     const { error: dErr } = await supabase.from("doses").insert({
@@ -798,13 +808,13 @@ export async function importCsvDoses(
       done: row.done,
     });
     if (dErr) {
-      failed++;
+      fail(rowNumber, "save_failed");
       continue;
     }
     imported++;
   }
 
-  return { imported, newPeptides, failed };
+  return { imported, newPeptides, failed: failedRows.length, failedRows };
 }
 
 export async function addDose(
