@@ -36,6 +36,14 @@ cancelar", con motivos de opción única (sin texto obligatorio):
 vía cobro. Hotmart no expone esas acciones por API — solo cancelar. Prometerlas sería
 un cobro que sigue llegando igual, generando reembolsos y reseñas negativas.
 
+**⛔ La encuesta NUNCA es obligatoria para cancelar.** La primera versión SÍ tenía este
+bug: el botón "Cancelar" del modal cerraba TODO el intento de baja, así que la única
+forma de llegar a las instrucciones era eligiendo un motivo — exactamente el dark
+pattern de fricción que este mismo sistema prohíbe (`PROMPT-RETENER-INGRESOS.txt`:
+"cancelar debe ser FÁCIL, cero dark patterns"). Corregido el mismo día: existe
+"Prefiero no decirlo, solo quiero cancelar", que sigue a las instrucciones sin exigir
+respuesta. La X/Escape/clic fuera siguen abandonando el intento completo.
+
 ## Qué se guarda
 
 Cada respuesta se inserta en una tabla nueva `cancellation_feedback` (motivo + nota
