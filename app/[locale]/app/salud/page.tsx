@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import Image from "next/image";
-import { Plus, Scale, Droplets, Footprints, AlertTriangle, Apple, Trash2, Camera, X, FlaskConical, Moon, Smile } from "lucide-react";
+import { Plus, Scale, Droplets, Footprints, AlertTriangle, Apple, Trash2, Camera, X, FlaskConical, Moon, Smile, GitCompare } from "lucide-react";
 import {
   addHealthLog,
   addMeal,
@@ -28,6 +28,7 @@ import { useSaveAction } from "@/lib/hooks/useSaveAction";
 import { useAppData } from "@/lib/hooks/useAppData";
 import { labTrend } from "@/lib/lab-trend";
 import { sideEffectPatterns } from "@/lib/side-effect-patterns";
+import { PhotoCompare } from "@/components/app/salud/PhotoCompare";
 import { SubTabs, type SubTabItem } from "@/components/app/shell/SubTabs";
 import { PremiumLocked } from "@/components/app/shell/PremiumLocked";
 import { PageSkeleton } from "@/components/app/shell/PageSkeleton";
@@ -51,6 +52,7 @@ export default function SaludPage() {
   const [showPhotoModal, setShowPhotoModal] = useState(false);
   const [lightboxPhoto, setLightboxPhoto] = useState<ProgressPhoto | null>(null);
   const [confirmDeletePhoto, setConfirmDeletePhoto] = useState(false);
+  const [showCompare, setShowCompare] = useState(false);
   const [showLabModal, setShowLabModal] = useState(false);
   const [showSleepModal, setShowSleepModal] = useState(false);
   const [showMoodModal, setShowMoodModal] = useState(false);
@@ -144,14 +146,26 @@ export default function SaludPage() {
           </button>
         )}
         {tab === "fotos" && isPremium && (
-          <button
-            type="button"
-            onClick={() => setShowPhotoModal(true)}
-            aria-label={t("registerPhotoAria")}
-            className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground transition-transform active:scale-97"
-          >
-            <Plus className="size-5" aria-hidden />
-          </button>
+          <>
+            {/* Con una sola foto no hay nada que comparar. */}
+            {data.progressPhotos.length >= 2 && (
+              <button
+                type="button"
+                onClick={() => setShowCompare(true)}
+                className="flex h-10 shrink-0 items-center gap-1.5 rounded-full border border-border bg-card px-3.5 text-xs font-semibold text-foreground transition-transform active:scale-97"
+              >
+                <GitCompare className="size-3.5" aria-hidden /> {t("compareCta")}
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={() => setShowPhotoModal(true)}
+              aria-label={t("registerPhotoAria")}
+              className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground transition-transform active:scale-97"
+            >
+              <Plus className="size-5" aria-hidden />
+            </button>
+          </>
         )}
         {tab === "labs" && isPremium && (
           <button
@@ -505,6 +519,13 @@ export default function SaludPage() {
           setData(next);
           setShowPhotoModal(false);
         }}
+      />
+
+      <PhotoCompare
+        open={showCompare}
+        onClose={() => setShowCompare(false)}
+        photos={data.progressPhotos}
+        formatDate={formatLogDate}
       />
 
       <LabModal

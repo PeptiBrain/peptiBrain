@@ -8,12 +8,15 @@ import Image from "next/image";
 import { formatDateOnly } from "@/lib/date-range";
 import { createClient } from "@/lib/supabase/client";
 import { computeStats } from "@/lib/stats";
+import { LAB_MARKER_IDS } from "@/lib/lab-markers";
 import { useAppData } from "@/lib/hooks/useAppData";
 import { USER_DATA_CURRENCY, type Locale } from "@/i18n/routing";
 import { PremiumLocked } from "@/components/app/shell/PremiumLocked";
 
 export default function InformePage() {
   const t = useTranslations("Informe");
+  // Los nombres de los marcadores de laboratorio viven en el namespace de Salud.
+  const tSalud = useTranslations("Salud");
   const locale = useLocale();
   const { data } = useAppData();
   const [name, setName] = useState("");
@@ -60,6 +63,13 @@ export default function InformePage() {
   const recentWeights = [...data.healthLogs]
     .filter((h) => h.weightKg && Number.isFinite(parseFloat(h.weightKg)))
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .slice(0, 15);
+  const recentLabs = [...data.labResults]
+    .sort((a, b) => (a.date < b.date ? 1 : -1))
+    .slice(0, 15);
+  const recentSideEffects = [...data.healthLogs]
+    .filter((h) => h.sideEffect?.trim())
+    .sort((a, b) => (a.date < b.date ? 1 : -1))
     .slice(0, 15);
 
   function peptideName(id: string) {
@@ -223,6 +233,61 @@ export default function InformePage() {
             </table>
           )}
         </div>
+
+        {/* Análisis y efectos secundarios: son justo lo que un médico mira
+            primero, y hasta ahora el informe no los llevaba — el usuario tenía
+            que contarlos de memoria en la consulta. */}
+        {recentLabs.length > 0 && (
+          <div className="mt-6">
+            <h2 className="text-sm font-semibold text-foreground">{t("labsTitle")}</h2>
+            <table className="mt-2 w-full text-left text-sm">
+              <thead>
+                <tr className="border-b border-border text-xs text-muted-foreground">
+                  <th className="py-1.5 font-medium">{t("colDate")}</th>
+                  <th className="py-1.5 font-medium">{t("colMarker")}</th>
+                  <th className="py-1.5 font-medium">{t("colValue")}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {recentLabs.map((r) => (
+                  <tr key={r.id} className="border-b border-border/60">
+                    <td className="py-1.5 text-muted-foreground">{formatDateOnly(r.date, locale)}</td>
+                    <td className="py-1.5 text-foreground">
+                      {(LAB_MARKER_IDS as readonly string[]).includes(r.marker)
+                        ? tSalud(`marker_${r.marker}` as never)
+                        : r.marker}
+                    </td>
+                    <td className="py-1.5 text-foreground">
+                      {r.value} {r.unit || ""}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {recentSideEffects.length > 0 && (
+          <div className="mt-6">
+            <h2 className="text-sm font-semibold text-foreground">{t("sideEffectsTitle")}</h2>
+            <table className="mt-2 w-full text-left text-sm">
+              <thead>
+                <tr className="border-b border-border text-xs text-muted-foreground">
+                  <th className="py-1.5 font-medium">{t("colDate")}</th>
+                  <th className="py-1.5 font-medium">{t("colSideEffect")}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {recentSideEffects.map((h) => (
+                  <tr key={h.id} className="border-b border-border/60">
+                    <td className="py-1.5 text-muted-foreground">{formatDateOnly(h.date, locale)}</td>
+                    <td className="py-1.5 text-foreground">{h.sideEffect}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
 
         <div className="mt-8 border-t border-border pt-4">
           <p className="text-xs text-muted-foreground">{t("footerNote")}</p>
