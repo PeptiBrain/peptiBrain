@@ -1,5 +1,21 @@
 # ESTADO — PeptiBrain
 
+## ✅ Tests automatizados de los flujos críticos (2026-07-26) — desplegado a main (c65685f)
+
+Vitest instalado (`npm test`). 40 tests en 4 archivos, 0.8s, corren sin navegador ni sesión ni DB:
+- `tests/dose-math.test.ts` (11) — matemática de dosis (unitsToDraw/waterForTargetUnits)
+- `tests/date-range.test.ts` (10) — filtros de fecha (isWithinRange/todayIso/formatDateOnly)
+- `tests/plausible.test.ts` (7) — límites clínicos de plausibilidad
+- `tests/stats.test.ts` (12) — adherencia/estado de vial/dinero invertido
+
+Cubren los casos exactos que el QA encontró rotos (agua=0→Infinity, dosis mayor al vial,
+fechas futuras contando como actividad, rango "hoy-hoy" colando ayer, "sin datos" vs "0%" del
+bug #24). Encontraron un bug real al escribirlos: `myShareOfCost` en `lib/stats.ts` reventaba
+con `TypeError` si `vial.shares` venía `undefined` — verificado que no ocurre en producción hoy,
+blindado con `?? []` de todas formas por ser cálculo de dinero. tsc ✓ build ✓.
+**No cubren**: interfaz, base de datos, permisos, ni el recorrido completo por pantalla — para eso
+haría falta Playwright con una cuenta de pruebas dedicada (ofrecido, pendiente de decisión del usuario).
+
 ## 🐞 BACKLOG DE BUGS — lista viva (2026-07-25)
 
 > **Origen**: dos rondas de QA exhaustivo hechas por Claude con la extensión de Chrome, usando la
