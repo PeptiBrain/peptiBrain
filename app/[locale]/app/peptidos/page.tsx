@@ -37,7 +37,7 @@ import { PremiumLocked } from "@/components/app/shell/PremiumLocked";
 import { PageSkeleton } from "@/components/app/shell/PageSkeleton";
 import { PEPTIDE_PROFILES } from "@/lib/peptide-profiles";
 import { DateRangeTabs } from "@/components/app/shell/DateRangeTabs";
-import { isWithinRange, type CustomRange, type DateRangeKey } from "@/lib/date-range";
+import { isWithinRange, canMarkDoseDone, type CustomRange, type DateRangeKey } from "@/lib/date-range";
 import { toMg } from "@/lib/dose-math";
 import { PLAUSIBLE, numberInRange } from "@/lib/plausible";
 import { logError } from "@/lib/error-log";
@@ -1149,7 +1149,7 @@ function UsosTab({
                       <span className="flex items-center gap-1 text-xs font-medium text-primary">
                         <Check className="size-3.5" aria-hidden /> {t("done")}
                       </span>
-                    ) : (
+                    ) : canMarkDoseDone(d.scheduledAt) ? (
                       <button
                         type="button"
                         onClick={() => markDone(d.id)}
@@ -1157,6 +1157,11 @@ function UsosTab({
                       >
                         {t("pending")}
                       </button>
+                    ) : (
+                      // Una dosis de mañana no se puede haber aplicado ya. Se
+                      // muestra como programada en vez de ofrecer un botón que
+                      // el propio guardado va a rechazar.
+                      <span className="text-xs text-muted-foreground">{t("scheduledLabel")}</span>
                     )}
                     <button
                       type="button"

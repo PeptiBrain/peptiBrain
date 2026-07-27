@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/client";
 import { loadOnboarding } from "@/lib/onboarding";
 import { toMg } from "@/lib/dose-math";
 import { PLAUSIBLE, numberInRange } from "@/lib/plausible";
+import { canMarkDoseDone } from "@/lib/date-range";
 
 export type Peptide = {
   id: string;
@@ -853,7 +854,22 @@ export async function removeDose(data: AppData, doseId: string): Promise<AppData
   return loadAppData();
 }
 
+export class FutureDoseError extends Error {
+  constructor(message = "DOSE_IN_THE_FUTURE") {
+    super(message);
+    this.name = "FutureDoseError";
+  }
+}
+
 export async function markDoseDone(data: AppData, doseId: string, injectionSite?: string): Promise<AppData> {
+  // Defensa en el núcleo, no solo en la pantalla: da igual desde qué botón se
+  // llame (Inicio, widget del header, lista de usos), una dosis de mañana no
+  // puede quedar "aplicada" (bug #8 del QA). Contaminaría la adherencia, el
+  // nivel estimado en el cuerpo y el consumo del vial.
+  const dose = data.doses.find((d) => d.id === doseId);
+  if (dose && !canMarkDoseDone(dose.scheduledAt)) {
+    throw new FutureDoseError();
+  }
   const { supabase } = await requireUser();
   const { error } = await supabase
     .from("doses")

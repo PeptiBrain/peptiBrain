@@ -591,7 +591,8 @@
     "viewAll": "Ver todas en Péptidos",
     "peptideFallback": "Tu péptido",
     "overdueBy": "Vencida hace {days, plural, one {# día} other {# días}}",
-    "overdueToday": "Vence hoy"
+    "overdueToday": "Vence hoy",
+    "scheduledLabel": "Programada"
   },
   "DoseToast": {
     "title": "¡Dosis registrada!",
@@ -612,7 +613,10 @@
     "close": "Cerrar",
     "download": "Descargar",
     "share": "Compartir",
-    "shareDesktopHint": "Tu navegador no puede compartir directo desde la computadora — descargamos la imagen, súbela desde WhatsApp o Instagram."
+    "shareDesktopHint": "Tu navegador no puede compartir directo desde la computadora — descargamos la imagen, súbela desde WhatsApp o Instagram.",
+    "cardTitle": "Mi protocolo",
+    "cardTitleNamed": "El protocolo de {name}",
+    "cardStreak": "{count, plural, one {# día seguido} other {# días seguidos}}"
   },
   "DailySummary": {
     "title": "Resumen de tu día",
@@ -873,7 +877,10 @@
     "waterOutOfRange": "Revisa esa cantidad de agua: parece fuera de lo normal.",
     "targetUnitsOutOfRange": "Revisa las unidades objetivo: parece fuera de lo normal.",
     "mustBeGreaterThanZero": "Tiene que ser mayor que 0 para poder calcular.",
-    "confirmDeleteProvider": "¿Eliminar este proveedor?"
+    "confirmDeleteProvider": "¿Eliminar este proveedor?",
+    "scheduledLabel": "Programada",
+    "volumeUnitNote": "Con un vial que ya viene líquido no se puede calcular la concentración ni estimar cuánto queda.",
+    "protocolCapped": "Se crean como máximo 60 dosis (24 semanas). Si necesitas más, crea otro protocolo después."
   },
   "Salud": {
     "saveError": "No se pudo guardar. Revisa los datos e inténtalo otra vez.",

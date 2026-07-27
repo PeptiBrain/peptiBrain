@@ -21,7 +21,13 @@ function loadImage(src: string): Promise<HTMLImageElement | null> {
 // Genera una tarjeta de protocolo como imagen (canvas nativo, sin librerías
 // nuevas) — solo péptidos/dosis/racha, nunca peso ni datos de salud, para no
 // filtrar de más en algo pensado para compartir en redes/con amigos.
-async function drawCard(canvas: HTMLCanvasElement, data: AppData, name: string) {
+// Los textos llegan ya traducidos desde el componente: dentro del canvas no hay
+// acceso a next-intl, y por eso la tarjeta salía en inglés ("jose's protocol",
+// "1 day streak") aunque la app estuviera en español — y esta imagen es
+// justamente la que la gente comparte en redes (bug #63).
+type CardLabels = { title: string; streak: string };
+
+async function drawCard(canvas: HTMLCanvasElement, data: AppData, name: string, labels: CardLabels) {
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
   canvas.width = WIDTH;
@@ -39,13 +45,12 @@ async function drawCard(canvas: HTMLCanvasElement, data: AppData, name: string) 
 
   ctx.fillStyle = "#ffffff";
   ctx.font = "800 56px system-ui, sans-serif";
-  const title = name ? `${name}'s protocol` : "My protocol";
-  ctx.fillText(title, 64, 220);
+  ctx.fillText(labels.title, 64, 220);
 
   if (data.progress.currentStreak > 0) {
     ctx.fillStyle = "#fbbf24";
     ctx.font = "700 40px system-ui, sans-serif";
-    ctx.fillText(`🔥 ${data.progress.currentStreak} day streak`, 64, 290);
+    ctx.fillText(`🔥 ${labels.streak}`, 64, 290);
   }
 
   let y = 400;
@@ -102,7 +107,10 @@ export function ProtocolShareCard({ data, name, onClose }: { data: AppData; name
   function handleCanvasRef(node: HTMLCanvasElement | null) {
     canvasRef.current = node;
     if (node) {
-      drawCard(node, data, name).then(() => setReady(true));
+      drawCard(node, data, name, {
+        title: name ? t("cardTitleNamed", { name }) : t("cardTitle"),
+        streak: t("cardStreak", { count: data.progress.currentStreak }),
+      }).then(() => setReady(true));
     }
   }
 

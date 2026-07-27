@@ -27,7 +27,12 @@ import { OPEN_CALENDAR_EVENT } from "@/components/app/shell/ProfileMenu";
 import { ProtocolShareCard } from "@/components/app/shell/ProtocolShareCard";
 import { TodayDoseCard } from "@/components/app/shell/TodayDoseCard";
 import { isWithinRange, type CustomRange, type DateRangeKey } from "@/lib/date-range";
-import { suggestNextInjectionSite, lastInjectionSite, type InjectionSiteId } from "@/lib/injection-sites";
+import {
+  suggestNextInjectionSite,
+  lastInjectionSite,
+  NON_INJECTABLE_ROUTES,
+  type InjectionSiteId,
+} from "@/lib/injection-sites";
 
 export default function InicioPage() {
   const t = useTranslations("Inicio");
@@ -109,8 +114,21 @@ export default function InicioPage() {
   const greetKey = hour < 12 ? "greetMorning" : hour < 20 ? "greetAfternoon" : "greetEvening";
   const dateLabel = now.toLocaleDateString(locale, { weekday: "long", day: "numeric", month: "long" });
 
+  // Preguntar "¿en qué zona te lo inyectaste?" por una cápsula que se traga es
+  // absurdo y resta credibilidad (bug #16). Si el péptido no se inyecta, se
+  // marca directamente.
+  const pendingIsInjectable = (() => {
+    if (!pendingDose || !data) return true;
+    const route = data.peptides.find((p) => p.id === pendingDose.peptideId)?.route || "";
+    return !NON_INJECTABLE_ROUTES.includes(route.trim().toLowerCase());
+  })();
+
   function handleMarkDone() {
     if (!pendingDose || !data) return;
+    if (!pendingIsInjectable) {
+      confirmMarkDone(undefined);
+      return;
+    }
     setShowSiteModal(true);
   }
 
@@ -443,7 +461,7 @@ export default function InicioPage() {
 
       <AssistantModal open={showAssistant} onClose={() => setShowAssistant(false)} data={data} />
 
-      {pendingDose && (
+      {pendingDose && pendingIsInjectable && (
         <InjectionSiteModal
           open={showSiteModal}
           onClose={() => setShowSiteModal(false)}

@@ -279,6 +279,13 @@ export function PeptideCard({
                   <option value="UI">UI</option>
                 </select>
               </div>
+              {/* "ml" es legítimo (hay viales que vienen ya líquidos), pero con
+                  un volumen no se puede calcular concentración ni estimar lo que
+                  queda. Se avisa en vez de prohibirlo: quitar la opción rompería
+                  un caso real. */}
+              {isVolumeUnit(unit) && (
+                <p className="mt-1.5 text-xs text-muted-foreground">{t("volumeUnitNote")}</p>
+              )}
               <input
                 value={bacWater}
                 onChange={(e) => setBacWater(e.target.value)}

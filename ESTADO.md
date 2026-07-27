@@ -190,7 +190,7 @@ Atacar estas cuatro mata la mayoría del backlog. Arreglar bug a bug es el error
    individual (`removeDose` + confirmación) además del péptido entero o "Restablecer todos mis datos".
 7. ✅ **Ningún control de plausibilidad, y encima se celebra.** Aceptó 500 kg, 99 % grasa, 999.999 kcal,
    999.999 ml, 99.999 min, testosterona 99.999, dosis 999.999 mg. El toast felicitó con **"-427 kg"**.
-8. **Dosis en el futuro se puede marcar como Aplicada** (registrada el 01/01/2030).
+8. ✅ **Dosis en el futuro se puede marcar como Aplicada** (registrada el 01/01/2030).
 9. ✅ **Fechas sin año** (`mar 1 de ene`, `26 jul`): un registro de 1900 o 2030 parece de este año.
    Peligroso en un historial clínico.
 50. ✅ **El modal "Centro de ayuda" queda ATRAPADO y no se puede cerrar.** X y título fuera de pantalla,
@@ -213,16 +213,16 @@ Atacar estas cuatro mata la mayoría del backlog. Arreglar bug a bug es el error
    no destructiva, reversible, no justifica la fricción de un modal).
 
 ### 🟠 ALTOS — funcionalidad
-10. Asistente responde cortado y con **markdown crudo** (`**6 péptidos**`), y trunca la respuesta.
+10. ✅ Asistente responde cortado y con **markdown crudo** (`**6 péptidos**`), y trunca la respuesta.
 11. **"Programar una dosis" no programa nada**: navega a Péptidos › Resumen sin abrir formulario.
 12. ✅ Navegación lenta o perdida: pulsar "Péptidos" a veces no hace nada; cuando funciona tarda 5-8 s
     mostrando el dashboard viejo. (Ver CR-3 — resuelto con caché SWR compartida, B2.)
 13. ✅ **Badge rojo de dosis pendientes no se actualiza** al aplicar una dosis (seguía en 60), y cuenta
     las 60 futuras en vez de solo las vencidas/de hoy. Ambas partes resueltas: se actualiza al
     instante (B2, caché compartida) y solo cuenta vencidas + de hoy (`dueTodayOrOverdueCount`).
-14. Duración del protocolo sin tope visible: 9999 semanas → "creará 60 dosis" sin explicar el límite.
+14. ✅ Duración del protocolo sin tope visible: 9999 semanas → "creará 60 dosis" sin explicar el límite.
 15. ✅ **Viaje con fecha fin anterior al inicio se guarda** (26 jul → 1 jul).
-16. Pide zona de inyección para un péptido **ORAL**.
+16. ✅ Pide zona de inyección para un péptido **ORAL**.
 17. Lista de la compra incoherente: "Añade un vial" cuando sí lo tiene; sugiere jeringas para oral.
 18. ✅ Confirmación equivocada: al borrar un **proveedor** pregunta "¿Eliminar este **vial**?".
 19. Protocolo guardado en la calculadora se lista con un "—" en vez de un resumen.
@@ -240,7 +240,7 @@ Atacar estas cuatro mata la mayoría del backlog. Arreglar bug a bug es el error
 26. ✅ Filtro "Personalizado" tras recarga mostraba datos fuera de rango — **ARREGLADO** (916b291).
 27. Notificación incoherente: "Llevas 12 días sin registrar" con racha de 1 día.
 28. ✅ "Vencida hace 0 días" (debería ser "vence hoy").
-29. Tour guiado estático: dice "vamos a verlas una por una" pero no navega ni resalta, sin botón
+29. ✅ Tour guiado estático: dice "vamos a verlas una por una" pero no navega ni resalta, sin botón
     Atrás, y menciona "Con Premium" en una calculadora que el usuario ya tiene.
 30. Contradicción de plan: "Mi plan: Family — el más completo" vs "tu plan Family solo incluye 2".
 31. ✅ En modo oscuro el botón "Invitar" deshabilitado se ve idéntico a uno activo (añadido
@@ -256,20 +256,20 @@ Atacar estas cuatro mata la mayoría del backlog. Arreglar bug a bug es el error
     resuelto con caché SWR compartida entre las 7 pantallas + widget, B2.)
 60. ✅ Al cambiar a inglés **la moneda pasa de € a $** con los mismos números. Eso no es traducir.
 61. En la UI inglesa las fechas siguen en español ("Next dose lun 27 de jul").
-62. El `<title>` sigue en español en `/en/`.
-63. La tarjeta de "Compartir" mezcla idiomas: en español pone "jose's protocol", "1 day streak".
+62. ✅ El `<title>` sigue en español en `/en/`.
+63. ✅ La tarjeta de "Compartir" mezcla idiomas: en español pone "jose's protocol", "1 day streak".
 64. ✅ "1 días" / "1 days" — falta singular/plural (Inicio e informe). `Informe.streakDays` ahora
     usa plural ICU.
 65. ✅ "1 dosis importadas · 1 péptidos nuevos creados · 1 filas con error" — sin plurales, y no dice
     QUÉ fila falló. `importCsvResult` con plural ICU + `importCsvDoses` devuelve `failedRows`
     (número de fila + motivo), mostrado en `ImportCsvModal`.
-66. El informe solo incluye péptidos, dosis, viales y peso. **Faltan** comidas, hidratación, sueño,
+66. ⏳ (labs y efectos ✅) El informe solo incluye péptidos, dosis, viales y peso. **Faltan** comidas, hidratación, sueño,
     ánimo, efectos secundarios, análisis y fotos.
-67. El desplegable de "Cantidad" del vial permite "ml" como unidad del péptido.
+67. ✅ El desplegable de "Cantidad" del vial permite "ml" como unidad del péptido.
     ⚠️ Parcialmente mitigado en 916b291 (ya no se pinta la concentración absurda), pero **la opción
     sigue ahí**; decidir si se restringe a mg/mcg/UI salvo viales líquidos.
 68. ✅ **Peso, Ejercicio, Hidratación, Sueño, Ánimo y Efectos no tienen borrar ni editar.** (CR-2.)
-69. El 404 es el por defecto de Next.js: en inglés, sin marca, sin cabecera, sin enlace de vuelta.
+69. ✅ El 404 es el por defecto de Next.js: en inglés, sin marca, sin cabecera, sin enlace de vuelta.
 70. "Instalar la app" abre `/descargar` a pantalla completa sin cabecera; no usa el prompt nativo
     de instalación y no cubre escritorio.
 71. **Móvil (372 px):** el icono de sincronizar se solapa con el logotipo "PeptiBrain".
@@ -278,7 +278,7 @@ Atacar estas cuatro mata la mayoría del backlog. Arreglar bug a bug es el error
 73. **Móvil:** el FAB tapa "+ Registrar uso" en Péptidos y el contador de Efectos en Inicio.
 74. "Elegir péptidos específicos" muestra dos "Semaglutida" idénticos.
 75. El acordeón del Centro de ayuda recorta la respuesta (solo 2 líneas visibles).
-76. La FAQ dice "Calculadora (Premium)" aunque el plan Family ya la incluye.
+76. ✅ La FAQ dice "Calculadora (Premium)" aunque el plan Family ya la incluye.
 77. ✅ El teléfono de un familiar acepta 12 dígitos sin validar, mientras Editar perfil sí valida.
 78. Resumen pinta las 60 dosis de golpe, sin paginación ni "cargar más".
 

@@ -40,6 +40,24 @@ export function formatDateSmart(iso: string, locale: string): string {
   });
 }
 
+/**
+ * ¿Se puede marcar como aplicada una dosis programada para este momento?
+ *
+ * El QA marcó como "aplicada" una dosis del 01/01/2030 (bug #8). Eso ensucia la
+ * adherencia, el nivel estimado en el cuerpo y el consumo del vial con algo que
+ * no ha pasado.
+ *
+ * Pero el límite NO puede ser "ahora mismo": ponerse la dosis de las 20:00 a las
+ * 18:30 es lo más normal del mundo, y bloquearlo sería pelearse con el usuario.
+ * El corte es el FINAL DEL DÍA de hoy: hoy sí, mañana no.
+ */
+export function canMarkDoseDone(scheduledAtIso: string, now: Date = new Date()): boolean {
+  const scheduled = new Date(scheduledAtIso).getTime();
+  if (!Number.isFinite(scheduled)) return false;
+  const endOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
+  return scheduled <= endOfToday.getTime();
+}
+
 export type DateRangeKey =
   | "today"
   | "7d"

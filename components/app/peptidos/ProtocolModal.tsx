@@ -375,12 +375,22 @@ export function ProtocolModal({
                     value={weeks}
                     onChange={(e) => setWeeks(e.target.value)}
                     inputMode="numeric"
+                    // El clamp a 24 semanas / 60 dosis existía pero era
+                    // invisible: se podía escribir 9999 y la app decía "creará
+                    // 60 dosis" sin explicar por qué (bug #14).
+                    max={24}
+                    maxLength={2}
                     className="h-11 w-full rounded-lg border border-input bg-background px-3 text-base text-foreground"
                   />
                 </div>
                 <p className="rounded-lg bg-accent px-3 py-2 text-xs text-accent-foreground">
                   {t("protocolWillCreate", { count: doseCount })}
                 </p>
+                {/* Si lo que escribió se recortó, decírselo: si no, cree que ha
+                    programado 9999 semanas. */}
+                {(Number(weeks) > 24 || doseCount >= MAX_PROTOCOL_DOSES) && (
+                  <p className="text-xs text-muted-foreground">{t("protocolCapped")}</p>
+                )}
               </>
             ) : (
               <div className="rounded-lg bg-accent p-3">

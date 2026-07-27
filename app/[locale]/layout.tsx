@@ -25,34 +25,54 @@ const inter = Inter({
   weight: ["400", "500", "600"],
 });
 
-const SITE_TITLE = "PeptiBrain — GLP-1, péptidos y TRT en un solo lugar";
-const SITE_DESC =
-  "Registra tus dosis de GLP-1, péptidos y terapia de testosterona (TRT), tus viales y tu bienestar en un solo lugar. Nunca pierdas el hilo de tu protocolo, y compártelo con quien tú elijas.";
+// El título y la descripción eran fijos en español, así que /en/ se anunciaba
+// en español en la pestaña del navegador, en Google y al compartir el enlace
+// (bug #62). Ahora dependen del idioma de la página.
+const SITE_META = {
+  es: {
+    title: "PeptiBrain — GLP-1, péptidos y TRT en un solo lugar",
+    desc: "Registra tus dosis de GLP-1, péptidos y terapia de testosterona (TRT), tus viales y tu bienestar en un solo lugar. Nunca pierdas el hilo de tu protocolo, y compártelo con quien tú elijas.",
+  },
+  en: {
+    title: "PeptiBrain — GLP-1, peptides and TRT in one place",
+    desc: "Track your GLP-1, peptide and testosterone (TRT) doses, your vials and your wellbeing in one place. Never lose track of your protocol, and share it with whoever you choose.",
+  },
+} as const;
 
-export const metadata: Metadata = {
-  metadataBase: new URL("https://peptibrain.com"),
-  title: SITE_TITLE,
-  description: SITE_DESC,
-  manifest: "/manifest.json",
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: "default",
-    title: "PeptiBrain",
-  },
-  // Vista previa al compartir enlaces (la imagen la aporta app/opengraph-image.tsx).
-  openGraph: {
-    type: "website",
-    siteName: "PeptiBrain",
-    title: SITE_TITLE,
-    description: SITE_DESC,
-    url: "https://peptibrain.com",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: SITE_TITLE,
-    description: SITE_DESC,
-  },
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const meta = SITE_META[locale as keyof typeof SITE_META] || SITE_META.es;
+  const url = locale === "en" ? "https://peptibrain.com/en" : "https://peptibrain.com";
+  return {
+    metadataBase: new URL("https://peptibrain.com"),
+    title: meta.title,
+    description: meta.desc,
+    manifest: "/manifest.json",
+    appleWebApp: {
+      capable: true,
+      statusBarStyle: "default",
+      title: "PeptiBrain",
+    },
+    // Vista previa al compartir enlaces (la imagen la aporta app/opengraph-image.tsx).
+    openGraph: {
+      type: "website",
+      siteName: "PeptiBrain",
+      title: meta.title,
+      description: meta.desc,
+      url,
+      locale,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: meta.title,
+      description: meta.desc,
+    },
+  };
+}
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));

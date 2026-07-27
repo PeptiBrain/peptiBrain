@@ -30,3 +30,8 @@ export function lastInjectionSite(doses: Dose[], peptideId: string): InjectionSi
     .sort((a, b) => new Date(b.scheduledAt).getTime() - new Date(a.scheduledAt).getTime())[0];
   return lastWithSite ? (lastWithSite.injectionSite as InjectionSiteId) : null;
 }
+
+// Vías que NO se inyectan: para ellas no tiene sentido preguntar la zona de
+// inyección (bug #16 del QA: pedía "abdomen/muslo/brazo" para una cápsula oral).
+// En minúsculas para comparar sin depender de cómo se escribió el perfil.
+export const NON_INJECTABLE_ROUTES = ["oral", "intranasal", "tópica", "topica", "sublingual"];

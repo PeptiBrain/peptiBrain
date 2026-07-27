@@ -591,7 +591,8 @@
     "viewAll": "See all in Peptides",
     "peptideFallback": "Your peptide",
     "overdueBy": "Overdue by {days, plural, one {# day} other {# days}}",
-    "overdueToday": "Due today"
+    "overdueToday": "Due today",
+    "scheduledLabel": "Scheduled"
   },
   "DoseToast": {
     "title": "Dose logged!",
@@ -612,7 +613,10 @@
     "close": "Close",
     "download": "Download",
     "share": "Share",
-    "shareDesktopHint": "Your browser can't share directly from a computer — we downloaded the image, upload it from WhatsApp or Instagram."
+    "shareDesktopHint": "Your browser can't share directly from a computer — we downloaded the image, upload it from WhatsApp or Instagram.",
+    "cardTitle": "My protocol",
+    "cardTitleNamed": "{name}'s protocol",
+    "cardStreak": "{count, plural, one {# day streak} other {# day streak}}"
   },
   "DailySummary": {
     "title": "Your day, summed up",
@@ -873,7 +877,10 @@
     "waterOutOfRange": "Check that water amount: it looks off.",
     "targetUnitsOutOfRange": "Check the target units: it looks off.",
     "mustBeGreaterThanZero": "It needs to be greater than 0 to calculate.",
-    "confirmDeleteProvider": "Delete this provider?"
+    "confirmDeleteProvider": "Delete this provider?",
+    "scheduledLabel": "Scheduled",
+    "volumeUnitNote": "With a vial that already comes liquid we can't work out the concentration or estimate what's left.",
+    "protocolCapped": "Up to 60 doses (24 weeks) are created. If you need more, create another protocol afterwards."
   },
   "Salud": {
     "saveError": "Couldn't save. Check the values and try again.",
