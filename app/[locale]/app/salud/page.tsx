@@ -26,6 +26,8 @@ import { PLAUSIBLE, inRange, requiredInRange } from "@/lib/plausible";
 import { logError } from "@/lib/error-log";
 import { useSaveAction } from "@/lib/hooks/useSaveAction";
 import { useAppData } from "@/lib/hooks/useAppData";
+import { labTrend } from "@/lib/lab-trend";
+import { sideEffectPatterns } from "@/lib/side-effect-patterns";
 import { SubTabs, type SubTabItem } from "@/components/app/shell/SubTabs";
 import { PremiumLocked } from "@/components/app/shell/PremiumLocked";
 import { PageSkeleton } from "@/components/app/shell/PageSkeleton";
@@ -100,6 +102,7 @@ export default function SaludPage() {
   const exerciseLogs = data.healthLogs.filter((h) => h.exerciseMin);
   const hydrationLogs = data.healthLogs.filter((h) => h.hydrationMl);
   const sideEffectLogs = data.healthLogs.filter((h) => h.sideEffect);
+  const effectPatterns = sideEffectPatterns(data.healthLogs, data.doses);
   const sleepLogs = data.healthLogs.filter((h) => h.sleepHours);
   const moodLogs = data.healthLogs.filter((h) => h.mood);
 
@@ -338,6 +341,34 @@ export default function SaludPage() {
           ) : (
             <PremiumLocked description={t("hydrationLockedDesc")} />
           ))}
+
+        {tab === "efectos" && isPremium && effectPatterns.length > 0 && (
+          <div className="mb-4 rounded-xl border border-border bg-card p-4">
+            <p className="text-sm font-semibold text-foreground">{t("patternsTitle")}</p>
+            <ul className="mt-2 space-y-2">
+              {effectPatterns.map((p) => (
+                <li key={p.effect} className="text-sm text-foreground">
+                  <span className="font-medium">{p.effect}</span>
+                  <span className="text-muted-foreground">
+                    {" — "}
+                    {t("patternDoseCoincidence", { same: p.sameDayAsDose, total: p.total })}
+                    {p.avgSleepHours !== null && (
+                      <> · {t("patternAvgSleep", { hours: p.avgSleepHours.toFixed(1) })}</>
+                    )}
+                    {p.avgHydrationMl !== null && (
+                      <> · {t("patternAvgHydration", { ml: Math.round(p.avgHydrationMl) })}</>
+                    )}
+                  </span>
+                </li>
+              ))}
+            </ul>
+            {/* Sin esta frase, una coincidencia contada se lee como un
+                diagnóstico. La app describe; quien interpreta es el médico. */}
+            <p className="mt-3 border-t border-border pt-2 text-[11px] text-muted-foreground">
+              {t("patternsDisclaimer")}
+            </p>
+          </div>
+        )}
 
         {tab === "efectos" &&
           (isPremium ? (
@@ -1475,6 +1506,23 @@ function LabResultsList({
                   <span className="font-medium text-foreground">
                     {r.value} {r.unit}
                   </span>
+                  {(() => {
+                    // Solo el HECHO de que cambió respecto a la vez anterior.
+                    // Sin color verde/rojo a propósito: subir es bueno en unos
+                    // marcadores y malo en otros, y decidir eso sería
+                    // interpretar el análisis (ver lib/lab-trend.ts).
+                    const trend = labTrend(r, results);
+                    if (!trend || trend.direction === "same") return null;
+                    const arrow = trend.direction === "up" ? "↑" : "↓";
+                    return (
+                      <span
+                        className="shrink-0 text-[11px] text-muted-foreground"
+                        title={t("labTrendSince", { date: formatDate(trend.previousDate) })}
+                      >
+                        {arrow} {Math.abs(trend.delta).toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                      </span>
+                    );
+                  })()}
                   <button
                     type="button"
                     onClick={() => onDelete(r.id)}

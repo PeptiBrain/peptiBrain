@@ -535,6 +535,16 @@ function ViatesTab({
                           {t("vialLifeDeplete", { date: fmt(life.depletionAt) })}
                         </span>
                       )}
+                      {/* Quedarse sin producto a mitad de protocolo rompe la
+                          racha y la adherencia. Con ~10 días de margen todavía
+                          da tiempo a pedir otro y que llegue. */}
+                      {life.verdict === "deplete" &&
+                        life.daysToDeplete != null &&
+                        life.daysToDeplete <= 10 && (
+                          <span className="mt-1 block font-semibold">
+                            {t("vialReorderNow", { days: life.daysToDeplete })}
+                          </span>
+                        )}
                     </div>
                   );
                 })()}

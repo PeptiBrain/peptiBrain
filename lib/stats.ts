@@ -124,7 +124,10 @@ export type VialLifecycle = {
 // si el vial vencerá antes de gastarse (desperdicio) o si te quedarás sin producto antes.
 export function vialLifecycle(vial: Vial, doses: Dose[], now: Date): VialLifecycle | null {
   if (!vial.bacWater) return null; // solo aplica a viales reconstituidos
-  const reconstitutedAt = new Date(vial.createdAt).getTime();
+  // La cuenta atrás empieza cuando se MEZCLA con agua, no cuando se compra.
+  // Los viales antiguos no tienen ese dato: para ellos se sigue usando la
+  // fecha de alta, igual que antes (no se inventa una caducidad nueva).
+  const reconstitutedAt = new Date(vial.reconstitutedAt || vial.createdAt).getTime();
   if (!Number.isFinite(reconstitutedAt)) return null;
 
   const nowMs = now.getTime();

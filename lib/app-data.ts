@@ -24,6 +24,8 @@ export type Vial = {
   syringeType?: SyringeType;
   cost?: string;
   createdAt: string;
+  /** Cuándo se mezcló con agua. Vacío = se desconoce → se usa createdAt. */
+  reconstitutedAt?: string;
   shares: VialShare[]; // reparto con familiares — puede ser con varios a la vez
 };
 
@@ -321,6 +323,7 @@ export async function loadAppData(): Promise<AppData> {
       syringeType: v.syringe_type || undefined,
       cost: v.cost != null ? String(v.cost) : undefined,
       createdAt: v.created_at,
+      reconstitutedAt: v.reconstituted_at || undefined,
       shares: sharesByVial.get(v.id) || [],
     })),
     doses: (doses || []).map((d) => ({
@@ -495,6 +498,9 @@ export async function addVial(
     bac_water: vial.bacWater ? Number(vial.bacWater) : null,
     syringe_type: vial.syringeType || null,
     cost: vial.cost ? Number(vial.cost) : null,
+    // Si se guarda YA reconstituido y no se indica otra fecha, se asume que se
+    // mezcló hoy — que es lo que hace la gente al registrarlo.
+    reconstituted_at: vial.reconstitutedAt || (vial.bacWater ? new Date().toISOString() : null),
   });
   if (error) {
     if (error.message.includes("PLAN_LIMIT_REACHED")) throw new PlanLimitError();
