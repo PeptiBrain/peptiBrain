@@ -109,7 +109,7 @@ export default function SaludPage() {
   const moodLogs = data.healthLogs.filter((h) => h.mood);
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-5">
+    <div className="mx-auto max-w-3xl px-4 pt-5 pb-28">
       <div className="mb-4 flex items-center justify-between gap-2">
         <div>
           <h1 className="text-balance font-display text-xl font-bold text-foreground">{t("title")}</h1>

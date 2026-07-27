@@ -112,7 +112,15 @@ export async function GET(req: Request) {
     const t = new Date(iso).getTime();
     if (!lastActivity.has(userId) || t > lastActivity.get(userId)!) lastActivity.set(userId, t);
   }
-  for (const d of doses || []) if (d.user_id && d.created_at) bump(d.user_id, d.created_at);
+  // Se usaba created_at: la fecha en que se CREÓ la fila. Un protocolo crea 60
+  // dosis de golpe, así que quien lo programó en mayo y lleva cumpliéndolo cada
+  // semana figuraba como "inactivo desde mayo" — de ahí el "llevas 12 días sin
+  // registrar" a alguien con una racha viva (bug #27). Lo que cuenta como
+  // actividad es CUMPLIR la dosis, no haberla programado.
+  for (const d of doses || []) {
+    if (!d.user_id) continue;
+    if (d.done && d.scheduled_at) bump(d.user_id, d.scheduled_at);
+  }
   for (const h of healthLogs || []) if (h.user_id && h.log_date) bump(h.user_id, `${h.log_date}T12:00:00Z`);
 
   const inactiveCutoff = now.getTime() - WINBACK_INACTIVE_DAYS * 86400000;

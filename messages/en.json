@@ -880,7 +880,8 @@
     "confirmDeleteProvider": "Delete this provider?",
     "scheduledLabel": "Scheduled",
     "volumeUnitNote": "With a vial that already comes liquid we can't work out the concentration or estimate what's left.",
-    "protocolCapped": "Up to 60 doses (24 weeks) are created. If you need more, create another protocol afterwards."
+    "protocolCapped": "Up to 60 doses (24 weeks) are created. If you need more, create another protocol afterwards.",
+    "loadMore": "Show more ({remaining} left)"
   },
   "Salud": {
     "saveError": "Couldn't save. Check the values and try again.",

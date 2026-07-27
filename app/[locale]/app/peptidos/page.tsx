@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense, useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { Plus, Package, Syringe, Beaker, Calculator, Check, Lock, Droplet, Trash2, CalendarClock, Zap, Pill, Wind, ArrowRightLeft, Shuffle, Building2, Users, X } from "lucide-react";
 import Image from "next/image";
@@ -37,7 +38,7 @@ import { PremiumLocked } from "@/components/app/shell/PremiumLocked";
 import { PageSkeleton } from "@/components/app/shell/PageSkeleton";
 import { PEPTIDE_PROFILES } from "@/lib/peptide-profiles";
 import { DateRangeTabs } from "@/components/app/shell/DateRangeTabs";
-import { isWithinRange, canMarkDoseDone, type CustomRange, type DateRangeKey } from "@/lib/date-range";
+import { isWithinRange, canMarkDoseDone, formatDoseWhen, type CustomRange, type DateRangeKey } from "@/lib/date-range";
 import { toMg } from "@/lib/dose-math";
 import { PLAUSIBLE, numberInRange } from "@/lib/plausible";
 import { logError } from "@/lib/error-log";
@@ -139,7 +140,7 @@ export default function PeptidosPage() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-5">
+    <div className="mx-auto max-w-3xl px-4 pt-5 pb-28">
       {/* La acción principal vive ARRIBA DEL TODO, junto al título y visible
           desde cualquier pestaña — no escondida dentro de "Inventario".
           "Péptidos > Inventario > Agregar" eran 3 niveles para la acción más
@@ -900,8 +901,21 @@ function UsosTab({
   onAddPeptide: () => void;
 }) {
   const t = useTranslations("Peptidos");
+  const locale = useLocale();
   const [showForm, setShowForm] = useState(false);
   const [showProtocol, setShowProtocol] = useState(false);
+
+  // "Programar una dosis" en Inicio llega con ?nuevo=uso: se abre el formulario
+  // directamente en vez de dejar al usuario buscando el botón (bug #11).
+  const searchParams = useSearchParams();
+  useEffect(() => {
+    if (searchParams.get("nuevo") === "uso") setShowForm(true);
+  }, [searchParams]);
+
+  // Un protocolo genera hasta 60 dosis y se pintaban todas de golpe (bug #78):
+  // en un móvil de gama media eso es una lista larguísima que además ralentiza
+  // el desplazamiento. Se muestran de 20 en 20.
+  const [visibleCount, setVisibleCount] = useState(20);
   const [peptideId, setPeptideId] = useState(data.peptides[0]?.id || "");
   const [whenInput, setWhenInput] = useState(() => toLocalInputValue(new Date()));
   const [amount, setAmount] = useState("");
@@ -909,6 +923,14 @@ function UsosTab({
   const [forMemberId, setForMemberId] = useState("");
   const [confirmDeleteDoseId, setConfirmDeleteDoseId] = useState<string | null>(null);
   const [deletingDose, setDeletingDose] = useState(false);
+
+  // Nombres que aparecen más de una vez: solo a esos se les añade la vía, para
+  // no ensuciar la lista de quien no tiene duplicados.
+  const duplicatePeptideNames = new Set(
+    data.peptides
+      .map((p) => p.name.trim().toLowerCase())
+      .filter((n, i, arr) => arr.indexOf(n) !== i)
+  );
 
   const sorted = [...data.doses]
     .filter((d) => isWithinRange(d.scheduledAt, range, customRange))
@@ -1032,7 +1054,13 @@ function UsosTab({
               >
                 {data.peptides.map((p) => (
                   <option key={p.id} value={p.id}>
-                    {p.name}
+                    {/* Si hay dos con el mismo nombre (pasaba por el triple
+                        clic, ya arreglado, pero los duplicados viejos siguen
+                        ahí), se añade la vía para poder distinguirlos: elegir a
+                        ciegas parte las estadísticas en dos (bug #20/#74). */}
+                    {duplicatePeptideNames.has(p.name.trim().toLowerCase())
+                      ? `${p.name} · ${p.route}`
+                      : p.name}
                   </option>
                 ))}
               </select>
@@ -1131,7 +1159,7 @@ function UsosTab({
         </div>
       ) : (
         <div className="space-y-2 sm:grid sm:grid-cols-2 sm:gap-2 sm:space-y-0">
-          {sorted.map((d) => {
+          {sorted.slice(0, visibleCount).map((d) => {
             const peptide = data.peptides.find((p) => p.id === d.peptideId);
             const recipient = d.forMemberId ? data.familyMembers.find((m) => m.id === d.forMemberId) : undefined;
             return (
@@ -1140,7 +1168,7 @@ function UsosTab({
                   <div className="min-w-0">
                     <p className="truncate text-sm font-medium text-foreground">{peptide?.name || "—"}</p>
                     <p className="truncate text-xs text-muted-foreground">
-                      {d.when} · {d.amount} {d.unit}
+                      {formatDoseWhen(d.scheduledAt, locale)} · {d.amount} {d.unit}
                       {recipient && ` · ${t("doseForMember", { name: recipient.name })}`}
                     </p>
                   </div>
@@ -1199,6 +1227,16 @@ function UsosTab({
             );
           })}
         </div>
+      )}
+
+      {sorted.length > visibleCount && (
+        <button
+          type="button"
+          onClick={() => setVisibleCount((c) => c + 20)}
+          className="mt-3 h-11 w-full rounded-lg border border-border text-sm font-medium text-foreground hover:border-primary hover:text-primary"
+        >
+          {t("loadMore", { remaining: sorted.length - visibleCount })}
+        </button>
       )}
     </div>
   );

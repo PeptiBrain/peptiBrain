@@ -880,7 +880,8 @@
     "confirmDeleteProvider": "¿Eliminar este proveedor?",
     "scheduledLabel": "Programada",
     "volumeUnitNote": "Con un vial que ya viene líquido no se puede calcular la concentración ni estimar cuánto queda.",
-    "protocolCapped": "Se crean como máximo 60 dosis (24 semanas). Si necesitas más, crea otro protocolo después."
+    "protocolCapped": "Se crean como máximo 60 dosis (24 semanas). Si necesitas más, crea otro protocolo después.",
+    "loadMore": "Ver más ({remaining} restantes)"
   },
   "Salud": {
     "saveError": "No se pudo guardar. Revisa los datos e inténtalo otra vez.",

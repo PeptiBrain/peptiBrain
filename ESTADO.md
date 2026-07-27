@@ -214,7 +214,7 @@ Atacar estas cuatro mata la mayoría del backlog. Arreglar bug a bug es el error
 
 ### 🟠 ALTOS — funcionalidad
 10. ✅ Asistente responde cortado y con **markdown crudo** (`**6 péptidos**`), y trunca la respuesta.
-11. **"Programar una dosis" no programa nada**: navega a Péptidos › Resumen sin abrir formulario.
+11. ✅ **"Programar una dosis" no programa nada**: navega a Péptidos › Resumen sin abrir formulario.
 12. ✅ Navegación lenta o perdida: pulsar "Péptidos" a veces no hace nada; cuando funciona tarda 5-8 s
     mostrando el dashboard viejo. (Ver CR-3 — resuelto con caché SWR compartida, B2.)
 13. ✅ **Badge rojo de dosis pendientes no se actualiza** al aplicar una dosis (seguía en 60), y cuenta
@@ -226,7 +226,7 @@ Atacar estas cuatro mata la mayoría del backlog. Arreglar bug a bug es el error
 17. Lista de la compra incoherente: "Añade un vial" cuando sí lo tiene; sugiere jeringas para oral.
 18. ✅ Confirmación equivocada: al borrar un **proveedor** pregunta "¿Eliminar este **vial**?".
 19. Protocolo guardado en la calculadora se lista con un "—" en vez de un resumen.
-20. Péptidos duplicados indistinguibles en el desplegable de "Registrar uso". (Ver 51 y 74.)
+20. ✅ Péptidos duplicados indistinguibles en el desplegable de "Registrar uso". (Ver 51 y 74.)
 21. ✅ Campos "(opcional)" que son obligatorios: "Nombre del péptido (opcional)" en crear péptido
     (nuevo placeholder solo ahí). "Efecto secundario — opcional" no se encontró tal cual (ya no dice eso).
 22. ✅ Proveedores sin validación: web `javascript:alert(1)`, teléfono `abcdefg`, email inválido.
@@ -236,9 +236,9 @@ Atacar estas cuatro mata la mayoría del backlog. Arreglar bug a bug es el error
 23. ✅ **Peso y Ejercicio no se pueden editar ni borrar.** (Ver CR-2 y 68.)
 24. Métricas que se contradicen: Estadísticas "Adherencia — Sin datos" con 1 dosis aplicada;
     Inicio "Dosis cumplidas 0 de 0" mientras Estadísticas dice 1.
-25. Gráfica "Dosis en el tiempo" etiqueta el eje con horas (`10h`) aunque el periodo sea "Histórico".
+25. ✅ Gráfica "Dosis en el tiempo" etiqueta el eje con horas (`10h`) aunque el periodo sea "Histórico".
 26. ✅ Filtro "Personalizado" tras recarga mostraba datos fuera de rango — **ARREGLADO** (916b291).
-27. Notificación incoherente: "Llevas 12 días sin registrar" con racha de 1 día.
+27. ✅ Notificación incoherente: "Llevas 12 días sin registrar" con racha de 1 día.
 28. ✅ "Vencida hace 0 días" (debería ser "vence hoy").
 29. ✅ Tour guiado estático: dice "vamos a verlas una por una" pero no navega ni resalta, sin botón
     Atrás, y menciona "Con Premium" en una calculadora que el usuario ya tiene.
@@ -255,7 +255,7 @@ Atacar estas cuatro mata la mayoría del backlog. Arreglar bug a bug es el error
 59. ✅ **Todas las tablas se piden DOS veces por carga** (~24 peticiones en vez de 12). (Ver CR-3 —
     resuelto con caché SWR compartida entre las 7 pantallas + widget, B2.)
 60. ✅ Al cambiar a inglés **la moneda pasa de € a $** con los mismos números. Eso no es traducir.
-61. En la UI inglesa las fechas siguen en español ("Next dose lun 27 de jul").
+61. ✅ En la UI inglesa las fechas siguen en español ("Next dose lun 27 de jul").
 62. ✅ El `<title>` sigue en español en `/en/`.
 63. ✅ La tarjeta de "Compartir" mezcla idiomas: en español pone "jose's protocol", "1 day streak".
 64. ✅ "1 días" / "1 days" — falta singular/plural (Inicio e informe). `Informe.streakDays` ahora
@@ -272,15 +272,15 @@ Atacar estas cuatro mata la mayoría del backlog. Arreglar bug a bug es el error
 69. ✅ El 404 es el por defecto de Next.js: en inglés, sin marca, sin cabecera, sin enlace de vuelta.
 70. "Instalar la app" abre `/descargar` a pantalla completa sin cabecera; no usa el prompt nativo
     de instalación y no cubre escritorio.
-71. **Móvil (372 px):** el icono de sincronizar se solapa con el logotipo "PeptiBrain".
-72. **Móvil:** en Familia el subtítulo se solapa con los botones y el banner del plan queda en una
+71. ✅ **Móvil (372 px):** el icono de sincronizar se solapa con el logotipo "PeptiBrain".
+72. ✅ **Móvil:** en Familia el subtítulo se solapa con los botones y el banner del plan queda en una
     columna de ~10 caracteres.
-73. **Móvil:** el FAB tapa "+ Registrar uso" en Péptidos y el contador de Efectos en Inicio.
-74. "Elegir péptidos específicos" muestra dos "Semaglutida" idénticos.
+73. ✅ **Móvil:** el FAB tapa "+ Registrar uso" en Péptidos y el contador de Efectos en Inicio.
+74. ✅ "Elegir péptidos específicos" muestra dos "Semaglutida" idénticos.
 75. El acordeón del Centro de ayuda recorta la respuesta (solo 2 líneas visibles).
 76. ✅ La FAQ dice "Calculadora (Premium)" aunque el plan Family ya la incluye.
 77. ✅ El teléfono de un familiar acepta 12 dígitos sin validar, mientras Editar perfil sí valida.
-78. Resumen pinta las 60 dosis de golpe, sin paginación ni "cargar más".
+78. ✅ Resumen pinta las 60 dosis de golpe, sin paginación ni "cargar más".
 
 ### 🟡 MENORES — copy y UI
 33. ✅ Capitalización: "Julio De 2026", "Domingo, 26 De Julio" (`capitalize` afecta también a "de").

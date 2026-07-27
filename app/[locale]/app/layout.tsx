@@ -49,11 +49,14 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         role="banner"
         className="sticky top-0 z-20 flex h-[57px] items-center justify-between border-b border-border bg-background/95 px-4 backdrop-blur print:hidden"
       >
-        <Link href="/app" className="flex items-center gap-2">
-          <Image src="/peptibrain-isotipo.svg" alt="" width={26} height={26} />
-          <span className="font-display text-base font-bold text-foreground">PeptiBrain</span>
+        {/* min-w-0 + truncate: a 372px los 4 controles de la derecha no dejaban
+            sitio y el logo se solapaba con el de sincronizar (bug #71). Ahora el
+            que cede es el texto de la marca, no los botones. */}
+        <Link href="/app" className="flex min-w-0 items-center gap-2">
+          <Image src="/peptibrain-isotipo.svg" alt="" width={26} height={26} className="shrink-0" />
+          <span className="truncate font-display text-base font-bold text-foreground">PeptiBrain</span>
         </Link>
-        <div className="flex items-center gap-1">
+        <div className="flex shrink-0 items-center gap-1">
           <RefreshButton />
           <NotificationBell />
           <ThemeToggle />

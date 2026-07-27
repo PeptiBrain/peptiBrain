@@ -58,6 +58,27 @@ export function canMarkDoseDone(scheduledAtIso: string, now: Date = new Date()):
   return scheduled <= endOfToday.getTime();
 }
 
+/**
+ * Etiqueta de "cuándo" de una dosis, siempre en el idioma ACTUAL de la app.
+ *
+ * Cada dosis guarda un texto `when` ya formateado, generado con el idioma del
+ * navegador en el momento de crearla. Resultado: quien creó sus dosis en
+ * español las seguía viendo en español dentro de la interfaz en inglés — "Next
+ * dose lun 27 de jul" (bug #61). El texto guardado no se puede traducir a
+ * posteriori, así que se ignora y se vuelve a formatear desde la fecha real.
+ */
+export function formatDoseWhen(scheduledAtIso: string, locale: string): string {
+  const d = new Date(scheduledAtIso);
+  if (Number.isNaN(d.getTime())) return "";
+  return d.toLocaleString(locale, {
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
+
 export type DateRangeKey =
   | "today"
   | "7d"

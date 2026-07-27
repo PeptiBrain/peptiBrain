@@ -206,10 +206,14 @@ export default function FamiliaPage() {
     }
   }
 
+  // pb-28: el botón flotante de dosis (fixed bottom-6) tapaba los controles del
+  // final de la página en móvil (bug #73).
   return (
-    <div className="mx-auto max-w-3xl px-4 py-5">
-      <div className="mb-1 flex items-center justify-between">
-        <div>
+    <div className="mx-auto max-w-3xl px-4 pt-5 pb-28">
+      {/* flex-wrap + min-w-0: a 372px el subtítulo se metía debajo de los
+          botones y quedaban encima uno del otro (bug #72). */}
+      <div className="mb-1 flex flex-wrap items-start justify-between gap-2">
+        <div className="min-w-0 flex-1">
           <h1 className="text-balance font-display text-xl font-bold text-foreground">{t("title")}</h1>
           <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
         </div>

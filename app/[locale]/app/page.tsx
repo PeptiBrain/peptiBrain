@@ -152,7 +152,7 @@ export default function InicioPage() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-5">
+    <div className="mx-auto max-w-3xl px-4 pt-5 pb-28">
       <div className="mb-2 flex flex-wrap justify-end gap-2">
         <button
           type="button"
@@ -262,8 +262,11 @@ export default function InicioPage() {
               <p className="text-xs text-muted-foreground">{t("noDosesPendingHint")}</p>
             </div>
           </div>
+          {/* Antes llevaba a Péptidos y ahí se quedaba: el usuario pulsaba
+              "Programar una dosis" y tenía que buscar el botón otra vez
+              (bug #11). El parámetro abre el formulario directamente. */}
           <Link
-            href="/app/peptidos"
+            href="/app/peptidos?nuevo=uso"
             className="mt-3 inline-flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-primary text-sm font-semibold text-primary-foreground transition-transform active:scale-97"
           >
             <Plus className="size-4" aria-hidden /> {t("scheduleDose")}

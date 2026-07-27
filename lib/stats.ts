@@ -278,8 +278,11 @@ export type Bucket = { label: string; value: number };
 
 type Granularity = "hour" | "day" | "week" | "month" | "year";
 
-function pickGranularity(spanDays: number): Granularity {
-  if (spanDays <= 2) return "hour";
+function pickGranularity(spanDays: number, rangeKey?: DateRangeKey): Granularity {
+  // Las horas solo tienen sentido si el usuario PIDIÓ ver hoy. En "Histórico"
+  // el eje salía en horas ("10h") si resultaba que todas sus dosis eran de hoy
+  // — un histórico medido en horas se lee como un error (bug #25).
+  if (spanDays <= 2) return rangeKey && rangeKey !== "today" ? "day" : "hour";
   if (spanDays <= 45) return "day";
   if (spanDays <= 130) return "week";
   if (spanDays <= 900) return "month";
@@ -335,7 +338,7 @@ export function doseBuckets(
   }
 
   const spanDays = Math.max(1, (end.getTime() - start.getTime()) / 86400000);
-  const g = pickGranularity(spanDays);
+  const g = pickGranularity(spanDays, key);
 
   // Genera los buckets vacíos en orden
   const buckets: { key: string; label: string; value: number }[] = [];

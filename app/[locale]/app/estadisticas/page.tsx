@@ -138,7 +138,7 @@ export default function EstadisticasPage() {
   };
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-5">
+    <div className="mx-auto max-w-3xl px-4 pt-5 pb-28">
       <div className="mb-4 flex items-start justify-between gap-3">
         <div>
           <h1 className="font-display text-xl font-bold text-foreground">{t("title")}</h1>
