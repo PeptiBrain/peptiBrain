@@ -111,7 +111,7 @@
     "premiumFeature1": "Péptidos y viales ilimitados",
     "premiumFeature2": "Calculadora y conversor de unidades",
     "premiumFeature3": "Asistente IA",
-    "premiumFeature4": "Salud completa (comidas, hidratación, efectos secundarios)",
+    "premiumFeature4": "Salud completa (fotos, análisis, hidratación, sueño, ánimo)",
     "premiumFeature5": "Crear protocolos automáticos",
     "premiumFeature6": "Exporta tu protocolo en PDF",
     "familyName": "Family",
@@ -321,7 +321,7 @@
     "premiumPeriod": "/mes",
     "premiumFeature1": "Péptidos y viales ilimitados",
     "premiumFeature2": "Calculadora de reconstitución y Asistente IA",
-    "premiumFeature3": "Salud completa (comidas, hidratación, efectos)",
+    "premiumFeature3": "Salud completa (fotos, análisis, hidratación, sueño, ánimo)",
     "familyName": "Family",
     "familyPeriod": "/mes",
     "familyFeature1": "Todo lo de Premium",
@@ -696,7 +696,9 @@
     "weightSub": "de {first} a {last} kg",
     "sideEffects": "Efectos secundarios",
     "sideEffectsNone": "Ninguno registrado",
-    "sideEffectsSub": "registrados"
+    "sideEffectsSub": "registrados",
+    "rangeLockedDesc": "Ver más de 30 días de historial es parte de Premium — así puedes seguir tu progreso completo, no solo el último mes.",
+    "rangePremiumTag": "Premium"
   },
   "Peptidos": {
     "title": "Péptidos",

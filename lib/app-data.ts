@@ -633,6 +633,13 @@ export async function addProtocol(
     weeks: number;
   }
 ): Promise<AppData> {
+  // "Crear protocolos automáticos" se vende como feature Premium (paywall,
+  // Pricing) pero no tenía ningún control real: un plan gratis podía generar
+  // sus 60 dosis programadas igual que un Premium. Mismo patrón que el resto
+  // de límites de plan (PlanLimitError + banner que ya existe en la UI).
+  if (data.plan === "free") {
+    throw new PlanLimitError();
+  }
   const { supabase, user } = await requireUser();
   const [hours, minutes] = protocol.time.split(":").map(Number);
   const totalDays = protocol.weeks * 7;
@@ -680,6 +687,11 @@ export async function addTitrationProtocol(
     steps: TitrationStep[];
   }
 ): Promise<AppData> {
+  // Ver el comentario equivalente en addProtocol: sin este control, la
+  // titulación (la versión MÁS elaborada de esta feature) era gratis.
+  if (data.plan === "free") {
+    throw new PlanLimitError();
+  }
   const { supabase, user } = await requireUser();
   const [hours, minutes] = protocol.time.split(":").map(Number);
   const cursor = new Date(`${protocol.startDate}T00:00:00`);

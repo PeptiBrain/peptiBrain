@@ -111,7 +111,7 @@
     "premiumFeature1": "Unlimited peptides and vials",
     "premiumFeature2": "Calculator and unit converter",
     "premiumFeature3": "AI Assistant",
-    "premiumFeature4": "Full health tracking (meals, hydration, side effects)",
+    "premiumFeature4": "Full health tracking (photos, labs, hydration, sleep, mood)",
     "premiumFeature5": "Automatic protocols",
     "premiumFeature6": "Export your protocol as PDF",
     "familyName": "Family",
@@ -321,7 +321,7 @@
     "premiumPeriod": "/mo",
     "premiumFeature1": "Unlimited peptides and vials",
     "premiumFeature2": "Reconstitution calculator and AI Assistant",
-    "premiumFeature3": "Full health tracking (meals, hydration, effects)",
+    "premiumFeature3": "Full health tracking (photos, labs, hydration, sleep, mood)",
     "familyName": "Family",
     "familyPeriod": "/mo",
     "familyFeature1": "Everything in Premium",
@@ -696,7 +696,9 @@
     "weightSub": "from {first} to {last} kg",
     "sideEffects": "Side effects",
     "sideEffectsNone": "None logged",
-    "sideEffectsSub": "logged"
+    "sideEffectsSub": "logged",
+    "rangeLockedDesc": "Seeing more than 30 days of history is part of Premium — so you can follow your full progress, not just the last month.",
+    "rangePremiumTag": "Premium"
   },
   "Peptidos": {
     "title": "Peptides",

@@ -1033,13 +1033,27 @@ function UsosTab({
       )}
 
       <div className="mb-3 flex justify-end gap-2">
-        <button
-          type="button"
-          onClick={() => setShowProtocol(true)}
-          className="flex h-10 items-center gap-1.5 rounded-full border border-border bg-card px-4 text-sm font-semibold text-foreground transition-transform active:scale-97"
-        >
-          <CalendarClock className="size-4" aria-hidden /> {t("createProtocol")}
-        </button>
+        {/* "Crear protocolo" es feature Premium (Pricing/Paywall) pero antes
+            se podía usar gratis sin ningún aviso — mismo patrón que el botón
+            del Asistente IA en Inicio: manda al paywall en vez de abrir el
+            modal para quien no puede usarlo. */}
+        {data.plan === "free" ? (
+          <Link
+            href="/paywall"
+            className="flex h-10 items-center gap-1.5 rounded-full border border-border bg-card px-4 text-sm font-semibold text-foreground transition-transform active:scale-97"
+          >
+            <CalendarClock className="size-4" aria-hidden /> {t("createProtocol")}
+            <Lock className="size-3.5" aria-hidden />
+          </Link>
+        ) : (
+          <button
+            type="button"
+            onClick={() => setShowProtocol(true)}
+            className="flex h-10 items-center gap-1.5 rounded-full border border-border bg-card px-4 text-sm font-semibold text-foreground transition-transform active:scale-97"
+          >
+            <CalendarClock className="size-4" aria-hidden /> {t("createProtocol")}
+          </button>
+        )}
         <button
           type="button"
           onClick={() => setShowForm((s) => !s)}

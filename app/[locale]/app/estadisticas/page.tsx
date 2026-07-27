@@ -34,6 +34,7 @@ import { AnimatedNumber } from "@/components/app/shell/AnimatedNumber";
 import { BarChart, DonutChart } from "@/components/app/stats/Charts";
 import { BodyLevelChartSection } from "@/components/app/stats/BodyLevelChartSection";
 import { PageSkeleton } from "@/components/app/shell/PageSkeleton";
+import { PremiumLocked } from "@/components/app/shell/PremiumLocked";
 import { STATS_RANGE_KEYS, type DateRangeKey, type CustomRange } from "@/lib/date-range";
 import { USER_DATA_CURRENCY, type Locale } from "@/i18n/routing";
 
@@ -52,6 +53,10 @@ const RANGE_LABEL_KEY: Record<DateRangeKey, string> = {
   custom: "custom",
 };
 
+// El histórico completo (>30 días) era gratis: ninguna razón real para pasar
+// a Premium en la pantalla que más "engancha" con el progreso propio.
+const FREE_STATS_RANGES = new Set<DateRangeKey>(["today", "7d", "30d"]);
+
 export default function EstadisticasPage() {
   const t = useTranslations("Stats");
   const tr = useTranslations("DateRange");
@@ -66,6 +71,16 @@ export default function EstadisticasPage() {
   useEffect(() => {
     loadFamilySharedData().then(setFamilyData);
   }, []);
+
+  // Si un usuario gratis llega con un rango largo guardado (o el default
+  // "all" antes de que sepamos su plan), lo bajamos al rango permitido en vez
+  // de dejarlo mirando un muro de "Premium" apenas entra a la pantalla.
+  useEffect(() => {
+    if (data && data.plan === "free" && !FREE_STATS_RANGES.has(range)) {
+      setRange("30d");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data?.plan]);
 
   const hasFamilyData = (familyData?.length || 0) > 0;
   const combined = viewMode === "family" && hasFamilyData;
@@ -127,6 +142,8 @@ export default function EstadisticasPage() {
 
   if (!data || !filtered || !stats) return <PageSkeleton tabs cards={4} />;
 
+  const isPremium = data.plan !== "free";
+  const rangeLocked = !isPremium && !FREE_STATS_RANGES.has(range);
   const hasData = data.peptides.length > 0 || data.doses.length > 0;
   const maxDoses = stats.usage[0]?.doseCount || 1;
   const chartHasValues = buckets.some((b) => b.value > 0);
@@ -197,6 +214,7 @@ export default function EstadisticasPage() {
               {STATS_RANGE_KEYS.map((k) => (
                 <option key={k} value={k}>
                   {tr(RANGE_LABEL_KEY[k])}
+                  {!isPremium && !FREE_STATS_RANGES.has(k) ? ` 🔒 ${t("rangePremiumTag")}` : ""}
                 </option>
               ))}
             </select>
@@ -219,6 +237,10 @@ export default function EstadisticasPage() {
             )}
           </div>
 
+          {rangeLocked ? (
+            <PremiumLocked description={t("rangeLockedDesc")} />
+          ) : (
+            <>
           {/* HÉROE: dinero invertido */}
           <motion.div
             {...fade}
@@ -444,6 +466,8 @@ export default function EstadisticasPage() {
               sub={stats.sideEffects === 0 ? t("sideEffectsNone") : t("sideEffectsSub")}
             />
           </motion.div>
+            </>
+          )}
         </div>
       )}
     </div>
