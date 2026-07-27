@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { ShoppingCart, Beaker, Syringe } from "lucide-react";
+import { Link } from "@/i18n/navigation";
 import type { Dose, Peptide, Vial } from "@/lib/app-data";
 
 const DAY_MS = 86400000;
@@ -102,6 +103,12 @@ export function ShoppingList({
         <ShoppingCart className="mx-auto mb-2 size-7 text-muted-foreground" aria-hidden />
         <p className="text-sm font-medium text-foreground">{t("shoppingEmptyTitle")}</p>
         <p className="mx-auto mt-1 max-w-[20rem] text-xs text-muted-foreground">{t("shoppingEmptyHint")}</p>
+        <Link
+          href="/app/peptidos?nuevo=uso"
+          className="mt-4 inline-flex h-10 items-center justify-center rounded-full bg-primary px-4 text-xs font-semibold text-primary-foreground"
+        >
+          {t("registerUse")}
+        </Link>
       </div>
     );
   }

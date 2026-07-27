@@ -404,7 +404,10 @@
     "lockedDesc": "Generate the full report of your protocol (vials, doses, weight and adherence) as a PDF with the Premium plan.",
     "lockedCta": "See Premium plans",
     "footerNote": "This report is a summary of your personal PeptiBrain journal. It is not medical advice.",
-    "confidential": "Personal document — do not share with third parties without your consent."
+    "confidential": "Personal document — do not share with third parties without your consent.",
+    "emptyReportTitle": "Nothing to report yet",
+    "emptyReportBody": "Log your first peptide and dose so this report has data to bring to your doctor.",
+    "emptyReportCta": "Log my first dose"
   },
   "Notifications": {
     "title": "Notifications",
@@ -456,7 +459,9 @@
     "install1Q": "How do I install the app on my iPhone or Android?",
     "install1A": "PeptiBrain works in any browser. To install it as an app: on iPhone (Safari) tap Share → 'Add to Home Screen'; on Android (Chrome) tap the ⋮ menu → 'Install app'.",
     "contact1Q": "I can't find what I'm looking for, how do I contact you?",
-    "contact1A": "Email us at hello@peptibrain.com with your question and your account email. We'll reply as soon as possible."
+    "contact1A": "Email us at hello@peptibrain.com with your question and your account email. We'll reply as soon as possible.",
+    "clearSearch": "Clear search",
+    "contactSupportCta": "Contact support"
   },
   "DateRange": {
     "today": "Today",
@@ -881,7 +886,8 @@
     "scheduledLabel": "Scheduled",
     "volumeUnitNote": "With a vial that already comes liquid we can't work out the concentration or estimate what's left.",
     "protocolCapped": "Up to 60 doses (24 weeks) are created. If you need more, create another protocol afterwards.",
-    "loadMore": "Show more ({remaining} left)"
+    "loadMore": "Show more ({remaining} left)",
+    "vialsEmptyCta": "See my peptides"
   },
   "Salud": {
     "saveError": "Couldn't save. Check the values and try again.",

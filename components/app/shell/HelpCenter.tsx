@@ -122,7 +122,24 @@ export function HelpCenter({ open, onClose }: { open: boolean; onClose: () => vo
             {/* Lista con scroll */}
             <div className="min-h-0 flex-1 overflow-y-auto p-4">
               {items.length === 0 ? (
-                <p className="py-8 text-center text-sm text-muted-foreground">{t("noResults")}</p>
+                <div className="py-8 text-center">
+                  <p className="text-sm text-muted-foreground">{t("noResults")}</p>
+                  <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setQuery("")}
+                      className="h-10 rounded-full border border-border px-4 text-xs font-semibold text-foreground"
+                    >
+                      {t("clearSearch")}
+                    </button>
+                    <a
+                      href={`mailto:${SUPPORT_EMAIL}`}
+                      className="flex h-10 items-center rounded-full bg-primary px-4 text-xs font-semibold text-primary-foreground"
+                    >
+                      {t("contactSupportCta")}
+                    </a>
+                  </div>
+                </div>
               ) : (
                 <ul className="space-y-2">
                   {items.map((i) => {

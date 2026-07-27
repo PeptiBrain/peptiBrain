@@ -27,6 +27,7 @@ export function ProtocolModal({
   doses,
   onSave,
   onSaveTitration,
+  onAddPeptide,
 }: {
   open: boolean;
   onClose: () => void;
@@ -50,6 +51,7 @@ export function ProtocolModal({
     intervalDays: number;
     steps: TitrationStep[];
   }) => Promise<void>;
+  onAddPeptide: () => void;
 }) {
   const t = useTranslations("Peptidos");
   const [mode, setMode] = useState<"fixed" | "titration">("fixed");
@@ -174,7 +176,16 @@ export function ProtocolModal({
     >
       <div className="space-y-3">
         {peptides.length === 0 ? (
-          <p className="text-sm text-muted-foreground">{t("createProtocolNoPeptides")}</p>
+          <div className="rounded-xl border border-dashed border-border p-6 text-center">
+            <p className="text-sm text-muted-foreground">{t("createProtocolNoPeptides")}</p>
+            <button
+              type="button"
+              onClick={onAddPeptide}
+              className="mt-4 inline-flex h-11 items-center justify-center gap-1.5 rounded-lg bg-primary px-5 text-sm font-semibold text-primary-foreground transition-transform active:scale-97"
+            >
+              <Plus className="size-4" aria-hidden /> {t("addPeptideAria")}
+            </button>
+          </div>
         ) : (
           <>
             <div className="grid grid-cols-2 gap-2">

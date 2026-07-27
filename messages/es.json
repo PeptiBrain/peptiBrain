@@ -404,7 +404,10 @@
     "lockedDesc": "Genera el informe completo de tu protocolo (viales, dosis, peso y adherencia) en PDF con el plan Premium.",
     "lockedCta": "Ver planes Premium",
     "footerNote": "Este informe es un resumen de tu diario personal en PeptiBrain. No constituye consejo médico.",
-    "confidential": "Documento personal — no compartir con terceros sin tu consentimiento."
+    "confidential": "Documento personal — no compartir con terceros sin tu consentimiento.",
+    "emptyReportTitle": "Todavía no hay nada que informar",
+    "emptyReportBody": "Registra tu primer péptido y tu primera dosis para que este informe tenga datos que llevar al médico.",
+    "emptyReportCta": "Registrar mi primer uso"
   },
   "Notifications": {
     "title": "Notificaciones",
@@ -456,7 +459,9 @@
     "install1Q": "¿Cómo instalo la app en mi iPhone o Android?",
     "install1A": "PeptiBrain funciona en cualquier navegador. Para instalarla como app: en iPhone (Safari) toca Compartir → 'Añadir a pantalla de inicio'; en Android (Chrome) toca el menú ⋮ → 'Instalar aplicación'.",
     "contact1Q": "No encuentro lo que busco, ¿cómo os contacto?",
-    "contact1A": "Escríbenos a hello@peptibrain.com con tu duda y el correo de tu cuenta. Respondemos lo antes posible."
+    "contact1A": "Escríbenos a hello@peptibrain.com con tu duda y el correo de tu cuenta. Respondemos lo antes posible.",
+    "clearSearch": "Limpiar búsqueda",
+    "contactSupportCta": "Escribir a soporte"
   },
   "DateRange": {
     "today": "Hoy",
@@ -881,7 +886,8 @@
     "scheduledLabel": "Programada",
     "volumeUnitNote": "Con un vial que ya viene líquido no se puede calcular la concentración ni estimar cuánto queda.",
     "protocolCapped": "Se crean como máximo 60 dosis (24 semanas). Si necesitas más, crea otro protocolo después.",
-    "loadMore": "Ver más ({remaining} restantes)"
+    "loadMore": "Ver más ({remaining} restantes)",
+    "vialsEmptyCta": "Ver mis péptidos"
   },
   "Salud": {
     "saveError": "No se pudo guardar. Revisa los datos e inténtalo otra vez.",

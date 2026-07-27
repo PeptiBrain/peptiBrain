@@ -76,6 +76,9 @@ export default function InformePage() {
     return data!.peptides.find((p) => p.id === id)?.name || "—";
   }
 
+  const hasAnyData =
+    data.peptides.length > 0 || recentDoses.length > 0 || data.vials.length > 0 || recentWeights.length > 0;
+
   return (
     <div className="mx-auto max-w-2xl px-4 py-6 print:max-w-none print:px-0 print:py-0">
       <div className="mb-6 flex items-center justify-between print:hidden">
@@ -90,6 +93,19 @@ export default function InformePage() {
           <Printer className="size-4" aria-hidden /> {t("print")}
         </button>
       </div>
+
+      {!hasAnyData && (
+        <div className="mb-4 rounded-2xl border border-dashed border-border bg-card p-6 text-center print:hidden">
+          <p className="text-sm font-semibold text-foreground">{t("emptyReportTitle")}</p>
+          <p className="mx-auto mt-1 max-w-xs text-xs text-muted-foreground">{t("emptyReportBody")}</p>
+          <Link
+            href="/app/peptidos?nuevo=uso"
+            className="mt-4 inline-flex h-10 items-center justify-center rounded-full bg-primary px-4 text-sm font-semibold text-primary-foreground"
+          >
+            {t("emptyReportCta")}
+          </Link>
+        </div>
+      )}
 
       <div className="rounded-2xl border border-border bg-card p-6 print:rounded-none print:border-none print:p-0 print:shadow-none">
         <div className="flex items-center justify-between border-b border-border pb-4">

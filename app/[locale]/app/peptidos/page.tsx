@@ -320,7 +320,7 @@ export default function PeptidosPage() {
                 </button>
               </div>
             ) : (
-              <div className="space-y-3 sm:grid sm:grid-cols-2 sm:gap-3 sm:space-y-0">
+              <div id="peptides-grid" className="space-y-3 sm:grid sm:grid-cols-2 sm:gap-3 sm:space-y-0">
                 {data.peptides.map((p) => (
                   <PeptideCard key={p.id} peptide={p} data={data} onChange={setData} />
                 ))}
@@ -329,7 +329,12 @@ export default function PeptidosPage() {
 
             {/* Viales dentro del Inventario */}
             <div className="mt-4 border-t border-border pt-4">
-              <ViatesTab data={data} onChange={setData} t={t} />
+              <ViatesTab
+                data={data}
+                onChange={setData}
+                t={t}
+                onAddPeptide={() => setShowForm(true)}
+              />
             </div>
 
             {/* Lista de la compra para las próximas semanas */}
@@ -406,10 +411,12 @@ function ViatesTab({
   data,
   onChange,
   t,
+  onAddPeptide,
 }: {
   data: AppData;
   onChange: (next: AppData) => void;
   t: (key: string, values?: Record<string, string | number>) => string;
+  onAddPeptide: () => void;
 }) {
   const locale = useLocale();
   const [confirmId, setConfirmId] = useState<string | null>(null);
@@ -429,6 +436,25 @@ function ViatesTab({
           <Beaker className="mx-auto mb-2 size-8 text-muted-foreground" aria-hidden />
           <p className="text-sm text-muted-foreground">{t("vialsEmptyState")}</p>
           <p className="mt-1 text-xs text-muted-foreground">{t("vialsHint")}</p>
+          {data.peptides.length === 0 ? (
+            <button
+              type="button"
+              onClick={onAddPeptide}
+              className="mt-4 inline-flex h-11 items-center justify-center gap-1.5 rounded-lg bg-primary px-5 text-sm font-semibold text-primary-foreground transition-transform active:scale-97"
+            >
+              <Plus className="size-4" aria-hidden /> {t("addPeptideAria")}
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={() =>
+                document.getElementById("peptides-grid")?.scrollIntoView({ behavior: "smooth", block: "start" })
+              }
+              className="mt-4 inline-flex h-11 items-center justify-center gap-1.5 rounded-lg bg-primary px-5 text-sm font-semibold text-primary-foreground transition-transform active:scale-97"
+            >
+              {t("vialsEmptyCta")}
+            </button>
+          )}
         </div>
       ) : (
         <div className="space-y-2 sm:grid sm:grid-cols-2 sm:gap-2 sm:space-y-0">
@@ -1037,6 +1063,10 @@ function UsosTab({
           const next = await addTitrationProtocol(data, payload);
           onChange(next);
           setShowProtocol(false);
+        }}
+        onAddPeptide={() => {
+          setShowProtocol(false);
+          onAddPeptide();
         }}
       />
 
