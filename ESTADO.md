@@ -1,5 +1,32 @@
 # ESTADO — PeptiBrain
 
+## ✅ Auditoría freemium + cierre de 2 fugas de monetización (2026-07-27)
+
+El dueño pidió evaluar la lista de features gratis/Pro como experto en monetización. Hallazgo
+real revisando el código (no solo el marketing): dos features anunciadas como Premium eran
+gratis de facto. Con su OK, se corrigieron:
+
+- **"Crear protocolos automáticos"** (Pricing/Paywall feature Premium #5): `addProtocol` y
+  `addTitrationProtocol` en `lib/app-data.ts` no tenían NINGÚN control de plan — un usuario
+  gratis podía generar sus 60 dosis programadas igual que Premium. Ahora lanzan `PlanLimitError`
+  para plan gratis. El botón "Crear protocolo" en Péptidos manda al paywall en plan gratis
+  (mismo patrón que el botón del Asistente IA en Inicio) en vez de abrir el modal sin avisar.
+- **Histórico de Estadísticas sin tope**: plan gratis ahora ve hasta 30 días (today/7d/30d);
+  rangos más largos (3m→10y/all/custom) muestran `PremiumLocked`, con las opciones bloqueadas
+  del selector marcadas "🔒 Premium". Si alguien gratis llega con "Histórico" ya seleccionado
+  (el default de la página), se reajusta solo a 30 días — no lo recibe con un muro apenas entra.
+- **Copy corregido**: "Salud completa (comidas, hidratación...)" en Pricing y Paywall mencionaba
+  "comidas", que ya era gratis desde antes — no genera conversión y genera la sensación de "pagué
+  por algo que ya tenía". Reemplazado por las categorías que sí siguen siendo Premium (fotos,
+  análisis, hidratación, sueño, ánimo).
+
+Recomendaciones dadas pero NO implementadas (quedan para si el dueño las pide): momento de
+upgrade emocional en la racha de 7 días (no bloqueante), preview borroso del PDF del informe en
+vez de un muro directo.
+
+Verificado: tsc ✓ · npm test (74/74) ✓ · npm run build ✓ · staging→main desplegado.
+**No verificado en navegador**: ambas pantallas viven tras el login.
+
 ## ✅ Encuesta de motivo de cancelación (2026-07-27)
 
 Capa 1 de `docs/sistema/PROMPT-RETENER-INGRESOS.txt` (ya la mencionaba como pendiente). Idea
