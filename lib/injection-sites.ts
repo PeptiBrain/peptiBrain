@@ -34,4 +34,7 @@ export function lastInjectionSite(doses: Dose[], peptideId: string): InjectionSi
 // Vías que NO se inyectan: para ellas no tiene sentido preguntar la zona de
 // inyección (bug #16 del QA: pedía "abdomen/muslo/brazo" para una cápsula oral).
 // En minúsculas para comparar sin depender de cómo se escribió el perfil.
-export const NON_INJECTABLE_ROUTES = ["oral", "intranasal", "tópica", "topica", "sublingual"];
+// "nasal" se agrega junto a "intranasal": el selector de vía de Péptidos usa
+// la etiqueta corta "Nasal", y sin esta entrada esas dosis se seguían
+// contando como inyectables (parte del bug #17 del QA).
+export const NON_INJECTABLE_ROUTES = ["oral", "nasal", "intranasal", "tópica", "topica", "sublingual"];

@@ -286,19 +286,28 @@ export function PeptideCard({
               {isVolumeUnit(unit) && (
                 <p className="mt-1.5 text-xs text-muted-foreground">{t("volumeUnitNote")}</p>
               )}
+              {/* Etiqueta FIJA además del placeholder: el placeholder desaparece en
+                  cuanto se escribe y el campo queda sin ninguna pista de qué es
+                  (bug #37 del QA). */}
+              <label className="mb-1 mt-2 block text-xs font-medium text-muted-foreground">
+                {t("bacWaterPlaceholder")}
+              </label>
               <input
                 value={bacWater}
                 onChange={(e) => setBacWater(e.target.value)}
                 inputMode="decimal"
                 placeholder={t("bacWaterPlaceholder")}
-                className="mt-2 h-11 w-full rounded-lg border border-input bg-background px-3 text-base text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className="h-11 w-full rounded-lg border border-input bg-background px-3 text-base text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
               />
+              <label className="mb-1 mt-2 block text-xs font-medium text-muted-foreground">
+                {t("costPlaceholder")}
+              </label>
               <input
                 value={cost}
                 onChange={(e) => setCost(e.target.value)}
                 inputMode="decimal"
                 placeholder={t("costPlaceholder")}
-                className="mt-2 h-11 w-full rounded-lg border border-input bg-background px-3 text-base text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className="h-11 w-full rounded-lg border border-input bg-background px-3 text-base text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
               />
               {!vialCostOk && <p className="mt-2 text-xs text-destructive">{t("vialCostInvalid")}</p>}
               {concentration && (

@@ -264,7 +264,10 @@ export function ProfileMenu({
               <Plane className="size-4 shrink-0" aria-hidden />
               <span className="min-w-0 flex-1">
                 <span className="block truncate">{t("travelMode")}</span>
-                <span className="block truncate text-xs font-normal text-muted-foreground">
+                {/* Sin truncate: el texto es corto pero en pantallas angostas
+                    junto al badge se cortaba a mitad de palabra (bug #43). Dos
+                    líneas es preferible a un texto ilegible. */}
+                <span className="block text-xs font-normal leading-snug text-muted-foreground">
                   {t("travelModeHint")}
                 </span>
               </span>

@@ -846,7 +846,7 @@
     "deleteProtocolAria": "Delete protocol",
     "confirmDeleteProtocol": "Delete this saved protocol?",
     "calculatorToolGlp": "GLP-1",
-    "vialLifeExpires": "Expires in {days} d ({date})",
+    "vialLifeExpires": "Expires in {days} days · due {date}",
     "vialLifeExpired": "Vial expired (reconstituted 30+ days ago)",
     "vialLifeWaste": "Expires before you finish it — you'll waste product. Use a smaller vial or a higher dose.",
     "vialLifeDeplete": "You'll run out ~{date}. Prepare a new vial.",
@@ -887,7 +887,8 @@
     "volumeUnitNote": "With a vial that already comes liquid we can't work out the concentration or estimate what's left.",
     "protocolCapped": "Up to 60 doses (24 weeks) are created. If you need more, create another protocol afterwards.",
     "loadMore": "Show more ({remaining} left)",
-    "vialsEmptyCta": "See my peptides"
+    "vialsEmptyCta": "See my peptides",
+    "shoppingVialUnitMismatch": "You already have a {size} vial, but its unit doesn't let us calculate how many you need"
   },
   "Salud": {
     "saveError": "Couldn't save. Check the values and try again.",

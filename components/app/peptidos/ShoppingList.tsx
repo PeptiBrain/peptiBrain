@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { ShoppingCart, Beaker, Syringe } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import type { Dose, Peptide, Vial } from "@/lib/app-data";
+import { NON_INJECTABLE_ROUTES } from "@/lib/injection-sites";
 
 const DAY_MS = 86400000;
 const HORIZON_WEEKS = 4;
@@ -17,12 +18,20 @@ function toMg(amount: string, unit: string): number {
   return 0;
 }
 
+function isInjectableRoute(route: string): boolean {
+  return !NON_INJECTABLE_ROUTES.includes(route.trim().toLowerCase());
+}
+
 type Line = {
   peptideName: string;
   doseCount: number;
+  /** true = ya hay un vial registrado; separado de vialsNeeded porque "sin
+      vial" y "vial con unidad no calculable" (bug #17) son mensajes distintos. */
+  hasVial: boolean;
   vialsNeeded: number | null;
   vialLabel: string;
   bacTotal: number | null;
+  injectable: boolean;
 };
 
 // Lista de la compra para las próximas 4 semanas, calculada desde las dosis YA
@@ -61,12 +70,15 @@ export function ShoppingList({
 
     for (const [peptideId, items] of byPeptide) {
       const peptide = peptides.find((p) => p.id === peptideId);
+      const injectable = isInjectableRoute(peptide?.route || "Subcutánea");
       const latestVial = [...vials]
         .filter((v) => v.peptideId === peptideId)
         .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0];
 
       const mgNeeded = items.reduce((sum, d) => sum + toMg(d.amount, d.unit), 0);
-      totalSyringes += items.length;
+      // Las jeringas solo aplican a vías inyectables: sumarlas también para
+      // oral/nasal/etc. era el origen de "3 jeringas" para una cápsula (bug #17).
+      if (injectable) totalSyringes += items.length;
 
       let vialsNeeded: number | null = null;
       let bacTotal: number | null = null;
@@ -87,9 +99,11 @@ export function ShoppingList({
       lines.push({
         peptideName: peptide?.name || "—",
         doseCount: items.length,
+        hasVial: Boolean(latestVial),
         vialsNeeded,
         vialLabel,
         bacTotal,
+        injectable,
       });
     }
 
@@ -132,7 +146,9 @@ export function ShoppingList({
             <p className="mt-1 text-xs text-muted-foreground">
               {l.vialsNeeded != null
                 ? t("shoppingVials", { count: l.vialsNeeded, size: l.vialLabel })
-                : t("shoppingVialsUnknown")}
+                : l.hasVial
+                  ? t("shoppingVialUnitMismatch", { size: l.vialLabel })
+                  : t("shoppingVialsUnknown")}
               {l.bacTotal != null && ` · ${t("shoppingBac", { ml: +l.bacTotal.toFixed(1) })}`}
             </p>
           </li>
@@ -140,10 +156,14 @@ export function ShoppingList({
       </ul>
 
       <div className="mt-3 grid grid-cols-2 gap-2">
-        <div className="flex items-center gap-2 rounded-xl bg-secondary/50 px-3 py-2">
-          <Syringe className="size-4 shrink-0 text-primary" aria-hidden />
-          <span className="text-xs text-foreground">{t("shoppingSyringes", { count: totalSyringes })}</span>
-        </div>
+        {/* Antes se sumaban aquí también las tomas orales/nasales, que no usan
+            jeringa (bug #17): solo se cuentan las vías inyectables. */}
+        {totalSyringes > 0 && (
+          <div className="flex items-center gap-2 rounded-xl bg-secondary/50 px-3 py-2">
+            <Syringe className="size-4 shrink-0 text-primary" aria-hidden />
+            <span className="text-xs text-foreground">{t("shoppingSyringes", { count: totalSyringes })}</span>
+          </div>
+        )}
         {totalBac > 0 && (
           <div className="flex items-center gap-2 rounded-xl bg-secondary/50 px-3 py-2">
             <Beaker className="size-4 shrink-0 text-primary" aria-hidden />

@@ -1353,11 +1353,21 @@ function PhotosGrid({
           {photo.url && (
             <Image
               src={photo.url}
-              alt=""
+              alt={photo.note ? `${formatDate(photo.date)} · ${photo.note}` : formatDate(photo.date)}
               fill
               className="object-cover transition-transform group-hover:scale-105"
               unoptimized
             />
+          )}
+          {/* Antes la nota solo se veía dentro del lightbox: aquí solo un indicador,
+              para no recortar texto largo en una tarjeta tan chica (bug #39). */}
+          {photo.note && (
+            <span
+              className="absolute right-1.5 top-1.5 flex size-5 items-center justify-center rounded-full bg-black/50 text-[10px] text-white"
+              aria-hidden
+            >
+              📝
+            </span>
           )}
           <span className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent px-2 py-1.5 text-left text-[11px] font-medium text-white">
             {formatDate(photo.date)}

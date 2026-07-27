@@ -846,7 +846,7 @@
     "deleteProtocolAria": "Eliminar protocolo",
     "confirmDeleteProtocol": "¿Eliminar este protocolo guardado?",
     "calculatorToolGlp": "GLP-1",
-    "vialLifeExpires": "Caduca en {days} d ({date})",
+    "vialLifeExpires": "Caduca en {days} días · vence el {date}",
     "vialLifeExpired": "Vial vencido (reconstituido hace +30 d)",
     "vialLifeWaste": "Caduca antes de gastarse — vas a desperdiciar. Usa un vial más pequeño o sube la dosis.",
     "vialLifeDeplete": "Se te acabará ~{date}. Prepara un vial nuevo.",
@@ -887,7 +887,8 @@
     "volumeUnitNote": "Con un vial que ya viene líquido no se puede calcular la concentración ni estimar cuánto queda.",
     "protocolCapped": "Se crean como máximo 60 dosis (24 semanas). Si necesitas más, crea otro protocolo después.",
     "loadMore": "Ver más ({remaining} restantes)",
-    "vialsEmptyCta": "Ver mis péptidos"
+    "vialsEmptyCta": "Ver mis péptidos",
+    "shoppingVialUnitMismatch": "Ya tienes un vial de {size}, pero su unidad no permite calcular cuántos necesitas"
   },
   "Salud": {
     "saveError": "No se pudo guardar. Revisa los datos e inténtalo otra vez.",
