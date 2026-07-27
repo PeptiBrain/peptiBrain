@@ -46,9 +46,11 @@ Todo lo que promociones tiene que respetar eso.
 
 ## Comisión
 
-- **30 % recurrente** mientras el cliente siga pagando su suscripción.
+- **35 % recurrente** mientras el cliente siga pagando su suscripción.
+- Aplica a los planes **Premium y Family**, mensuales y anuales.
+- El plan **Fundadores (pago único de por vida) no tiene comisión**.
 - La comisión se paga sobre ventas **completadas**. Un reembolso o un contracargo la anula.
-- La cuenta oficial la lleva Hotmart, con sus plazos de pago.
+- La cuenta oficial la lleva Hotmart, con sus plazos y condiciones de pago.
 
 ## Si incumples
 

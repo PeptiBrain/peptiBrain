@@ -9,9 +9,16 @@ export const routing = defineRouting({
 });
 
 // Moneda de los PRECIOS QUE COBRAMOS (paywall, planes, oferta de por vida).
-// Aquí sí tiene sentido que siga al idioma: son ofertas distintas en Hotmart.
+//
+// USD en los dos idiomas porque es lo que Hotmart cobra de verdad: los planes
+// están configurados en dólares (USD$ 9,00 Premium, USD$ 19,00 Family). Antes
+// la versión en español anunciaba "9 €" y al cliente le llegaba un cargo de 9
+// USD (~8 €): ni el importe ni la divisa coincidían con lo prometido.
+//
+// Si algún día se crean ofertas en euros en Hotmart, este mapa vuelve a tener
+// sentido por idioma — pero los números tienen que salir de Hotmart, no de aquí.
 export const CURRENCY: Record<(typeof routing.locales)[number], { symbol: string; code: string }> = {
-  es: { symbol: "€", code: "EUR" },
+  es: { symbol: "$", code: "USD" },
   en: { symbol: "$", code: "USD" },
 };
 
