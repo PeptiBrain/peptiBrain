@@ -1,5 +1,49 @@
 # ESTADO — PeptiBrain
 
+## ✅ Bloque C del PLAN-PRODUCTO.md — 10 de 12 (2026-07-27)
+
+Desplegado en 4 capas verificadas (commits 40d0d8a, eb918b4, 2a32692, 791d163).
+
+**Decisión de producto tomada con el dueño**: C1 y C6 pedían que la app sugiriera
+dosis e interpretara análisis, lo que choca con la línea roja D2 del propio plan
+("la app EJECUTA el protocolo del usuario, nunca lo sugiere"). Se eligió respetar
+la línea. Consecuencias concretas en el código:
+- Los análisis muestran **tendencia** (subió/bajó respecto a la vez anterior) y
+  nunca si un valor es normal. La flecha **no se pinta de verde ni de rojo**:
+  subir es bueno en un marcador y malo en otro, colorearlo colaría un juicio.
+- Los patrones de efectos **cuentan coincidencias**, no diagnostican: "5 de 6
+  náuseas cayeron en día de dosis" es un dato para llevar a consulta; "la dosis
+  te causa náusea" sería medicina.
+
+| # | Qué | Estado |
+|---|---|---|
+| C2 | Tarjeta "hoy toca esto" (dosis + unidades + jeringa + zona, junto y antes de inyectar) | ✅ |
+| C3 | Caducidad real del vial (`reconstituted_at`, migración 0045) + aviso de recompra a ≤10 días | ✅ |
+| C4 | Informe médico con análisis y efectos secundarios | ✅ |
+| C5 | Patrones de efectos (`lib/side-effect-patterns.ts`, 8 tests) | ✅ |
+| C6 | Tendencia en análisis, versión segura (`lib/lab-trend.ts`) | ✅ |
+| C7 | Gráficos a prueba de outliers (`lib/chart-scale.ts`, 7 tests) | ✅ |
+| C8 | Resumen semanal, domingos 10:00 (`/api/cron/weekly`) | ✅ |
+| C9 | Comparador de fotos antes/después | ✅ |
+| C10 | Coste por mg, semanal y proyección anual (10 tests) | ✅ |
+| C11 | Asistente: markdown legible + 1024 tokens + aviso si se corta | ✅ |
+| C1 | Plantillas de protocolo | ⏳ pendiente — ver nota |
+| C12 | Tour guiado con coachmarks reales | ⏳ pendiente |
+
+**Nota sobre C1**: despojado de las dosis sugeridas, "guardar la estructura de
+escalones" aporta poco (el valor estaba en los números, que es justo lo que no se
+puede dar). La versión que SÍ aporta y sigue siendo segura es **duplicar un
+protocolo propio anterior**: los números son del usuario, no de la app. Queda
+definido así para cuando se retome.
+
+**C12** es un rediseño de `AppTour` (hoy 9 pantallas de texto → coachmarks
+anclados a elementos reales). Es el mayor de los dos y no se empezó para no
+dejarlo a medias a 6 días del lanzamiento.
+
+Verificado en cada capa: tsc ✓ · npm test (65/65) ✓ · npm run build ✓ · deploys
+confirmados. La migración 0045 se comprobó contra el esquema real de la base
+antes y después de aplicarla.
+
 ## ✅ Segunda tanda de bugs cosméticos del backlog QA (2026-07-27)
 
 Tras el Bloque B, se pidió explícitamente cerrar los ~25 bugs restantes. Cerrados en esta tanda:
