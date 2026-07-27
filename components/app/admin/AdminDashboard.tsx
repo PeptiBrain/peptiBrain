@@ -608,6 +608,42 @@ export function AdminDashboard({ data, alerts }: { data: AdminOverview; alerts: 
         {/* ADQUISICIÓN */}
         {showAcq && (
           <Section title="Adquisición · De dónde vienen" delay={0.4}>
+            {/* Afiliados: quién vende de verdad. Solo aparece cuando hay alguno,
+                para no meterle una tarjeta vacía a quien no use afiliación. */}
+            {data.affiliateSales.length > 0 && (
+              <div
+                className="mb-4 rounded-2xl p-5"
+                style={{ background: ADMIN.surface, border: `1px solid ${ADMIN.border}` }}
+              >
+                <p className="mb-3 text-sm font-semibold" style={{ color: ADMIN.text }}>
+                  Ventas por afiliado
+                </p>
+                <ul className="space-y-2.5">
+                  {data.affiliateSales.map((a) => (
+                    <li key={a.name} className="flex items-center gap-3">
+                      <span className="min-w-0 flex-1 truncate text-sm font-medium" style={{ color: ADMIN.text }}>
+                        {a.name}
+                      </span>
+                      <span className="shrink-0 text-sm font-semibold" style={{ color: ADMIN.text }}>
+                        {a.netSales}
+                      </span>
+                      {/* Las devueltas se muestran aparte: pagar comisión por una
+                          venta reembolsada es el error clásico de los afiliados. */}
+                      {a.reversed > 0 && (
+                        <span className="shrink-0 text-xs" style={{ color: ADMIN.textMuted }}>
+                          ({a.reversed} devuelta{a.reversed === 1 ? "" : "s"})
+                        </span>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-4 text-xs" style={{ color: ADMIN.textMuted }}>
+                  Contadas desde los avisos que manda Hotmart, descontando reembolsos y contracargos. La cuenta
+                  oficial de comisiones es siempre la de Hotmart — esto es para ver de un vistazo quién vende de
+                  verdad.
+                </p>
+              </div>
+            )}
             <div className="rounded-2xl p-5" style={{ background: ADMIN.surface, border: `1px solid ${ADMIN.border}` }}>
               {data.utmSources.length === 0 ? (
                 <p className="text-sm" style={{ color: ADMIN.textMuted }}>

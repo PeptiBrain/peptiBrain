@@ -73,6 +73,9 @@ export type AdminOverview = {
   refundedOrChargeback30d: number;
   lastWebhookEventAt: string | null;
   webhookEventsToday: number;
+  /** Ventas atribuidas a cada afiliado (según lo que manda Hotmart en el
+   *  webhook). La cuenta oficial de comisiones sigue siendo la de Hotmart. */
+  affiliateSales: { name: string; sales: number; reversed: number; netSales: number; lastSaleAt: string | null }[];
   assistantMessagesToday: number;
   assistantGlobalLimit: number;
   assistantPaused: boolean;
@@ -181,9 +184,11 @@ export async function loadAdminOverview(): Promise<AdminOverview> {
       .order("created_at", { ascending: false }),
     admin
       .from("hotmart_events")
-      .select("processed_at")
+      // El payload entero ya se guardaba; ahora además se LEE, para saber qué
+      // ventas ha traído cada afiliado (Hotmart lo manda en data.affiliates).
+      .select("processed_at, event_type, payload")
       .order("processed_at", { ascending: false })
-      .limit(50),
+      .limit(500),
     admin
       .from("assistant_global_usage")
       .select("message_count")
@@ -223,6 +228,39 @@ export async function loadAdminOverview(): Promise<AdminOverview> {
   const lastWebhookEventAt = events[0]?.processed_at || null;
   const todayStart = `${todayIso()}T00:00:00`;
   const webhookEventsToday = events.filter((e) => e.processed_at >= todayStart).length;
+
+  // ── Ventas por afiliado ────────────────────────────────────────────────────
+  // Hotmart lleva la cuenta oficial de comisiones; esto NO la sustituye. Sirve
+  // para ver desde la app quién está trayendo ventas de verdad y quién solo
+  // figura, sin tener que entrar al panel de Hotmart.
+  //
+  // Se cuentan solo las compras APROBADAS/COMPLETADAS y se descuentan las que
+  // acabaron en reembolso o contracargo: pagar comisión por una venta devuelta
+  // es el error clásico de los programas de afiliados.
+  const APPROVED = new Set(["PURCHASE_APPROVED", "PURCHASE_COMPLETE"]);
+  const REVERSED = new Set(["PURCHASE_REFUNDED", "PURCHASE_CHARGEBACK", "PURCHASE_PROTEST"]);
+  const affiliateTally = new Map<string, { sales: number; reversed: number; lastSaleAt: string | null }>();
+
+  for (const e of events) {
+    const payload = e.payload as { data?: { affiliates?: { name?: string; affiliate_code?: string }[] } } | null;
+    const affiliate = payload?.data?.affiliates?.[0];
+    // Sin afiliado = venta directa tuya, no entra en este recuento.
+    const code = affiliate?.affiliate_code?.trim();
+    if (!code) continue;
+    const label = affiliate?.name?.trim() || code;
+    const entry = affiliateTally.get(label) || { sales: 0, reversed: 0, lastSaleAt: null };
+    if (APPROVED.has(e.event_type)) {
+      entry.sales++;
+      if (!entry.lastSaleAt || e.processed_at > entry.lastSaleAt) entry.lastSaleAt = e.processed_at;
+    } else if (REVERSED.has(e.event_type)) {
+      entry.reversed++;
+    }
+    affiliateTally.set(label, entry);
+  }
+
+  const affiliateSales = Array.from(affiliateTally.entries())
+    .map(([name, v]) => ({ name, ...v, netSales: Math.max(0, v.sales - v.reversed) }))
+    .sort((a, b) => b.netSales - a.netSales);
 
   const ASSISTANT_GLOBAL_LIMIT = Number(process.env.ASSISTANT_GLOBAL_DAILY_LIMIT) || 500;
   const assistantMessagesToday = globalUsage?.message_count || 0;
@@ -528,6 +566,7 @@ export async function loadAdminOverview(): Promise<AdminOverview> {
     refundedOrChargeback30d,
     lastWebhookEventAt,
     webhookEventsToday,
+    affiliateSales,
     assistantMessagesToday,
     assistantGlobalLimit: ASSISTANT_GLOBAL_LIMIT,
     assistantPaused: assistantMessagesToday >= ASSISTANT_GLOBAL_LIMIT,
