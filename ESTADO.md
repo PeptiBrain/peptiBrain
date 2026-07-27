@@ -1,5 +1,23 @@
 # ESTADO — PeptiBrain
 
+## ✅ Lote de bugs cosméticos del backlog QA (2026-07-27)
+
+Retomé el backlog de bugs cosméticos "MENORES — copy y UI" (sección de más abajo). Corregidos
+#17, #37, #39, #43, #82 y #84 (detalle en cada número, más abajo en la lista completa). De paso,
+revisando código encontré que #38, #42 y #75 ya estaban resueltos de sesiones anteriores sin
+marcar ✅, y que #79 (CSV con fechas sin cero) parece obsoleto: no existe ninguna función de
+**exportar** CSV en el código actual, solo importar.
+
+Sigue pendiente (necesitan decisión de producto o ver la app logueada, cosa que no puedo hacer):
+#19, #24 (parece resuelto pero no puedo confirmarlo sin datos reales), #30, #32/#57/#58 (causa de
+raíz en red — CR-3, requiere investigar Vercel/env), #40, #41, #44, #45, #46, #47 (decisión de
+rutas /en/ ANTES de lanzar), #49, #70, #80, #81, #83, y toda la sección "NO PROBADO" que requiere
+OK explícito del dueño.
+
+Verificado: tsc ✓ · npm test (74/74) ✓ · npm run build ✓ · staging→main desplegado y confirmado
+(`success` en GitHub, commit `885c7fd`). **No verificado en navegador**: todas las pantallas
+tocadas viven tras el login.
+
 ## ✅ Estados vacíos con CTA (2026-07-27)
 
 Barrido pedido por el usuario: toda pantalla que puede mostrarse "sin datos
@@ -281,7 +299,9 @@ Atacar estas cuatro mata la mayoría del backlog. Arreglar bug a bug es el error
 14. ✅ Duración del protocolo sin tope visible: 9999 semanas → "creará 60 dosis" sin explicar el límite.
 15. ✅ **Viaje con fecha fin anterior al inicio se guarda** (26 jul → 1 jul).
 16. ✅ Pide zona de inyección para un péptido **ORAL**.
-17. Lista de la compra incoherente: "Añade un vial" cuando sí lo tiene; sugiere jeringas para oral.
+17. ✅ Lista de la compra incoherente: "Añade un vial" cuando sí lo tiene; sugiere jeringas para oral.
+    Mensaje distinto para "sin vial" vs "vial con unidad no calculable"; jeringas solo cuentan vías
+    inyectables (`NON_INJECTABLE_ROUTES` sumó "nasal", que faltaba junto a "intranasal").
 18. ✅ Confirmación equivocada: al borrar un **proveedor** pregunta "¿Eliminar este **vial**?".
 19. Protocolo guardado en la calculadora se lista con un "—" en vez de un resumen.
 20. ✅ Péptidos duplicados indistinguibles en el desplegable de "Registrar uso". (Ver 51 y 74.)
@@ -292,8 +312,11 @@ Atacar estas cuatro mata la mayoría del backlog. Arreglar bug a bug es el error
     Hoy se pintan como texto plano (no hay XSS) — **pero si algún día se convierten en `<a href>`
     sí lo habría**. "Editar perfil" YA tiene el patrón correcto: reutilizarlo.
 23. ✅ **Peso y Ejercicio no se pueden editar ni borrar.** (Ver CR-2 y 68.)
-24. Métricas que se contradicen: Estadísticas "Adherencia — Sin datos" con 1 dosis aplicada;
-    Inicio "Dosis cumplidas 0 de 0" mientras Estadísticas dice 1.
+24. ⏳ Métricas que se contradicen: Estadísticas "Adherencia — Sin datos" con 1 dosis aplicada;
+    Inicio "Dosis cumplidas 0 de 0" mientras Estadísticas dice 1. Revisado: el test
+    `tests/stats.test.ts` que cubre exactamente ese escenario de adherencia YA pasa, y no se
+    encontró el texto literal "0 de 0" en Inicio — puede estar resuelto, pero solo se puede
+    confirmar viendo la app logueada con datos reales (no puedo iniciar sesión).
 25. ✅ Gráfica "Dosis en el tiempo" etiqueta el eje con horas (`10h`) aunque el periodo sea "Histórico".
 26. ✅ Filtro "Personalizado" tras recarga mostraba datos fuera de rango — **ARREGLADO** (916b291).
 27. ✅ Notificación incoherente: "Llevas 12 días sin registrar" con racha de 1 día.
@@ -335,7 +358,8 @@ Atacar estas cuatro mata la mayoría del backlog. Arreglar bug a bug es el error
     columna de ~10 caracteres.
 73. ✅ **Móvil:** el FAB tapa "+ Registrar uso" en Péptidos y el contador de Efectos en Inicio.
 74. ✅ "Elegir péptidos específicos" muestra dos "Semaglutida" idénticos.
-75. El acordeón del Centro de ayuda recorta la respuesta (solo 2 líneas visibles).
+75. ✅ Acordeón del Centro de ayuda: revisado, ya anima a `height:"auto"` sin ningún recorte fijo —
+    no se encontró el bug descrito, probablemente resuelto en una capa anterior sin marcar.
 76. ✅ La FAQ dice "Calculadora (Premium)" aunque el plan Family ya la incluye.
 77. ✅ El teléfono de un familiar acepta 12 dígitos sin validar, mientras Editar perfil sí valida.
 78. ✅ Resumen pinta las 60 dosis de golpe, sin paginación ni "cargar más".
@@ -347,13 +371,18 @@ Atacar estas cuatro mata la mayoría del backlog. Arreglar bug a bug es el error
     A2 rechaza calorías fuera de rango (max 20.000) antes de guardar.
 36. ✅ "2000.0 unidades" se pinta en verde (color de éxito) cuando es un error — ahora se pinta en
     rojo cuando supera la capacidad de la jeringa (calculadora y crear vial).
-37. "Agua bacteriostática (ml)" solo existe como placeholder: al escribir desaparece la etiqueta.
-38. Emojis de ánimo 2.º y 4.º casi idénticos; los botones sin texto ni `aria-label`.
-39. La nota de la foto solo se ve en el lightbox, no en la tarjeta; la imagen sin `alt`.
+37. ✅ "Agua bacteriostática (ml)" solo existe como placeholder: al escribir desaparece la etiqueta.
+    Se añadió etiqueta fija arriba del campo (igual con "Precio del vial").
+38. ✅ Emojis de ánimo: revisados, ya son distinguibles y cada botón tiene `aria-label` — resuelto
+    en una capa anterior sin marcar.
+39. ✅ La nota de la foto solo se ve en el lightbox, no en la tarjeta; la imagen sin `alt`.
+    `alt` ahora incluye fecha + nota; indicador 📝 en la tarjeta cuando hay nota.
 40. El "+" de Salud a veces abre modal (Peso) y a veces un formulario inline (Ejercicio).
 41. CTA inconsistentes en estados vacíos: "Registrar salud" en Ejercicio vs "Registrar comida"…
-42. Botón sin etiqueta junto a "Importar CSV" en Familia (es exportar). Ver 54.
-43. "Modo viaje / Pausa los recordatorios…" truncado en el menú de perfil.
+42. ✅ Botón de exportar en Familia: revisado, ya tiene `aria-label` — resuelto en una capa anterior
+    sin marcar. Ver 54.
+43. ✅ "Modo viaje / Pausa los recordatorios…" truncado en el menú de perfil — quitado el `truncate`,
+    ahora envuelve a 2 líneas en vez de cortar a mitad de palabra.
 44. Avatar vacío en "Editar perfil"; en Familia un miembro muestra una foto de vial como avatar.
 45. Filtros por defecto distintos: Inicio "Últimos 7 días" vs Péptidos "Histórico".
 46. La cabecera sticky solapa y recorta contenido al hacer scroll.
@@ -361,12 +390,15 @@ Atacar estas cuatro mata la mayoría del backlog. Arreglar bug a bug es el error
     lanzar**: cambiarlo después rompe enlaces guardados y SEO.
 48. ✅ Calculadora con agua = 0 o unidades = 0: no calcula y no explica por qué.
 49. "Pendiente" / "Marcar como aplicada" a veces necesita dos clics (el primero solo enfoca).
-79. El CSV exporta fechas sin cero: `23/9/2026`.
+79. ❓ El CSV exporta fechas sin cero: `23/9/2026`. No se encontró NINGUNA función de exportar a
+    CSV en el código actual (solo existe **importar** CSV, en Familia y Cuenta) — probablemente
+    esa feature se quitó o se reemplazó por el JSON export en otra capa. Bug parece obsoleto.
 80. Ninguna descarga (JSON, CSV, PNG) muestra aviso de "descargado".
 81. El botón "Recargar" del header no da ninguna señal.
-82. "Caduca en 29 d (24 ago)" se lee como "hace 24".
+82. ✅ "Caduca en 29 d (24 ago)" se lee como "hace 24" — reescrito "Caduca en 29 días · vence el 24 ago".
 83. Cambiar de idioma te devuelve a la pestaña Resumen.
-84. Los modales no usan `role="dialog"` ni atrapan el foco.
+84. ✅ Los modales no usan `role="dialog"` ni atrapan el foco — arreglado en `ModalShell.tsx`
+    (base compartida de 8 modales): Escape cierra, `role="dialog"`/`aria-modal`, Tab atrapado dentro.
 
 ### ⚪ NO PROBADO — requiere OK explícito del dueño
 Compartir progreso y viales · cambiar permisos de familia · "Añadir asiento extra (5€/mes)" ·
