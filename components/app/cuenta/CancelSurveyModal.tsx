@@ -104,13 +104,6 @@ export function CancelSurveyModal({
       <div className="mt-5 flex gap-2">
         <button
           type="button"
-          onClick={onClose}
-          className="h-11 flex-1 rounded-lg border border-border text-sm font-medium text-foreground"
-        >
-          {t("deleteAccountCancel")}
-        </button>
-        <button
-          type="button"
           disabled={!reason || sending}
           onClick={() => reason && submit(reason)}
           className="h-11 flex-1 rounded-lg bg-primary text-sm font-semibold text-primary-foreground disabled:opacity-50"
@@ -118,6 +111,20 @@ export function CancelSurveyModal({
           {t("cancelSurveyContinue")}
         </button>
       </div>
+      {/* NO es "cancelar la encuesta" (eso ya lo hace la X del modal, que
+          además abandona TODO el intento de baja) — es "seguir sin responder".
+          Sin este botón, la única forma de llegar a las instrucciones de
+          cancelar era elegir un motivo: la encuesta se volvía obligatoria
+          para poder darse de baja, justo el dark pattern que este mismo
+          proyecto prohíbe (docs/sistema/PROMPT-RETENER-INGRESOS.txt: "cancelar
+          debe ser FÁCIL, cero dark patterns"). */}
+      <button
+        type="button"
+        onClick={onContinue}
+        className="mt-3 block w-full text-center text-sm text-muted-foreground underline-offset-2 hover:underline"
+      >
+        {t("cancelSurveySkip")}
+      </button>
     </ModalShell>
   );
 }

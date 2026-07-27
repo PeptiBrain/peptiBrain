@@ -1306,7 +1306,8 @@
     "cancelReason_otro": "Otro motivo",
     "cancelSurveyNotePlaceholder": "Cuéntanos qué pasó (opcional)",
     "cancelSurveyContactSupport": "Escribir a soporte antes de decidir",
-    "cancelSurveyContinue": "Continuar"
+    "cancelSurveyContinue": "Continuar",
+    "cancelSurveySkip": "Prefiero no decirlo, solo quiero cancelar"
   },
   "Tour": {
     "skip": "Omitir",
