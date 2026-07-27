@@ -7,6 +7,7 @@ import { Link } from "@/i18n/navigation";
 import { Sparkles, Camera, Check, Eye, EyeOff, Download, Upload, Trash2, Mail, Flame, Snowflake, Gem } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { CancelOfferModal } from "@/components/app/cuenta/CancelOfferModal";
+import { CancelSurveyModal } from "@/components/app/cuenta/CancelSurveyModal";
 import { ImportCsvModal } from "@/components/app/cuenta/ImportCsvModal";
 import { ModalShell } from "@/components/app/shell/ModalShell";
 import { PageSkeleton } from "@/components/app/shell/PageSkeleton";
@@ -61,6 +62,7 @@ export default function CuentaPage() {
 
   const [showOffer, setShowOffer] = useState(false);
   const [offerAccepted, setOfferAccepted] = useState(false);
+  const [showCancelSurvey, setShowCancelSurvey] = useState(false);
   const [showCancelInstructions, setShowCancelInstructions] = useState(false);
   const [showDeleteAccount, setShowDeleteAccount] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
@@ -607,6 +609,21 @@ export default function CuentaPage() {
         }}
         onConfirmCancel={() => {
           setShowOffer(false);
+          // Antes iba directo a las instrucciones: ahora primero se pregunta
+          // por qué, para no perder ese dato en cada cancelación.
+          setShowCancelSurvey(true);
+        }}
+      />
+
+      <CancelSurveyModal
+        open={showCancelSurvey}
+        onClose={() => setShowCancelSurvey(false)}
+        onReviewOffer={() => {
+          setShowCancelSurvey(false);
+          setShowOffer(true);
+        }}
+        onContinue={() => {
+          setShowCancelSurvey(false);
           setShowCancelInstructions(true);
         }}
       />

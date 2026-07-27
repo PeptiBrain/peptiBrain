@@ -1294,7 +1294,19 @@
     "csvHeaderDone": "Aplicada",
     "csvHeaderInjectionSite": "Sitio de inyección",
     "csvYes": "Sí",
-    "csvNo": "No"
+    "csvNo": "No",
+    "cancelSurveyTitle": "Antes de irte, ¿nos dices por qué?",
+    "cancelSurveyBody": "No hace falta que canceles ahora mismo — pero si nos cuentas qué pasó, nos ayuda a mejorar para el resto.",
+    "cancelReason_no_esperaba": "No era lo que esperaba",
+    "cancelReason_plan_gratis_basta": "El plan gratis me basta",
+    "cancelReason_no_entendi": "No entendí cómo usarla",
+    "cancelReason_miedo_cobro": "Me dio miedo el cobro",
+    "cancelReason_muy_caro": "Es muy caro",
+    "cancelReason_no_tiempo": "No tengo tiempo",
+    "cancelReason_otro": "Otro motivo",
+    "cancelSurveyNotePlaceholder": "Cuéntanos qué pasó (opcional)",
+    "cancelSurveyContactSupport": "Escribir a soporte antes de decidir",
+    "cancelSurveyContinue": "Continuar"
   },
   "Tour": {
     "skip": "Omitir",

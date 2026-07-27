@@ -76,6 +76,8 @@ export type AdminOverview = {
   /** Ventas atribuidas a cada afiliado (según lo que manda Hotmart en el
    *  webhook). La cuenta oficial de comisiones sigue siendo la de Hotmart. */
   affiliateSales: { name: string; sales: number; reversed: number; netSales: number; lastSaleAt: string | null }[];
+  /** Motivos de cancelación de los últimos 30 días (encuesta de un clic al cancelar). */
+  cancellationReasons: { reason: string; count: number }[];
   assistantMessagesToday: number;
   assistantGlobalLimit: number;
   assistantPaused: boolean;
@@ -175,6 +177,7 @@ export async function loadAdminOverview(): Promise<AdminOverview> {
     { data: allHealthLogs },
     { data: allMeals },
     { data: assistantUsers },
+    { data: cancellationFeedback },
   ] = await Promise.all([
     admin
       .from("profiles")
@@ -205,6 +208,10 @@ export async function loadAdminOverview(): Promise<AdminOverview> {
     admin.from("health_logs").select("user_id, log_date, side_effect"),
     admin.from("meals").select("user_id, created_at"),
     admin.from("assistant_usage").select("user_id"),
+    admin
+      .from("cancellation_feedback")
+      .select("reason, created_at")
+      .gte("created_at", daysAgoIso(30)),
   ]);
 
   const profiles = allProfiles || [];
@@ -261,6 +268,15 @@ export async function loadAdminOverview(): Promise<AdminOverview> {
   const affiliateSales = Array.from(affiliateTally.entries())
     .map(([name, v]) => ({ name, ...v, netSales: Math.max(0, v.sales - v.reversed) }))
     .sort((a, b) => b.netSales - a.netSales);
+
+  // ── Motivos de cancelación (últimos 30 días) ────────────────────────────────
+  const reasonTally = new Map<string, number>();
+  for (const f of cancellationFeedback || []) {
+    reasonTally.set(f.reason, (reasonTally.get(f.reason) || 0) + 1);
+  }
+  const cancellationReasons = Array.from(reasonTally.entries())
+    .map(([reason, count]) => ({ reason, count }))
+    .sort((a, b) => b.count - a.count);
 
   const ASSISTANT_GLOBAL_LIMIT = Number(process.env.ASSISTANT_GLOBAL_DAILY_LIMIT) || 500;
   const assistantMessagesToday = globalUsage?.message_count || 0;
@@ -567,6 +583,7 @@ export async function loadAdminOverview(): Promise<AdminOverview> {
     lastWebhookEventAt,
     webhookEventsToday,
     affiliateSales,
+    cancellationReasons,
     assistantMessagesToday,
     assistantGlobalLimit: ASSISTANT_GLOBAL_LIMIT,
     assistantPaused: assistantMessagesToday >= ASSISTANT_GLOBAL_LIMIT,

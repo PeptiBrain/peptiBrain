@@ -360,6 +360,49 @@ export function AdminDashboard({ data, alerts }: { data: AdminOverview; alerts: 
               <AdminBarChart data={data.signupsByDay} />
             </div>
 
+            {/* Encuesta de un clic al cancelar (docs PROMPT-ENCUESTA-CANCELACION.md):
+                esto NO reemplaza los números de Hotmart, es el "por qué" que
+                Hotmart no manda. */}
+            <div className="mt-4 rounded-2xl p-5" style={{ background: ADMIN.surface, border: `1px solid ${ADMIN.border}` }}>
+              <p className="mb-3 text-xs font-semibold uppercase tracking-wide" style={{ color: ADMIN.textMuted }}>
+                Motivos de cancelación · últimos 30 días
+              </p>
+              {data.cancellationReasons.length === 0 ? (
+                <p className="text-sm" style={{ color: ADMIN.textMuted }}>
+                  Nadie respondió la encuesta de cancelación todavía.
+                </p>
+              ) : (
+                <ul className="space-y-2.5">
+                  {(() => {
+                    const REASON_LABELS: Record<string, string> = {
+                      no_esperaba: "No era lo que esperaba",
+                      plan_gratis_basta: "El plan gratis le basta",
+                      no_entendi: "No entendió cómo usarla",
+                      miedo_cobro: "Miedo al cobro",
+                      muy_caro: "Muy caro",
+                      no_tiempo: "No tiene tiempo",
+                      otro: "Otro motivo",
+                    };
+                    const max = Math.max(...data.cancellationReasons.map((r) => r.count), 1);
+                    return data.cancellationReasons.map((r) => (
+                      <li key={r.reason}>
+                        <div className="mb-1 flex items-center justify-between text-sm">
+                          <span style={{ color: ADMIN.text }}>{REASON_LABELS[r.reason] || r.reason}</span>
+                          <span className="font-semibold" style={{ color: ADMIN.text }}>{r.count}</span>
+                        </div>
+                        <div className="h-1.5 overflow-hidden rounded-full" style={{ background: ADMIN.border }}>
+                          <div
+                            className="h-full rounded-full"
+                            style={{ width: `${(r.count / max) * 100}%`, background: ADMIN.negative }}
+                          />
+                        </div>
+                      </li>
+                    ));
+                  })()}
+                </ul>
+              )}
+            </div>
+
             <div className="mt-4 rounded-2xl p-5" style={{ background: ADMIN.surface, border: `1px solid ${ADMIN.border}` }}>
               <p className="mb-3 text-xs font-semibold uppercase tracking-wide" style={{ color: ADMIN.textMuted }}>
                 Péptidos más usados por tus clientes
