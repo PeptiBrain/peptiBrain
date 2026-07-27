@@ -5,7 +5,8 @@ import { motion, AnimatePresence } from "motion/react";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Syringe, Check, X, ChevronRight, AlertTriangle } from "lucide-react";
-import { loadAppData, markDoseDone, type AppData, type Dose } from "@/lib/app-data";
+import { markDoseDone, type Dose } from "@/lib/app-data";
+import { useAppData } from "@/lib/hooks/useAppData";
 import { celebrateDoseLogged } from "@/lib/celebrate";
 import { checkStreakMilestone } from "@/lib/milestones";
 import { PeptideIcon } from "@/components/app/peptidos/PeptideIcon";
@@ -15,13 +16,9 @@ import { suggestNextInjectionSite, lastInjectionSite, type InjectionSiteId } fro
 export function NextDosesWidget() {
   const t = useTranslations("NextDoses");
   const locale = useLocale();
-  const [data, setData] = useState<AppData | null>(null);
+  const { data, setData } = useAppData();
   const [open, setOpen] = useState(false);
   const [siteDose, setSiteDose] = useState<Dose | null>(null);
-
-  useEffect(() => {
-    loadAppData().then(setData);
-  }, []);
 
   if (!data) return null;
 
@@ -33,6 +30,12 @@ export function NextDosesWidget() {
 
   const now = Date.now();
   const overdueCount = pending.filter((d) => new Date(d.scheduledAt).getTime() < now).length;
+  // Un protocolo genera hasta 60 dosis futuras de golpe: el badge contaba TODAS
+  // (bug #13 del QA — "60" en vez de las vencidas/de hoy). Solo cuentan las que
+  // ya vencieron o vencen hoy; el resto no exige nada del usuario todavía.
+  const endOfToday = new Date();
+  endOfToday.setHours(23, 59, 59, 999);
+  const dueTodayOrOverdueCount = pending.filter((d) => new Date(d.scheduledAt).getTime() <= endOfToday.getTime()).length;
 
   function peptideName(id: string) {
     return data!.peptides.find((p) => p.id === id)?.name || t("peptideFallback");
@@ -130,9 +133,11 @@ export function NextDosesWidget() {
         style={{ background: overdueCount > 0 ? "#ef4444" : "var(--primary)" }}
       >
         <Syringe className="size-6" aria-hidden />
-        <span className="absolute -right-0.5 -top-0.5 flex size-5 items-center justify-center rounded-full bg-white text-xs font-bold text-destructive ring-2 ring-card">
-          {pending.length}
-        </span>
+        {dueTodayOrOverdueCount > 0 && (
+          <span className="absolute -right-0.5 -top-0.5 flex size-5 items-center justify-center rounded-full bg-white text-xs font-bold text-destructive ring-2 ring-card">
+            {dueTodayOrOverdueCount}
+          </span>
+        )}
       </button>
 
       {siteDose && (

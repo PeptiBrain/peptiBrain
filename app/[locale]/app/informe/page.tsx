@@ -7,20 +7,19 @@ import { Printer, ArrowLeft } from "lucide-react";
 import Image from "next/image";
 import { formatDateOnly } from "@/lib/date-range";
 import { createClient } from "@/lib/supabase/client";
-import { loadAppData, type AppData } from "@/lib/app-data";
 import { computeStats } from "@/lib/stats";
+import { useAppData } from "@/lib/hooks/useAppData";
 import { USER_DATA_CURRENCY, type Locale } from "@/i18n/routing";
 import { PremiumLocked } from "@/components/app/shell/PremiumLocked";
 
 export default function InformePage() {
   const t = useTranslations("Informe");
   const locale = useLocale();
-  const [data, setData] = useState<AppData | null>(null);
+  const { data } = useAppData();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
 
   useEffect(() => {
-    loadAppData().then(setData);
     const supabase = createClient();
     supabase.auth.getUser().then(async ({ data: { user } }) => {
       if (!user) return;

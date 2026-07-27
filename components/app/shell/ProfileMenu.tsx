@@ -33,6 +33,7 @@ export const OPEN_CALENDAR_EVENT = "peptibrain:calendar:open";
 import { HelpCenter } from "@/components/app/shell/HelpCenter";
 import { LocaleSwitcher } from "@/components/app/LocaleSwitcher";
 import { pushSupported, enablePushReminders, disablePushReminders } from "@/lib/push-client";
+import { todayIso } from "@/lib/date-range";
 
 export function ProfileMenu({
   name,
@@ -63,8 +64,7 @@ export function ProfileMenu({
   useEffect(() => setPref(getStoredPref()), []);
 
   useEffect(() => {
-    const d = new Date();
-    const todayLocal = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+    const todayLocal = todayIso();
     setTravelModeActive(trips.some((tr) => todayLocal >= tr.startDate && todayLocal <= tr.endDate));
   }, [trips]);
 

@@ -12,8 +12,8 @@ import {
   addProtocol,
   addTitrationProtocol,
   addProvider,
-  loadAppData,
   markDoseDone,
+  removeDose,
   removeProvider,
   removeVial,
   addVialShare,
@@ -41,6 +41,8 @@ import { isWithinRange, type CustomRange, type DateRangeKey } from "@/lib/date-r
 import { toMg } from "@/lib/dose-math";
 import { PLAUSIBLE, numberInRange } from "@/lib/plausible";
 import { logError } from "@/lib/error-log";
+import { useSaveAction } from "@/lib/hooks/useSaveAction";
+import { useAppData } from "@/lib/hooks/useAppData";
 import { celebrate } from "@/lib/celebrate";
 import { vialStatus, vialLifecycle } from "@/lib/stats";
 
@@ -56,7 +58,7 @@ type Tab = "resumen" | "inventario" | "proveedores" | "calculadora";
 export default function PeptidosPage() {
   const t = useTranslations("Peptidos");
   const [tab, setTab] = useState<Tab>("resumen");
-  const [data, setData] = useState<AppData | null>(null);
+  const { data, setData } = useAppData();
   const [showForm, setShowForm] = useState(false);
   const [name, setName] = useState("");
   const [route, setRoute] = useState("Subcutánea");
@@ -66,10 +68,6 @@ export default function PeptidosPage() {
   const [suggestionsHidden, setSuggestionsHidden] = useState(false);
   const [range, setRange] = useState<DateRangeKey>("all");
   const [customRange, setCustomRange] = useState<CustomRange | null>(null);
-
-  useEffect(() => {
-    loadAppData().then(setData);
-  }, []);
 
   // Sugerencias de la base de 48 péptidos a partir de 2 letras. Busca por
   // nombre Y por etiquetas: nadie escribe "Semaglutida" cuando lo que tiene en
@@ -899,8 +897,8 @@ function UsosTab({
   const [amount, setAmount] = useState("");
   const [unit, setUnit] = useState("mg");
   const [forMemberId, setForMemberId] = useState("");
-  const [saving, setSaving] = useState(false);
-  const [saveError, setSaveError] = useState(false);
+  const [confirmDeleteDoseId, setConfirmDeleteDoseId] = useState<string | null>(null);
+  const [deletingDose, setDeletingDose] = useState(false);
 
   const sorted = [...data.doses]
     .filter((d) => isWithinRange(d.scheduledAt, range, customRange))
@@ -927,35 +925,45 @@ function UsosTab({
     amountValue > 0 &&
     (amountMg === null || numberInRange(amountMg, PLAUSIBLE.vialMassMg));
 
-  async function handleSave() {
-    if (!peptideId || !amountIsValid || saving) return;
-    setSaving(true);
-    setSaveError(false);
-    try {
-      const label = formatWhenLabel(whenInput);
-      const scheduledAt = new Date(whenInput).toISOString();
-      const next = await addDose(data, {
-        peptideId,
-        amount,
-        unit,
-        when: label,
-        scheduledAt,
-        forMemberId: forMemberId || undefined,
-      });
-      onChange(next);
-      setAmount("");
-      setForMemberId("");
-      setShowForm(false);
-    } catch (err) {
-      setSaveError(true);
-      logError(err instanceof Error ? err : new Error(String(err)), "peptidos/UsosTab.handleSave");
-    } finally {
-      setSaving(false);
-    }
+  const save = useSaveAction(async () => {
+    const label = formatWhenLabel(whenInput);
+    const scheduledAt = new Date(whenInput).toISOString();
+    const next = await addDose(data, {
+      peptideId,
+      amount,
+      unit,
+      when: label,
+      scheduledAt,
+      forMemberId: forMemberId || undefined,
+    });
+    onChange(next);
+    setAmount("");
+    setForMemberId("");
+    setShowForm(false);
+  }, "peptidos/UsosTab.handleSave");
+  const saving = save.saving;
+  const saveError = save.error;
+
+  function handleSave() {
+    if (!peptideId || !amountIsValid) return;
+    save.run();
   }
 
   async function markDone(doseId: string) {
     onChange(await markDoseDone(data, doseId));
+  }
+
+  async function handleDeleteDose(doseId: string) {
+    if (deletingDose) return;
+    setDeletingDose(true);
+    try {
+      onChange(await removeDose(data, doseId));
+      setConfirmDeleteDoseId(null);
+    } catch (err) {
+      logError(err instanceof Error ? err : new Error(String(err)), "peptidos/handleDeleteDose");
+    } finally {
+      setDeletingDose(false);
+    }
   }
 
   return (
@@ -1116,26 +1124,60 @@ function UsosTab({
             const peptide = data.peptides.find((p) => p.id === d.peptideId);
             const recipient = d.forMemberId ? data.familyMembers.find((m) => m.id === d.forMemberId) : undefined;
             return (
-              <div key={d.id} className="flex items-center justify-between rounded-xl border border-border bg-card p-3">
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-medium text-foreground">{peptide?.name || "—"}</p>
-                  <p className="truncate text-xs text-muted-foreground">
-                    {d.when} · {d.amount} {d.unit}
-                    {recipient && ` · ${t("doseForMember", { name: recipient.name })}`}
-                  </p>
+              <div key={d.id} className="rounded-xl border border-border bg-card p-3">
+                <div className="flex items-center justify-between">
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-medium text-foreground">{peptide?.name || "—"}</p>
+                    <p className="truncate text-xs text-muted-foreground">
+                      {d.when} · {d.amount} {d.unit}
+                      {recipient && ` · ${t("doseForMember", { name: recipient.name })}`}
+                    </p>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-1.5">
+                    {d.done ? (
+                      <span className="flex items-center gap-1 text-xs font-medium text-primary">
+                        <Check className="size-3.5" aria-hidden /> {t("done")}
+                      </span>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => markDone(d.id)}
+                        className="rounded-lg border border-border px-2.5 py-1.5 text-xs font-medium text-foreground hover:border-primary hover:text-primary"
+                      >
+                        {t("pending")}
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => setConfirmDeleteDoseId(d.id)}
+                      aria-label={t("deleteDoseAria")}
+                      className="flex size-8 items-center justify-center rounded-full text-muted-foreground hover:bg-secondary hover:text-destructive"
+                    >
+                      <Trash2 className="size-4" aria-hidden />
+                    </button>
+                  </div>
                 </div>
-                {d.done ? (
-                  <span className="flex shrink-0 items-center gap-1 text-xs font-medium text-primary">
-                    <Check className="size-3.5" aria-hidden /> {t("done")}
-                  </span>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => markDone(d.id)}
-                    className="shrink-0 rounded-lg border border-border px-2.5 py-1.5 text-xs font-medium text-foreground hover:border-primary hover:text-primary"
-                  >
-                    {t("pending")}
-                  </button>
+                {confirmDeleteDoseId === d.id && (
+                  <div className="mt-2 flex items-center justify-between gap-2 rounded-lg bg-secondary/60 px-3 py-2">
+                    <p className="text-xs text-foreground">{t("confirmDeleteDose")}</p>
+                    <div className="flex shrink-0 gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => setConfirmDeleteDoseId(null)}
+                        className="rounded-md px-2 py-1 text-xs font-medium text-muted-foreground hover:bg-secondary"
+                      >
+                        {t("cancel")}
+                      </button>
+                      <button
+                        type="button"
+                        disabled={deletingDose}
+                        onClick={() => handleDeleteDose(d.id)}
+                        className="rounded-md bg-destructive/10 px-2 py-1 text-xs font-semibold text-destructive hover:bg-destructive/20 disabled:opacity-50"
+                      >
+                        {t("deleteConfirm")}
+                      </button>
+                    </div>
+                  </div>
                 )}
               </div>
             );

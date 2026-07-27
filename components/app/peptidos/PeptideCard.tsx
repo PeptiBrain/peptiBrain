@@ -341,7 +341,13 @@ export function PeptideCard({
                 <div className="mt-3 rounded-lg border border-border p-3">
                   <p className="text-center text-sm text-foreground">
                     {t("drawUpTo")}{" "}
-                    <span className="tabular font-semibold text-primary">{draw.toFixed(1)}</span>{" "}
+                    <span
+                      className={`tabular font-semibold ${
+                        draw > SYRINGE_CAPACITY[syringeType] ? "text-destructive" : "text-primary"
+                      }`}
+                    >
+                      {draw.toFixed(1)}
+                    </span>{" "}
                     {t("units")}
                   </p>
                   <div className="mt-2">

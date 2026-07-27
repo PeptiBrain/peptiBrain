@@ -8,7 +8,7 @@ import type { Peptide, TitrationStep } from "@/lib/app-data";
 import { todayIso } from "@/lib/date-range";
 import { toMg } from "@/lib/dose-math";
 import { PLAUSIBLE, numberInRange } from "@/lib/plausible";
-import { logError } from "@/lib/error-log";
+import { useSaveAction } from "@/lib/hooks/useSaveAction";
 
 const INTERVAL_OPTIONS = [1, 2, 3, 7, 14];
 const MAX_PROTOCOL_DOSES = 60;
@@ -57,8 +57,22 @@ export function ProtocolModal({
   const [intervalDays, setIntervalDays] = useState(1);
   const [weeks, setWeeks] = useState("4");
   const [steps, setSteps] = useState<(TitrationStep & { id: string })[]>([newStep(), newStep()]);
-  const [saving, setSaving] = useState(false);
-  const [saveError, setSaveError] = useState(false);
+  const save = useSaveAction(async () => {
+    if (mode === "fixed") {
+      await onSave({ peptideId, amount: amount.trim(), unit, startDate, time, intervalDays, weeks: weeksNum });
+    } else {
+      await onSaveTitration({
+        peptideId,
+        unit,
+        startDate,
+        time,
+        intervalDays,
+        steps: steps.map((s) => ({ amount: s.amount.trim(), weeks: Math.max(1, s.weeks) })),
+      });
+    }
+  }, "ProtocolModal.handleSave");
+  const saving = save.saving;
+  const saveError = save.error;
 
   useEffect(() => {
     if (open) {
@@ -71,7 +85,9 @@ export function ProtocolModal({
       setIntervalDays(1);
       setWeeks("4");
       setSteps([newStep(), newStep()]);
+      save.reset();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, peptides]);
 
   const weeksNum = Math.max(1, Math.min(24, Number(weeks) || 1));
@@ -117,31 +133,10 @@ export function ProtocolModal({
   const titrationValid =
     steps.every((s) => s.amount.trim() && isAmountPlausible(s.amount)) && titrationTotalDoses > 0;
 
-  async function handleSave() {
+  function handleSave() {
     if (!peptideId) return;
-    setSaving(true);
-    setSaveError(false);
-    try {
-      if (mode === "fixed") {
-        if (!amount.trim() || !fixedAmountPlausible) return;
-        await onSave({ peptideId, amount: amount.trim(), unit, startDate, time, intervalDays, weeks: weeksNum });
-      } else {
-        if (!titrationValid) return;
-        await onSaveTitration({
-          peptideId,
-          unit,
-          startDate,
-          time,
-          intervalDays,
-          steps: steps.map((s) => ({ amount: s.amount.trim(), weeks: Math.max(1, s.weeks) })),
-        });
-      }
-    } catch (err) {
-      setSaveError(true);
-      logError(err instanceof Error ? err : new Error(String(err)), "ProtocolModal.handleSave");
-    } finally {
-      setSaving(false);
-    }
+    if (mode === "fixed" ? !amount.trim() || !fixedAmountPlausible : !titrationValid) return;
+    save.run();
   }
 
   return (

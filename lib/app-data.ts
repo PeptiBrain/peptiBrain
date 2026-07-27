@@ -826,6 +826,17 @@ export async function addDose(
   return loadAppData();
 }
 
+// Un protocolo genera hasta 60 dosis de golpe y antes no había forma de quitar
+// UNA sola: solo se podía borrar el péptido entero o "Restablecer todos mis
+// datos" (bug #6 del QA). Esto permite corregir una dosis mal programada sin
+// perder el resto del protocolo.
+export async function removeDose(data: AppData, doseId: string): Promise<AppData> {
+  const { supabase } = await requireUser();
+  const { error } = await supabase.from("doses").delete().eq("id", doseId);
+  if (error) throw error;
+  return loadAppData();
+}
+
 export async function markDoseDone(data: AppData, doseId: string, injectionSite?: string): Promise<AppData> {
   const { supabase } = await requireUser();
   const { error } = await supabase

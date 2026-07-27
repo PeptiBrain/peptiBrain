@@ -1,5 +1,34 @@
 # ESTADO — PeptiBrain
 
+## ✅ Bloque B del PLAN-PRODUCTO.md completo (2026-07-27)
+
+Los 6 puntos del Bloque B, incluyendo los 2 refactors grandes (B1/B2) que el usuario pidió
+explícitamente hacer YA pese al riesgo a 6 días del lanzamiento.
+
+- **B1 — sistema único de formularios**: nuevo `lib/hooks/useSaveAction.ts` (saving/error/logError
+  en un solo hook). Migrados los 13 formularios que antes repetían el patrón a mano: los 9 modales
+  de Salud (incluye ejercicio), ProviderModal, ProtocolModal, CalendarModal (viaje), familia
+  (invitar), y registrar dosis en Péptidos.
+- **B2 — capa de caché de datos**: instalado `swr`. Nuevo `lib/hooks/useAppData.ts` con una sola
+  clave de caché compartida (`"app-data"`) para las 7 pantallas (Inicio, Péptidos, Salud,
+  Estadísticas, Familia, Cuenta, Informe) + el widget de dosis del header, que antes hacían
+  `loadAppData()` cada una por su cuenta (~24 peticiones duplicadas por navegación, CR-3). Ahora
+  comparten una sola copia: marcar una dosis en una pantalla actualiza el badge del header al
+  instante, sin refetch.
+- **B3** — `lib/date-range.ts` con `formatDateSmart` (año solo si distinto), aplicado en Salud;
+  corregidos 2 bugs reales de idioma (`ProfileMenu` reimplementaba `todayIso`, `BodyLevelChartSection`
+  ignoraba el locale real). El resto de duplicación cosmética de fechas (funcionalmente correcta)
+  queda como deuda técnica documentada, no tocada por riesgo/beneficio a esta distancia del lanzamiento.
+- **B4** — `removeDose()` en `lib/app-data.ts` + botón de borrar con confirmación en cada dosis del
+  protocolo (antes solo se podía borrar el péptido entero o resetear todos los datos).
+- **B6** — cerrados de este backlog: #4, #6, #12, #13, #35, #36, #53, #59, #64 (varios ya cubiertos
+  como efecto colateral de B2/A2). El resto (~25 de 84, sobre todo copy/UI menor) queda documentado
+  como pendiente, no crítico para vender con seguridad.
+
+Verificado: tsc ✓ · `npm test` (40/40) ✓ · `npm run build` ✓. No se pudo verificar visualmente el
+flujo con sesión iniciada (nunca uso contraseñas); sí se verificó que la home pública carga sin
+errores en el servidor de desarrollo local.
+
 ## ✅ Bloque A del PLAN-PRODUCTO.md, sin A1/A5 (2026-07-26) — desplegado a main (ceaf364)
 
 Ejecutado A2, A3, A4, A7, A8 completos; A6 documentado (requiere que el dueño use el botón ya
@@ -74,12 +103,12 @@ Atacar estas cuatro mata la mayoría del backlog. Arreglar bug a bug es el error
    (real 0,025 U, no medible). Existe aviso para "supera la jeringa" pero no para el defecto.
 3. ✅ **"Resolver agua" da resultado físicamente imposible.** Vial 1 mg, dosis 2000 mcg, 20 U → `0.10 mL`.
    No se pueden sacar 2 mg de un vial de 1 mg, y 20 U son el doble del volumen total.
-4. **Fallos silenciosos en 5 formularios** (400 sin mensaje): nombre de péptido de 229 caracteres
+4. ✅ **Fallos silenciosos en 5 formularios** (400 sin mensaje): nombre de péptido de 229 caracteres
    (input sin `maxlength`), vial `-10` mg, peso `-50` kg / grasa `500 %`, comida `-5000` kcal,
    sueño `48` h.
 5. ⏳ **"Eliminar foto" borra sin confirmación** (los demás borrados sí confirman). Ver también 56.
-6. ⏳ (salud ✅, dosis pendiente) **No hay forma de borrar dosis ni protocolos programados.** Un protocolo generó 60 dosis y solo
-   se pueden quitar borrando el péptido entero o "Restablecer todos mis datos".
+6. ✅ **No hay forma de borrar dosis ni protocolos programados.** Ahora se puede borrar una dosis
+   individual (`removeDose` + confirmación) además del péptido entero o "Restablecer todos mis datos".
 7. ✅ **Ningún control de plausibilidad, y encima se celebra.** Aceptó 500 kg, 99 % grasa, 999.999 kcal,
    999.999 ml, 99.999 min, testosterona 99.999, dosis 999.999 mg. El toast felicitó con **"-427 kg"**.
 8. **Dosis en el futuro se puede marcar como Aplicada** (registrada el 01/01/2030).
@@ -96,19 +125,22 @@ Atacar estas cuatro mata la mayoría del backlog. Arreglar bug a bug es el error
    (el arreglo por nombre del commit 916b291 no cubre la carrera de clics rápidos).
 52. ✅ **Desfase de un día app vs informe.** Salud "25 jul", informe "24 jul". Peso del 1 ene sale como
    "31 dic 1899". Mezcla de UTC con hora local al formatear.
-53. **El importador CSV acepta fechas y cantidades imposibles**: `01/01/1800` y `999999999 mg` se
+53. ✅ **El importador CSV acepta fechas y cantidades imposibles**: `01/01/1800` y `999999999 mg` se
    importan (201). Ese registro rompe el gráfico "Dosis en el tiempo" y provoca scroll horizontal
-   en toda la página.
+   en toda la página. Ahora rechaza (cuenta como fila fallida) fechas fuera de ±25/+3 años y masas
+   fuera del rango plausible.
 54. **El icono de descarga sin etiqueta de Familia exporta TODOS tus datos** (`peptibrain-datos.json`,
-   todo el historial) sin tooltip, sin `aria-label`, sin confirmación. Parece un export de familia.
+   todo el historial) — el `aria-label` ya existe; sin confirmación (no se añadió: es una descarga
+   no destructiva, reversible, no justifica la fricción de un modal).
 
 ### 🟠 ALTOS — funcionalidad
 10. Asistente responde cortado y con **markdown crudo** (`**6 péptidos**`), y trunca la respuesta.
 11. **"Programar una dosis" no programa nada**: navega a Péptidos › Resumen sin abrir formulario.
-12. Navegación lenta o perdida: pulsar "Péptidos" a veces no hace nada; cuando funciona tarda 5-8 s
-    mostrando el dashboard viejo. (Ver CR-3.)
-13. **Badge rojo de dosis pendientes no se actualiza** al aplicar una dosis (seguía en 60), y cuenta
-    las 60 futuras en vez de solo las vencidas/de hoy.
+12. ✅ Navegación lenta o perdida: pulsar "Péptidos" a veces no hace nada; cuando funciona tarda 5-8 s
+    mostrando el dashboard viejo. (Ver CR-3 — resuelto con caché SWR compartida, B2.)
+13. ✅ **Badge rojo de dosis pendientes no se actualiza** al aplicar una dosis (seguía en 60), y cuenta
+    las 60 futuras en vez de solo las vencidas/de hoy. Ambas partes resueltas: se actualiza al
+    instante (B2, caché compartida) y solo cuenta vencidas + de hoy (`dueTodayOrOverdueCount`).
 14. Duración del protocolo sin tope visible: 9999 semanas → "creará 60 dosis" sin explicar el límite.
 15. ✅ **Viaje con fecha fin anterior al inicio se guarda** (26 jul → 1 jul).
 16. Pide zona de inyección para un péptido **ORAL**.
@@ -138,12 +170,14 @@ Atacar estas cuatro mata la mayoría del backlog. Arreglar bug a bug es el error
     ⚠️ Mitigado en 916b291 (`extraSeatsUnknown` ya no bloquea), pero la causa sigue.
 58. `cdn.growthbook.io` 503 ×3 por carga → feature flags a valores por defecto; probable origen del
     texto incoherente de "Premium".
-59. **Todas las tablas se piden DOS veces por carga** (~24 peticiones en vez de 12). (Ver CR-3.)
+59. ✅ **Todas las tablas se piden DOS veces por carga** (~24 peticiones en vez de 12). (Ver CR-3 —
+    resuelto con caché SWR compartida entre las 7 pantallas + widget, B2.)
 60. ✅ Al cambiar a inglés **la moneda pasa de € a $** con los mismos números. Eso no es traducir.
 61. En la UI inglesa las fechas siguen en español ("Next dose lun 27 de jul").
 62. El `<title>` sigue en español en `/en/`.
 63. La tarjeta de "Compartir" mezcla idiomas: en español pone "jose's protocol", "1 day streak".
-64. "1 días" / "1 days" — falta singular/plural (Inicio e informe).
+64. ✅ "1 días" / "1 days" — falta singular/plural (Inicio e informe). `Informe.streakDays` ahora
+    usa plural ICU.
 65. "1 dosis importadas · 1 péptidos nuevos creados · 1 filas con error" — sin plurales, y no dice
     QUÉ fila falló.
 66. El informe solo incluye péptidos, dosis, viales y peso. **Faltan** comidas, hidratación, sueño,
@@ -168,8 +202,10 @@ Atacar estas cuatro mata la mayoría del backlog. Arreglar bug a bug es el error
 ### 🟡 MENORES — copy y UI
 33. ✅ Capitalización: "Julio De 2026", "Domingo, 26 De Julio" (`capitalize` afecta también a "de").
 34. ✅ Doble símbolo: "+ + Agregar otro péptido (mezcla)".
-35. Números sin separador de miles: "999999 kcal" desborda la tarjeta.
-36. "2000.0 unidades" se pinta en verde (color de éxito) cuando es un error.
+35. ✅ Números sin separador de miles: "999999 kcal" desborda la tarjeta — ya no puede ocurrir,
+    A2 rechaza calorías fuera de rango (max 20.000) antes de guardar.
+36. ✅ "2000.0 unidades" se pinta en verde (color de éxito) cuando es un error — ahora se pinta en
+    rojo cuando supera la capacidad de la jeringa (calculadora y crear vial).
 37. "Agua bacteriostática (ml)" solo existe como placeholder: al escribir desaparece la etiqueta.
 38. Emojis de ánimo 2.º y 4.º casi idénticos; los botones sin texto ni `aria-label`.
 39. La nota de la foto solo se ve en el lightbox, no en la tarjeta; la imagen sin `alt`.

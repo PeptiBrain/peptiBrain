@@ -25,6 +25,21 @@ export function formatDateOnly(
   return d.toLocaleDateString(locale, options);
 }
 
+// Igual que formatDateOnly, pero oculta el año cuando es el actual — así "26
+// jul" sigue corto para lo de este año, y un registro de 1900 o 2030 muestra
+// su año y no se confunde con uno reciente (historial clínico). Antes esta
+// lógica de "año solo si distinto" estaba duplicada a mano en Salud.
+export function formatDateSmart(iso: string, locale: string): string {
+  const d = /^\d{4}-\d{2}-\d{2}$/.test(iso) ? new Date(`${iso}T00:00:00`) : new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso;
+  const sameYear = d.getFullYear() === new Date().getFullYear();
+  return d.toLocaleDateString(locale, {
+    day: "numeric",
+    month: "short",
+    ...(sameYear ? {} : { year: "numeric" }),
+  });
+}
+
 export type DateRangeKey =
   | "today"
   | "7d"

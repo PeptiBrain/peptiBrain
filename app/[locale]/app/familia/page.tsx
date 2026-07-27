@@ -25,6 +25,8 @@ import {
 } from "@/lib/app-data";
 import { csvToFamilyRows } from "@/lib/csv";
 import { logError } from "@/lib/error-log";
+import { useSaveAction } from "@/lib/hooks/useSaveAction";
+import { useAppData } from "@/lib/hooks/useAppData";
 import { hotmartExtraSeatCheckoutUrl } from "@/lib/hotmart-links";
 import { loadOnboarding } from "@/lib/onboarding";
 import { USER_DATA_CURRENCY, type Locale } from "@/i18n/routing";
@@ -58,7 +60,7 @@ const RELATIONSHIPS: FamilyRelationship[] = [
 
 export default function FamiliaPage() {
   const t = useTranslations("Familia");
-  const [data, setData] = useState<AppData | null>(null);
+  const { data, setData } = useAppData();
   const [invitations, setInvitations] = useState<ReceivedInvitation[] | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [name, setName] = useState("");
@@ -73,14 +75,31 @@ export default function FamiliaPage() {
   const [seatLimitId, setSeatLimitId] = useState<string | null>(null);
   const [importResult, setImportResult] = useState<{ imported: number; skipped: number } | null>(null);
   const [importing, setImporting] = useState(false);
-  const [inviting, setInviting] = useState(false);
-  const [inviteError, setInviteError] = useState(false);
   const [csvError, setCsvError] = useState(false);
+  const inviteSave = useSaveAction(async () => {
+    if (!data) return;
+    const next = await addFamilyMember(data, {
+      name: name.trim(),
+      email: email.trim(),
+      phone: phone.trim() || undefined,
+      phoneCode: phone.trim() ? phoneCode : undefined,
+      relationship,
+      sharePeptides: true,
+      shareDoses: true,
+      shareHealth: false,
+    });
+    setData(next);
+    notifyInviteEmail(email.trim(), name.trim());
+    setName("");
+    setEmail("");
+    setPhone("");
+    setRelationship("otro");
+    setShowForm(false);
+  }, "familia/handleInvite");
   const fileRefs = useRef<Record<string, HTMLInputElement | null>>({});
   const csvInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
-    loadAppData().then(setData);
     loadReceivedInvitations().then(setInvitations);
   }, []);
 
@@ -119,34 +138,9 @@ export default function FamiliaPage() {
     URL.revokeObjectURL(url);
   }
 
-  async function handleInvite() {
-    if (!canShare || seatsFull || !name.trim() || !email.trim() || !data || inviting) return;
-    setInviting(true);
-    setInviteError(false);
-    try {
-      const next = await addFamilyMember(data, {
-        name: name.trim(),
-        email: email.trim(),
-        phone: phone.trim() || undefined,
-        phoneCode: phone.trim() ? phoneCode : undefined,
-        relationship,
-        sharePeptides: true,
-        shareDoses: true,
-        shareHealth: false,
-      });
-      setData(next);
-      notifyInviteEmail(email.trim(), name.trim());
-      setName("");
-      setEmail("");
-      setPhone("");
-      setRelationship("otro");
-      setShowForm(false);
-    } catch (err) {
-      setInviteError(true);
-      logError(err instanceof Error ? err : new Error(String(err)), "familia/handleInvite");
-    } finally {
-      setInviting(false);
-    }
+  function handleInvite() {
+    if (!canShare || seatsFull || !name.trim() || !email.trim() || !data) return;
+    inviteSave.run();
   }
 
   function notifyInviteEmail(toEmail: string, toName: string) {
@@ -361,10 +355,10 @@ export default function FamiliaPage() {
             </select>
           </div>
           <p className="text-xs text-muted-foreground">{t("inviteNote")}</p>
-          {inviteError && <p className="text-xs text-destructive">{t("saveError")}</p>}
+          {inviteSave.error && <p className="text-xs text-destructive">{t("saveError")}</p>}
           <button
             type="button"
-            disabled={!name.trim() || !email.trim() || inviting}
+            disabled={!name.trim() || !email.trim() || inviteSave.saving}
             onClick={handleInvite}
             className="h-11 w-full rounded-lg bg-primary text-sm font-semibold text-primary-foreground disabled:opacity-50 sm:w-auto sm:px-8"
           >

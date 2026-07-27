@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { motion } from "motion/react";
 import { Activity } from "lucide-react";
 import { PEPTIDE_PROFILES } from "@/lib/peptide-profiles";
@@ -13,6 +13,7 @@ const DAYS = 30;
 
 export function BodyLevelChartSection({ data }: { data: AppData }) {
   const t = useTranslations("Stats");
+  const locale = useLocale();
 
   const eligiblePeptides = useMemo(
     () =>
@@ -75,8 +76,8 @@ export function BodyLevelChartSection({ data }: { data: AppData }) {
             labels={
               firstDate && lastDate
                 ? [
-                    firstDate.toLocaleDateString(undefined, { day: "numeric", month: "short" }),
-                    lastDate.toLocaleDateString(undefined, { day: "numeric", month: "short" }),
+                    firstDate.toLocaleDateString(locale, { day: "numeric", month: "short" }),
+                    lastDate.toLocaleDateString(locale, { day: "numeric", month: "short" }),
                   ]
                 : undefined
             }

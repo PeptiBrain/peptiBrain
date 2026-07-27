@@ -348,7 +348,15 @@ export function ReconstitutionCalculator({ data }: { data: AppData }) {
                 {draws[i]?.draw != null && (
                   <div className="mt-3 rounded-lg bg-secondary/60 p-3">
                     <p className="text-center text-sm text-foreground">
-                      {t("drawUpTo")} <span className="tabular font-semibold text-primary">{draws[i].draw!.toFixed(1)}</span> {t("units")}
+                      {t("drawUpTo")}{" "}
+                      <span
+                        className={`tabular font-semibold ${
+                          draws[i].draw! > SYRINGE_CAPACITY[syringeType] ? "text-destructive" : "text-primary"
+                        }`}
+                      >
+                        {draws[i].draw!.toFixed(1)}
+                      </span>{" "}
+                      {t("units")}
                     </p>
                     <div className="mt-2">
                       <SyringeVisual syringeType={syringeType} units={draws[i].draw!} />

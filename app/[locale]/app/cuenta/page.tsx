@@ -11,7 +11,8 @@ import { ImportCsvModal } from "@/components/app/cuenta/ImportCsvModal";
 import { ModalShell } from "@/components/app/shell/ModalShell";
 import { PageSkeleton } from "@/components/app/shell/PageSkeleton";
 import { track } from "@/lib/mixpanel";
-import { loadAppData, setDailyGoal, resetTrackingData, type AppData } from "@/lib/app-data";
+import { loadAppData, setDailyGoal, resetTrackingData } from "@/lib/app-data";
+import { useAppData } from "@/lib/hooks/useAppData";
 
 const DAILY_GOALS = [10, 20, 30, 50] as const;
 
@@ -71,7 +72,7 @@ export default function CuentaPage() {
   const [resetting, setResetting] = useState(false);
   const [resetError, setResetError] = useState(false);
 
-  const [appData, setAppData] = useState<AppData | null>(null);
+  const { data: appData, setData: setAppData } = useAppData();
   const [showImportCsv, setShowImportCsv] = useState(false);
   const [savingGoal, setSavingGoal] = useState(false);
 
@@ -94,7 +95,6 @@ export default function CuentaPage() {
         setAvatarUrl(p.avatar_url);
       }
     });
-    loadAppData().then(setAppData);
   }, []);
 
   if (!profile) return <PageSkeleton narrow cards={3} />;

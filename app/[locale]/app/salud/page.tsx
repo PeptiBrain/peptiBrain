@@ -13,8 +13,6 @@ import {
   addLabResult,
   removeLabResult,
   clearHealthField,
-  loadAppData,
-  type AppData,
   type HealthField,
   type HealthLog,
   type Meal,
@@ -23,9 +21,11 @@ import {
 } from "@/lib/app-data";
 import { LAB_MARKER_IDS, LAB_MARKER_DEFAULT_UNIT, type LabMarkerId } from "@/lib/lab-markers";
 import { checkStreakMilestone } from "@/lib/milestones";
-import { todayIso } from "@/lib/date-range";
+import { todayIso, formatDateSmart } from "@/lib/date-range";
 import { PLAUSIBLE, inRange, requiredInRange } from "@/lib/plausible";
 import { logError } from "@/lib/error-log";
+import { useSaveAction } from "@/lib/hooks/useSaveAction";
+import { useAppData } from "@/lib/hooks/useAppData";
 import { SubTabs, type SubTabItem } from "@/components/app/shell/SubTabs";
 import { PremiumLocked } from "@/components/app/shell/PremiumLocked";
 import { PageSkeleton } from "@/components/app/shell/PageSkeleton";
@@ -39,7 +39,7 @@ export default function SaludPage() {
   const t = useTranslations("Salud");
   const locale = useLocale();
   const [tab, setTab] = useState<Tab>("peso");
-  const [data, setData] = useState<AppData | null>(null);
+  const { data, setData } = useAppData();
   const [showExerciseForm, setShowExerciseForm] = useState(false);
   const [exerciseMin, setExerciseMin] = useState("");
   const [showWeightModal, setShowWeightModal] = useState(false);
@@ -57,11 +57,15 @@ export default function SaludPage() {
     null
   );
   const [deleting, setDeleting] = useState(false);
-  const [exerciseSaveError, setExerciseSaveError] = useState(false);
-
-  useEffect(() => {
-    loadAppData().then(setData);
-  }, []);
+  const exerciseSave = useSaveAction(async () => {
+    if (!data) return;
+    const prev = data;
+    const next = await addHealthLog(data, { date: todayIso(), exerciseMin: exerciseMin.trim() });
+    setData(next);
+    checkStreakMilestone(prev, next);
+    setExerciseMin("");
+    setShowExerciseForm(false);
+  }, "salud/handleSaveExercise");
 
   if (!data) return <PageSkeleton tabs cards={3} />;
 
@@ -82,33 +86,13 @@ export default function SaludPage() {
   // 99.999 minutos de ejercicio se guardaban tal cual (son 69 días seguidos).
   const exerciseOk = requiredInRange(exerciseMin, PLAUSIBLE.exerciseMin);
 
-  async function handleSaveExercise() {
+  function handleSaveExercise() {
     if (!data || !exerciseOk) return;
-    setExerciseSaveError(false);
-    const prev = data;
-    try {
-      const next = await addHealthLog(data, { date: todayIso(), exerciseMin: exerciseMin.trim() });
-      setData(next);
-      checkStreakMilestone(prev, next);
-      setExerciseMin("");
-      setShowExerciseForm(false);
-    } catch (err) {
-      setExerciseSaveError(true);
-      logError(err instanceof Error ? err : new Error(String(err)), "salud/handleSaveExercise");
-    }
+    exerciseSave.run();
   }
 
   function formatLogDate(iso: string) {
-    // El año solo se muestra si NO es el actual: así "26 jul" sigue siendo
-    // corto para lo de este año, pero un registro de 1900 o de 2030 se ve tal
-    // cual y no se confunde con uno reciente (historial clínico).
-    const d = new Date(`${iso}T00:00:00`);
-    const sameYear = d.getFullYear() === new Date().getFullYear();
-    return d.toLocaleDateString(locale, {
-      day: "numeric",
-      month: "short",
-      ...(sameYear ? {} : { year: "numeric" }),
-    });
+    return formatDateSmart(iso, locale);
   }
 
   const weightLogs = data.healthLogs.filter((h) => h.weightKg);
@@ -237,7 +221,7 @@ export default function SaludPage() {
             {exerciseMin.trim() && !exerciseOk && (
               <p className="mb-2 text-xs text-destructive">{t("exerciseOutOfRange")}</p>
             )}
-            {exerciseSaveError && <p className="mb-2 text-xs text-destructive">{t("saveError")}</p>}
+            {exerciseSave.error && <p className="mb-2 text-xs text-destructive">{t("saveError")}</p>}
             <button
               type="button"
               disabled={!exerciseOk}
@@ -716,8 +700,18 @@ function WeightModal({
   const [weightKg, setWeightKg] = useState("");
   const [bodyFatPct, setBodyFatPct] = useState("");
   const [notes, setNotes] = useState("");
-  const [saving, setSaving] = useState(false);
-  const [saveError, setSaveError] = useState(false);
+  const save = useSaveAction(
+    () =>
+      onSave({
+        date,
+        weightKg: weightKg.trim(),
+        bodyFatPct: bodyFatPct.trim() || undefined,
+        notes: notes.trim() || undefined,
+      }),
+    "salud/WeightModal"
+  );
+  const saving = save.saving;
+  const saveError = save.error;
 
   useEffect(() => {
     if (open) {
@@ -725,9 +719,9 @@ function WeightModal({
       setWeightKg("");
       setBodyFatPct("");
       setNotes("");
-      setSaving(false);
-      setSaveError(false);
+      save.reset();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
   // Antes solo se pedía que el campo no estuviera vacío: entraban 500 kg y 99 %
@@ -736,23 +730,9 @@ function WeightModal({
   const weightOk = requiredInRange(weightKg, PLAUSIBLE.weightKg);
   const bodyFatOk = inRange(bodyFatPct, PLAUSIBLE.bodyFatPct);
 
-  async function handleSave() {
-    if (!weightOk || !bodyFatOk || saving) return;
-    setSaving(true);
-    setSaveError(false);
-    try {
-      await onSave({
-        date,
-        weightKg: weightKg.trim(),
-        bodyFatPct: bodyFatPct.trim() || undefined,
-        notes: notes.trim() || undefined,
-      });
-    } catch (err) {
-      setSaveError(true);
-      logError(err instanceof Error ? err : new Error(String(err)), "salud/WeightModal");
-    } finally {
-      setSaving(false);
-    }
+  function handleSave() {
+    if (!weightOk || !bodyFatOk) return;
+    save.run();
   }
 
   return (
@@ -836,34 +816,29 @@ function MealModal({
   const [date, setDate] = useState(todayIso());
   const [description, setDescription] = useState("");
   const [calories, setCalories] = useState("");
-  const [saving, setSaving] = useState(false);
-  const [saveError, setSaveError] = useState(false);
+  const save = useSaveAction(
+    () => onSave({ date, description: description.trim(), calories: calories.trim() || undefined }),
+    "salud/MealModal"
+  );
+  const saving = save.saving;
+  const saveError = save.error;
 
   useEffect(() => {
     if (open) {
       setDate(todayIso());
       setDescription("");
       setCalories("");
-      setSaving(false);
-      setSaveError(false);
+      save.reset();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
   // Se aceptaban 999.999 kcal, que desbordan la tarjeta y falsean el promedio.
   const caloriesOk = inRange(calories, PLAUSIBLE.calories);
 
-  async function handleSave() {
-    if (!description.trim() || !caloriesOk || saving) return;
-    setSaving(true);
-    setSaveError(false);
-    try {
-      await onSave({ date, description: description.trim(), calories: calories.trim() || undefined });
-    } catch (err) {
-      setSaveError(true);
-      logError(err instanceof Error ? err : new Error(String(err)), "salud/MealModal");
-    } finally {
-      setSaving(false);
-    }
+  function handleSave() {
+    if (!description.trim() || !caloriesOk) return;
+    save.run();
   }
 
   return (
@@ -933,32 +908,24 @@ function HydrationModal({
   const t = useTranslations("Salud");
   const [date, setDate] = useState(todayIso());
   const [hydrationMl, setHydrationMl] = useState("");
-  const [saving, setSaving] = useState(false);
-  const [saveError, setSaveError] = useState(false);
+  const save = useSaveAction(() => onSave({ date, hydrationMl: hydrationMl.trim() }), "salud/HydrationModal");
+  const saving = save.saving;
+  const saveError = save.error;
 
   useEffect(() => {
     if (open) {
       setDate(todayIso());
       setHydrationMl("");
-      setSaving(false);
-      setSaveError(false);
+      save.reset();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
   const hydrationOk = requiredInRange(hydrationMl, PLAUSIBLE.hydrationMl);
 
-  async function handleSave() {
-    if (!hydrationOk || saving) return;
-    setSaving(true);
-    setSaveError(false);
-    try {
-      await onSave({ date, hydrationMl: hydrationMl.trim() });
-    } catch (err) {
-      setSaveError(true);
-      logError(err instanceof Error ? err : new Error(String(err)), "salud/HydrationModal");
-    } finally {
-      setSaving(false);
-    }
+  function handleSave() {
+    if (!hydrationOk) return;
+    save.run();
   }
 
   return (
@@ -1026,30 +993,22 @@ function SideEffectModal({
   const t = useTranslations("Salud");
   const [date, setDate] = useState(todayIso());
   const [sideEffect, setSideEffect] = useState("");
-  const [saving, setSaving] = useState(false);
-  const [saveError, setSaveError] = useState(false);
+  const save = useSaveAction(() => onSave({ date, sideEffect: sideEffect.trim() }), "salud/SideEffectModal");
+  const saving = save.saving;
+  const saveError = save.error;
 
   useEffect(() => {
     if (open) {
       setDate(todayIso());
       setSideEffect("");
-      setSaving(false);
-      setSaveError(false);
+      save.reset();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
-  async function handleSave() {
-    if (!sideEffect.trim() || saving) return;
-    setSaving(true);
-    setSaveError(false);
-    try {
-      await onSave({ date, sideEffect: sideEffect.trim() });
-    } catch (err) {
-      setSaveError(true);
-      logError(err instanceof Error ? err : new Error(String(err)), "salud/SideEffectModal");
-    } finally {
-      setSaving(false);
-    }
+  function handleSave() {
+    if (!sideEffect.trim()) return;
+    save.run();
   }
 
   return (
@@ -1113,33 +1072,25 @@ function SleepModal({
   const t = useTranslations("Salud");
   const [date, setDate] = useState(todayIso());
   const [sleepHours, setSleepHours] = useState("");
-  const [saving, setSaving] = useState(false);
-  const [saveError, setSaveError] = useState(false);
+  const save = useSaveAction(() => onSave({ date, sleepHours: sleepHours.trim() }), "salud/SleepModal");
+  const saving = save.saving;
+  const saveError = save.error;
 
   useEffect(() => {
     if (open) {
       setDate(todayIso());
       setSleepHours("");
-      setSaving(false);
-      setSaveError(false);
+      save.reset();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
   // 48 h de sueño se guardaban tal cual. Un día tiene 24.
   const sleepOk = requiredInRange(sleepHours, PLAUSIBLE.sleepHours);
 
-  async function handleSave() {
-    if (!sleepOk || saving) return;
-    setSaving(true);
-    setSaveError(false);
-    try {
-      await onSave({ date, sleepHours: sleepHours.trim() });
-    } catch (err) {
-      setSaveError(true);
-      logError(err instanceof Error ? err : new Error(String(err)), "salud/SleepModal");
-    } finally {
-      setSaving(false);
-    }
+  function handleSave() {
+    if (!sleepOk) return;
+    save.run();
   }
 
   return (
@@ -1202,30 +1153,25 @@ function MoodModal({
   const t = useTranslations("Salud");
   const [date, setDate] = useState(todayIso());
   const [mood, setMood] = useState<number | null>(null);
-  const [saving, setSaving] = useState(false);
-  const [saveError, setSaveError] = useState(false);
+  const save = useSaveAction(() => {
+    if (mood == null) return Promise.resolve();
+    return onSave({ date, mood }) as Promise<void>;
+  }, "salud/MoodModal");
+  const saving = save.saving;
+  const saveError = save.error;
 
   useEffect(() => {
     if (open) {
       setDate(todayIso());
       setMood(null);
-      setSaving(false);
-      setSaveError(false);
+      save.reset();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
-  async function handleSave() {
-    if (mood == null || saving) return;
-    setSaving(true);
-    setSaveError(false);
-    try {
-      await onSave({ date, mood });
-    } catch (err) {
-      setSaveError(true);
-      logError(err instanceof Error ? err : new Error(String(err)), "salud/MoodModal");
-    } finally {
-      setSaving(false);
-    }
+  function handleSave() {
+    if (mood == null) return;
+    save.run();
   }
 
   return (
@@ -1354,8 +1300,12 @@ function PhotoModal({
   const [note, setNote] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
-  const [saving, setSaving] = useState(false);
-  const [saveError, setSaveError] = useState(false);
+  const save = useSaveAction(() => {
+    if (!file) return;
+    return onSave({ date, file, note: note.trim() || undefined });
+  }, "salud/PhotoModal");
+  const saving = save.saving;
+  const saveError = save.error;
 
   useEffect(() => {
     if (open) {
@@ -1363,9 +1313,9 @@ function PhotoModal({
       setNote("");
       setFile(null);
       setPreview(null);
-      setSaving(false);
-      setSaveError(false);
+      save.reset();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
   function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
@@ -1375,18 +1325,9 @@ function PhotoModal({
     setPreview(URL.createObjectURL(f));
   }
 
-  async function handleSave() {
-    if (!file || saving) return;
-    setSaving(true);
-    setSaveError(false);
-    try {
-      await onSave({ date, file, note: note.trim() || undefined });
-    } catch (err) {
-      setSaveError(true);
-      logError(err instanceof Error ? err : new Error(String(err)), "salud/PhotoModal");
-    } finally {
-      setSaving(false);
-    }
+  function handleSave() {
+    if (!file) return;
+    save.run();
   }
 
   return (
@@ -1537,8 +1478,18 @@ function LabModal({
   const [customMarker, setCustomMarker] = useState("");
   const [value, setValue] = useState("");
   const [unit, setUnit] = useState(LAB_MARKER_DEFAULT_UNIT[LAB_MARKER_IDS[0]]);
-  const [saving, setSaving] = useState(false);
-  const [saveError, setSaveError] = useState(false);
+  const save = useSaveAction(
+    () =>
+      onSave({
+        date,
+        marker: marker === "otro" ? customMarker.trim() : marker,
+        value: value.trim(),
+        unit: unit.trim() || undefined,
+      }),
+    "salud/LabModal"
+  );
+  const saving = save.saving;
+  const saveError = save.error;
 
   useEffect(() => {
     if (open) {
@@ -1547,9 +1498,9 @@ function LabModal({
       setCustomMarker("");
       setValue("");
       setUnit(LAB_MARKER_DEFAULT_UNIT[LAB_MARKER_IDS[0]]);
-      setSaving(false);
-      setSaveError(false);
+      save.reset();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
   const markerName = marker === "otro" ? customMarker.trim() : t(`marker_${marker}`);
@@ -1558,23 +1509,9 @@ function LabModal({
   const valueOk = requiredInRange(value, PLAUSIBLE.labValue);
   const canSave = valueOk && markerName.length > 0;
 
-  async function handleSave() {
-    if (!canSave || saving) return;
-    setSaving(true);
-    setSaveError(false);
-    try {
-      await onSave({
-        date,
-        marker: marker === "otro" ? customMarker.trim() : marker,
-        value: value.trim(),
-        unit: unit.trim() || undefined,
-      });
-    } catch (err) {
-      setSaveError(true);
-      logError(err instanceof Error ? err : new Error(String(err)), "salud/LabModal");
-    } finally {
-      setSaving(false);
-    }
+  function handleSave() {
+    if (!canSave) return;
+    save.run();
   }
 
   return (

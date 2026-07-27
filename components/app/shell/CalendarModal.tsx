@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { ChevronLeft, ChevronRight, X, Check, Clock, AlertTriangle, Pill, Plane, Dumbbell, Plus, Trash2 } from "lucide-react";
 import type { AppData, Dose } from "@/lib/app-data";
 import { addTrip, removeTrip } from "@/lib/app-data";
-import { logError } from "@/lib/error-log";
+import { useSaveAction } from "@/lib/hooks/useSaveAction";
 
 function toIsoDate(d: Date) {
   const pad = (n: number) => String(n).padStart(2, "0");
@@ -48,8 +48,21 @@ export function CalendarModal({
   const [tripEnd, setTripEnd] = useState("");
   const [tripDest, setTripDest] = useState("");
   const [confirmDeleteTrip, setConfirmDeleteTrip] = useState<string | null>(null);
-  const [savingTrip, setSavingTrip] = useState(false);
-  const [tripSaveError, setTripSaveError] = useState(false);
+  const tripSave = useSaveAction(async () => {
+    if (!onDataChange) return;
+    // El input de fecha de fin solo SUGIERE un mínimo (atributo `min`), no lo
+    // impone — sin este chequeo, una fecha de fin tecleada a mano anterior a
+    // la de inicio creaba un viaje que no aparecía marcado en ningún día del
+    // calendario (el bucle que pinta el rango nunca corre si fin < inicio).
+    const end = tripEnd && tripEnd >= selectedIso ? tripEnd : selectedIso;
+    const next = await addTrip(data, { startDate: selectedIso, endDate: end, destination: tripDest });
+    onDataChange(next);
+    setAddingTrip(false);
+    setTripEnd("");
+    setTripDest("");
+  }, "CalendarModal.saveTrip");
+  const savingTrip = tripSave.saving;
+  const tripSaveError = tripSave.error;
 
   function toggle(f: Filter) {
     setFilters((prev) => ({ ...prev, [f]: !prev[f] }));
@@ -126,27 +139,9 @@ export function CalendarModal({
     (tr) => selectedIso >= tr.startDate && selectedIso <= tr.endDate
   );
 
-  async function saveTrip() {
-    if (!onDataChange || savingTrip) return;
-    setSavingTrip(true);
-    setTripSaveError(false);
-    try {
-      // El input de fecha de fin solo SUGIERE un mínimo (atributo `min`), no lo
-      // impone — sin este chequeo, una fecha de fin tecleada a mano anterior a
-      // la de inicio creaba un viaje que no aparecía marcado en ningún día del
-      // calendario (el bucle que pinta el rango nunca corre si fin < inicio).
-      const end = tripEnd && tripEnd >= selectedIso ? tripEnd : selectedIso;
-      const next = await addTrip(data, { startDate: selectedIso, endDate: end, destination: tripDest });
-      onDataChange(next);
-      setAddingTrip(false);
-      setTripEnd("");
-      setTripDest("");
-    } catch (err) {
-      setTripSaveError(true);
-      logError(err instanceof Error ? err : new Error(String(err)), "CalendarModal.saveTrip");
-    } finally {
-      setSavingTrip(false);
-    }
+  function saveTrip() {
+    if (!onDataChange) return;
+    tripSave.run();
   }
 
   async function deleteTrip(id: string) {

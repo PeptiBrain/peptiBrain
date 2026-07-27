@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { useTranslations } from "next-intl";
 import { X, Plus } from "lucide-react";
-import { logError } from "@/lib/error-log";
+import { useSaveAction } from "@/lib/hooks/useSaveAction";
 
 const SOCIAL_NETWORKS = ["Instagram", "TikTok", "Telegram", "WhatsApp", "X (Twitter)", "Reddit", "Otra"];
 
@@ -38,8 +38,13 @@ export function ProviderModal({
   const [brands, setBrands] = useState<string[]>([]);
   const [brandInput, setBrandInput] = useState("");
   const [notes, setNotes] = useState("");
-  const [saving, setSaving] = useState(false);
-  const [saveError, setSaveError] = useState(false);
+  const save = useSaveAction(async () => {
+    await onSave({ name: name.trim(), website, socialNetwork, socialHandle, phone, email, brands, notes });
+    reset();
+    onClose();
+  }, "ProviderModal.handleSave");
+  const saving = save.saving;
+  const saveError = save.error;
 
   function reset() {
     setName("");
@@ -51,7 +56,7 @@ export function ProviderModal({
     setBrands([]);
     setBrandInput("");
     setNotes("");
-    setSaveError(false);
+    save.reset();
   }
 
   function addBrand() {
@@ -60,20 +65,9 @@ export function ProviderModal({
     setBrandInput("");
   }
 
-  async function handleSave() {
-    if (!name.trim() || saving) return;
-    setSaving(true);
-    setSaveError(false);
-    try {
-      await onSave({ name: name.trim(), website, socialNetwork, socialHandle, phone, email, brands, notes });
-      reset();
-      onClose();
-    } catch (err) {
-      setSaveError(true);
-      logError(err instanceof Error ? err : new Error(String(err)), "ProviderModal.handleSave");
-    } finally {
-      setSaving(false);
-    }
+  function handleSave() {
+    if (!name.trim()) return;
+    save.run();
   }
 
   const inputClass =

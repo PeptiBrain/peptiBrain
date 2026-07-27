@@ -6,7 +6,8 @@ import { useLocale, useTranslations } from "next-intl";
 import { Check, Flame, Syringe, AlertTriangle, Scale, Droplets, Lock, Apple, CalendarDays, Sparkles, Wallet, Trophy, ArrowRight, Gem, Share2, Plus } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { loadOnboarding } from "@/lib/onboarding";
-import { loadAppData, markDoseDone, type AppData } from "@/lib/app-data";
+import { markDoseDone } from "@/lib/app-data";
+import { useAppData } from "@/lib/hooks/useAppData";
 import { computeStats } from "@/lib/stats";
 import { celebrateDoseLogged } from "@/lib/celebrate";
 import { checkStreakMilestone } from "@/lib/milestones";
@@ -32,7 +33,7 @@ export default function InicioPage() {
   const tCal = useTranslations("Calendar");
   const tSite = useTranslations("InjectionSite");
   const locale = useLocale();
-  const [data, setData] = useState<AppData | null>(null);
+  const { data, setData } = useAppData();
   const [name, setName] = useState("");
   const [range, setRange] = useState<DateRangeKey>("7d");
   const [customRange, setCustomRange] = useState<CustomRange | null>(null);
@@ -42,7 +43,6 @@ export default function InicioPage() {
   const [showShareCard, setShowShareCard] = useState(false);
 
   useEffect(() => {
-    loadAppData().then(setData);
     setName(loadOnboarding().name);
   }, []);
 

@@ -17,7 +17,8 @@ import {
   Plus,
 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
-import { loadAppData, loadFamilySharedData, type AppData, type SharedOwnerData } from "@/lib/app-data";
+import { loadFamilySharedData, type AppData, type SharedOwnerData } from "@/lib/app-data";
+import { useAppData } from "@/lib/hooks/useAppData";
 import { computeStats, filterDataByRange, doseBuckets, totalInvested, doneDoses } from "@/lib/stats";
 import { PeptideIcon } from "@/components/app/peptidos/PeptideIcon";
 import { AnimatedNumber } from "@/components/app/shell/AnimatedNumber";
@@ -47,14 +48,13 @@ export default function EstadisticasPage() {
   const tr = useTranslations("DateRange");
   const locale = useLocale() as Locale;
   const { symbol } = USER_DATA_CURRENCY;
-  const [data, setData] = useState<AppData | null>(null);
+  const { data } = useAppData();
   const [familyData, setFamilyData] = useState<SharedOwnerData[] | null>(null);
   const [range, setRange] = useState<DateRangeKey>("all");
   const [custom, setCustom] = useState<CustomRange | null>(null);
   const [viewMode, setViewMode] = useState<"mine" | "family">("mine");
 
   useEffect(() => {
-    loadAppData().then(setData);
     loadFamilySharedData().then(setFamilyData);
   }, []);
 
