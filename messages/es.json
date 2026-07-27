@@ -1067,7 +1067,7 @@
     "cancelRemove": "Cancelar",
     "confirmRemoveCta": "Quitar",
     "exportData": "Descargar mis datos (JSON)",
-    "seatsFullNote": "Tienes {used} personas conectadas, pero tu plan Family solo incluye {max}. Añade un asiento extra para no perder acceso a nadie.",
+    "seatsFullNote": "Tienes {used} personas conectadas, pero tu plan Family solo incluye {max} invitados además de ti. Añade un asiento extra para no perder acceso a nadie.",
     "addExtraSeatCta": "Añadir un asiento extra ($5/mes)",
     "sharedWithMeTitle": "Compartido conmigo",
     "statusPending": "Pendiente",

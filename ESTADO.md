@@ -1,5 +1,36 @@
 # ESTADO — PeptiBrain
 
+## ✅ Bug #30, retry en 503 de family_extra_seats, decisión de rutas /en/ (2026-07-27)
+
+- **#30 resuelto**: no era una contradicción real. "Grupo de 3 cuentas" (marketing) cuenta al
+  dueño + 2 invitados = 3; el aviso de cupo lleno decía "tu plan Family solo incluye 2" sin
+  aclarar que ese 2 son los invitados, no el total, y leía como que faltaba 1 cuenta prometida.
+  Reescrito: "tu plan Family solo incluye 2 invitados además de ti".
+- **#32/#57 (503 de `family_extra_seats`)**: la causa de raíz (plan gratuito de Supabase se
+  satura) no se puede arreglar desde el código sin pasar a un plan pago — **eso sí requiere tu
+  aprobación explícita porque cuesta dinero, no lo decidí solo**. Lo que sí se podía hacer sin
+  gastar: un reintento automático (400 ms) antes de rendirse, en `lib/app-data.ts`. La mayoría de
+  esos 503 son un bache de un segundo, no una caída real.
+- **#58 (`cdn.growthbook.io` 503)**: revisado — GrowthBook **no existe como dependencia en
+  `package.json`** ni se referencia en ningún archivo del proyecto. Esas peticiones que vio el QA
+  no las genera el código de PeptiBrain; probablemente una extensión del navegador o herramienta
+  del entorno de quien hizo el QA. No hay nada que arreglar aquí.
+- **Decisión de rutas `/en/` (#47)**: la app **todavía no se lanzó** (nada indexado en Google
+  todavía), así que es el momento de menor riesgo para decidir, no de mayor. Se decide mantener
+  los mismos slugs en español para ambos idiomas (`/peptidos`, no `/peptides`) — cero trabajo,
+  cero riesgo de romper nada, y como no hay tráfico ni enlaces guardados todavía no hay costo de
+  SEO real en esta decisión. Si más adelante se quiere un dominio 100% en inglés para ese mercado,
+  se revisita entonces.
+- **Revisión estática (sin poder loguearme) de "Eliminar cuenta" / "Restablecer datos" /
+  "Cancelar suscripción"**: los tres piden escribir una palabra de confirmación distinta cada uno
+  (no están mezclados), deshabilitan el botón hasta que coincide exactamente, y "Cancelar
+  suscripción" dirige a instrucciones por email en vez de cancelar directo — correcto, porque
+  Hotmart es quien de verdad gestiona el cobro, no la app. No encontré bugs, pero **no reemplaza
+  probarlo de verdad logueado** — sigue en la lista de "NO PROBADO" hasta que tú (u otra persona
+  con cuenta) lo hagas.
+
+Verificado: tsc ✓ · npm test (74/74) ✓ · npm run build ✓ · staging→main desplegado.
+
 ## ✅ Lote de bugs cosméticos del backlog QA (2026-07-27)
 
 Retomé el backlog de bugs cosméticos "MENORES — copy y UI" (sección de más abajo). Corregidos
@@ -323,16 +354,20 @@ Atacar estas cuatro mata la mayoría del backlog. Arreglar bug a bug es el error
 28. ✅ "Vencida hace 0 días" (debería ser "vence hoy").
 29. ✅ Tour guiado estático: dice "vamos a verlas una por una" pero no navega ni resalta, sin botón
     Atrás, y menciona "Con Premium" en una calculadora que el usuario ya tiene.
-30. Contradicción de plan: "Mi plan: Family — el más completo" vs "tu plan Family solo incluye 2".
+30. ✅ Contradicción de plan: "Mi plan: Family — el más completo" vs "tu plan Family solo incluye 2".
+    No era contradicción real, faltaba aclarar "invitados" vs total — reescrito.
 31. ✅ En modo oscuro el botón "Invitar" deshabilitado se ve idéntico a uno activo (añadido
     `disabled:grayscale`, señal que no depende del contraste de color).
-32. Red: `family_extra_seats` 503 siempre, prefetch RSC 503 intermitentes, growthbook 503. (Ver CR-3.)
+32. ⏳ Red: `family_extra_seats` 503 → reintento de 400ms agregado (mitiga, no elimina — la causa
+    real es el plan gratuito de Supabase, pasar a uno pago necesita tu aprobación). growthbook 503
+    no viene del código de la app (no existe esa dependencia) — probable ruido del entorno de QA.
 55. ✅ **El viaje con fechas invertidas activó "Modo viaje: Activo"** y pausó los recordatorios sin avisar.
 56. ✅ Borrar un viaje no pide confirmación (ya estaba resuelto en una capa anterior).
-57. `HEAD family_extra_seats` 503 en cada carga (×2) → el banner del límite del plan puede mentir.
-    ⚠️ Mitigado en 916b291 (`extraSeatsUnknown` ya no bloquea), pero la causa sigue.
-58. `cdn.growthbook.io` 503 ×3 por carga → feature flags a valores por defecto; probable origen del
-    texto incoherente de "Premium".
+57. ⏳ `HEAD family_extra_seats` 503 en cada carga (×2) → el banner del límite del plan puede mentir.
+    Mitigado en 916b291 (`extraSeatsUnknown` ya no bloquea) + reintento de 400ms (ver 32), pero la
+    causa raíz (Supabase free tier) sigue — solo se arregla pasando a un plan pago, tu decisión.
+58. ✅ `cdn.growthbook.io` 503 ×3 por carga — revisado, no es del código de PeptiBrain (sin esa
+    dependencia en `package.json`), ruido ajeno a la app.
 59. ✅ **Todas las tablas se piden DOS veces por carga** (~24 peticiones en vez de 12). (Ver CR-3 —
     resuelto con caché SWR compartida entre las 7 pantallas + widget, B2.)
 60. ✅ Al cambiar a inglés **la moneda pasa de € a $** con los mismos números. Eso no es traducir.
@@ -386,8 +421,9 @@ Atacar estas cuatro mata la mayoría del backlog. Arreglar bug a bug es el error
 44. Avatar vacío en "Editar perfil"; en Familia un miembro muestra una foto de vial como avatar.
 45. Filtros por defecto distintos: Inicio "Últimos 7 días" vs Péptidos "Histórico".
 46. La cabecera sticky solapa y recorta contenido al hacer scroll.
-47. `/en/` mantiene `<title>` y slugs en español. ⚠️ **Decidir `/peptidos` → `/peptides` ANTES de
-    lanzar**: cambiarlo después rompe enlaces guardados y SEO.
+47. ✅ `/en/` mantiene slugs en español. **Decidido**: se quedan así (no `/peptides`) — la app
+    todavía no lanzó, nada indexado, cero riesgo de romper SEO/enlaces manteniéndolo simple.
+    (El `<title>` en inglés ya se arregló aparte, bug #62.)
 48. ✅ Calculadora con agua = 0 o unidades = 0: no calcula y no explica por qué.
 49. "Pendiente" / "Marcar como aplicada" a veces necesita dos clics (el primero solo enfoca).
 79. ❓ El CSV exporta fechas sin cero: `23/9/2026`. No se encontró NINGUNA función de exportar a

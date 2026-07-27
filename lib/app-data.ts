@@ -284,11 +284,22 @@ export async function loadAppData(): Promise<AppData> {
   // comprobar": si no se pudo, no se bloquea nada. No se regala nada, porque el
   // límite real se sigue aplicando en el servidor al ACEPTAR la invitación —
   // solo se evita acusar en falso a un cliente que sí pagó.
-  const { count: extraFamilySeats, error: extraSeatsError } = await supabase
+  // Un solo reintento (bug #32/#57 del QA): la mayoría de esos 503 son un
+  // bache de un segundo del plan gratuito, no una caída real — reintentar una
+  // vez con un pequeño retraso evita mostrar "no se pudo comprobar" por nada.
+  let { count: extraFamilySeats, error: extraSeatsError } = await supabase
     .from("family_extra_seats")
     .select("id", { count: "exact", head: true })
     .eq("owner_id", user.id)
     .eq("status", "active");
+  if (extraSeatsError) {
+    await new Promise((resolve) => setTimeout(resolve, 400));
+    ({ count: extraFamilySeats, error: extraSeatsError } = await supabase
+      .from("family_extra_seats")
+      .select("id", { count: "exact", head: true })
+      .eq("owner_id", user.id)
+      .eq("status", "active"));
+  }
 
   const sharesByVial = new Map<string, VialShare[]>();
   for (const s of vialShares || []) {
