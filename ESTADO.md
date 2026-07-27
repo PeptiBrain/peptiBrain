@@ -1,5 +1,29 @@
 # ESTADO — PeptiBrain
 
+## ✅ Bloque A del PLAN-PRODUCTO.md, sin A1/A5 (2026-07-26) — desplegado a main (ceaf364)
+
+Ejecutado A2, A3, A4, A7, A8 completos; A6 documentado (requiere que el dueño use el botón ya
+existente, no algo que el agente deba automatizar). Quedan A1 (pago real, solo el dueño) y A5
+(subir Supabase a Pro por los backups, cuesta ~25$/mes, requiere aprobación de gasto).
+
+- **A2** — `lib/plausible.ts` ampliado (`vialMassMg`, `bacWaterMl`, `targetUnitsRange`,
+  `costAmount`) y aplicado donde faltaba: calculadora de reconstitución, crear vial, registrar
+  dosis, valor de laboratorio (existía el rango pero no se usaba), e importador CSV (cantidad
+  Y fecha — antes aceptaba "01/01/1800" y "999999999 mg" sin avisar).
+- **A3** — cerrados los formularios que fallaban en silencio (400/500 sin ningún mensaje):
+  registrar dosis, proveedor, protocolo/titulación, viaje (no tenía ni try/catch), los 8 modales
+  de Salud + ejercicio, invitar familiar (tampoco tenía try/catch) e importar CSV de familia.
+- **A4** — todos esos catches (más los ya existentes de péptido/vial) ahora llaman
+  `lib/error-log.ts` `logError()`: un 400/500 real queda en `error_log`/panel, no solo en la
+  consola del usuario que lo sufrió.
+- **A6** — NO ejecutado por el agente (borrar es irreversible); usar
+  Cuenta → Zona de peligro → Restablecer mis datos.
+- **A7** — decidido NO traducir rutas (`/peptidos` se mantiene en inglés) a 6 días del
+  lanzamiento: nada que proteger todavía, riesgo real de romper next-intl. Backlog post-lanzamiento.
+- **A8** — `Help.tools1A` (es/en) ya distingue la calculadora pública gratis de la de Premium.
+
+Verificado: tsc ✓ · `npm test` (40/40) ✓ · `npm run build` ✓ · deploy a producción confirmado.
+
 ## ✅ Tests automatizados de los flujos críticos (2026-07-26) — desplegado a main (c65685f)
 
 Vitest instalado (`npm test`). 40 tests en 4 archivos, 0.8s, corren sin navegador ni sesión ni DB:
