@@ -1,5 +1,37 @@
 # ESTADO — PeptiBrain
 
+## ✅ Programa de afiliados Hotmart + precios en USD (2026-07-27)
+
+Un tercero quiere vender PeptiBrain por afiliación. No hizo falta tocar código
+del webhook: `payload->data` de Hotmart ya trae `affiliates`/`commissions` en
+cada evento, así que el tracking de quién vendió qué lo lleva Hotmart solo.
+
+- Comisión configurada en Hotmart: **35% recurrente**, solo en Premium/Family
+  (mensual y anual). El plan Fundadores (pago único) queda en 0%.
+- Acceso de afiliados: abierto a cualquiera en Hotmart.
+- `NORMAS-AFILIADOS.md` (raíz del repo) es el texto para pegar en Hotmart →
+  Afiliación → Reglas del afiliado: qué SÍ/NO puede decir un afiliado (línea
+  roja D2: la app ejecuta el protocolo, no lo sugiere — nada de dosis, curas
+  ni sustituir al médico), reglas de promoción y la comisión real. **Pendiente
+  del usuario**: pegarlo en Hotmart y pasarle el link de afiliación a su
+  contacto — eso no lo puedo hacer yo.
+- `lib/admin-data.ts` + `AdminDashboard.tsx`: nueva tarjeta "por afiliado"
+  (ventas netas, devueltas) leída directo de `hotmart_events.payload`, dentro
+  de la sección de Adquisición. Hotmart sigue siendo el libro de comisiones
+  oficial; esto es solo visibilidad para el dueño.
+- **Bug real encontrado de paso**: la landing en español anunciaba "9€/mes" y
+  "19€/mes" pero Hotmart cobra en dólares (Premium $9, Family $19) — precio y
+  divisa no coincidían con lo que se cobraba de verdad. Corregido:
+  `CURRENCY` en `i18n/routing.ts` ahora es USD en los dos idiomas (antes solo
+  `en` era USD). `USER_DATA_CURRENCY` (lo que el usuario anota que gastó en
+  sus viales) sigue en EUR — es su historial, no un precio de la app, y no
+  debe seguir al idioma (ver comentario en el propio archivo, bug #60 previo).
+  Verificado en el navegador: `/es` y `/en` muestran `$9 /mes` y `$19 /mes`,
+  sin ningún € colado en precios de planes.
+
+Verificado: tsc ✓ · npm test (74/74) ✓ · npm run build ✓ · staging→main
+mergeado y pusheado (commit `7b720a1`).
+
 ## ✅ Bloque C del PLAN-PRODUCTO.md — COMPLETO, 12 de 12 (2026-07-27)
 
 Desplegado en 5 capas verificadas (40d0d8a, eb918b4, 2a32692, 791d163, 481be53).
