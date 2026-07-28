@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { Wrench, Calculator, Syringe, Shuffle, ListChecks, Clock, Coins, ArrowRight } from "lucide-react";
+import { Wrench, Calculator, Syringe, Shuffle, ListChecks, Clock, Coins, ArrowRight, GitCompareArrows } from "lucide-react";
 import { Header } from "@/components/app/Header";
 import { Footer } from "@/components/app/Footer";
 import { Link } from "@/i18n/navigation";
@@ -13,6 +13,7 @@ const TOOLS = [
   { href: "/calculadora", key: "calc" as const, icon: Calculator },
   { href: "/calculadora-semaglutida", key: "sema" as const, icon: Syringe },
   { href: "/comparador", key: "comparador" as const, icon: Shuffle },
+  { href: "/compatibilidad", key: "compat" as const, icon: GitCompareArrows },
   { href: "/protocolos", key: "protocolos" as const, icon: ListChecks },
   { href: "/calculadora-eliminacion", key: "eliminacion" as const, icon: Clock },
   { href: "/calculadora-costo-mg", key: "costomg" as const, icon: Coins },

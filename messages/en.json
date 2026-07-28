@@ -1444,7 +1444,8 @@
     "navClearance": "Clearance calculator",
     "navCostPerMg": "Cost per mg calculator",
     "navAllTools": "See all tools",
-    "navIdeas": "Ideas & Roadmap"
+    "navIdeas": "Ideas & Roadmap",
+    "navCompat": "Stack compatibility"
   },
   "Calculadora": {
     "metaTitle": "Free Peptide Reconstitution Calculator | PeptiBrain",
@@ -1712,7 +1713,9 @@
     "eliminacionTitle": "Clearance calculator",
     "eliminacionDesc": "How long a peptide takes to clear your system, based on its half-life.",
     "costomgTitle": "Cost per mg calculator",
-    "costomgDesc": "How much each mg and each dose costs you, based on what you paid."
+    "costomgDesc": "How much each mg and each dose costs you, based on what you paid.",
+    "compatTitle": "Stack compatibility",
+    "compatDesc": "Can I combine these two peptides? Instant verdict."
   },
   "FreeToolsSection": {
     "eyebrow": "Free · no signup",
@@ -1761,5 +1764,37 @@
     "collapseAria": "Minimize",
     "expandAria": "Expand",
     "closeAria": "Close"
+  },
+  "Compatibilidad": {
+    "metaTitle": "Stack compatibility: can I combine these peptides? | PeptiBrain",
+    "metaDescription": "Pick two peptides, GLP-1s, or TRT compounds and instantly see if the combination is studied, needs caution, should be avoided, or has no data. Free, no signup.",
+    "kicker": "Free tool",
+    "h1": "Stack compatibility",
+    "subtitle": "Pick two compounds and see at a glance what's known (and not known) about combining them.",
+    "labelA": "Compound A",
+    "labelB": "Compound B",
+    "placeholder": "— Select —",
+    "emptyState": "Pick both compounds above to see the verdict.",
+    "unknownNote": "We didn't find any specific report on this combination. No data doesn't mean it's safe, or that it isn't — check with your doctor before combining them.",
+    "status_studied": "Studied / known combo",
+    "status_caution": "Caution",
+    "status_avoid": "Avoid combining",
+    "status_unknown": "No data",
+    "popularTitle": "Popular combinations",
+    "popularSubtitle": "The most asked-about ones, with their verdict already loaded.",
+    "faq": [
+      {
+        "q": "Where does each combination's verdict come from?",
+        "a": "From the same profile we use for each peptide across the app (library, comparator, calculator): what the community reports and what public sources indicate. When a source doesn't explicitly name the combination but it's plausible given the same compound family, we mark it \"Caution\" instead of inventing a stronger verdict."
+      },
+      {
+        "q": "Does \"No data\" mean it's safe to combine?",
+        "a": "No. It means exactly that: we didn't find any specific report on that combination, for or against. Don't read it as a green light."
+      },
+      {
+        "q": "Can I use this to decide my next stack?",
+        "a": "This tool is informative and educational. The decision of what to combine, at what dose, and under what circumstances is always up to a healthcare professional."
+      }
+    ]
   }
 }

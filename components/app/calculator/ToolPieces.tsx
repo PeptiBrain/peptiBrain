@@ -1,4 +1,4 @@
-import { AlertTriangle, ArrowRight, Calculator, ListChecks, Syringe, Shuffle, Clock, Coins } from "lucide-react";
+import { AlertTriangle, ArrowRight, Calculator, ListChecks, Syringe, Shuffle, Clock, Coins, GitCompareArrows } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { getTranslations } from "next-intl/server";
 
@@ -54,7 +54,7 @@ export async function ToolFaq({ items }: { items: { q: string; a: string }[] }) 
 export async function ToolCrossLinks({
   current,
 }: {
-  current: "calc" | "sema" | "protocolos" | "comparador" | "eliminacion" | "costomg";
+  current: "calc" | "sema" | "protocolos" | "comparador" | "eliminacion" | "costomg" | "compat";
 }) {
   const t = await getTranslations("Tools");
   const links = [
@@ -62,6 +62,7 @@ export async function ToolCrossLinks({
     { key: "sema" as const, href: "/calculadora-semaglutida", label: t("navSemaglutide"), icon: Syringe },
     { key: "protocolos" as const, href: "/protocolos", label: t("navProtocols"), icon: ListChecks },
     { key: "comparador" as const, href: "/comparador", label: t("navComparador"), icon: Shuffle },
+    { key: "compat" as const, href: "/compatibilidad", label: t("navCompat"), icon: GitCompareArrows },
     { key: "eliminacion" as const, href: "/calculadora-eliminacion", label: t("navClearance"), icon: Clock },
     { key: "costomg" as const, href: "/calculadora-costo-mg", label: t("navCostPerMg"), icon: Coins },
   ].filter((l) => l.key !== current);

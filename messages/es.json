@@ -1444,7 +1444,8 @@
     "navClearance": "Calculadora de eliminación",
     "navCostPerMg": "Calculadora de costo por mg",
     "navAllTools": "Ver todas las herramientas",
-    "navIdeas": "Ideas y Roadmap"
+    "navIdeas": "Ideas y Roadmap",
+    "navCompat": "Compatibilidad de stacks"
   },
   "Calculadora": {
     "metaTitle": "Calculadora de reconstitución de péptidos gratis | PeptiBrain",
@@ -1712,7 +1713,9 @@
     "eliminacionTitle": "Calculadora de eliminación",
     "eliminacionDesc": "Cuánto tarda un péptido en salir de tu cuerpo, según su vida media.",
     "costomgTitle": "Calculadora de costo por mg",
-    "costomgDesc": "Cuánto te cuesta cada mg y cada dosis, según lo que pagaste."
+    "costomgDesc": "Cuánto te cuesta cada mg y cada dosis, según lo que pagaste.",
+    "compatTitle": "Compatibilidad de stacks",
+    "compatDesc": "¿Puedo combinar estos dos péptidos? Veredicto al instante."
   },
   "FreeToolsSection": {
     "eyebrow": "Gratis · sin registro",
@@ -1761,5 +1764,37 @@
     "collapseAria": "Minimizar",
     "expandAria": "Expandir",
     "closeAria": "Cerrar"
+  },
+  "Compatibilidad": {
+    "metaTitle": "Compatibilidad de stacks: ¿puedo combinar estos péptidos? | PeptiBrain",
+    "metaDescription": "Elige dos péptidos, GLP-1 o compuestos de TRT y mira al instante si su combinación está estudiada, pide precaución, se debe evitar o no hay datos. Gratis, sin registro.",
+    "kicker": "Herramienta gratuita",
+    "h1": "Compatibilidad de stacks",
+    "subtitle": "Elige dos compuestos y mira de un vistazo qué se sabe (y qué no) sobre combinarlos.",
+    "labelA": "Compuesto A",
+    "labelB": "Compuesto B",
+    "placeholder": "— Selecciona —",
+    "emptyState": "Elige los dos compuestos de arriba para ver el veredicto.",
+    "unknownNote": "No encontramos ningún reporte específico sobre esta combinación. Que no haya datos no significa que sea segura ni que no lo sea — consúltalo con tu médico antes de combinarlos.",
+    "status_studied": "Estudiado / combo conocido",
+    "status_caution": "Precaución",
+    "status_avoid": "Evitar combinar",
+    "status_unknown": "Sin datos",
+    "popularTitle": "Combinaciones populares",
+    "popularSubtitle": "Las que más se preguntan, con su veredicto ya cargado.",
+    "faq": [
+      {
+        "q": "¿De dónde sale el veredicto de cada combinación?",
+        "a": "De la misma ficha de cada péptido que usamos en toda la app (biblioteca, comparador, calculadora): lo que la comunidad reporta y lo que indican las fuentes públicas. Cuando la fuente no nombra la combinación explícitamente pero es plausible por la misma familia de compuestos, lo marcamos como \"Precaución\" en vez de inventar un veredicto más fuerte."
+      },
+      {
+        "q": "¿\"Sin datos\" significa que es segura combinarla?",
+        "a": "No. Significa exactamente eso: que no encontramos ningún reporte específico sobre esa combinación, ni a favor ni en contra. No lo interpretes como luz verde."
+      },
+      {
+        "q": "¿Puedo usar esto para decidir mi próximo stack?",
+        "a": "Esta herramienta es informativa y educativa. La decisión de qué combinar, en qué dosis y bajo qué circunstancias corresponde siempre a un profesional de la salud."
+      }
+    ]
   }
 }

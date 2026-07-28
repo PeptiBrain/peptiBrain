@@ -20,6 +20,7 @@ const PUBLIC_PATHS: Array<{
   { path: "/calculadora", priority: 0.8, changeFrequency: "monthly" },
   { path: "/calculadora-semaglutida", priority: 0.8, changeFrequency: "monthly" },
   { path: "/comparador", priority: 0.8, changeFrequency: "monthly" },
+  { path: "/compatibilidad", priority: 0.8, changeFrequency: "monthly" },
   { path: "/calculadora-eliminacion", priority: 0.8, changeFrequency: "monthly" },
   { path: "/calculadora-costo-mg", priority: 0.8, changeFrequency: "monthly" },
   { path: "/protocolos", priority: 0.8, changeFrequency: "monthly" },
