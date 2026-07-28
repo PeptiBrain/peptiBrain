@@ -1,5 +1,22 @@
 # ESTADO — PeptiBrain
 
+## ✅ Nueva herramienta gratis: Compatibilidad de stacks (2026-07-27)
+
+El dueño vio la herramienta de un competidor (peptidosfacil.com) — una matriz de 23×23 (500+
+celdas) sin jerarquía, que ni él mismo entendía. En vez de copiarla, se construyó `/compatibilidad`:
+elegir 2 compuestos → un solo veredicto (Estudiado / Precaución / Evitar / Sin datos), combinaciones
+populares precargadas, leyenda visual. Reutiliza el campo `combinesWithAvoid` que ya existía en
+cada perfil de `lib/peptide-profiles.ts` — no se inventó contenido nuevo, solo se reestructuró en
+`lib/stack-compatibility.ts` (22 compuestos, 36 pares curados; distingue lo que la fuente nombra
+explícitamente de lo que es solo plausible por categoría, marcado como "caution" para no inflar
+el veredicto). Integrada en `/herramientas`, en los enlaces cruzados de las demás calculadoras y
+en el sitemap.
+
+Verificado: tsc ✓ · npm test (74/74) ✓ · npm run build ✓ · **verificado visualmente en el
+navegador a 375px** (los 4 estados, FAQ, disclaimer y CTA) — es pública, no requiere login, así
+que a diferencia de la mayoría de la app sí pude mirarla renderizada de verdad. staging→main
+desplegado.
+
 ## ✅ Auditoría freemium + cierre de 2 fugas de monetización (2026-07-27)
 
 El dueño pidió evaluar la lista de features gratis/Pro como experto en monetización. Hallazgo
