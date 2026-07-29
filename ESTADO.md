@@ -1,5 +1,26 @@
 # ESTADO — PeptiBrain
 
+## ✅ Feed RSS + enlace a Compatibilidad en el FAQ (2026-07-28)
+
+El dueño pidió comprobar que el blog tuviera RSS en las 3 rutas que suelen probar los checklists de
+SEO/GEO (`/feed`, `/rss`, `/rss.xml`) — no existía ninguna. Se creó `lib/rss.ts` (genera RSS 2.0 del
+blog en español, ordenado por más reciente) servido en las 3 rutas. `/feed` y `/rss` (sin punto en
+la URL) necesitaron sumarse a la exclusión del matcher del middleware de idioma en `proxy.ts` —
+si no, next-intl las reescribía con prefijo `/es/...` y devolvían 404 antes de llegar al route
+handler (`/rss.xml` no necesitó el cambio, ya lo cubría la exclusión existente de archivos con punto).
+
+De paso: en el artículo FAQ, la pregunta "¿Puedo combinar varios péptidos (stack)?" ahora enlaza a
+la herramienta de Compatibilidad de stacks (es/en) — el dueño notó que la respuesta recomendaba
+revisar combinaciones pero no daba una forma concreta de hacerlo.
+
+También: las imágenes de portada que el dueño generó (en `Desktop/Aqui claude/`) quedaron
+renombradas ahí mismo con el nombre de slug correcto (antes solo se habían copiado a `public/blog/`
+con el nombre nuevo, dejando los originales sin renombrar).
+
+Verificado: tsc ✓ · npm test (82/82) ✓ · npm run build ✓ (`/feed`, `/rss`, `/rss.xml` aparecen como
+rutas dinámicas) · las 3 URLs devuelven 200 con `content-type: application/rss+xml` y XML válido con
+los 20 posts · enlace a `/compatibilidad` confirmado en el FAQ renderizado · staging→main desplegado.
+
 ## ✅ Las 7 portadas restantes del blog, integradas (2026-07-28)
 
 El dueño generó con Gemini las 7 imágenes que faltaban (prompts dados en esta sesión) y las dejó en
