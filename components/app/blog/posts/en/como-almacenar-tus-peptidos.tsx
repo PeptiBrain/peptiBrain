@@ -1,5 +1,5 @@
 import { Link } from "@/i18n/navigation";
-import { H2, P, UL, LI, Callout } from "@/components/app/blog/ArticleBlocks";
+import { H2, P, UL, LI, Callout, Summary } from "@/components/app/blog/ArticleBlocks";
 
 export default function Post() {
   return (
@@ -9,6 +9,13 @@ export default function Post() {
         goes unnoticed because it doesn&apos;t smell or visibly change. Here are the basic storage rules, before and
         after reconstitution.
       </P>
+
+      <Summary label="In short:">
+        Unreconstituted powder holds up well if kept cold and away from light, but once mixed with
+        bacteriostatic water it becomes far more sensitive and needs to stay refrigerated, with a
+        reference shelf life of about 30 days. Heat is the biggest threat, and logging each vial&apos;s
+        reconstitution date is what keeps you from losing track of which ones are still good.
+      </Summary>
 
       <H2>Before reconstitution (lyophilized powder)</H2>
       <P>As a powder, unreconstituted, most peptides are fairly stable if stored properly:</P>

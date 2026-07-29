@@ -1,4 +1,4 @@
-import { H2, P, UL, LI, Callout } from "@/components/app/blog/ArticleBlocks";
+import { H2, P, UL, LI, Callout, Summary } from "@/components/app/blog/ArticleBlocks";
 
 export default function Post() {
   return (
@@ -8,6 +8,12 @@ export default function Post() {
         dozens of odd-sounding names (BPC-157, GHK-Cu, semaglutide...), forums full of jargon and little clarity.
         Let&apos;s start with the basics, no tech-speak.
       </P>
+
+      <Summary label="In short:">
+        A peptide is a short chain of amino acids your body already makes naturally, and synthetic versions have
+        become popular for weight control, recovery, skin, and longevity research — but the real risk isn&apos;t
+        the peptide itself, it&apos;s handling it without any tracking or consistency.
+      </Summary>
 
       <H2>What exactly is a peptide?</H2>
       <P>

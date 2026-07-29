@@ -1,5 +1,5 @@
 import { Link } from "@/i18n/navigation";
-import { H2, P, UL, LI, Callout } from "@/components/app/blog/ArticleBlocks";
+import { H2, P, UL, LI, Callout, Summary } from "@/components/app/blog/ArticleBlocks";
 
 export default function Post() {
   return (
@@ -8,6 +8,11 @@ export default function Post() {
         If you&apos;re into skincare beyond the usual creams, you&apos;ve probably come across GHK-Cu. It&apos;s one of the
         few peptides that also has a real presence in commercial cosmetics, not just biohacking forums.
       </P>
+
+      <Summary label="In short:">
+        GHK-Cu is a copper-bound tripeptide studied for its ties to collagen production and skin regeneration,
+        available both as topical creams and serums and as the injectable version used in biohacking circles.
+      </Summary>
 
       <H2>What is GHK-Cu?</H2>
       <P>

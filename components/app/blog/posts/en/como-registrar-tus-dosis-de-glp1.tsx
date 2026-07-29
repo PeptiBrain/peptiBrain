@@ -1,5 +1,5 @@
 import { Link } from "@/i18n/navigation";
-import { H2, H3, P, UL, LI, OL, OLItem, Callout } from "@/components/app/blog/ArticleBlocks";
+import { H2, H3, P, UL, LI, OL, OLItem, Callout, Summary } from "@/components/app/blog/ArticleBlocks";
 
 export default function Post() {
   return (
@@ -10,6 +10,12 @@ export default function Post() {
         &ldquo;keep a log.&rdquo; But nobody really explains what to write down, when to do it, or why it
         matters. This is the step-by-step guide we wish we'd had on day one.
       </P>
+
+      <Summary label="In short:">
+        Logging your GLP-1 (date, dose, injection site, weight, and side effects) is what lets you
+        see the real week-to-week pattern instead of relying on memory or a scrap of paper — and
+        shows up at your appointment with something concrete to bring.
+      </Summary>
 
       <H2>Why track it, if it's just one weekly shot anyway?</H2>
       <P>

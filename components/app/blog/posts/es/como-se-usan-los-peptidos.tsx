@@ -1,5 +1,5 @@
 import { Link } from "@/i18n/navigation";
-import { H2, P, OL, OLItem, Callout } from "@/components/app/blog/ArticleBlocks";
+import { H2, P, OL, OLItem, Callout, Summary } from "@/components/app/blog/ArticleBlocks";
 
 export default function Post() {
   return (
@@ -8,6 +8,11 @@ export default function Post() {
         Ya sabes qué es un péptido y cómo reconstituirlo. Lo que casi nadie explica bien es la parte del día a
         día: por dónde se aplica, con qué frecuencia y cómo evitar irritar siempre la misma zona.
       </P>
+
+      <Summary>
+        La mayoría de péptidos se aplican por vía subcutánea rotando entre 3-4 zonas para evitar irritación, con
+        4 pasos básicos de aplicación, y llevar un registro es lo que ayuda a no perder el hilo cuando usas más de uno.
+      </Summary>
 
       <H2>La vía más habitual: subcutánea</H2>
       <P>

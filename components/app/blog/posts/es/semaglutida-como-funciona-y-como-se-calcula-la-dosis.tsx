@@ -1,5 +1,5 @@
 import { Link } from "@/i18n/navigation";
-import { H2, P, UL, LI, Callout } from "@/components/app/blog/ArticleBlocks";
+import { H2, P, UL, LI, Callout, Summary } from "@/components/app/blog/ArticleBlocks";
 
 export default function Post() {
   return (
@@ -9,6 +9,12 @@ export default function Post() {
         mal entendido en cuanto a cómo se dosifica. Vamos a aclarar las dos cosas: qué hace y cómo se calcula
         correctamente.
       </P>
+
+      <Summary>
+        La semaglutida actúa sobre el receptor GLP-1 y se sube por fases de 4 semanas (de 0,25 mg hasta 2,4 mg de
+        mantenimiento), y el error más habitual no es el fármaco sino convertir mal esos miligramos en unidades
+        de jeringa según la concentración de tu vial.
+      </Summary>
 
       <H2>¿Qué es y cómo actúa?</H2>
       <P>

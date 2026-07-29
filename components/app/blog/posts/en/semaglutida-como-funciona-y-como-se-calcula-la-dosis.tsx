@@ -1,5 +1,5 @@
 import { Link } from "@/i18n/navigation";
-import { H2, P, UL, LI, Callout } from "@/components/app/blog/ArticleBlocks";
+import { H2, P, UL, LI, Callout, Summary } from "@/components/app/blog/ArticleBlocks";
 
 export default function Post() {
   return (
@@ -9,6 +9,12 @@ export default function Post() {
         most misunderstood when it comes to dosing. Let&apos;s clear up both: what it does and how to calculate it
         correctly.
       </P>
+
+      <Summary label="In short:">
+        Semaglutide works on the GLP-1 receptor and is titrated over 4-week phases, from 0.25 mg up to a 2.4 mg
+        maintenance dose, and the most common mistake isn&apos;t the drug itself but converting those milligrams
+        into the wrong syringe units based on your vial&apos;s concentration.
+      </Summary>
 
       <H2>What is it and how does it work?</H2>
       <P>

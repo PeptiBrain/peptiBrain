@@ -1,5 +1,5 @@
 import { Link } from "@/i18n/navigation";
-import { H2, P, Callout } from "@/components/app/blog/ArticleBlocks";
+import { H2, P, Callout, Summary } from "@/components/app/blog/ArticleBlocks";
 import { JsonLd } from "@/components/app/calculator/ToolPieces";
 
 const FAQ_ITEMS = [
@@ -49,6 +49,12 @@ export default function Post() {
       />
 
       <P>The questions that keep coming up, answered clearly and without overselling anything.</P>
+
+      <Summary label="In short:">
+        Whether a peptide is legal, safe, or fast-acting depends on the specific peptide and whether it's
+        an approved medication or a research compound — either way, blood work and a healthcare
+        professional should be part of starting, combining, or stopping any protocol.
+      </Summary>
 
       {FAQ_ITEMS.map((item) => (
         <div key={item.q}>

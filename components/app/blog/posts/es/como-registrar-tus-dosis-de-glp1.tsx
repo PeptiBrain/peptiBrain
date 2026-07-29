@@ -1,5 +1,5 @@
 import { Link } from "@/i18n/navigation";
-import { H2, H3, P, UL, LI, OL, OLItem, Callout } from "@/components/app/blog/ArticleBlocks";
+import { H2, H3, P, UL, LI, OL, OLItem, Callout, Summary } from "@/components/app/blog/ArticleBlocks";
 
 export default function Post() {
   return (
@@ -10,6 +10,12 @@ export default function Post() {
         registro&rdquo;. Pero nadie explica bien qué anotar, cuándo hacerlo, ni por qué importa. Esta es
         la guía paso a paso que nos hubiera gustado tener el primer día.
       </P>
+
+      <Summary>
+        Un GLP-1 se evalúa por el patrón de varias semanas, no por un día suelto, así que anotar fecha,
+        dosis, zona de inyección, peso y efectos secundarios de cada aplicación es lo que te permite ver
+        la tendencia real y llevar algo concreto a tu cita médica, en lugar de depender de la memoria.
+      </Summary>
 
       <H2>¿Por qué llevar un registro, si de todos modos es una sola inyección semanal?</H2>
       <P>

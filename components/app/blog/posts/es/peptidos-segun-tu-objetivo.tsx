@@ -1,5 +1,5 @@
 import { Link } from "@/i18n/navigation";
-import { H2, P, UL, LI, Callout } from "@/components/app/blog/ArticleBlocks";
+import { H2, P, UL, LI, Callout, Summary } from "@/components/app/blog/ArticleBlocks";
 
 export default function Post() {
   return (
@@ -8,6 +8,11 @@ export default function Post() {
         En vez de repasar péptido por péptido, muchas veces es más útil partir al revés: ¿cuál es tu objetivo?
         Aquí los organizamos por lo que la gente busca más a menudo.
       </P>
+
+      <Summary>
+        Organizamos los péptidos más mencionados según el objetivo que persigas — bajar de peso, recuperación,
+        músculo, longevidad o piel — para que encuentres rápido los que corresponden al tuyo.
+      </Summary>
 
       <H2>Quiero bajar de peso</H2>
       <P>La categoría con más demanda, con diferencia. Los más mencionados:</P>

@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Info } from "lucide-react";
+import { Info, Zap } from "lucide-react";
 
 // Bloques de contenido reutilizables para el cuerpo de los artículos del blog —
 // evitan repetir las mismas clases de Tailwind en cada uno de los 7 artículos.
@@ -40,6 +40,27 @@ export function OLItem({ n, children }: { n: number; children: ReactNode }) {
       </span>
       <span className="pt-0.5 text-base leading-relaxed text-muted-foreground">{children}</span>
     </li>
+  );
+}
+
+// Respuesta directa al inicio del artículo (pirámide invertida): la conclusión
+// en 2-3 líneas antes de desarrollarla, para lectores que escanean y para que
+// un buscador/IA pueda citar la respuesta sin tener que leer todo el post.
+export function Summary({
+  children,
+  label = "En resumen:",
+}: {
+  children: ReactNode;
+  label?: string;
+}) {
+  return (
+    <div className="mt-5 flex gap-3 rounded-xl border-2 border-foreground/10 bg-card p-4">
+      <Zap className="mt-0.5 size-4.5 shrink-0 text-primary" aria-hidden />
+      <p className="text-sm leading-relaxed text-foreground">
+        <span className="font-bold">{label} </span>
+        {children}
+      </p>
+    </div>
   );
 }
 

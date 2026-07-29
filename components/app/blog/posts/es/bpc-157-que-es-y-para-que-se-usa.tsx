@@ -1,5 +1,5 @@
 import { Link } from "@/i18n/navigation";
-import { H2, P, UL, LI, Callout } from "@/components/app/blog/ArticleBlocks";
+import { H2, P, UL, LI, Callout, Summary } from "@/components/app/blog/ArticleBlocks";
 
 export default function Post() {
   return (
@@ -8,6 +8,11 @@ export default function Post() {
         Dentro de la comunidad de recuperación y rendimiento, pocos nombres se repiten tanto como el BPC-157.
         Vamos a ver qué es realmente y qué dice — y qué no dice — la investigación disponible.
       </P>
+
+      <Summary>
+        BPC-157 es un pentadecapéptido estudiado sobre todo en modelos animales por su posible papel en la
+        reparación de tejidos y la salud digestiva, sin el mismo respaldo clínico en humanos que un medicamento aprobado.
+      </Summary>
 
       <H2>¿Qué es el BPC-157?</H2>
       <P>

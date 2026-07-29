@@ -1,5 +1,5 @@
 import { Link } from "@/i18n/navigation";
-import { H2, P, OL, OLItem, Callout } from "@/components/app/blog/ArticleBlocks";
+import { H2, P, OL, OLItem, Callout, Summary } from "@/components/app/blog/ArticleBlocks";
 
 export default function Post() {
   return (
@@ -9,6 +9,12 @@ export default function Post() {
         vial y hay que &ldquo;activarlo&rdquo; con agua antes de poder aplicarlo. Suena más complicado de lo que es — vamos
         paso a paso.
       </P>
+
+      <Summary>
+        Reconstituir un péptido son 4 pasos (ver los mg del vial, decidir el agua, calcular la concentración y
+        guardarlo en frío con la fecha anotada) y luego convertir esa concentración en unidades de jeringa según
+        tu dosis — la calculadora de reconstitución hace esa conversión por ti para evitar el error más común.
+      </Summary>
 
       <H2>¿Qué es el agua bacteriostática?</H2>
       <P>

@@ -1,5 +1,5 @@
 import { Link } from "@/i18n/navigation";
-import { H2, P, OL, OLItem, Callout } from "@/components/app/blog/ArticleBlocks";
+import { H2, P, OL, OLItem, Callout, Summary } from "@/components/app/blog/ArticleBlocks";
 
 export default function Post() {
   return (
@@ -9,6 +9,11 @@ export default function Post() {
         it&apos;s time for the most practical part: the mistakes that keep repeating among beginners — and how to
         avoid them.
       </P>
+
+      <Summary label="In short:">
+        The most common beginner mistakes with peptides come down to calculation and record-keeping, not which
+        peptide you pick — and nearly all of them are fixed by using a reconstitution calculator and logging the date and dose of every application.
+      </Summary>
 
       <H2>The 7 most common mistakes</H2>
       <OL>

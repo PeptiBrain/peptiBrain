@@ -1,5 +1,5 @@
 import { Link } from "@/i18n/navigation";
-import { H2, P, UL, LI, Callout } from "@/components/app/blog/ArticleBlocks";
+import { H2, P, UL, LI, Callout, Summary } from "@/components/app/blog/ArticleBlocks";
 
 export default function Post() {
   return (
@@ -9,6 +9,13 @@ export default function Post() {
         porque no huele ni cambia de aspecto de forma obvia. Estas son las reglas básicas de almacenamiento,
         antes y después de reconstituir.
       </P>
+
+      <Summary>
+        Antes de reconstituir, el polvo aguanta bien en frío y protegido de la luz; una vez mezclado con
+        agua bacteriostática se vuelve mucho más sensible y debe ir siempre en nevera, con una vida útil
+        de referencia de unos 30 días. El calor es el enemigo principal, y anotar la fecha de cada
+        reconstitución es lo que evita perder la cuenta de qué vial sigue en buen estado.
+      </Summary>
 
       <H2>Antes de reconstituir (polvo liofilizado)</H2>
       <P>

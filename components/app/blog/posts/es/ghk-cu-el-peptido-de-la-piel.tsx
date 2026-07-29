@@ -1,5 +1,5 @@
 import { Link } from "@/i18n/navigation";
-import { H2, P, UL, LI, Callout } from "@/components/app/blog/ArticleBlocks";
+import { H2, P, UL, LI, Callout, Summary } from "@/components/app/blog/ArticleBlocks";
 
 export default function Post() {
   return (
@@ -9,6 +9,11 @@ export default function Post() {
         GHK-Cu. Es uno de los pocos péptidos que además tiene presencia real en cosmética comercial, no solo en
         foros de biohacking.
       </P>
+
+      <Summary>
+        El GHK-Cu es un tripéptido con cobre, estudiado por su relación con el colágeno y la regeneración de la
+        piel, que existe tanto en cremas y serums cosméticos como en la versión inyectable que circula en comunidades de biohacking.
+      </Summary>
 
       <H2>¿Qué es el GHK-Cu?</H2>
       <P>

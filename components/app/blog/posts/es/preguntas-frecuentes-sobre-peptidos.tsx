@@ -1,5 +1,5 @@
 import { Link } from "@/i18n/navigation";
-import { H2, P, Callout } from "@/components/app/blog/ArticleBlocks";
+import { H2, P, Callout, Summary } from "@/components/app/blog/ArticleBlocks";
 import { JsonLd } from "@/components/app/calculator/ToolPieces";
 
 const FAQ_ITEMS = [
@@ -49,6 +49,12 @@ export default function Post() {
       />
 
       <P>Las dudas que aparecen una y otra vez, respondidas de forma clara y sin promesas exageradas.</P>
+
+      <Summary>
+        La legalidad, seguridad y velocidad de resultados de un péptido dependen del péptido concreto y de
+        si está aprobado o es de investigación; en cualquier caso, conviene apoyarse en análisis de sangre
+        y en un profesional de la salud antes de empezar, combinar o dejar cualquier protocolo.
+      </Summary>
 
       {FAQ_ITEMS.map((item) => (
         <div key={item.q}>

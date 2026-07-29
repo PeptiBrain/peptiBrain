@@ -1,5 +1,5 @@
 import { Link } from "@/i18n/navigation";
-import { H2, P, UL, LI, Callout } from "@/components/app/blog/ArticleBlocks";
+import { H2, P, UL, LI, Callout, Summary } from "@/components/app/blog/ArticleBlocks";
 
 export default function Post() {
   return (
@@ -8,6 +8,11 @@ export default function Post() {
         Instead of going peptide by peptide, it&apos;s often more useful to start from the other end: what&apos;s your
         goal? Here we organize them by what people search for most often.
       </P>
+
+      <Summary label="In short:">
+        We organize the most mentioned peptides by the goal you&apos;re after — weight loss, recovery, muscle,
+        longevity, or skin — so you can quickly find the ones that match yours.
+      </Summary>
 
       <H2>I want to lose weight</H2>
       <P>By far the category with the most demand. The most mentioned:</P>

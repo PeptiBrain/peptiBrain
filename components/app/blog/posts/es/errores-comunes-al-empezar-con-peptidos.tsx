@@ -1,5 +1,5 @@
 import { Link } from "@/i18n/navigation";
-import { H2, P, OL, OLItem, Callout } from "@/components/app/blog/ArticleBlocks";
+import { H2, P, OL, OLItem, Callout, Summary } from "@/components/app/blog/ArticleBlocks";
 
 export default function Post() {
   return (
@@ -8,6 +8,11 @@ export default function Post() {
         Después de repasar qué son los péptidos, cómo reconstituirlos y los más buscados por objetivo, toca la
         parte más práctica: los errores que se repiten una y otra vez entre quien empieza — y cómo evitarlos.
       </P>
+
+      <Summary>
+        Los errores más comunes al empezar con péptidos son de cálculo y registro — no de qué péptido elegir —
+        y casi todos se evitan usando una calculadora de reconstitución y anotando fecha y dosis de cada aplicación.
+      </Summary>
 
       <H2>Los 7 errores más comunes</H2>
       <OL>

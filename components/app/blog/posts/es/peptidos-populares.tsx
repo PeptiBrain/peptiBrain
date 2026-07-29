@@ -1,5 +1,5 @@
 import { Link } from "@/i18n/navigation";
-import { H2, H3, P, Callout } from "@/components/app/blog/ArticleBlocks";
+import { H2, H3, P, Callout, Summary } from "@/components/app/blog/ArticleBlocks";
 
 export default function Post() {
   return (
@@ -8,6 +8,11 @@ export default function Post() {
         Si empiezas a investigar sobre péptidos, enseguida aparecen los mismos nombres una y otra vez. Aquí tienes
         un repaso rápido a los más mencionados, organizados por lo que más se investiga de cada uno.
       </P>
+
+      <Summary>
+        Repasamos los péptidos más mencionados agrupados por categoría — pérdida de peso, recuperación, músculo,
+        longevidad y piel — con qué se investiga de cada uno, sin entrar en dosis ni recomendaciones de uso.
+      </Summary>
 
       <H2>Pérdida de peso</H2>
       <H3>Semaglutida</H3>

@@ -1,5 +1,5 @@
 import { Link } from "@/i18n/navigation";
-import { H2, H3, P, Callout } from "@/components/app/blog/ArticleBlocks";
+import { H2, H3, P, Callout, Summary } from "@/components/app/blog/ArticleBlocks";
 
 export default function Post() {
   return (
@@ -8,6 +8,11 @@ export default function Post() {
         If you start researching peptides, the same names quickly come up again and again. Here&apos;s a quick
         rundown of the most mentioned ones, organized by what&apos;s most researched about each.
       </P>
+
+      <Summary label="In short:">
+        This is a rundown of the most mentioned peptides grouped by category — weight loss, recovery, muscle,
+        longevity, and skin — covering what&apos;s researched about each, without dosing or usage recommendations.
+      </Summary>
 
       <H2>Weight loss</H2>
       <H3>Semaglutide</H3>

@@ -1,4 +1,4 @@
-import { H2, P, UL, LI, Callout } from "@/components/app/blog/ArticleBlocks";
+import { H2, P, UL, LI, Callout, Summary } from "@/components/app/blog/ArticleBlocks";
 
 export default function Post() {
   return (
@@ -8,6 +8,12 @@ export default function Post() {
         raros (BPC-157, GHK-Cu, semaglutida...), foros con mucha jerga y poca claridad. Vamos a empezar por lo
         básico, sin tecnicismos.
       </P>
+
+      <Summary>
+        Un péptido es una cadena corta de aminoácidos que tu cuerpo ya produce de forma natural, y algunas
+        versiones sintéticas se han vuelto populares en control de peso, recuperación, piel y longevidad — pero
+        el mayor riesgo no es el péptido en sí, sino manejarlo sin orden ni registro.
+      </Summary>
 
       <H2>¿Qué es un péptido, exactamente?</H2>
       <P>

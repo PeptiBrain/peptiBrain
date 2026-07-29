@@ -1,5 +1,5 @@
 import { Link } from "@/i18n/navigation";
-import { H2, P, OL, OLItem, Callout } from "@/components/app/blog/ArticleBlocks";
+import { H2, P, OL, OLItem, Callout, Summary } from "@/components/app/blog/ArticleBlocks";
 
 export default function Post() {
   return (
@@ -9,6 +9,12 @@ export default function Post() {
         powder inside a vial, and you need to &ldquo;activate&rdquo; it with water before you can use it. It sounds more
         complicated than it is — let&apos;s go step by step.
       </P>
+
+      <Summary label="In short:">
+        Reconstituting a peptide comes down to 4 steps — check the vial&apos;s mg, decide on the water amount,
+        calculate the concentration, and store it cold with the date logged — then converting that concentration
+        into syringe units for your dose, which is exactly what the free reconstitution calculator does for you.
+      </Summary>
 
       <H2>What is bacteriostatic water?</H2>
       <P>

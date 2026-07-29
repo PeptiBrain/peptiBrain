@@ -1,5 +1,5 @@
 import { Link } from "@/i18n/navigation";
-import { H2, P, OL, OLItem, Callout } from "@/components/app/blog/ArticleBlocks";
+import { H2, P, OL, OLItem, Callout, Summary } from "@/components/app/blog/ArticleBlocks";
 
 export default function Post() {
   return (
@@ -8,6 +8,11 @@ export default function Post() {
         You already know what a peptide is and how to reconstitute it. What almost no one explains well is the
         day-to-day part: where to apply it, how often, and how to avoid always irritating the same spot.
       </P>
+
+      <Summary label="In short:">
+        Most peptides are injected subcutaneously, rotating between 3-4 sites to avoid irritation, following 4
+        basic steps — and keeping a log is what helps you stay on track when running more than one at a time.
+      </Summary>
 
       <H2>The most common route: subcutaneous</H2>
       <P>
