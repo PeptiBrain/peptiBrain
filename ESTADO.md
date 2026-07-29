@@ -1,5 +1,47 @@
 # ESTADO — PeptiBrain
 
+## ✅ Portal editorial del blog: breadcrumbs, tags, newsletter, Quiénes somos, fuentes (2026-07-29)
+
+El dueño compartió una lista de ChatGPT sobre "cómo construir un blog profesional tipo WebMD" (20
+puntos). Se evaluó cada uno antes de tocar código: mucho ya existía (Biblioteca=/protocolos,
+calculadoras, buscador+categorías, artículos relacionados, CTA a la app, schema.org). Se rechazó
+explícitamente lo que hubiera requerido fabricar confianza (bios/fotos de autor falsas, "revisión
+médica" que no existe, comentarios). De lo real y verificable, se construyó:
+
+1. **Breadcrumbs visibles** (Inicio > Blog > Artículo) en cada post y en el índice — reutilizando
+   el `BreadcrumbList` schema.org que ya existía solo como dato, nunca visible en pantalla.
+2. **Autodescubrimiento RSS**: `<link rel="alternate" type="application/rss+xml">` en el `<head>`
+   global — Feedly/Inoreader/Flipboard/NewsBlur detectan el feed con solo pegar la URL del sitio.
+3. **Etiquetas (tags)** por artículo (es/en, los 20 posts) — chips clicables que enlazan a
+   `/blog?q=<tag>`; `BlogGrid` ahora lee `?q=` de la URL para sembrar su buscador.
+4. **Newsletter** (Resend Audience): formulario visible en el índice del blog y al final de cada
+   artículo, `POST /api/newsletter/subscribe` — no-op si falta `RESEND_AUDIENCE_ID` (mismo patrón
+   que el resto de integraciones opcionales de Resend).
+5. **Página `/quienes-somos`** (es/en): qué es PeptiBrain, cómo se escribe el contenido (fuentes
+   verificables o se dice explícitamente que no las hay), qué NO es (no consejo médico), identidad
+   legal real (Digital Dreams World LLC) — sin bios ni asesores inventados.
+6. **Fuentes científicas reales** (componente `Sources` nuevo): 8 citas verificadas por
+   WebSearch antes de escribir (STEP-1/STEP-5 de semaglutida, SURMOUNT-1 de tirzepatida, revisión
+   preclínica + estudio en modelo animal de BPC-157, revisión + ensayo clínico registrado de
+   GHK-Cu), añadidas solo a los 4 artículos donde hay evidencia sólida y verificable — el resto se
+   deja sin esta sección a propósito.
+
+De paso, dos fixes reportados por el dueño:
+- **429 en `/compatibilidad`**: el límite de peticiones por IP estaba en 60/min — demasiado
+  ajustado porque Next.js precarga en segundo plano los enlaces visibles en pantalla. Subido a
+  180/min (`lib/rate-limit.ts`).
+- **Pregunta sobre indexación automática en GSC**: se explicó que la Indexing API de Google solo
+  está permitida para ofertas de empleo/eventos en vivo (no se recomendó usarla) — la vía legítima
+  ya existe (`sitemap.xml` se regenera solo); pendiente si el dueño quiere el ping automático a
+  Google tras cada deploy.
+
+**Pendiente del dueño**: las 7 imágenes de portada con los prompts dados en la tanda anterior.
+
+Verificado en cada fase: tsc ✓ · npm test (81/82 — 1 fallo es un test preexistente que depende de
+la hora del día, ya reportado aparte, no relacionado) ✓ · npm run build ✓ · cada pieza confirmada
+en navegador (breadcrumbs, tag→búsqueda por URL, newsletter no-op, página Quiénes somos, fuentes
+con links reales) · 3 tandas desplegadas a staging→main.
+
 ## ✅ Feed RSS + enlace a Compatibilidad en el FAQ (2026-07-28)
 
 El dueño pidió comprobar que el blog tuviera RSS en las 3 rutas que suelen probar los checklists de
