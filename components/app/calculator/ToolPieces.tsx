@@ -1,4 +1,4 @@
-import { AlertTriangle, ArrowRight, Calculator, ListChecks, Syringe, Shuffle, Clock, Coins, GitCompareArrows } from "lucide-react";
+import { AlertTriangle, ArrowRight, Calculator, ListChecks, Syringe, Shuffle, Clock, Coins, GitCompareArrows, Activity, ClipboardCheck } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { getTranslations } from "next-intl/server";
 
@@ -54,7 +54,7 @@ export async function ToolFaq({ items }: { items: { q: string; a: string }[] }) 
 export async function ToolCrossLinks({
   current,
 }: {
-  current: "calc" | "sema" | "protocolos" | "comparador" | "eliminacion" | "costomg" | "compat";
+  current: "calc" | "sema" | "protocolos" | "comparador" | "eliminacion" | "costomg" | "compat" | "trt" | "trtQuiz";
 }) {
   const t = await getTranslations("Tools");
   const links = [
@@ -65,6 +65,8 @@ export async function ToolCrossLinks({
     { key: "compat" as const, href: "/compatibilidad", label: t("navCompat"), icon: GitCompareArrows },
     { key: "eliminacion" as const, href: "/calculadora-eliminacion", label: t("navClearance"), icon: Clock },
     { key: "costomg" as const, href: "/calculadora-costo-mg", label: t("navCostPerMg"), icon: Coins },
+    { key: "trt" as const, href: "/calculadora-trt", label: t("navTrt"), icon: Activity },
+    { key: "trtQuiz" as const, href: "/quiz-trt", label: t("navTrtQuiz"), icon: ClipboardCheck },
   ].filter((l) => l.key !== current);
 
   return (

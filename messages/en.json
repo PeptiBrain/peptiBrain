@@ -1455,7 +1455,9 @@
     "navCostPerMg": "Cost per mg calculator",
     "navAllTools": "See all tools",
     "navIdeas": "Ideas & Roadmap",
-    "navCompat": "Stack compatibility"
+    "navCompat": "Stack compatibility",
+    "navTrt": "TRT dose calculator",
+    "navTrtQuiz": "Testosterone level quiz"
   },
   "Calculadora": {
     "metaTitle": "Free Peptide Reconstitution Calculator | PeptiBrain",
@@ -1704,6 +1706,87 @@
       }
     ]
   },
+  "Trt": {
+    "metaTitle": "TRT Dose Calculator: mg, mL and syringe units | PeptiBrain",
+    "metaDescription": "Calculate how many mL and syringe units you need per testosterone injection based on your weekly dose, concentration, and frequency. Free, no signup.",
+    "kicker": "Free tool",
+    "h1": "TRT dose calculator",
+    "subtitle": "Enter your weekly dose, vial concentration, and injection frequency — we'll tell you the mg, mL, and syringe units for each injection.",
+    "weeklyDoseLabel": "Total weekly dose (mg)",
+    "concentrationLabel": "Vial concentration (mg/mL)",
+    "customOption": "Other",
+    "customPlaceholder": "E.g. 150",
+    "frequencyLabel": "Injection frequency",
+    "freq": {
+      "weekly": "Once a week",
+      "twice-weekly": "Twice a week",
+      "eod": "Every other day (48h)"
+    },
+    "mgPerInjectionLabel": "mg per injection",
+    "mlPerInjectionLabel": "mL per injection",
+    "faq": [
+      {
+        "q": "Why doesn't testosterone need reconstitution like peptides?",
+        "a": "Injectable testosterone (cypionate, enanthate, etc.) already comes pre-dissolved in oil at a fixed factory concentration (usually 100, 200, or 250 mg/mL) — there's no bacteriostatic water step, just converting your dose into the right volume."
+      },
+      {
+        "q": "Which injection frequency is best?",
+        "a": "This calculator doesn't decide that — your doctor does, based on your levels and how you feel between doses. Here we just convert the frequency you already have into mg and mL per injection."
+      },
+      {
+        "q": "Can this calculator decide my dose?",
+        "a": "No. It's a math conversion tool (mg → mL → syringe units), not a dosing recommendation. Your dose and frequency are set by your doctor based on your labs."
+      }
+    ]
+  },
+  "TrtQuiz": {
+    "metaTitle": "Is it worth getting a testosterone test? Free quiz | PeptiBrain",
+    "metaDescription": "8 quick questions about symptoms commonly linked to low testosterone. Not a diagnosis — it helps you decide whether a blood test is worth requesting.",
+    "kicker": "Free quiz · 2 minutes",
+    "h1": "Is it worth getting a testosterone test?",
+    "subtitle": "8 questions about symptoms often mentioned alongside low testosterone. At the end we tell you whether it's worth talking to your doctor — never whether you “have” low testosterone: only a blood test can tell you that.",
+    "question": [
+      "Do you feel persistent fatigue or low energy, even after sleeping well?",
+      "Has your sex drive clearly dropped compared to before?",
+      "Do you struggle to gain or keep muscle mass despite training consistently?",
+      "Have you noticed more irritability, low mood, or less motivation than before?",
+      "Are you sleeping worse or waking up without feeling rested?",
+      "Have you noticed more body fat building up, especially around the belly, without changing your habits?",
+      "Do you struggle to concentrate or feel more “brain fog” than before?",
+      "Do you notice you recover more slowly after training?"
+    ],
+    "yes": "Yes",
+    "no": "No",
+    "stepLabel": "Question {step} of {total}",
+    "resultScoreLabel": "You marked {score} of {total} symptoms",
+    "band": {
+      "bajo": {
+        "title": "Few symptoms marked",
+        "body": "Based on your answers, there's no clear pattern of low-testosterone symptoms standing out. If you still have concerns, a blood test is the only way to confirm it."
+      },
+      "medio": {
+        "title": "Some symptoms present",
+        "body": "You marked several symptoms sometimes linked to low testosterone — not conclusive, but it may be worth mentioning to your doctor and requesting a total and free testosterone test."
+      },
+      "alto": {
+        "title": "Several symptoms present",
+        "body": "You marked quite a few symptoms from the list. That doesn't confirm anything on its own, but it's a good reason to request a blood test (total and free testosterone) and talk to your doctor about it."
+      }
+    },
+    "notDiagnosis": "This quiz doesn't diagnose anything — the symptoms we ask about can have many other causes (stress, sleep, thyroid, iron, etc.). The only way to know your actual testosterone level is a blood test ordered by a healthcare professional.",
+    "ctaButton": "Track my TRT protocol in PeptiBrain",
+    "restart": "Start over",
+    "faq": [
+      {
+        "q": "Does this quiz replace a blood test?",
+        "a": "No. It's just a symptom guide to help decide whether a test is worth requesting — it never replaces a lab test or your doctor's judgment."
+      },
+      {
+        "q": "What test should I request if I have several symptoms?",
+        "a": "The usual starting point is total and free testosterone, ideally from a morning blood draw. Your doctor may also order LH, FSH, and other markers depending on your case."
+      }
+    ]
+  },
   "Herramientas": {
     "metaTitle": "All free peptide tools | PeptiBrain",
     "metaDescription": "Free calculators and tools for peptides, GLP-1 and TRT: reconstitution, semaglutide, comparator, library, clearance and cost per mg. No signup.",
@@ -1725,7 +1808,11 @@
     "costomgTitle": "Cost per mg calculator",
     "costomgDesc": "How much each mg and each dose costs you, based on what you paid.",
     "compatTitle": "Stack compatibility",
-    "compatDesc": "Can I combine these two peptides? Instant verdict."
+    "compatDesc": "Can I combine these two peptides? Instant verdict.",
+    "trtTitle": "TRT dose calculator",
+    "trtDesc": "Calculate mg, mL, and syringe units per testosterone injection based on your weekly dose and concentration.",
+    "trtQuizTitle": "Quiz: do I need a TRT test?",
+    "trtQuizDesc": "8 quick questions about common symptoms — not a diagnosis, helps you decide if a blood test is worth it."
   },
   "FreeToolsSection": {
     "eyebrow": "Free · no signup",

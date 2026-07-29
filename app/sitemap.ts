@@ -23,6 +23,8 @@ const PUBLIC_PATHS: Array<{
   { path: "/compatibilidad", priority: 0.8, changeFrequency: "monthly" },
   { path: "/calculadora-eliminacion", priority: 0.8, changeFrequency: "monthly" },
   { path: "/calculadora-costo-mg", priority: 0.8, changeFrequency: "monthly" },
+  { path: "/calculadora-trt", priority: 0.8, changeFrequency: "monthly" },
+  { path: "/quiz-trt", priority: 0.8, changeFrequency: "monthly" },
   { path: "/protocolos", priority: 0.8, changeFrequency: "monthly" },
   { path: "/ideas", priority: 0.6, changeFrequency: "daily" },
   { path: "/login", priority: 0.5, changeFrequency: "monthly" },

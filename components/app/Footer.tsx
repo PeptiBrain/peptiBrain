@@ -62,6 +62,8 @@ export function Footer() {
               <FooterLink href="/protocolos">{tt("navProtocols")}</FooterLink>
               <FooterLink href="/calculadora-eliminacion">{tt("navClearance")}</FooterLink>
               <FooterLink href="/calculadora-costo-mg">{tt("navCostPerMg")}</FooterLink>
+              <FooterLink href="/calculadora-trt">{tt("navTrt")}</FooterLink>
+              <FooterLink href="/quiz-trt">{tt("navTrtQuiz")}</FooterLink>
             </FooterColumn>
 
             <FooterColumn title={t("colCommunity")}>

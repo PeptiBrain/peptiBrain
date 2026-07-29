@@ -12,6 +12,8 @@ import {
   Snowflake,
   HelpCircle,
   CalendarCheck,
+  Activity,
+  GitCompareArrows,
   type LucideIcon,
 } from "lucide-react";
 
@@ -230,6 +232,36 @@ export const BLOG_POSTS: BlogPost[] = [
     icon: CalendarCheck,
     publishedAt: "2026-08-05",
     readingMinutes: 7,
+  },
+  {
+    slug: "como-registrar-tus-dosis-de-trt",
+    title: {
+      es: "Cómo registrar tus dosis de TRT correctamente: guía paso a paso",
+      en: "How to track your TRT doses correctly: a step-by-step guide",
+    },
+    excerpt: {
+      es: "Qué anotar en cada inyección de testosterona, cómo calcular el volumen exacto y qué mirar en tu registro antes de cada análisis de sangre.",
+      en: "What to log with every testosterone injection, how to calculate the exact volume, and what to look for in your log before each blood test.",
+    },
+    category: { es: "Guía práctica", en: "Practical guide" },
+    icon: Activity,
+    publishedAt: "2026-08-06",
+    readingMinutes: 7,
+  },
+  {
+    slug: "compatibilidad-de-stacks-como-usarla",
+    title: {
+      es: "Compatibilidad de stacks: cómo funciona la herramienta y cómo sacarle el máximo partido",
+      en: "Stack compatibility: how the tool works and how to get the most out of it",
+    },
+    excerpt: {
+      es: "Qué significan los 4 estados (estudiado, precaución, evitar, sin datos), ejemplos reales de combos consultados y cómo usarla si llevas varios péptidos a la vez.",
+      en: "What the 4 statuses mean (studied, caution, avoid, no data), real examples of checked combos, and how to use it if you're running several peptides at once.",
+    },
+    category: { es: "Guía práctica", en: "Practical guide" },
+    icon: GitCompareArrows,
+    publishedAt: "2026-08-07",
+    readingMinutes: 6,
   },
 ];
 

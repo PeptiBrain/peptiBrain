@@ -61,6 +61,14 @@ const CONTENT: Record<string, { es: Loader; en: Loader }> = {
     es: () => import("@/components/app/blog/posts/es/como-registrar-tus-dosis-de-glp1"),
     en: () => import("@/components/app/blog/posts/en/como-registrar-tus-dosis-de-glp1"),
   },
+  "como-registrar-tus-dosis-de-trt": {
+    es: () => import("@/components/app/blog/posts/es/como-registrar-tus-dosis-de-trt"),
+    en: () => import("@/components/app/blog/posts/en/como-registrar-tus-dosis-de-trt"),
+  },
+  "compatibilidad-de-stacks-como-usarla": {
+    es: () => import("@/components/app/blog/posts/es/compatibilidad-de-stacks-como-usarla"),
+    en: () => import("@/components/app/blog/posts/en/compatibilidad-de-stacks-como-usarla"),
+  },
 };
 
 export function generateStaticParams() {

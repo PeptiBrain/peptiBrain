@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { ChevronDown, Calculator, Syringe, Shuffle, ListChecks, Clock, Coins, Wrench, GitCompareArrows } from "lucide-react";
+import { ChevronDown, Calculator, Syringe, Shuffle, ListChecks, Clock, Coins, Wrench, GitCompareArrows, Activity, ClipboardCheck } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 
 const TOOLS = [
@@ -13,6 +13,8 @@ const TOOLS = [
   { href: "/protocolos", labelKey: "navProtocols" as const, icon: ListChecks },
   { href: "/calculadora-eliminacion", labelKey: "navClearance" as const, icon: Clock },
   { href: "/calculadora-costo-mg", labelKey: "navCostPerMg" as const, icon: Coins },
+  { href: "/calculadora-trt", labelKey: "navTrt" as const, icon: Activity },
+  { href: "/quiz-trt", labelKey: "navTrtQuiz" as const, icon: ClipboardCheck },
 ];
 
 // Menú desplegable "Herramientas" del header — reemplaza el enlace suelto

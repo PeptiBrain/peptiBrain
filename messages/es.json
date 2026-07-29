@@ -1455,7 +1455,9 @@
     "navCostPerMg": "Calculadora de costo por mg",
     "navAllTools": "Ver todas las herramientas",
     "navIdeas": "Ideas y Roadmap",
-    "navCompat": "Compatibilidad de stacks"
+    "navCompat": "Compatibilidad de stacks",
+    "navTrt": "Calculadora de TRT",
+    "navTrtQuiz": "Quiz de nivel de testosterona"
   },
   "Calculadora": {
     "metaTitle": "Calculadora de reconstitución de péptidos gratis | PeptiBrain",
@@ -1704,6 +1706,87 @@
       }
     ]
   },
+  "Trt": {
+    "metaTitle": "Calculadora de dosis de TRT: mg, mL y unidades de jeringa | PeptiBrain",
+    "metaDescription": "Calcula cuántos mL y unidades de jeringa te corresponden por inyección de testosterona según tu dosis semanal, concentración y frecuencia. Gratis, sin registro.",
+    "kicker": "Herramienta gratuita",
+    "h1": "Calculadora de dosis de TRT",
+    "subtitle": "Indica tu dosis semanal, la concentración del vial y la frecuencia de inyección — te decimos cuántos mg, mL y unidades de jeringa te corresponden en cada aplicación.",
+    "weeklyDoseLabel": "Dosis semanal total (mg)",
+    "concentrationLabel": "Concentración del vial (mg/mL)",
+    "customOption": "Otra",
+    "customPlaceholder": "Ej. 150",
+    "frequencyLabel": "Frecuencia de inyección",
+    "freq": {
+      "weekly": "Una vez por semana",
+      "twice-weekly": "Dos veces por semana",
+      "eod": "Día por medio (cada 48h)"
+    },
+    "mgPerInjectionLabel": "mg por inyección",
+    "mlPerInjectionLabel": "mL por inyección",
+    "faq": [
+      {
+        "q": "¿Por qué la testosterona no se reconstituye como los péptidos?",
+        "a": "La testosterona inyectable (cipionato, enantato, etc.) ya viene disuelta en aceite a una concentración fija de fábrica (habitualmente 100, 200 o 250 mg/mL) — no hay que agregar agua bacteriostática ni disolver nada, solo calcular cuánto volumen corresponde a tu dosis."
+      },
+      {
+        "q": "¿Qué frecuencia de inyección es mejor?",
+        "a": "No la decide esta calculadora — la determina tu médico según tus niveles y cómo te sientes entre dosis. Aquí solo convertimos la frecuencia que ya tienes indicada en mg y mL por aplicación."
+      },
+      {
+        "q": "¿Esta calculadora sirve para decidir mi dosis?",
+        "a": "No. Es una herramienta de conversión matemática (mg → mL → unidades de jeringa), no una recomendación de dosis. La dosis y frecuencia las define tu médico según tus análisis."
+      }
+    ]
+  },
+  "TrtQuiz": {
+    "metaTitle": "¿Vale la pena hacerte un análisis de testosterona? Quiz gratis | PeptiBrain",
+    "metaDescription": "8 preguntas rápidas sobre síntomas comunes asociados a testosterona baja. No es un diagnóstico — te ayuda a decidir si vale la pena pedir un análisis de sangre.",
+    "kicker": "Quiz gratuito · 2 minutos",
+    "h1": "¿Vale la pena pedir un análisis de testosterona?",
+    "subtitle": "8 preguntas sobre síntomas que suelen mencionarse junto a la testosterona baja. Al final te decimos si tiene sentido hablar con tu médico — nunca si “tienes” testosterona baja: eso solo lo dice un análisis de sangre.",
+    "question": [
+      "¿Sientes fatiga o falta de energía persistente, incluso durmiendo bien?",
+      "¿Tu deseo sexual ha bajado claramente respecto a antes?",
+      "¿Te cuesta ganar o mantener masa muscular pese a entrenar de forma constante?",
+      "¿Notas más irritabilidad, bajo ánimo o menos motivación que antes?",
+      "¿Duermes peor o te despiertas sin sensación de descanso?",
+      "¿Has notado más grasa acumulada, sobre todo en el abdomen, sin cambiar tus hábitos?",
+      "¿Te cuesta concentrarte o sientes más “niebla mental” que antes?",
+      "¿Notas que te recuperas más lento después de entrenar?"
+    ],
+    "yes": "Sí",
+    "no": "No",
+    "stepLabel": "Pregunta {step} de {total}",
+    "resultScoreLabel": "Marcaste {score} de {total} síntomas",
+    "band": {
+      "bajo": {
+        "title": "Pocos síntomas marcados",
+        "body": "Con base en lo que respondiste, no destaca un patrón claro de síntomas de testosterona baja. Si igual tienes dudas, un análisis de sangre es la única forma de confirmarlo."
+      },
+      "medio": {
+        "title": "Algunos síntomas presentes",
+        "body": "Marcaste varios síntomas que a veces se asocian con testosterona baja — no es concluyente, pero puede valer la pena comentarlo con tu médico y pedir un análisis de testosterona total y libre."
+      },
+      "alto": {
+        "title": "Varios síntomas presentes",
+        "body": "Marcaste bastantes síntomas de la lista. Eso no confirma nada por sí solo, pero es una buena razón para pedir un análisis de sangre (testosterona total y libre) y hablarlo con tu médico."
+      }
+    },
+    "notDiagnosis": "Este quiz no diagnostica nada — los síntomas que preguntamos pueden tener muchas otras causas (estrés, sueño, tiroides, hierro, etc.). La única forma de saber tu nivel real de testosterona es un análisis de sangre pedido por un profesional de la salud.",
+    "ctaButton": "Registrar mi protocolo de TRT en PeptiBrain",
+    "restart": "Volver a empezar",
+    "faq": [
+      {
+        "q": "¿Este quiz reemplaza un análisis de sangre?",
+        "a": "No. Es solo una guía de síntomas para decidir si vale la pena pedir un análisis — nunca sustituye una prueba de laboratorio ni el criterio de tu médico."
+      },
+      {
+        "q": "¿Qué análisis debería pedir si tengo varios síntomas?",
+        "a": "Lo habitual es empezar con testosterona total y libre, idealmente en una extracción matutina. Tu médico puede pedir además LH, FSH y otros marcadores según el caso."
+      }
+    ]
+  },
   "Herramientas": {
     "metaTitle": "Todas las herramientas gratis para péptidos | PeptiBrain",
     "metaDescription": "Calculadoras y herramientas gratuitas para péptidos, GLP-1 y TRT: reconstitución, semaglutida, comparador, biblioteca, eliminación y costo por mg. Sin registro.",
@@ -1725,7 +1808,11 @@
     "costomgTitle": "Calculadora de costo por mg",
     "costomgDesc": "Cuánto te cuesta cada mg y cada dosis, según lo que pagaste.",
     "compatTitle": "Compatibilidad de stacks",
-    "compatDesc": "¿Puedo combinar estos dos péptidos? Veredicto al instante."
+    "compatDesc": "¿Puedo combinar estos dos péptidos? Veredicto al instante.",
+    "trtTitle": "Calculadora de TRT",
+    "trtDesc": "Calcula mg, mL y unidades de jeringa por inyección de testosterona según tu dosis semanal y concentración.",
+    "trtQuizTitle": "Quiz: ¿necesito un análisis de TRT?",
+    "trtQuizDesc": "8 preguntas rápidas sobre síntomas comunes — no diagnostica, te ayuda a decidir si vale la pena un análisis."
   },
   "FreeToolsSection": {
     "eyebrow": "Gratis · sin registro",
