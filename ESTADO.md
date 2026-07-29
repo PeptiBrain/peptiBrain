@@ -1,5 +1,17 @@
 # ESTADO — PeptiBrain
 
+## ✅ Buscador + filtro por categoría en el blog (2026-07-28)
+
+Con 20 artículos y 9 categorías, el blog ya pasaba el umbral de la propia regla de UX del proyecto
+(10+ ítems necesitan filtros). Nuevo `components/app/blog/BlogGrid.tsx` (cliente): buscador (título +
+extracto) y chips de categoría, mismo patrón que `PeptideLibraryGrid` en `/protocolos`. Mientras no
+hay filtro activo se muestra la grilla+paginación ya renderizada por el servidor (sin JS, buena para
+SEO); en cuanto hay texto o categoría, el componente cliente toma el control y muestra su propia
+lista filtrada (sin capar a 12 — igual que el resto de listas filtrables de la app).
+
+Verificado: tsc ✓ · npm test (82/82) ✓ · npm run build ✓ · probado en navegador: buscar "TRT" da 1
+resultado correcto, filtro "Pérdida de peso" da 1 resultado correcto · staging→main desplegado.
+
 ## ✅ Paginación del blog (2026-07-28)
 
 El blog llegó a 20 artículos en una sola página larga. Se agregó paginación de 12 por página
