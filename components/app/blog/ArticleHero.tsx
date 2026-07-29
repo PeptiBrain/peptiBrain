@@ -59,11 +59,11 @@ export function ArticleHero({
         {useLogo ? (
           <span
             className={`flex items-center justify-center rounded-2xl bg-white/95 shadow-lg ${
-              compact ? "size-11" : "size-16"
+              compact ? "size-16" : "size-24"
             }`}
           >
-            <span className={`relative ${compact ? "size-8" : "size-12"}`}>
-              <Image src="/peptibrain-isotipo.svg" alt="" fill sizes="64px" />
+            <span className={`relative ${compact ? "size-13" : "size-20"}`}>
+              <Image src="/peptibrain-isotipo.svg" alt="" fill sizes="96px" />
             </span>
           </span>
         ) : (
