@@ -149,14 +149,17 @@ export default async function BlogIndexPage({
               Blog
             </span>
           </nav>
-          <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-primary">{s.eyebrow}</p>
-          <h1 className="mt-2 text-balance font-display text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-            {s.h1}
-          </h1>
-          <p className="mt-3 max-w-xl text-base leading-relaxed text-muted-foreground">{s.subtitle}</p>
-
-          <div className="mt-6 max-w-xl">
-            <NewsletterSignup />
+          <div className="mt-4 grid gap-8 lg:grid-cols-[1fr_auto] lg:items-start">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wide text-primary">{s.eyebrow}</p>
+              <h1 className="mt-2 text-balance font-display text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+                {s.h1}
+              </h1>
+              <p className="mt-3 max-w-xl text-base leading-relaxed text-muted-foreground">{s.subtitle}</p>
+            </div>
+            <div className="lg:w-96">
+              <NewsletterSignup />
+            </div>
           </div>
 
           <Suspense fallback={null}>
