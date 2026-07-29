@@ -6,6 +6,7 @@ import { ShieldAlert } from "lucide-react";
 export function Footer() {
   const t = useTranslations("Footer");
   const tt = useTranslations("Tools");
+  const tq = useTranslations("QuienesSomos");
   const year = new Date().getFullYear();
 
   return (
@@ -69,6 +70,7 @@ export function Footer() {
             <FooterColumn title={t("colCommunity")}>
               <FooterLink href="/blog">Blog</FooterLink>
               <FooterLink href="/ideas">{tt("navIdeas")}</FooterLink>
+              <FooterLink href="/quienes-somos">{tq("title")}</FooterLink>
             </FooterColumn>
 
             <FooterColumn title={t("colLegal")}>

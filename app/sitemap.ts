@@ -33,6 +33,7 @@ const PUBLIC_PATHS: Array<{
   { path: "/terminos", priority: 0.3, changeFrequency: "yearly" },
   { path: "/privacidad", priority: 0.3, changeFrequency: "yearly" },
   { path: "/aviso-legal", priority: 0.3, changeFrequency: "yearly" },
+  { path: "/quienes-somos", priority: 0.5, changeFrequency: "yearly" },
   { path: "/cookies", priority: 0.3, changeFrequency: "yearly" },
   { path: "/reembolsos", priority: 0.3, changeFrequency: "yearly" },
 ];

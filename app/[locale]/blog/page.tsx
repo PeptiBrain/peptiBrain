@@ -9,6 +9,7 @@ import { BLOG_POSTS, localized, getPostImagePath } from "@/lib/blog/posts";
 import { JsonLd } from "@/components/app/calculator/ToolPieces";
 import { ArticleHero } from "@/components/app/blog/ArticleHero";
 import { BlogGrid } from "@/components/app/blog/BlogGrid";
+import { NewsletterSignup } from "@/components/app/blog/NewsletterSignup";
 
 const BASE = "https://peptibrain.com";
 const POSTS_PER_PAGE = 12;
@@ -153,6 +154,10 @@ export default async function BlogIndexPage({
             {s.h1}
           </h1>
           <p className="mt-3 max-w-xl text-base leading-relaxed text-muted-foreground">{s.subtitle}</p>
+
+          <div className="mt-6 max-w-xl">
+            <NewsletterSignup />
+          </div>
 
           <Suspense fallback={null}>
           <BlogGrid

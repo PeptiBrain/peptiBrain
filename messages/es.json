@@ -1947,5 +1947,44 @@
     "no2": "No sugiere dosis ni interpreta tus análisis — solo registra lo que tú decides.",
     "no3": "No vende péptidos ni te dice dónde comprarlos.",
     "no4": "No comparte tus datos con nadie sin tu permiso."
+  },
+  "Newsletter": {
+    "title": "Recibe cada semana las últimas novedades",
+    "subtitle": "Péptidos, GLP-1 y TRT — guías nuevas y actualizaciones directo a tu correo, sin spam.",
+    "placeholder": "tu@correo.com",
+    "cta": "Suscribirme",
+    "sending": "Enviando…",
+    "success": "Listo — revisa tu correo para confirmar la suscripción.",
+    "error": "No se pudo suscribir. Inténtalo de nuevo en un momento."
+  },
+  "QuienesSomos": {
+    "metaTitle": "Quiénes somos | PeptiBrain",
+    "metaDescription": "Qué es PeptiBrain, cómo escribimos el contenido del blog y quién está detrás de la app.",
+    "title": "Quiénes somos",
+    "updated": "Última actualización: 29 de julio de 2026",
+    "intro": "PeptiBrain es una app de seguimiento de protocolos de péptidos, GLP-1 y TRT — no una consulta médica ni un medio de noticias de salud. Esta página explica qué hacemos, cómo escribimos el contenido del blog y quién está detrás.",
+    "sections": [
+      {
+        "title": "Qué es PeptiBrain",
+        "body": "Una aplicación web para llevar el registro de tus dosis, viales y protocolo de péptidos, GLP-1 o TRT en un solo lugar — calculadoras, historial, y recordatorios. La app organiza y calcula lo que tu médico o tu protocolo ya indican; nunca decide una dosis ni sustituye una consulta médica."
+      },
+      {
+        "title": "Cómo escribimos el contenido del blog",
+        "body": "Los artículos se basan en información pública ya establecida (mecanismos conocidos, esquemas de titulación de referencia, reglas estándar de farmacología) y en los mismos datos de referencia que usan las herramientas de la app. Cuando citamos un estudio, enlazamos directo a la fuente (PubMed/DOI) — si no encontramos una fuente verificable, lo decimos explícitamente en vez de inventar un dato o una cita."
+      },
+      {
+        "title": "Lo que el contenido NO es",
+        "body": "Ningún artículo, calculadora ni respuesta del asistente de IA constituye consejo médico, diagnóstico o receta. No sustituyen a un profesional de la salud. El contenido es educativo — la decisión sobre qué usar, en qué dosis y bajo qué supervisión es siempre de tu médico."
+      },
+      {
+        "title": "Quién está detrás",
+        "body": "PeptiBrain es un producto de Digital Dreams World LLC (2105 Vista Oeste NW Suite E 3564, Albuquerque, NM 87120, Estados Unidos). Hoy no contamos con un consejo médico asesor propio — si en el futuro lo tenemos, lo anunciaremos aquí con nombre real, no antes."
+      },
+      {
+        "title": "Contacto",
+        "body": "¿Preguntas, correcciones o algo que creas que deberíamos revisar? Escríbenos a hello@peptibrain.com."
+      }
+    ],
+    "backHome": "Volver al inicio"
   }
 }

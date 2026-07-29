@@ -5,6 +5,7 @@ import { Link } from "@/i18n/navigation";
 import { ArrowLeft, ArrowRight, Clock, ChevronRight } from "lucide-react";
 import { ArticleHero } from "@/components/app/blog/ArticleHero";
 import { BlogCtaBanner } from "@/components/app/blog/BlogCtaBanner";
+import { NewsletterSignup } from "@/components/app/blog/NewsletterSignup";
 import { ToolDisclaimer, ToolCrossLinks, JsonLd } from "@/components/app/calculator/ToolPieces";
 import { BLOG_POSTS, localized, localizedTags, getPostImagePath, type BlogPost } from "@/lib/blog/posts";
 
@@ -141,6 +142,10 @@ export function ArticleLayout({ post, locale, children }: { post: BlogPost; loca
               </div>
             </section>
           )}
+
+          <div className="mt-10">
+            <NewsletterSignup />
+          </div>
         </div>
       </main>
       <Footer />
