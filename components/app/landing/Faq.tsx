@@ -26,24 +26,43 @@ export function Faq() {
     { q: t("q10"), a: t("a10") },
   ];
 
+  // Dos columnas en desktop (una en móvil): dos <Accordion> independientes,
+  // no una sola lista partida a la mitad con CSS — así abrir una pregunta a
+  // la izquierda no empuja ni recoloca nada a la derecha.
+  const half = Math.ceil(faqs.length / 2);
+  const left = faqs.slice(0, half);
+  const right = faqs.slice(half);
+
   return (
     <section className="px-4 py-16">
-      <div className="mx-auto max-w-2xl">
+      <div className="mx-auto max-w-4xl">
         <Reveal>
           <h2 className="text-balance text-center font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
             {t("title")}
           </h2>
         </Reveal>
-        <Reveal delay={0.05}>
-          <Accordion className="mt-8 rounded-xl border border-border bg-card px-5">
-            {faqs.map((item) => (
-              <AccordionItem key={item.q} value={item.q}>
-                <AccordionTrigger className="text-foreground">{item.q}</AccordionTrigger>
-                <AccordionContent className="text-muted-foreground">{item.a}</AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
-        </Reveal>
+        <div className="mt-8 grid gap-4 sm:grid-cols-2">
+          <Reveal delay={0.05}>
+            <Accordion className="rounded-xl border border-border bg-card px-5">
+              {left.map((item) => (
+                <AccordionItem key={item.q} value={item.q}>
+                  <AccordionTrigger className="text-foreground">{item.q}</AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground">{item.a}</AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </Reveal>
+          <Reveal delay={0.1}>
+            <Accordion className="rounded-xl border border-border bg-card px-5">
+              {right.map((item) => (
+                <AccordionItem key={item.q} value={item.q}>
+                  <AccordionTrigger className="text-foreground">{item.q}</AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground">{item.a}</AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </Reveal>
+        </div>
       </div>
     </section>
   );
