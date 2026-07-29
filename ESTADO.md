@@ -1,5 +1,27 @@
 # ESTADO — PeptiBrain
 
+## ✅ Bloque de respuesta directa (GEO) en 12 artículos del blog (2026-07-28)
+
+El dueño compartió un PDF con una conversación previa en Gemini sobre estrategia SEO/GEO
+(Generative Engine Optimization) para posicionar PeptiBrain, incluyendo un "prompt maestro" para
+reescribir los artículos del blog. Se auditó contra lo ya construido antes de tocar nada:
+
+- Ya cumplido: schema.org `SoftwareApplication` (sin `aggregateRating` inventado), `FAQPage`
+  schema, apuntar a intención de búsqueda (no a marca), tabla real de comparación (no en imagen)
+  en `mejores-apps-de-peptidos`, jerarquía H1/H2/H3 en los 13 posts, enlaces internos a
+  calculadoras.
+- Rechazado explícitamente: el ejemplo del PDF de un "Resumen Ejecutivo del Dr. Leo" con
+  superlativos autoproclamados ("la más recomendada", "la más segura") — es una afirmación no
+  verificable presentada como hecho para que una IA la repita; contradice tanto la regla D2 como
+  la propia condición del PDF de "no fluff genérico". No se implementó.
+- Mejora real aplicada: nuevo componente `Summary` en `ArticleBlocks.tsx` (bloque "En resumen:" /
+  "In short:", pirámide invertida) insertado tras la intro y antes del primer H2, en los 12 posts
+  que no tenían tabla (se excluyó `mejores-apps-de-peptidos`, que ya tiene su propia tabla). Cada
+  resumen está anclado en lo que el propio artículo ya dice — nada de claims nuevos.
+
+Verificado: tsc ✓ · npm test (74/74) ✓ · npm run build ✓ · verificado visualmente en navegador
+(es + en) en `/blog/bpc-157-que-es-y-para-que-se-usa` · staging→main desplegado.
+
 ## ✅ Imagen de portada del artículo de registro de dosis GLP-1 (2026-07-27)
 
 Cerrado el pendiente: el dueño generó la imagen con el prompt de estilo ya dado (mismo look que
