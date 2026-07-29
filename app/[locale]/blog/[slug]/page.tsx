@@ -69,6 +69,26 @@ const CONTENT: Record<string, { es: Loader; en: Loader }> = {
     es: () => import("@/components/app/blog/posts/es/compatibilidad-de-stacks-como-usarla"),
     en: () => import("@/components/app/blog/posts/en/compatibilidad-de-stacks-como-usarla"),
   },
+  "calculadora-de-reconstitucion-como-usarla": {
+    es: () => import("@/components/app/blog/posts/es/calculadora-de-reconstitucion-como-usarla"),
+    en: () => import("@/components/app/blog/posts/en/calculadora-de-reconstitucion-como-usarla"),
+  },
+  "calculadora-de-semaglutida-como-usarla": {
+    es: () => import("@/components/app/blog/posts/es/calculadora-de-semaglutida-como-usarla"),
+    en: () => import("@/components/app/blog/posts/en/calculadora-de-semaglutida-como-usarla"),
+  },
+  "comparador-de-peptidos-como-usarlo": {
+    es: () => import("@/components/app/blog/posts/es/comparador-de-peptidos-como-usarlo"),
+    en: () => import("@/components/app/blog/posts/en/comparador-de-peptidos-como-usarlo"),
+  },
+  "calculadora-de-eliminacion-como-usarla": {
+    es: () => import("@/components/app/blog/posts/es/calculadora-de-eliminacion-como-usarla"),
+    en: () => import("@/components/app/blog/posts/en/calculadora-de-eliminacion-como-usarla"),
+  },
+  "calculadora-de-costo-por-mg-como-usarla": {
+    es: () => import("@/components/app/blog/posts/es/calculadora-de-costo-por-mg-como-usarla"),
+    en: () => import("@/components/app/blog/posts/en/calculadora-de-costo-por-mg-como-usarla"),
+  },
 };
 
 export function generateStaticParams() {

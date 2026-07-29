@@ -1736,6 +1736,46 @@
       {
         "q": "Can this calculator decide my dose?",
         "a": "No. It's a math conversion tool (mg → mL → syringe units), not a dosing recommendation. Your dose and frequency are set by your doctor based on your labs."
+      },
+      {
+        "q": "What's the right testosterone dose for TRT?",
+        "a": "There's no single number — it depends on your doctor's read of your blood work and the goal of restoring normal levels, not maximizing them. In clinical practice, typical ranges run from 50 to 200 mg per week, split according to your prescribed frequency, but the exact number comes from your labs, not a generic table online."
+      },
+      {
+        "q": "Is 1 mL or 5 mL of testosterone a week enough?",
+        "a": "Volume only matters together with concentration: 1 mL at 200 mg/mL is 200 mg, but 1 mL at 100 mg/mL is only 100 mg. Our calculator does exactly that mL-to-mg conversion (and back) so you don't have to memorize it."
+      },
+      {
+        "q": "Which testosterone is best for TRT?",
+        "a": "There's no universal \"best\" — cypionate and enanthate are the most commonly prescribed injectable esters due to their similar release profile and cost. The actual choice is made by your doctor based on availability, your response, and your history."
+      },
+      {
+        "q": "Is 400 mg of testosterone a week enough to build muscle?",
+        "a": "400 mg/week is well above the typical range of a medical TRT protocol, which aims to restore normal levels, not maximize them. That kind of dose isn't replacement therapy — it's a different use case with more risk, and not something this calculator or app is meant to support."
+      },
+      {
+        "q": "What happens if I inject 250 mg of testosterone?",
+        "a": "It depends entirely on frequency: 250 mg as a single weekly shot is high compared to the typical TRT range; split across several injections a month it can be reasonable if your doctor prescribes it that way. It's not something to decide without supervision."
+      },
+      {
+        "q": "How long does it take for TRT to start working?",
+        "a": "The first physical symptoms (energy, libido) are usually noticeable within 3-4 weeks; fuller changes (body composition, stable mood) typically take 3-6 months. Blood levels stabilize before all symptoms catch up."
+      },
+      {
+        "q": "What side effects does TRT have?",
+        "a": "The most commonly reported are acne, fluid retention, and increased hematocrit — which is why periodic follow-up labs include it. Mood changes or reduced fertility can also occur. Medical follow-up is part of the treatment, not an optional extra."
+      },
+      {
+        "q": "What happens if my testosterone is over 1000 ng/dL?",
+        "a": "A total level above 1000 ng/dL is usually outside the range a well-tuned TRT protocol aims for (which targets the normal-to-high range, not above it). It's worth bringing straight to your doctor — it may mean the dose or frequency needs adjusting."
+      },
+      {
+        "q": "How can I raise my testosterone very fast?",
+        "a": "There's no safe way to raise it \"very fast\" on your own. The only medically backed option is a prescribed treatment after confirming a deficiency through labs. Sleeping well, strength training, and keeping a healthy weight help long-term, not overnight."
+      },
+      {
+        "q": "Can you buy testosterone at a pharmacy without a prescription?",
+        "a": "No — it's a controlled substance in the vast majority of countries. Getting it without medical supervision (for example, online) carries dosing, purity, and follow-up risks that real TRT always accounts for."
       }
     ]
   },

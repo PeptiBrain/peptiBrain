@@ -1736,6 +1736,46 @@
       {
         "q": "¿Esta calculadora sirve para decidir mi dosis?",
         "a": "No. Es una herramienta de conversión matemática (mg → mL → unidades de jeringa), no una recomendación de dosis. La dosis y frecuencia las define tu médico según tus análisis."
+      },
+      {
+        "q": "¿Cuál es la dosis de testosterona para una TRT?",
+        "a": "No hay un número único — depende de tu médico según tus análisis de sangre y el objetivo de restaurar niveles normales, no maximizarlos. En la práctica clínica se ven rangos habituales de 50 a 200 mg por semana, repartidos según la frecuencia que te indiquen, pero el número exacto lo define tu análisis, no una tabla genérica de internet."
+      },
+      {
+        "q": "¿Es suficiente con 1 mL o 5 mL de testosterona a la semana?",
+        "a": "El volumen solo importa junto con la concentración: 1 mL a 200 mg/mL son 200 mg, pero 1 mL a 100 mg/mL son solo 100 mg. Nuestra calculadora hace justo esa conversión de mL a mg (y viceversa) para que no dependas de memorizarlo."
+      },
+      {
+        "q": "¿Qué testosterona es la mejor para la TRT?",
+        "a": "No hay una \"mejor\" universal — cipionato y enantato son los ésteres inyectables más recetados por su perfil de liberación similar y su costo. La elección concreta la hace tu médico según disponibilidad, tu respuesta y tu historial."
+      },
+      {
+        "q": "¿Son suficientes 400 mg de testosterona a la semana para ganar músculo?",
+        "a": "400 mg/semana está muy por encima del rango habitual de una TRT médica, que busca restaurar niveles normales, no maximizarlos. Ese tipo de dosis no es terapia de reemplazo — es otro uso, con más riesgo, y no es algo que esta calculadora ni esta app estén pensadas para respaldar."
+      },
+      {
+        "q": "¿Qué pasa si me inyecto 250 mg de testosterona?",
+        "a": "Depende completamente de la frecuencia: 250 mg de una sola vez por semana es una dosis alta frente al rango típico de TRT médica; repartidos en varias inyecciones al mes puede ser razonable según indique tu médico. No es algo para decidir sin supervisión."
+      },
+      {
+        "q": "¿Cuánto tiempo tarda en hacer efecto la TRT?",
+        "a": "Los primeros síntomas físicos (energía, libido) suelen notarse en 3-4 semanas; los cambios más completos (composición corporal, ánimo estable) suelen tardar 3-6 meses. Los niveles en sangre se estabilizan antes de que se noten todos los síntomas."
+      },
+      {
+        "q": "¿Qué efectos secundarios tiene la TRT?",
+        "a": "Los más reportados son acné, retención de líquidos y aumento del hematocrito — por eso los análisis de seguimiento periódicos lo incluyen. También puede haber cambios de ánimo o menor fertilidad. El seguimiento médico es parte del tratamiento, no un extra opcional."
+      },
+      {
+        "q": "¿Qué pasa si tengo más de 1000 ng/dL de testosterona?",
+        "a": "Un nivel total por encima de 1000 ng/dL suele estar fuera del rango que busca una TRT bien ajustada (que apunta a dejarte dentro de rango normal-alto, no por encima). Es un dato para llevar directamente a tu médico — puede significar que la dosis o la frecuencia necesitan ajuste."
+      },
+      {
+        "q": "¿Cómo subir la testosterona muy rápido?",
+        "a": "No existe una forma segura de subirla \"muy rápido\" por cuenta propia. Lo único respaldado médicamente es un tratamiento prescrito tras confirmar el déficit con análisis. Dormir bien, entrenar fuerza y mantener un peso saludable ayudan a largo plazo, no de un día para otro."
+      },
+      {
+        "q": "¿Se puede comprar testosterona en la farmacia sin receta?",
+        "a": "No — es un medicamento controlado en la gran mayoría de países. Conseguirla sin supervisión médica (por ejemplo por internet) implica riesgos de dosis, pureza y falta de seguimiento que una TRT real siempre incluye."
       }
     ]
   },

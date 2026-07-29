@@ -14,6 +14,9 @@ import {
   CalendarCheck,
   Activity,
   GitCompareArrows,
+  Shuffle,
+  Clock,
+  Coins,
   type LucideIcon,
 } from "lucide-react";
 
@@ -261,6 +264,81 @@ export const BLOG_POSTS: BlogPost[] = [
     category: { es: "Guía práctica", en: "Practical guide" },
     icon: GitCompareArrows,
     publishedAt: "2026-08-07",
+    readingMinutes: 6,
+  },
+  {
+    slug: "calculadora-de-reconstitucion-como-usarla",
+    title: {
+      es: "Calculadora de reconstitución: cómo funciona y cómo sacarle el máximo partido",
+      en: "Reconstitution calculator: how it works and how to get the most out of it",
+    },
+    excerpt: {
+      es: "Cómo pasar de mg y agua bacteriostática a unidades exactas de jeringa (U30, U50, U100), con jeringa visual y PDF — la aritmética explicada sin dosis personalizadas.",
+      en: "How to go from mg and bacteriostatic water to exact syringe units (U30, U50, U100), with a visual syringe and PDF — the math explained without personalized dosing.",
+    },
+    category: { es: "Guía práctica", en: "Practical guide" },
+    icon: Beaker,
+    publishedAt: "2026-08-08",
+    readingMinutes: 6,
+  },
+  {
+    slug: "calculadora-de-semaglutida-como-usarla",
+    title: {
+      es: "Calculadora de semaglutida y tirzepatida: cómo funciona y cómo sacarle el máximo partido",
+      en: "Semaglutide & tirzepatide calculator: how it works and how to get the most out of it",
+    },
+    excerpt: {
+      es: "La tabla completa de titulación semanal explicada: por qué existe, qué esquema de referencia usa y cómo convertir cada fase en unidades de jeringa.",
+      en: "The full weekly titration table explained: why it exists, what reference schedule it uses, and how to convert each phase into syringe units.",
+    },
+    category: { es: "Guía práctica", en: "Practical guide" },
+    icon: Syringe,
+    publishedAt: "2026-08-09",
+    readingMinutes: 7,
+  },
+  {
+    slug: "comparador-de-peptidos-como-usarlo",
+    title: {
+      es: "Comparador de péptidos: cómo funciona y cómo sacarle el máximo partido",
+      en: "Peptide comparator: how it works and how to get the most out of it",
+    },
+    excerpt: {
+      es: "Qué campos compara lado a lado (vía, dosis, frecuencia, evidencia, combina/evita) y cómo usarlo para entender diferencias, no para elegir por ti.",
+      en: "What fields it compares side by side (route, dose, frequency, evidence, combines/avoid) and how to use it to understand differences, not to choose for you.",
+    },
+    category: { es: "Guía práctica", en: "Practical guide" },
+    icon: Shuffle,
+    publishedAt: "2026-08-10",
+    readingMinutes: 6,
+  },
+  {
+    slug: "calculadora-de-eliminacion-como-usarla",
+    title: {
+      es: "Calculadora de eliminación: cómo funciona y cómo sacarle el máximo partido",
+      en: "Clearance calculator: how it works and how to get the most out of it",
+    },
+    excerpt: {
+      es: "Por qué se usa la regla de 5 vidas medias (~97% eliminado), por qué no aparecen todos los péptidos y cómo leer el resultado con criterio.",
+      en: "Why the 5-half-lives rule (~97% eliminated) is used, why not every peptide appears, and how to read the result with judgment.",
+    },
+    category: { es: "Guía práctica", en: "Practical guide" },
+    icon: Clock,
+    publishedAt: "2026-08-11",
+    readingMinutes: 6,
+  },
+  {
+    slug: "calculadora-de-costo-por-mg-como-usarla",
+    title: {
+      es: "Calculadora de costo por mg: cómo funciona y cómo sacarle el máximo partido",
+      en: "Cost-per-mg calculator: how it works and how to get the most out of it",
+    },
+    excerpt: {
+      es: "Cómo comparar de verdad el costo entre proveedores y tamaños de vial: precio ÷ contenido, y por qué el costo por dosis es el número que importa.",
+      en: "How to really compare cost across suppliers and vial sizes: price ÷ content, and why cost per dose is the number that matters.",
+    },
+    category: { es: "Guía práctica", en: "Practical guide" },
+    icon: Coins,
+    publishedAt: "2026-08-12",
     readingMinutes: 6,
   },
 ];
