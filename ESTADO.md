@@ -1,5 +1,24 @@
 # ESTADO — PeptiBrain
 
+## ✅ 5 artículos-guía de calculadoras + FAQ de TRT con búsquedas reales (2026-07-28)
+
+El dueño compartió capturas de "la gente también pregunta" de Google sobre TRT (dosis, efectos
+secundarios, ng/dL, si se compra en farmacia, etc.) y pidió aprovecharlas para tráfico. Se amplió el
+FAQ de `/calculadora-trt` de 3 a 13 preguntas, usando esas búsquedas reales tal cual (apunta a
+intención real de búsqueda, no a lo que adivinaríamos nosotros). Cuidado aplicado: preguntas como
+"¿son suficientes 400mg para músculo?" o "¿cómo subo la testosterona rápido?" se responden de forma
+factual/educativa, nunca como recomendación de dosis — siempre redirigiendo a análisis + médico.
+
+También se completaron los 5 artículos-guía de calculadoras que habían quedado pendientes de la
+tanda anterior (reconstitución, semaglutida/tirzepatida, comparador, eliminación, costo por mg) —
+mismo patrón que los de TRT/Compatibilidad: bloque de respuesta directa, "cómo funciona", "cómo
+sacarle el máximo partido". Grounding verificado a mano: los números de titulación de semaglutida
+(0,25→2,4mg) y tirzepatida (2,5→15mg) coinciden exactamente con el FAQ que ya existía en el código
+— nada inventado.
+
+Verificado: tsc ✓ · npm test (82/82) ✓ · npm run build ✓ · FAQ ampliado confirmado en navegador ·
+listado del blog confirmado con los 7 artículos nuevos de la sesión · staging→main desplegado.
+
 ## ✅ Calculadora + quiz de TRT, y 2 artículos SEO/GEO nuevos (2026-07-28)
 
 El dueño pidió 2 artículos ("Registra tus dosis de TRT" y "Compatibilidad de stacks") y, tras
