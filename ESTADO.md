@@ -1,5 +1,35 @@
 # ESTADO — PeptiBrain
 
+## ✅ "Quiénes somos" v3: rediseño visual completo, sin duplicar el artículo (2026-07-29)
+
+El dueño vio la v2 (párrafo corto + 2 secciones nuevas) y pidió ir más lejos: "que sea más visual,
+con tabla y con todo", con comparación honesta ventajas/desventajas y enlaces a todo lo demás del
+sitio. Se abandonó por completo el `LegalPage` genérico (solo prosa) para esta página — sigue
+usándose sin cambios en Términos/Privacidad/Aviso legal/Reembolsos, donde sí encaja.
+
+- **Nuevo layout propio** en `app/[locale]/quienes-somos/page.tsx`: hero con ícono, breadcrumb de
+  2 niveles, y el cuerpo delegado a `components/app/quienes-somos/ContentEs.tsx`/`ContentEn.tsx`
+  (mismo patrón que los artículos del blog: componente TSX por idioma, no JSON de traducciones).
+- **Tabla comparativa real** (`AppComparisonTable`, 8 filas): PeptiBrain vs. notas del móvil vs.
+  hoja de cálculo — honesta, incluye filas donde la hoja de cálculo también gana (historial
+  buscable) o queda en "no especificado" (depende de cómo el usuario la arme).
+- **Pros/contras en dos columnas** ("Te conviene si..." / "Quizás no es para ti si...") — la columna
+  negativa es real: no diagnostica, no es para quien no sigue un protocolo, no vende péptidos.
+- **Sección "Explora PeptiBrain"**: enlaces a `/herramientas` (calculadoras gratis), `/protocolos`
+  (galería de péptidos), el artículo de péptidos populares, la guía "¿Qué es PeptiBrain?" y el
+  índice del blog — pedido explícito del dueño de que la página recomendara "todo".
+  Se conservan intactas las secciones honestas ya existentes (principios, cómo se escribe el
+  contenido, seguridad/privacidad, identidad legal real) y se agrega Organization + BreadcrumbList
+  JSON-LD (antes la página no tenía structured data propia).
+- El namespace `QuienesSomos` en `messages/es.json`/`en.json` se redujo a solo
+  `metaTitle`/`metaDescription`/`title`/`updated`/`intro`/`backHome` — el contenido de secciones ya
+  no vive en JSON, igual que el resto del blog.
+
+Verificado: tsc ✓ · npm test (82/82) ✓ · npm run build ✓ (ambos locales de `/quienes-somos`
+prerenderizados) · confirmado en navegador a 375px y 1280px, es/en, incluyendo clic real en el
+enlace al artículo "¿Qué es PeptiBrain?" · preview real de Vercel (staging) verificado antes de
+fusionar a main · staging→main desplegado, CI en verde.
+
 ## ✅ Ajustes de feedback: logo, categorías, tabla GEO, Quiénes somos v2 (2026-07-29)
 
 Feedback directo del dueño tras ver el artículo insignia en vivo:
