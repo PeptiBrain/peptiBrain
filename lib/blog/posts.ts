@@ -11,6 +11,7 @@ import {
   MapPin,
   Snowflake,
   HelpCircle,
+  CalendarCheck,
   type LucideIcon,
 } from "lucide-react";
 
@@ -214,6 +215,21 @@ export const BLOG_POSTS: BlogPost[] = [
     icon: HelpCircle,
     publishedAt: "2026-08-04",
     readingMinutes: 10,
+  },
+  {
+    slug: "como-registrar-tus-dosis-de-glp1",
+    title: {
+      es: "Cómo registrar tus dosis de GLP-1 correctamente: guía paso a paso",
+      en: "How to track your GLP-1 doses correctly: a step-by-step guide",
+    },
+    excerpt: {
+      es: "Qué anotar en cada dosis, cómo hacerlo desde el primer día y qué mirar en tu registro semanas después — la guía que nos hubiera gustado tener al empezar.",
+      en: "What to log with every dose, how to start from day one, and what to look for in your log weeks later — the guide we wish we'd had when starting.",
+    },
+    category: { es: "Guía práctica", en: "Practical guide" },
+    icon: CalendarCheck,
+    publishedAt: "2026-08-05",
+    readingMinutes: 7,
   },
 ];
 

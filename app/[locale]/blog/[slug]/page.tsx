@@ -57,6 +57,10 @@ const CONTENT: Record<string, { es: Loader; en: Loader }> = {
     es: () => import("@/components/app/blog/posts/es/preguntas-frecuentes-sobre-peptidos"),
     en: () => import("@/components/app/blog/posts/en/preguntas-frecuentes-sobre-peptidos"),
   },
+  "como-registrar-tus-dosis-de-glp1": {
+    es: () => import("@/components/app/blog/posts/es/como-registrar-tus-dosis-de-glp1"),
+    en: () => import("@/components/app/blog/posts/en/como-registrar-tus-dosis-de-glp1"),
+  },
 };
 
 export function generateStaticParams() {
