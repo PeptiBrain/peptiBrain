@@ -21,12 +21,14 @@ import {
 } from "lucide-react";
 
 type LocalizedText = { es: string; en: string };
+type LocalizedTags = { es: string[]; en: string[] };
 
 export type BlogPost = {
   slug: string;
   title: LocalizedText;
   excerpt: LocalizedText;
   category: LocalizedText;
+  tags: LocalizedTags;
   icon: LucideIcon;
   publishedAt: string; // ISO yyyy-mm-dd
   readingMinutes: number;
@@ -35,6 +37,11 @@ export type BlogPost = {
 // Devuelve el texto en el idioma pedido (con fallback a español si faltara).
 export function localized(text: LocalizedText, locale: string): string {
   return locale === "en" ? text.en || text.es : text.es;
+}
+
+// Igual que localized() pero para el array de etiquetas.
+export function localizedTags(tags: LocalizedTags, locale: string): string[] {
+  return locale === "en" ? (tags.en.length ? tags.en : tags.es) : tags.es;
 }
 
 // Blog bilingüe (es/en) — 11 artículos, cubriendo los 3 pilares de demanda
@@ -52,6 +59,7 @@ export const BLOG_POSTS: BlogPost[] = [
       en: "A clear introduction to what peptides are, how they act in the body, and why they've become so popular in the wellness community.",
     },
     category: { es: "Guía básica", en: "Basic guide" },
+    tags: { es: ["guía básica", "péptidos"], en: ["basic guide", "peptides"] },
     icon: BookOpen,
     publishedAt: "2026-07-24",
     readingMinutes: 6,
@@ -67,6 +75,7 @@ export const BLOG_POSTS: BlogPost[] = [
       en: "Reconstitution explained in plain terms: what bacteriostatic water is, how much to use, and how to calculate your vial's concentration.",
     },
     category: { es: "Guía práctica", en: "Practical guide" },
+    tags: { es: ["reconstitución", "agua bacteriostática", "calculadora"], en: ["reconstitution", "bacteriostatic water", "calculator"] },
     icon: Beaker,
     publishedAt: "2026-07-25",
     readingMinutes: 7,
@@ -82,6 +91,7 @@ export const BLOG_POSTS: BlogPost[] = [
       en: "What semaglutide is, why the dose is titrated up gradually, and how to convert milligrams into syringe units without mistakes.",
     },
     category: { es: "Pérdida de peso", en: "Weight loss" },
+    tags: { es: ["semaglutida", "GLP-1", "pérdida de peso", "titulación"], en: ["semaglutide", "GLP-1", "weight loss", "titration"] },
     icon: Syringe,
     publishedAt: "2026-07-26",
     readingMinutes: 8,
@@ -97,6 +107,7 @@ export const BLOG_POSTS: BlogPost[] = [
       en: "A look at one of the most talked-about peptides in tissue repair and injury recovery: what the research says, and what it doesn't.",
     },
     category: { es: "Recuperación", en: "Recovery" },
+    tags: { es: ["BPC-157", "recuperación"], en: ["BPC-157", "recovery"] },
     icon: Dumbbell,
     publishedAt: "2026-07-27",
     readingMinutes: 6,
@@ -112,6 +123,7 @@ export const BLOG_POSTS: BlogPost[] = [
       en: "Why GHK-Cu has become so popular in skincare and what role copper plays in skin regeneration.",
     },
     category: { es: "Piel y antiedad", en: "Skin & anti-aging" },
+    tags: { es: ["GHK-Cu", "piel", "antiedad"], en: ["GHK-Cu", "skin", "anti-aging"] },
     icon: Sparkles,
     publishedAt: "2026-07-28",
     readingMinutes: 6,
@@ -127,6 +139,7 @@ export const BLOG_POSTS: BlogPost[] = [
       en: "The most common slip-ups when starting a protocol: from miscalculating water to keeping no record of your doses at all.",
     },
     category: { es: "Guía práctica", en: "Practical guide" },
+    tags: { es: ["errores comunes", "guía práctica", "seguridad"], en: ["common mistakes", "practical guide", "safety"] },
     icon: AlertTriangle,
     publishedAt: "2026-07-29",
     readingMinutes: 7,
@@ -142,6 +155,7 @@ export const BLOG_POSTS: BlogPost[] = [
       en: "We compare the most used apps for calculating doses and tracking peptides: language, price, calculators, and family plan.",
     },
     category: { es: "Comparativa", en: "Comparison" },
+    tags: { es: ["comparativa", "apps"], en: ["comparison", "apps"] },
     icon: ListChecks,
     publishedAt: "2026-07-30",
     readingMinutes: 8,
@@ -157,6 +171,7 @@ export const BLOG_POSTS: BlogPost[] = [
       en: "A rundown of the most searched-for peptides today — where they come from, what category they fall into, and what's researched about each.",
     },
     category: { es: "Directorio", en: "Directory" },
+    tags: { es: ["directorio", "péptidos populares"], en: ["directory", "popular peptides"] },
     icon: LayoutGrid,
     publishedAt: "2026-07-31",
     readingMinutes: 7,
@@ -172,6 +187,7 @@ export const BLOG_POSTS: BlogPost[] = [
       en: "Organized by what you're after: losing weight, recovering from an injury, gaining muscle, caring for your skin, or longevity.",
     },
     category: { es: "Guía por objetivo", en: "Goal-based guide" },
+    tags: { es: ["pérdida de peso", "recuperación", "piel", "músculo"], en: ["weight loss", "recovery", "skin", "muscle"] },
     icon: Target,
     publishedAt: "2026-08-01",
     readingMinutes: 8,
@@ -187,6 +203,7 @@ export const BLOG_POSTS: BlogPost[] = [
       en: "The practical part almost no one explains well: where to inject, how often, and how to rotate sites to avoid irritating the skin.",
     },
     category: { es: "Guía práctica", en: "Practical guide" },
+    tags: { es: ["vía de administración", "rotación de zona", "guía práctica"], en: ["administration route", "site rotation", "practical guide"] },
     icon: MapPin,
     publishedAt: "2026-08-02",
     readingMinutes: 6,
@@ -202,6 +219,7 @@ export const BLOG_POSTS: BlogPost[] = [
       en: "Before and after reconstitution: where to store each vial, why light and heat are the enemy, and how long it really lasts.",
     },
     category: { es: "Guía práctica", en: "Practical guide" },
+    tags: { es: ["almacenamiento", "vida útil", "guía práctica"], en: ["storage", "shelf life", "practical guide"] },
     icon: Snowflake,
     publishedAt: "2026-08-03",
     readingMinutes: 6,
@@ -217,6 +235,7 @@ export const BLOG_POSTS: BlogPost[] = [
       en: "The questions that keep coming up, answered clearly and without overselling anything.",
     },
     category: { es: "Preguntas frecuentes", en: "FAQ" },
+    tags: { es: ["preguntas frecuentes", "seguridad", "legalidad"], en: ["FAQ", "safety", "legality"] },
     icon: HelpCircle,
     publishedAt: "2026-08-04",
     readingMinutes: 10,
@@ -232,6 +251,7 @@ export const BLOG_POSTS: BlogPost[] = [
       en: "What to log with every dose, how to start from day one, and what to look for in your log weeks later — the guide we wish we'd had when starting.",
     },
     category: { es: "Guía práctica", en: "Practical guide" },
+    tags: { es: ["GLP-1", "registro de dosis", "seguimiento"], en: ["GLP-1", "dose tracking", "logging"] },
     icon: CalendarCheck,
     publishedAt: "2026-08-05",
     readingMinutes: 7,
@@ -247,6 +267,7 @@ export const BLOG_POSTS: BlogPost[] = [
       en: "What to log with every testosterone injection, how to calculate the exact volume, and what to look for in your log before each blood test.",
     },
     category: { es: "Guía práctica", en: "Practical guide" },
+    tags: { es: ["TRT", "testosterona", "registro de dosis"], en: ["TRT", "testosterone", "dose tracking"] },
     icon: Activity,
     publishedAt: "2026-08-06",
     readingMinutes: 7,
@@ -262,6 +283,7 @@ export const BLOG_POSTS: BlogPost[] = [
       en: "What the 4 statuses mean (studied, caution, avoid, no data), real examples of checked combos, and how to use it if you're running several peptides at once.",
     },
     category: { es: "Guía práctica", en: "Practical guide" },
+    tags: { es: ["stacks", "compatibilidad", "combinar péptidos"], en: ["stacks", "compatibility", "combining peptides"] },
     icon: GitCompareArrows,
     publishedAt: "2026-08-07",
     readingMinutes: 6,
@@ -277,6 +299,7 @@ export const BLOG_POSTS: BlogPost[] = [
       en: "How to go from mg and bacteriostatic water to exact syringe units (U30, U50, U100), with a visual syringe and PDF — the math explained without personalized dosing.",
     },
     category: { es: "Guía práctica", en: "Practical guide" },
+    tags: { es: ["reconstitución", "calculadora", "jeringa"], en: ["reconstitution", "calculator", "syringe"] },
     icon: Beaker,
     publishedAt: "2026-08-08",
     readingMinutes: 6,
@@ -292,6 +315,7 @@ export const BLOG_POSTS: BlogPost[] = [
       en: "The full weekly titration table explained: why it exists, what reference schedule it uses, and how to convert each phase into syringe units.",
     },
     category: { es: "Guía práctica", en: "Practical guide" },
+    tags: { es: ["semaglutida", "tirzepatida", "titulación", "calculadora"], en: ["semaglutide", "tirzepatide", "titration", "calculator"] },
     icon: Syringe,
     publishedAt: "2026-08-09",
     readingMinutes: 7,
@@ -307,6 +331,7 @@ export const BLOG_POSTS: BlogPost[] = [
       en: "What fields it compares side by side (route, dose, frequency, evidence, combines/avoid) and how to use it to understand differences, not to choose for you.",
     },
     category: { es: "Guía práctica", en: "Practical guide" },
+    tags: { es: ["comparativa", "péptidos", "evidencia"], en: ["comparison", "peptides", "evidence"] },
     icon: Shuffle,
     publishedAt: "2026-08-10",
     readingMinutes: 6,
@@ -322,6 +347,7 @@ export const BLOG_POSTS: BlogPost[] = [
       en: "Why the 5-half-lives rule (~97% eliminated) is used, why not every peptide appears, and how to read the result with judgment.",
     },
     category: { es: "Guía práctica", en: "Practical guide" },
+    tags: { es: ["vida media", "eliminación", "calculadora"], en: ["half-life", "clearance", "calculator"] },
     icon: Clock,
     publishedAt: "2026-08-11",
     readingMinutes: 6,
@@ -337,6 +363,7 @@ export const BLOG_POSTS: BlogPost[] = [
       en: "How to really compare cost across suppliers and vial sizes: price ÷ content, and why cost per dose is the number that matters.",
     },
     category: { es: "Guía práctica", en: "Practical guide" },
+    tags: { es: ["costo", "precio", "calculadora"], en: ["cost", "price", "calculator"] },
     icon: Coins,
     publishedAt: "2026-08-12",
     readingMinutes: 6,

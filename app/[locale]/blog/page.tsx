@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { setRequestLocale } from "next-intl/server";
 import { Clock, ChevronLeft, ChevronRight } from "lucide-react";
 import { Header } from "@/components/app/Header";
@@ -29,6 +30,7 @@ const STRINGS = {
     allCategories: "Todas",
     noResults: "No encontramos artículos con esa búsqueda o categoría.",
     clearFilters: "Quitar filtros",
+    home: "Inicio",
   },
   en: {
     title: "PeptiBrain Blog — Peptide guides",
@@ -46,6 +48,7 @@ const STRINGS = {
     allCategories: "All",
     noResults: "No articles match that search or category.",
     clearFilters: "Clear filters",
+    home: "Home",
   },
 };
 
@@ -121,17 +124,37 @@ export default async function BlogIndexPage({
     })),
   };
 
+  const localePrefix = safeLocale === "en" ? "/en" : "";
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: s.home, item: `${BASE}${localePrefix}` },
+      { "@type": "ListItem", position: 2, name: "Blog", item: `${BASE}${localePrefix}/blog` },
+    ],
+  };
+
   return (
     <>
       <Header />
       <main id="main-content" className="flex-1">
         <div className="mx-auto max-w-6xl px-4 py-10 sm:py-14">
-          <p className="text-xs font-semibold uppercase tracking-wide text-primary">{s.eyebrow}</p>
+          <nav aria-label="Breadcrumb" className="flex items-center gap-1 text-xs text-muted-foreground">
+            <Link href="/" className="hover:text-foreground">
+              {s.home}
+            </Link>
+            <ChevronRight className="size-3" aria-hidden />
+            <span className="font-medium text-foreground" aria-current="page">
+              Blog
+            </span>
+          </nav>
+          <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-primary">{s.eyebrow}</p>
           <h1 className="mt-2 text-balance font-display text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
             {s.h1}
           </h1>
           <p className="mt-3 max-w-xl text-base leading-relaxed text-muted-foreground">{s.subtitle}</p>
 
+          <Suspense fallback={null}>
           <BlogGrid
             locale={safeLocale}
             categories={categories}
@@ -221,10 +244,12 @@ export default async function BlogIndexPage({
             </nav>
           )}
           </BlogGrid>
+          </Suspense>
         </div>
       </main>
       <Footer />
       <JsonLd data={blogLd} />
+      <JsonLd data={breadcrumbLd} />
     </>
   );
 }

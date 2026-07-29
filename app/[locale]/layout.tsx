@@ -71,6 +71,11 @@ export async function generateMetadata({
       title: meta.title,
       description: meta.desc,
     },
+    // Autodescubrimiento del feed RSS del blog — lectores como Feedly/Inoreader
+    // lo detectan solo con pegar la URL del sitio, sin que el usuario busque /rss.xml a mano.
+    alternates: {
+      types: { "application/rss+xml": [{ url: "/rss.xml", title: "Blog de PeptiBrain" }] },
+    },
   };
 }
 

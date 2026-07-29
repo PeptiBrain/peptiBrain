@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState, type ReactNode } from "react";
+import { useSearchParams } from "next/navigation";
 import { Search, X, Clock } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { BLOG_POSTS, localized, getPostImagePath } from "@/lib/blog/posts";
@@ -29,7 +30,10 @@ export function BlogGrid({
   clearLabel: string;
   children: ReactNode;
 }) {
-  const [query, setQuery] = useState("");
+  // Semilla inicial desde ?q= en la URL — así un chip de etiqueta en un
+  // artículo (/blog?q=BPC-157) llega aquí ya filtrado, sin más JS que esto.
+  const searchParams = useSearchParams();
+  const [query, setQuery] = useState(() => searchParams.get("q") ?? "");
   const [activeCategory, setActiveCategory] = useState<string>("all");
 
   const filtering = query.trim() !== "" || activeCategory !== "all";

@@ -2,17 +2,17 @@ import type { ReactNode } from "react";
 import { Header } from "@/components/app/Header";
 import { Footer } from "@/components/app/Footer";
 import { Link } from "@/i18n/navigation";
-import { ArrowLeft, ArrowRight, Clock } from "lucide-react";
+import { ArrowLeft, ArrowRight, Clock, ChevronRight } from "lucide-react";
 import { ArticleHero } from "@/components/app/blog/ArticleHero";
 import { BlogCtaBanner } from "@/components/app/blog/BlogCtaBanner";
 import { ToolDisclaimer, ToolCrossLinks, JsonLd } from "@/components/app/calculator/ToolPieces";
-import { BLOG_POSTS, localized, getPostImagePath, type BlogPost } from "@/lib/blog/posts";
+import { BLOG_POSTS, localized, localizedTags, getPostImagePath, type BlogPost } from "@/lib/blog/posts";
 
 const BASE = "https://peptibrain.com";
 
 const STRINGS = {
-  es: { readMinutes: (n: number) => `${n} min de lectura`, keepReading: "Sigue leyendo" },
-  en: { readMinutes: (n: number) => `${n} min read`, keepReading: "Keep reading" },
+  es: { readMinutes: (n: number) => `${n} min de lectura`, keepReading: "Sigue leyendo", home: "Inicio" },
+  en: { readMinutes: (n: number) => `${n} min read`, keepReading: "Keep reading", home: "Home" },
 };
 
 // Chrome compartido de cada artículo del blog: cabecera, ilustración, meta,
@@ -31,6 +31,7 @@ export function ArticleLayout({ post, locale, children }: { post: BlogPost; loca
   });
 
   const related = BLOG_POSTS.filter((p) => p.slug !== post.slug).slice(0, 3);
+  const tags = localizedTags(post.tags, locale);
 
   const articleLd = {
     "@context": "https://schema.org",
@@ -60,9 +61,23 @@ export function ArticleLayout({ post, locale, children }: { post: BlogPost; loca
       <Header />
       <main id="main-content" className="flex-1">
         <div className="mx-auto max-w-2xl px-4 py-10 sm:py-14">
+          <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-1 text-xs text-muted-foreground">
+            <Link href="/" className="hover:text-foreground">
+              {s.home}
+            </Link>
+            <ChevronRight className="size-3" aria-hidden />
+            <Link href="/blog" className="hover:text-foreground">
+              Blog
+            </Link>
+            <ChevronRight className="size-3" aria-hidden />
+            <span className="max-w-[220px] truncate font-medium text-foreground" aria-current="page">
+              {title}
+            </span>
+          </nav>
+
           <Link
             href="/blog"
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground"
+            className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground"
           >
             <ArrowLeft className="size-4" aria-hidden /> Blog
           </Link>
@@ -80,6 +95,20 @@ export function ArticleLayout({ post, locale, children }: { post: BlogPost; loca
               <Clock className="size-3.5" aria-hidden /> {s.readMinutes(post.readingMinutes)}
             </span>
           </div>
+
+          {tags.length > 0 && (
+            <div className="mt-3 flex flex-wrap gap-1.5">
+              {tags.map((tag) => (
+                <Link
+                  key={tag}
+                  href={{ pathname: "/blog", query: { q: tag } }}
+                  className="rounded-full bg-secondary px-2.5 py-1 text-xs font-medium text-secondary-foreground transition-colors hover:bg-secondary/70"
+                >
+                  {tag}
+                </Link>
+              ))}
+            </div>
+          )}
 
           <article className="mt-2">{children}</article>
 
