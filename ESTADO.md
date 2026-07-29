@@ -1,5 +1,23 @@
 # ESTADO — PeptiBrain
 
+## ✅ Paginación del blog (2026-07-28)
+
+El blog llegó a 20 artículos en una sola página larga. Se agregó paginación de 12 por página
+(`?page=N`) con controles Anterior/números/Siguiente en `app/[locale]/blog/page.tsx`, canonical
+propio por página para SEO. De paso se corrigió el orden: mostraba del más viejo al más nuevo
+(orden de escritura del registro) — ahora se ordena por `publishedAt` descendente, el más nuevo
+primero.
+
+**Pendiente del dueño**: generar con Gemini las imágenes de portada de los 2 últimos artículos
+(`calculadora-de-eliminacion-como-usarla.png` y `calculadora-de-costo-por-mg-como-usarla.png`, 1424x752)
+— se le dieron los 2 prompts, mismo estilo de marca que las demás portadas (degradado
+#1CD39C→#00A87E, ícono blanco). Avisar cuando estén listas para integrarlas y sumar los slugs a
+`SLUGS_WITH_IMAGE`.
+
+Verificado: tsc ✓ · npm test (82/82) ✓ · npm run build ✓ (`/blog` pasó a dinámico por usar
+`searchParams`) · confirmado en navegador: página 1 = 12 posts más recientes (empieza en
+costo-por-mg), página 2 = los 8 restantes · staging→main desplegado.
+
 ## ✅ 5 artículos-guía de calculadoras + FAQ de TRT con búsquedas reales (2026-07-28)
 
 El dueño compartió capturas de "la gente también pregunta" de Google sobre TRT (dosis, efectos
