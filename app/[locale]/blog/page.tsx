@@ -7,6 +7,7 @@ import { Link } from "@/i18n/navigation";
 import { BLOG_POSTS, localized, getPostImagePath } from "@/lib/blog/posts";
 import { JsonLd } from "@/components/app/calculator/ToolPieces";
 import { ArticleHero } from "@/components/app/blog/ArticleHero";
+import { BlogGrid } from "@/components/app/blog/BlogGrid";
 
 const BASE = "https://peptibrain.com";
 const POSTS_PER_PAGE = 12;
@@ -24,6 +25,10 @@ const STRINGS = {
     pageLabel: (n: number, total: number) => `Página ${n} de ${total}`,
     prev: "Anterior",
     next: "Siguiente",
+    searchPlaceholder: "Buscar en el blog…",
+    allCategories: "Todas",
+    noResults: "No encontramos artículos con esa búsqueda o categoría.",
+    clearFilters: "Quitar filtros",
   },
   en: {
     title: "PeptiBrain Blog — Peptide guides",
@@ -37,6 +42,10 @@ const STRINGS = {
     pageLabel: (n: number, total: number) => `Page ${n} of ${total}`,
     prev: "Previous",
     next: "Next",
+    searchPlaceholder: "Search the blog…",
+    allCategories: "All",
+    noResults: "No articles match that search or category.",
+    clearFilters: "Clear filters",
   },
 };
 
@@ -96,6 +105,7 @@ export default async function BlogIndexPage({
   const page = parsePage(rawPage, totalPages);
   const start = (page - 1) * POSTS_PER_PAGE;
   const pagePosts = SORTED_POSTS.slice(start, start + POSTS_PER_PAGE);
+  const categories = Array.from(new Set(BLOG_POSTS.map((p) => localized(p.category, safeLocale))));
 
   const blogLd = {
     "@context": "https://schema.org",
@@ -122,6 +132,14 @@ export default async function BlogIndexPage({
           </h1>
           <p className="mt-3 max-w-xl text-base leading-relaxed text-muted-foreground">{s.subtitle}</p>
 
+          <BlogGrid
+            locale={safeLocale}
+            categories={categories}
+            searchPlaceholder={s.searchPlaceholder}
+            allLabel={s.allCategories}
+            noResultsLabel={s.noResults}
+            clearLabel={s.clearFilters}
+          >
           <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {pagePosts.map((post) => {
               const category = localized(post.category, safeLocale);
@@ -202,6 +220,7 @@ export default async function BlogIndexPage({
               </Link>
             </nav>
           )}
+          </BlogGrid>
         </div>
       </main>
       <Footer />
