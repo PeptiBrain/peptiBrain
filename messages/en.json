@@ -1963,36 +1963,6 @@
     "title": "About us",
     "updated": "Last updated: July 29, 2026",
     "intro": "PeptiBrain is an app for keeping track of your peptide, GLP-1, or TRT protocol without losing the thread — not a medical practice or a health news outlet. For the full picture of what it is, who it helps, and everything it includes, we have a dedicated article for that. Here we cover something different: our principles, how we write content, how we handle your data, and who's behind it.",
-    "sections": [
-      {
-        "title": "What is PeptiBrain and who does it help?",
-        "body": "An app for logging your doses, vials, and peptide/GLP-1/TRT protocol in one place. For the full picture — who it's for, how your day-to-day changes, everything it includes — we have a dedicated guide: “What is PeptiBrain?”, the most complete article on our blog."
-      },
-      {
-        "title": "Our principles",
-        "body": "Three rules we don't break: the app organizes and calculates what your protocol already specifies, it never decides a dose for you. The blog content never invents a fact, a citation, or a credential — if we can't verify it, we say so plainly. And your data is yours: no one sees it unless you explicitly share access."
-      },
-      {
-        "title": "How we write the blog content",
-        "body": "Articles are based on already-established public information (known mechanisms, reference titration schedules, standard pharmacology rules) and the same reference data used by the app's own tools. When we cite a study, we link directly to the source (PubMed/DOI) — if we can't find a verifiable source, we say so explicitly instead of inventing a fact or citation."
-      },
-      {
-        "title": "What the content is NOT",
-        "body": "No article, calculator, or AI assistant response constitutes medical advice, diagnosis, or prescription. None of it replaces a healthcare professional. The content is educational — the decision on what to use, at what dose, and under what supervision is always your doctor's."
-      },
-      {
-        "title": "Security and privacy of your data",
-        "body": "Every account has row-level access control (RLS) in the database: only you see your protocol, doses, and history, unless you explicitly share access with the Family plan. We don't sell your data to third parties or use it to train models without your consent."
-      },
-      {
-        "title": "Who's behind it",
-        "body": "PeptiBrain is a product of Digital Dreams World LLC (2105 Vista Oeste NW Suite E 3564, Albuquerque, NM 87120, United States). We don't currently have our own medical advisory board — if we do in the future, we'll announce it here with a real name, not before."
-      },
-      {
-        "title": "Contact",
-        "body": "Questions, corrections, or something you think we should review? Write to us at hello@peptibrain.com."
-      }
-    ],
     "backHome": "Back to home"
   }
 }
