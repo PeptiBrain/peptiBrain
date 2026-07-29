@@ -185,6 +185,7 @@ export default async function BlogIndexPage({
                       icon={post.icon}
                       category={category}
                       image={getPostImagePath(post.slug)}
+                      useLogo={post.coverIsLogo}
                       compact
                     />
                   </div>

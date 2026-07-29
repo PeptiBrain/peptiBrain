@@ -84,7 +84,12 @@ export function ArticleLayout({ post, locale, children }: { post: BlogPost; loca
           </Link>
 
           <div className="mt-4">
-            <ArticleHero icon={post.icon} category={category} image={getPostImagePath(post.slug)} />
+            <ArticleHero
+              icon={post.icon}
+              category={category}
+              image={getPostImagePath(post.slug)}
+              useLogo={post.coverIsLogo}
+            />
           </div>
 
           <h1 className="mt-6 text-balance font-display text-3xl font-bold tracking-tight text-foreground sm:text-4xl">

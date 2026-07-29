@@ -9,6 +9,10 @@ type Loader = () => Promise<{ default: React.ComponentType }>;
 
 // Cuerpo de cada artículo — mapa slug -> idioma -> componente. Blog bilingüe (es/en).
 const CONTENT: Record<string, { es: Loader; en: Loader }> = {
+  "que-es-peptibrain": {
+    es: () => import("@/components/app/blog/posts/es/que-es-peptibrain"),
+    en: () => import("@/components/app/blog/posts/en/que-es-peptibrain"),
+  },
   "que-son-los-peptidos": {
     es: () => import("@/components/app/blog/posts/es/que-son-los-peptidos"),
     en: () => import("@/components/app/blog/posts/en/que-son-los-peptidos"),

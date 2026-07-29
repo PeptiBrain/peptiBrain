@@ -12,11 +12,13 @@ export function ArticleHero({
   category,
   image,
   compact = false,
+  useLogo = false,
 }: {
   icon: LucideIcon;
   category: string;
   image?: string | null;
   compact?: boolean;
+  useLogo?: boolean;
 }) {
   if (image) {
     return (
@@ -54,13 +56,23 @@ export function ArticleHero({
         className={`absolute -bottom-10 -left-10 rounded-full bg-black/5 blur-2xl ${compact ? "size-28" : "size-48"}`}
       />
       <div className={`relative flex flex-col items-center ${compact ? "gap-2" : "gap-3"}`}>
-        <span
-          className={`flex items-center justify-center rounded-2xl bg-white/95 shadow-lg ${
-            compact ? "size-11" : "size-16"
-          }`}
-        >
-          <Icon className={compact ? "size-5 text-[#00A87E]" : "size-8 text-[#00A87E]"} aria-hidden />
-        </span>
+        {useLogo ? (
+          <span
+            className={`relative flex items-center justify-center overflow-hidden rounded-2xl shadow-lg ${
+              compact ? "size-11" : "size-16"
+            }`}
+          >
+            <Image src="/peptibrain-isotipo.svg" alt="" fill sizes="64px" />
+          </span>
+        ) : (
+          <span
+            className={`flex items-center justify-center rounded-2xl bg-white/95 shadow-lg ${
+              compact ? "size-11" : "size-16"
+            }`}
+          >
+            <Icon className={compact ? "size-5 text-[#00A87E]" : "size-8 text-[#00A87E]"} aria-hidden />
+          </span>
+        )}
         {!compact && (
           <span className="rounded-full bg-white/15 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white">
             {category}

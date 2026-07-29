@@ -17,6 +17,7 @@ import {
   Shuffle,
   Clock,
   Coins,
+  Rocket,
   type LucideIcon,
 } from "lucide-react";
 
@@ -32,6 +33,9 @@ export type BlogPost = {
   icon: LucideIcon;
   publishedAt: string; // ISO yyyy-mm-dd
   readingMinutes: number;
+  // true = la portada usa el logo real de PeptiBrain en vez del ícono genérico
+  // (solo para el artículo "presentación" de la marca).
+  coverIsLogo?: boolean;
 };
 
 // Devuelve el texto en el idioma pedido (con fallback a español si faltara).
@@ -48,6 +52,26 @@ export function localizedTags(tags: LocalizedTags, locale: string): string[] {
 // (adelgazar, recuperación, piel/antiedad) + guía básica + comparativa + errores
 // comunes + reconstitución + directorio + objetivo + uso + almacenamiento.
 export const BLOG_POSTS: BlogPost[] = [
+  {
+    slug: "que-es-peptibrain",
+    title: {
+      es: "¿Qué es PeptiBrain? La guía completa: para quién es, qué resuelve y todo lo que incluye",
+      en: "What is PeptiBrain? The complete guide: who it's for, what it solves, and everything it includes",
+    },
+    excerpt: {
+      es: "Qué es PeptiBrain, a quién está dirigida, cómo era el día a día antes y cómo es después, y todo lo que incluye la app — la guía definitiva para conocerla de verdad.",
+      en: "What PeptiBrain is, who it's for, what daily life looked like before and after, and everything the app includes — the definitive guide to really get to know it.",
+    },
+    category: { es: "Sobre PeptiBrain", en: "About PeptiBrain" },
+    tags: {
+      es: ["qué es PeptiBrain", "PeptiBrain", "seguimiento de péptidos", "GLP-1", "TRT"],
+      en: ["what is PeptiBrain", "PeptiBrain", "peptide tracking", "GLP-1", "TRT"],
+    },
+    icon: Rocket,
+    coverIsLogo: true,
+    publishedAt: "2026-07-20",
+    readingMinutes: 9,
+  },
   {
     slug: "que-son-los-peptidos",
     title: {

@@ -1962,8 +1962,16 @@
     "metaDescription": "Qué es PeptiBrain, cómo escribimos el contenido del blog y quién está detrás de la app.",
     "title": "Quiénes somos",
     "updated": "Última actualización: 29 de julio de 2026",
-    "intro": "PeptiBrain es una app de seguimiento de protocolos de péptidos, GLP-1 y TRT — no una consulta médica ni un medio de noticias de salud. Esta página explica qué hacemos, cómo escribimos el contenido del blog y quién está detrás.",
+    "intro": "PeptiBrain es una app para llevar tu protocolo de péptidos, GLP-1 o TRT sin perder el hilo — no una consulta médica ni un medio de noticias de salud. Esta página cuenta a quién ayudamos, qué cambia cuando la usas, cómo escribimos el contenido del blog y quién está detrás.",
     "sections": [
+      {
+        "title": "¿A quién ayuda PeptiBrain?",
+        "body": "A quien está en tratamiento con GLP-1 (semaglutida, tirzepatida) y necesita llevar la titulación semanal sin perderse entre fases. A quien sigue un protocolo de péptidos de recuperación o estéticos (BPC-157, TB-500, GHK-Cu) y quiere calcular bien cada reconstitución. A quien está en TRT y necesita ser constante con el intervalo entre inyecciones. A quien lleva el protocolo de otra persona además del suyo. Y a quien ya usaba una app de este tipo, pero solo la encontraba en inglés."
+      },
+      {
+        "title": "Qué cambia cuando usas PeptiBrain",
+        "body": "Antes: notas de la última dosis dispersas entre el móvil y la memoria, calcular a mano cuántas unidades cargar cada semana, no saber si ayer ya tocaba, y llegar a la consulta médica intentando reconstruir un mes de dosis y síntomas de memoria. Después: registrar una dosis toma segundos, la app calcula sola las unidades según tu vial, te avisa antes de que caduque, lleva tu racha, y generas un informe con tu adherencia y tendencia en segundos para tu médico."
+      },
       {
         "title": "Qué es PeptiBrain",
         "body": "Una aplicación web para llevar el registro de tus dosis, viales y protocolo de péptidos, GLP-1 o TRT en un solo lugar — calculadoras, historial, y recordatorios. La app organiza y calcula lo que tu médico o tu protocolo ya indican; nunca decide una dosis ni sustituye una consulta médica."

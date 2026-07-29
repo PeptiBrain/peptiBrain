@@ -114,7 +114,13 @@ export function BlogGrid({
                 className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card transition-colors hover:border-primary/40"
               >
                 <div className="p-3 pb-0">
-                  <ArticleHero icon={post.icon} category={category} image={getPostImagePath(post.slug)} compact />
+                  <ArticleHero
+                    icon={post.icon}
+                    category={category}
+                    image={getPostImagePath(post.slug)}
+                    useLogo={post.coverIsLogo}
+                    compact
+                  />
                 </div>
                 <div className="flex flex-1 flex-col p-5">
                   <p className="text-[11px] font-semibold uppercase tracking-wide text-primary">{category}</p>
