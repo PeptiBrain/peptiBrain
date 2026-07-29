@@ -1,5 +1,30 @@
 # ESTADO — PeptiBrain
 
+## ✅ Artículo insignia "¿Qué es PeptiBrain?" + Quiénes somos enfocada al cliente (2026-07-29)
+
+El dueño pidió el artículo más amplio del blog hasta ahora (~1000+ palabras), pensado para posicionar
+en Google las búsquedas "qué es PeptiBrain" y "PeptiBrain", cubriendo: qué es, el avatar (a quién va
+dirigido), beneficios, un antes/después de usarla, y absolutamente todo lo que incluye. Antes de
+escribir se confirmaron 2 decisiones con el dueño: (1) fecha del artículo — el más **antiguo**
+cronológicamente (2026-07-20, antes que los otros 20), no el más reciente; (2) sin capturas de
+pantalla de la app por ahora — portada con el logo real de la marca en su lugar.
+
+- **Nuevo artículo** `que-es-peptibrain` (es/en): qué es, para quién es (5 perfiles reales), antes/
+  después (enfocado en la experiencia de seguimiento — nunca resultados clínicos fabricados, eso
+  violaría la línea D2), todo lo que incluye (calculadoras, herramientas gratis, salud, familia,
+  informe médico), qué NO es, planes, y FAQ con schema.org `FAQPage`.
+- **Portada con logo real**: `ArticleHero.tsx` ahora soporta `useLogo`/`coverIsLogo` — muestra el
+  isotipo real de la marca (`/peptibrain-isotipo.svg`) dentro del mismo badge blanco+degradado que
+  ya usan los demás posts, sin depender de un ícono genérico ni de generar una imagen nueva.
+- **"Quiénes somos" reescrita** con enfoque al cliente: ahora abre con "¿A quién ayuda PeptiBrain?"
+  (el avatar) y "Qué cambia cuando la usas" (antes/después), manteniendo intactas las secciones
+  honestas ya construidas (cómo se escribe el contenido, qué NO es, identidad legal real) — nada
+  inventado ni credenciales falsas.
+
+Verificado: tsc ✓ · npm test (81/82, mismo fallo preexistente no relacionado) ✓ · npm run build ✓ ·
+confirmado en navegador (portada con logo real, breadcrumb de 3 niveles, tags, resumen; página
+Quiénes somos con el nuevo orden) · staging→main desplegado.
+
 ## ✅ Portal editorial del blog: breadcrumbs, tags, newsletter, Quiénes somos, fuentes (2026-07-29)
 
 El dueño compartió una lista de ChatGPT sobre "cómo construir un blog profesional tipo WebMD" (20
