@@ -1,5 +1,28 @@
 # ESTADO — PeptiBrain
 
+## ✅ Artículo de blog "Cómo registrar tus dosis de GLP-1" es/en (2026-07-27)
+
+El dueño notó que la home no aparece en Google ni en la IA de Google para búsquedas genéricas
+("registra tus dosis de GLP-1") — solo cuando buscan "peptibrain" por nombre. Diagnóstico: normal
+para un sitio de días; la home compite por marca, no por intención de búsqueda tipo "cómo hacer
+X". Se creó un artículo dedicado a esa intención exacta:
+
+- `/blog/como-registrar-tus-dosis-de-glp1` (es) y `/en/blog/...` (en). Registrado en
+  `lib/blog/posts.ts` + mapa de contenido en `app/[locale]/blog/[slug]/page.tsx`.
+- Contenido original: qué anotar en cada dosis, cómo empezar el primer día, qué mirar en el
+  registro semanas después, cómo llevarlo a la cita médica, errores comunes. Se miró la landing
+  de la competencia (Shotsy) solo para inspirarse en QUÉ cubrir (rotación de zona, exportar para
+  la cita), nunca se copió texto.
+  Enlaza a PeptiBrain de forma natural al final, no como venta forzada.
+- Jerarquía SEO verificada en el navegador: 1 h1, 6 h2, 3 h3.
+- **Pendiente del dueño**: generar `public/blog/como-registrar-tus-dosis-de-glp1.png` (prompt de
+  imagen ya entregado, mismo estilo que el resto del blog: ícono blanco sobre degradado verde) y
+  agregar el slug a `SLUGS_WITH_IMAGE` en `lib/blog/posts.ts` para activarla. Mientras tanto cae al
+  ícono + degradado por defecto (se ve bien igual, no es un error).
+
+Verificado: tsc ✓ · npm test (74/74) ✓ · npm run build ✓ · verificado visualmente en el navegador
+(ambos idiomas, aparece en el índice del blog) · staging→main desplegado.
+
 ## ✅ Ajustes a Compatibilidad de stacks: navegación + honestidad del "sin datos" (2026-07-27)
 
 Feedback del dueño tras ver la herramienta desplegada:
