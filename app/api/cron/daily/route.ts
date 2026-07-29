@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendPush } from "@/lib/push";
 import { emailShell, emailButton, escapeHtml } from "@/lib/email-template";
+import { pingIndexNow } from "@/lib/indexnow";
+import { BLOG_POSTS } from "@/lib/blog/posts";
 
 export const dynamic = "force-dynamic";
 
@@ -177,5 +179,17 @@ export async function GET(req: Request) {
     winbackSent++;
   }
 
-  return NextResponse.json({ ok: true, lowStockNotified, winbackSent });
+  // ---------- 3) IndexNow: avisar a Bing/Yandex de artículos recién publicados ----------
+  // Solo los de los últimos 3 días (no todo el archivo cada día) — evita reenviar
+  // sin necesidad las 20+ URLs que ya están indexadas desde hace meses.
+  const RECENT_DAYS = 3;
+  const recentCutoff = now.getTime() - RECENT_DAYS * 86400000;
+  const recentPosts = BLOG_POSTS.filter((p) => new Date(`${p.publishedAt}T00:00:00Z`).getTime() >= recentCutoff);
+  const indexNowUrls = recentPosts.flatMap((p) => [
+    `https://peptibrain.com/blog/${p.slug}`,
+    `https://peptibrain.com/en/blog/${p.slug}`,
+  ]);
+  const indexNowResult = await pingIndexNow(indexNowUrls);
+
+  return NextResponse.json({ ok: true, lowStockNotified, winbackSent, indexNowUrls: indexNowUrls.length, indexNowResult });
 }
