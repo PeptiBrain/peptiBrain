@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { setRequestLocale } from "next-intl/server";
-import { Clock } from "lucide-react";
+import { Clock, ChevronLeft, ChevronRight } from "lucide-react";
 import { Header } from "@/components/app/Header";
 import { Footer } from "@/components/app/Footer";
 import { Link } from "@/i18n/navigation";
@@ -9,6 +9,7 @@ import { JsonLd } from "@/components/app/calculator/ToolPieces";
 import { ArticleHero } from "@/components/app/blog/ArticleHero";
 
 const BASE = "https://peptibrain.com";
+const POSTS_PER_PAGE = 12;
 
 const STRINGS = {
   es: {
@@ -20,6 +21,9 @@ const STRINGS = {
     subtitle:
       "Contenido educativo y claro sobre péptidos: cómo se calculan las dosis, cómo se reconstituyen y qué dice la investigación sobre los más usados. No es consejo médico.",
     readMinutes: (n: number) => `${n} min de lectura`,
+    pageLabel: (n: number, total: number) => `Página ${n} de ${total}`,
+    prev: "Anterior",
+    next: "Siguiente",
   },
   en: {
     title: "PeptiBrain Blog — Peptide guides",
@@ -30,31 +34,68 @@ const STRINGS = {
     subtitle:
       "Clear, educational content about peptides: how doses are calculated, how they're reconstituted, and what the research says about the most used ones. Not medical advice.",
     readMinutes: (n: number) => `${n} min read`,
+    pageLabel: (n: number, total: number) => `Page ${n} of ${total}`,
+    prev: "Previous",
+    next: "Next",
   },
 };
 
+// Más recientes primero — BLOG_POSTS está ordenado por fecha ascendente en el
+// registro (el orden en que se escribieron), pero un blog se lee del más
+// nuevo al más viejo.
+const SORTED_POSTS = [...BLOG_POSTS].sort((a, b) => (a.publishedAt < b.publishedAt ? 1 : -1));
+
+function parsePage(raw: string | undefined, totalPages: number): number {
+  const n = Number(raw);
+  if (!Number.isInteger(n) || n < 1) return 1;
+  return Math.min(n, totalPages);
+}
+
 export async function generateMetadata({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string }>;
+  searchParams: Promise<{ page?: string }>;
 }): Promise<Metadata> {
   const { locale } = await params;
+  const { page: rawPage } = await searchParams;
   const s = locale === "en" ? STRINGS.en : STRINGS.es;
   const path = "/blog";
   const url = locale === "en" ? `${BASE}/en${path}` : `${BASE}${path}`;
+  const totalPages = Math.max(1, Math.ceil(SORTED_POSTS.length / POSTS_PER_PAGE));
+  const page = parsePage(rawPage, totalPages);
+  const title = page > 1 ? `${s.title} — ${s.pageLabel(page, totalPages)}` : s.title;
   return {
-    title: s.title,
+    title,
     description: s.description,
-    alternates: { canonical: url, languages: { es: `${BASE}${path}`, en: `${BASE}/en${path}` } },
-    openGraph: { title: s.title, description: s.description, url, type: "website" },
+    // Página 2+ apunta su canonical a sí misma (no a la página 1) para que
+    // Google indexe cada página de listado por separado, no las trate como duplicadas.
+    alternates: {
+      canonical: page > 1 ? `${url}?page=${page}` : url,
+      languages: { es: `${BASE}${path}`, en: `${BASE}/en${path}` },
+    },
+    openGraph: { title, description: s.description, url, type: "website" },
   };
 }
 
-export default async function BlogIndexPage({ params }: { params: Promise<{ locale: string }> }) {
+export default async function BlogIndexPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<{ page?: string }>;
+}) {
   const { locale } = await params;
+  const { page: rawPage } = await searchParams;
   const safeLocale = locale === "en" ? "en" : "es";
   setRequestLocale(safeLocale);
   const s = STRINGS[safeLocale];
+
+  const totalPages = Math.max(1, Math.ceil(SORTED_POSTS.length / POSTS_PER_PAGE));
+  const page = parsePage(rawPage, totalPages);
+  const start = (page - 1) * POSTS_PER_PAGE;
+  const pagePosts = SORTED_POSTS.slice(start, start + POSTS_PER_PAGE);
 
   const blogLd = {
     "@context": "https://schema.org",
@@ -62,7 +103,7 @@ export default async function BlogIndexPage({ params }: { params: Promise<{ loca
     name: s.title,
     url: `${BASE}/blog`,
     inLanguage: safeLocale,
-    blogPost: BLOG_POSTS.map((p) => ({
+    blogPost: SORTED_POSTS.map((p) => ({
       "@type": "BlogPosting",
       headline: localized(p.title, safeLocale),
       url: `${BASE}/blog/${p.slug}`,
@@ -82,7 +123,7 @@ export default async function BlogIndexPage({ params }: { params: Promise<{ loca
           <p className="mt-3 max-w-xl text-base leading-relaxed text-muted-foreground">{s.subtitle}</p>
 
           <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {BLOG_POSTS.map((post) => {
+            {pagePosts.map((post) => {
               const category = localized(post.category, safeLocale);
               return (
                 <Link
@@ -114,6 +155,53 @@ export default async function BlogIndexPage({ params }: { params: Promise<{ loca
               );
             })}
           </div>
+
+          {totalPages > 1 && (
+            <nav aria-label="Paginación del blog" className="mt-10 flex items-center justify-center gap-2">
+              <Link
+                href={page > 1 ? { pathname: "/blog", query: { page: page - 1 } } : "/blog"}
+                aria-disabled={page <= 1}
+                tabIndex={page <= 1 ? -1 : undefined}
+                className={`flex h-10 items-center gap-1 rounded-lg border border-border px-3 text-sm font-semibold transition-colors ${
+                  page <= 1
+                    ? "pointer-events-none opacity-40"
+                    : "text-foreground hover:bg-muted"
+                }`}
+              >
+                <ChevronLeft className="size-4" aria-hidden /> {s.prev}
+              </Link>
+
+              <div className="flex items-center gap-1.5">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => (
+                  <Link
+                    key={n}
+                    href={n === 1 ? "/blog" : { pathname: "/blog", query: { page: n } }}
+                    aria-current={n === page ? "page" : undefined}
+                    className={`flex size-10 items-center justify-center rounded-lg text-sm font-semibold transition-colors ${
+                      n === page
+                        ? "bg-primary text-primary-foreground"
+                        : "border border-border text-foreground hover:bg-muted"
+                    }`}
+                  >
+                    {n}
+                  </Link>
+                ))}
+              </div>
+
+              <Link
+                href={page < totalPages ? { pathname: "/blog", query: { page: page + 1 } } : "/blog"}
+                aria-disabled={page >= totalPages}
+                tabIndex={page >= totalPages ? -1 : undefined}
+                className={`flex h-10 items-center gap-1 rounded-lg border border-border px-3 text-sm font-semibold transition-colors ${
+                  page >= totalPages
+                    ? "pointer-events-none opacity-40"
+                    : "text-foreground hover:bg-muted"
+                }`}
+              >
+                {s.next} <ChevronRight className="size-4" aria-hidden />
+              </Link>
+            </nav>
+          )}
         </div>
       </main>
       <Footer />
