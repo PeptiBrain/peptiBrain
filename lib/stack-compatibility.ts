@@ -55,6 +55,24 @@ const PAIRS: [string, string, CompatStatus, string][] = [
   ["TB-500", "GHK-Cu", "studied", "Parte del blend popular \"GLOW\" (BPC-157 + GHK-Cu + TB-500) para piel y recuperación."],
   ["BPC-157", "KPV", "studied", "Se usan juntos para salud intestinal; sin interacciones graves conocidas."],
 
+  // GLP-1 × péptidos de recuperación/piel: mecanismos completamente distintos
+  // (metabólico vs. reparación tisular) y el propio perfil de BPC-157 ya dice
+  // "sin interacciones graves conocidas con otros péptidos de esta lista" —
+  // por eso "caution" (informativo) y no "unknown" en blanco. Sigue sin ser
+  // un estudio formal de la combinación en sí, así que tampoco es "studied".
+  ["Semaglutida", "BPC-157", "caution", "Mecanismos distintos (metabólico vs. reparación tisular) — sin conflicto conocido, pero tampoco hay un estudio formal de esta combinación puntual. Stack común en protocolos de recomposición corporal."],
+  ["Semaglutida", "TB-500", "caution", "Mecanismos distintos (metabólico vs. reparación tisular) — sin conflicto conocido, pero tampoco hay un estudio formal de esta combinación puntual. Stack común en protocolos de recomposición corporal."],
+  ["Semaglutida", "GHK-Cu", "caution", "Mecanismos distintos (metabólico vs. piel/reparación) — sin conflicto conocido, pero tampoco hay un estudio formal de esta combinación puntual."],
+  ["Tirzepatida", "BPC-157", "caution", "Mecanismos distintos (metabólico vs. reparación tisular) — sin conflicto conocido, pero tampoco hay un estudio formal de esta combinación puntual. Stack común en protocolos de recomposición corporal."],
+  ["Tirzepatida", "TB-500", "caution", "Mecanismos distintos (metabólico vs. reparación tisular) — sin conflicto conocido, pero tampoco hay un estudio formal de esta combinación puntual. Stack común en protocolos de recomposición corporal."],
+  ["Tirzepatida", "GHK-Cu", "caution", "Mecanismos distintos (metabólico vs. piel/reparación) — sin conflicto conocido, pero tampoco hay un estudio formal de esta combinación puntual."],
+  ["Retatrutida", "BPC-157", "caution", "Mecanismos distintos (metabólico vs. reparación tisular) — sin conflicto conocido, pero tampoco hay un estudio formal de esta combinación puntual."],
+  ["Retatrutida", "TB-500", "caution", "Mecanismos distintos (metabólico vs. reparación tisular) — sin conflicto conocido, pero tampoco hay un estudio formal de esta combinación puntual."],
+  ["Retatrutida", "GHK-Cu", "caution", "Mecanismos distintos (metabólico vs. piel/reparación) — sin conflicto conocido, pero tampoco hay un estudio formal de esta combinación puntual."],
+  ["Cagrilintide", "BPC-157", "caution", "Mecanismos distintos (metabólico vs. reparación tisular) — sin conflicto conocido, pero tampoco hay un estudio formal de esta combinación puntual."],
+  ["Cagrilintide", "TB-500", "caution", "Mecanismos distintos (metabólico vs. reparación tisular) — sin conflicto conocido, pero tampoco hay un estudio formal de esta combinación puntual."],
+  ["Cagrilintide", "GHK-Cu", "caution", "Mecanismos distintos (metabólico vs. piel/reparación) — sin conflicto conocido, pero tampoco hay un estudio formal de esta combinación puntual."],
+
   ["Semaglutida", "Tirzepatida", "avoid", "Dos agonistas GLP-1/GIP a la vez no se recomienda combinarlos."],
   ["Semaglutida", "Retatrutida", "avoid", "No se recomienda combinar dos agonistas GLP-1/GIP/glucagón a la vez."],
   ["Tirzepatida", "Retatrutida", "avoid", "No se recomienda combinar dos agonistas GLP-1/GIP/glucagón a la vez."],

@@ -1795,6 +1795,7 @@
         "q": "Can I use this to decide my next stack?",
         "a": "This tool is informative and educational. The decision of what to combine, at what dose, and under what circumstances is always up to a healthcare professional."
       }
-    ]
+    ],
+    "honestyNote": "Most combinations don't have formal studies — we tell you plainly instead of making up a data point."
   }
 }

@@ -2,13 +2,14 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { ChevronDown, Calculator, Syringe, Shuffle, ListChecks, Clock, Coins, Wrench } from "lucide-react";
+import { ChevronDown, Calculator, Syringe, Shuffle, ListChecks, Clock, Coins, Wrench, GitCompareArrows } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 
 const TOOLS = [
   { href: "/calculadora", labelKey: "navCalculator" as const, icon: Calculator },
   { href: "/calculadora-semaglutida", labelKey: "navSemaglutide" as const, icon: Syringe },
   { href: "/comparador", labelKey: "navComparador" as const, icon: Shuffle },
+  { href: "/compatibilidad", labelKey: "navCompat" as const, icon: GitCompareArrows },
   { href: "/protocolos", labelKey: "navProtocols" as const, icon: ListChecks },
   { href: "/calculadora-eliminacion", labelKey: "navClearance" as const, icon: Clock },
   { href: "/calculadora-costo-mg", labelKey: "navCostPerMg" as const, icon: Coins },

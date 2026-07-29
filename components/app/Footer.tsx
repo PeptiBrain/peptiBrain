@@ -58,6 +58,7 @@ export function Footer() {
               <FooterLink href="/calculadora">{tt("navCalculator")}</FooterLink>
               <FooterLink href="/calculadora-semaglutida">{tt("navSemaglutide")}</FooterLink>
               <FooterLink href="/comparador">{tt("navComparador")}</FooterLink>
+              <FooterLink href="/compatibilidad">{tt("navCompat")}</FooterLink>
               <FooterLink href="/protocolos">{tt("navProtocols")}</FooterLink>
               <FooterLink href="/calculadora-eliminacion">{tt("navClearance")}</FooterLink>
               <FooterLink href="/calculadora-costo-mg">{tt("navCostPerMg")}</FooterLink>

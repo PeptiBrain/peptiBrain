@@ -43,6 +43,12 @@ export function CompatibilidadTool() {
         <PeptideSelect label={t("labelB")} placeholder={t("placeholder")} value={nameB} onChange={setNameB} />
       </div>
 
+      {/* Aviso ANTES del resultado, no solo dentro de él: si "Sin datos" es la
+          primera vez que el usuario se entera de que puede pasar, se lee como
+          que la herramienta está rota. Puesto de entrada, se lee como lo que
+          es — una respuesta honesta, no un error. */}
+      <p className="mt-3 text-xs text-muted-foreground">{t("honestyNote")}</p>
+
       {result && style && Icon ? (
         <div
           className={`mt-6 overflow-hidden rounded-2xl border ${style.border} ${style.bg} p-5 transition-colors sm:p-6`}
@@ -58,7 +64,7 @@ export function CompatibilidadTool() {
           <div className="mt-4 flex items-start gap-3 border-t border-border/40 pt-4">
             <Icon className={`mt-0.5 size-6 shrink-0 ${style.color}`} aria-hidden />
             <div className="min-w-0">
-              <p className={`font-display text-base font-bold sm:text-lg ${style.color}`}>{t(`status_${result.status}`)}</p>
+              <h3 className={`font-display text-base font-bold sm:text-lg ${style.color}`}>{t(`status_${result.status}`)}</h3>
               <p className="mt-1 text-sm leading-relaxed text-foreground">
                 {result.note || t("unknownNote")}
               </p>
