@@ -58,11 +58,13 @@ export function ArticleHero({
       <div className={`relative flex flex-col items-center ${compact ? "gap-2" : "gap-3"}`}>
         {useLogo ? (
           <span
-            className={`relative flex items-center justify-center overflow-hidden rounded-2xl shadow-lg ${
+            className={`flex items-center justify-center rounded-2xl bg-white/95 shadow-lg ${
               compact ? "size-11" : "size-16"
             }`}
           >
-            <Image src="/peptibrain-isotipo.svg" alt="" fill sizes="64px" />
+            <span className={`relative ${compact ? "size-8" : "size-12"}`}>
+              <Image src="/peptibrain-isotipo.svg" alt="" fill sizes="64px" />
+            </span>
           </span>
         ) : (
           <span

@@ -1962,19 +1962,15 @@
     "metaDescription": "What PeptiBrain is, how we write the blog content, and who's behind the app.",
     "title": "About us",
     "updated": "Last updated: July 29, 2026",
-    "intro": "PeptiBrain is an app for keeping track of your peptide, GLP-1, or TRT protocol without losing the thread — not a medical practice or a health news outlet. This page covers who we help, what changes when you use it, how we write the blog content, and who's behind it.",
+    "intro": "PeptiBrain is an app for keeping track of your peptide, GLP-1, or TRT protocol without losing the thread — not a medical practice or a health news outlet. For the full picture of what it is, who it helps, and everything it includes, we have a dedicated article for that. Here we cover something different: our principles, how we write content, how we handle your data, and who's behind it.",
     "sections": [
       {
-        "title": "Who does PeptiBrain help?",
-        "body": "Anyone on GLP-1 treatment (semaglutide, tirzepatide) who needs to track weekly titration without getting lost between phases. Anyone following a recovery or cosmetic peptide protocol (BPC-157, TB-500, GHK-Cu) who wants to calculate every reconstitution correctly. Anyone on TRT who needs to stay consistent with the interval between injections. Anyone tracking someone else's protocol alongside their own. And anyone who already used an app like this, but could only find it in English."
+        "title": "What is PeptiBrain and who does it help?",
+        "body": "An app for logging your doses, vials, and peptide/GLP-1/TRT protocol in one place. For the full picture — who it's for, how your day-to-day changes, everything it includes — we have a dedicated guide: “What is PeptiBrain?”, the most complete article on our blog."
       },
       {
-        "title": "What changes when you use PeptiBrain",
-        "body": "Before: notes about the last dose scattered between your phone and memory, calculating units to draw by hand every week, not knowing if yesterday was the day, and showing up at the doctor's appointment trying to reconstruct a month of doses and symptoms from memory. After: logging a dose takes seconds, the app calculates the units on its own based on your vial, warns you before it expires, tracks your streak, and generates a report with your adherence and trend in seconds for your doctor."
-      },
-      {
-        "title": "What PeptiBrain is",
-        "body": "A web app for logging your doses, vials, and peptide/GLP-1/TRT protocol in one place — calculators, history, reminders. The app organizes and calculates what your doctor or protocol already specifies; it never decides a dose or replaces a medical consultation."
+        "title": "Our principles",
+        "body": "Three rules we don't break: the app organizes and calculates what your protocol already specifies, it never decides a dose for you. The blog content never invents a fact, a citation, or a credential — if we can't verify it, we say so plainly. And your data is yours: no one sees it unless you explicitly share access."
       },
       {
         "title": "How we write the blog content",
@@ -1983,6 +1979,10 @@
       {
         "title": "What the content is NOT",
         "body": "No article, calculator, or AI assistant response constitutes medical advice, diagnosis, or prescription. None of it replaces a healthcare professional. The content is educational — the decision on what to use, at what dose, and under what supervision is always your doctor's."
+      },
+      {
+        "title": "Security and privacy of your data",
+        "body": "Every account has row-level access control (RLS) in the database: only you see your protocol, doses, and history, unless you explicitly share access with the Family plan. We don't sell your data to third parties or use it to train models without your consent."
       },
       {
         "title": "Who's behind it",

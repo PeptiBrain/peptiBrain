@@ -1,6 +1,17 @@
 import { Link } from "@/i18n/navigation";
 import { H2, H3, P, UL, LI, Callout, Summary } from "@/components/app/blog/ArticleBlocks";
 import { JsonLd } from "@/components/app/calculator/ToolPieces";
+import { AppComparisonTable, type ComparisonRow } from "@/components/app/blog/AppComparisonTable";
+
+const COMPARISON_ROWS: ComparisonRow[] = [
+  { label: "Calculadora automática de dosis", values: [true, false] },
+  { label: "Recordatorio de próxima aplicación", values: [true, false] },
+  { label: "Control de caducidad del vial", values: [true, false] },
+  { label: "Historial completo y buscable", values: [true, false] },
+  { label: "Informe listo para tu médico", values: [true, false] },
+  { label: "Compartir con tu familia", values: [true, false] },
+  { label: "Todo en un solo lugar", values: [true, false] },
+];
 
 const FAQ_ITEMS = [
   {
@@ -118,6 +129,13 @@ export default function Post() {
         Nada de esto sustituye a tu médico ni decide tu dosis: PeptiBrain organiza y calcula lo que tu protocolo
         ya indica — la decisión médica sigue siendo siempre de tu profesional de salud.
       </Callout>
+
+      <H3>El antes y el después, de un vistazo</H3>
+      <AppComparisonTable
+        columns={["PeptiBrain", "Notas o papel"]}
+        rows={COMPARISON_ROWS}
+        unspecifiedLabel="Sin dato equivalente — no aplica a este método."
+      />
 
       <H2>Todo lo que incluye PeptiBrain</H2>
       <H3>Registro y cálculo del protocolo</H3>

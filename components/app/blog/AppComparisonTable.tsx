@@ -44,6 +44,7 @@ export function AppComparisonTable({
   rows: ComparisonRow[];
   unspecifiedLabel: string;
 }) {
+  const hasUnspecified = rows.some((row) => row.values.includes(null));
   return (
     <div className="mt-6 -mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
       <table className="w-full min-w-[560px] border-separate border-spacing-0 text-sm">
@@ -87,9 +88,11 @@ export function AppComparisonTable({
           ))}
         </tbody>
       </table>
-      <p className="mt-2 flex items-center gap-1.5 text-xs text-muted-foreground">
-        <Minus className="size-3" aria-hidden /> {unspecifiedLabel}
-      </p>
+      {hasUnspecified && (
+        <p className="mt-2 flex items-center gap-1.5 text-xs text-muted-foreground">
+          <Minus className="size-3" aria-hidden /> {unspecifiedLabel}
+        </p>
+      )}
     </div>
   );
 }

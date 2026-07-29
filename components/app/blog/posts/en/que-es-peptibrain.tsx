@@ -1,6 +1,17 @@
 import { Link } from "@/i18n/navigation";
 import { H2, H3, P, UL, LI, Callout, Summary } from "@/components/app/blog/ArticleBlocks";
 import { JsonLd } from "@/components/app/calculator/ToolPieces";
+import { AppComparisonTable, type ComparisonRow } from "@/components/app/blog/AppComparisonTable";
+
+const COMPARISON_ROWS: ComparisonRow[] = [
+  { label: "Automatic dose calculator", values: [true, false] },
+  { label: "Reminder for the next application", values: [true, false] },
+  { label: "Vial expiration tracking", values: [true, false] },
+  { label: "Full, searchable history", values: [true, false] },
+  { label: "Report ready for your doctor", values: [true, false] },
+  { label: "Share with your family", values: [true, false] },
+  { label: "Everything in one place", values: [true, false] },
+];
 
 const FAQ_ITEMS = [
   {
@@ -119,6 +130,13 @@ export default function Post() {
         None of this replaces your doctor or decides your dose: PeptiBrain organizes and calculates what your
         protocol already specifies — the medical decision always remains your healthcare professional&apos;s.
       </Callout>
+
+      <H3>Before and after, at a glance</H3>
+      <AppComparisonTable
+        columns={["PeptiBrain", "Notes or paper"]}
+        rows={COMPARISON_ROWS}
+        unspecifiedLabel="No equivalent data — doesn't apply to this method."
+      />
 
       <H2>Everything PeptiBrain includes</H2>
       <H3>Protocol logging and calculations</H3>
