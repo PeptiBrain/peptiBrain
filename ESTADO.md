@@ -1,5 +1,30 @@
 # ESTADO — PeptiBrain
 
+## ✅ 3 mejoras de confianza/SEO inspiradas en Shotsy (2026-07-27)
+
+El dueño compartió capturas de la landing de un competidor (Shotsy) y pidió tomar ideas. De 4
+sugeridas, se implementaron 3 (la 4 —credibilidad con nombre real/asesor médico— quedó fuera a
+propósito: no se puede fabricar una figura de autoridad falsa, necesita algo real del dueño):
+
+1. **Nombres comerciales** (Ozempic, Wegovy, Mounjaro, Zepbound): agregados a los `tags` de
+   Semaglutida/Tirzepatida en `lib/peptide-profiles.ts` — esto es funcional, no solo copy: antes
+   buscar "Ozempic" en el formulario de crear péptido no encontraba nada. También en su
+   `description`, en el FAQ y en el artículo de blog del registro de dosis.
+2. **FAQ ampliado de 5 a 10 preguntas** con redacción tipo pregunta-real (recordatorios, compartir
+   con el médico, sin tienda de apps, combinar compuestos). Se agregó el schema.org `FAQPage` que
+   la landing nunca tuvo (solo las herramientas sueltas lo tenían) — ayuda a que Google/su IA
+   citen estas respuestas directamente.
+3. **Bloque "Qué es / Qué no es"** (dos columnas, check verde / X roja) en la landing, entre
+   testimonios y FAQ — refuerza visualmente la línea D2 sin agregar riesgo legal nuevo.
+
+De paso: corregido `priceCurrency: EUR` → `USD` en el schema.org de la landing (quedó desde antes
+del cambio de precios a USD de una sesión anterior).
+
+Verificado: tsc ✓ · npm test (74/74) ✓ · npm run build ✓ · contenido y estructura confirmados en
+el navegador (texto, orden, JSON-LD, estilos computados `opacity:1`/`visible`) — la captura visual
+del bloque nuevo tuvo un glitch puntual del panel de preview al hacer scroll (no de la app; el
+resto de la página sí capturó bien). staging→main desplegado.
+
 ## ✅ Artículo de blog "Cómo registrar tus dosis de GLP-1" es/en (2026-07-27)
 
 El dueño notó que la home no aparece en Google ni en la IA de Google para búsquedas genéricas
