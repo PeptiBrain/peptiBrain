@@ -1,5 +1,33 @@
 # ESTADO — PeptiBrain
 
+## ✅ Logo del blog más grande + IndexNow para Bing/Yandex (2026-07-29)
+
+Dos pedidos cortos del dueño tras ver la sesión anterior en vivo:
+
+1. **Logo aún chico**: pese al fix anterior (badge blanco a juego con los íconos), el
+   isotipo seguía viéndose menos protagonista que un ícono Lucide normal. En
+   `ArticleHero.tsx`, se agrandó el badge de `useLogo` (`size-11/16` → `size-16/24`) y el
+   logo dentro (`size-8/12` → `size-13/20`) — ahora tiene la misma prominencia visual que
+   los demás posts, confirmado comparándolos lado a lado en el índice del blog.
+2. **Ping automático a buscadores tras publicar un artículo** (pendiente de la sesión
+   anterior): antes de construirlo se investigó el estado real — el "ping" de sitemap de
+   Google Y de Bing están **apagados desde 2023/2022** (ambos responden 404/410 hoy), así
+   que implementar la llamada tal cual se pidió habría sido una función hueca. Se le avisó
+   esto al dueño en simple antes de programar nada, y se le ofreció la alternativa real:
+   **IndexNow** (protocolo que sí soportan Bing/Yandex/Naver hoy; Google no lo soporta —
+   para Google no existe ningún aviso activo posible, el sitemap.xml ya enlazado en
+   robots.txt es lo único que hay). El dueño confirmó construir IndexNow.
+   - `lib/indexnow.ts`: llama a `api.indexnow.org` con la clave pública del protocolo.
+   - `public/<clave>.txt`: archivo de verificación que exige el protocolo (la clave es
+     pública por diseño, no es un secreto).
+   - Conectado al cron diario ya existente (`/api/cron/daily`, corre solo, sin tocar
+     Vercel/CI): cada día avisa las URLs (es/en) de artículos publicados en los últimos 3
+     días — no reenvía las 20+ URLs viejas cada vez, solo lo nuevo.
+
+Verificado: tsc ✓ · npm test (82/82) ✓ · npm run build ✓ · confirmado en navegador: logo
+más grande lado a lado con un ícono normal, archivo `<clave>.txt` sirviendo el contenido
+correcto en el preview real de Vercel · staging→main desplegado (2 tandas), CI en verde.
+
 ## ✅ "Quiénes somos" v3: rediseño visual completo, sin duplicar el artículo (2026-07-29)
 
 El dueño vio la v2 (párrafo corto + 2 secciones nuevas) y pidió ir más lejos: "que sea más visual,
