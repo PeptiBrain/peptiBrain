@@ -363,6 +363,13 @@ const SLUGS_WITH_IMAGE = new Set([
   "como-almacenar-tus-peptidos",
   "preguntas-frecuentes-sobre-peptidos",
   "como-registrar-tus-dosis-de-glp1",
+  "como-registrar-tus-dosis-de-trt",
+  "compatibilidad-de-stacks-como-usarla",
+  "calculadora-de-reconstitucion-como-usarla",
+  "calculadora-de-semaglutida-como-usarla",
+  "comparador-de-peptidos-como-usarlo",
+  "calculadora-de-eliminacion-como-usarla",
+  "calculadora-de-costo-por-mg-como-usarla",
 ]);
 
 export function getPostImagePath(slug: string): string | null {
