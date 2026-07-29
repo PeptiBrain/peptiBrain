@@ -1,5 +1,22 @@
 # ESTADO — PeptiBrain
 
+## ✅ Las 7 portadas restantes del blog, integradas (2026-07-28)
+
+El dueño generó con Gemini las 7 imágenes que faltaban (prompts dados en esta sesión) y las dejó en
+`Desktop/Aqui claude/11.png`...`17.png`. Se identificó cada una por su ícono (reloj, monedas, pulso,
+flechas cruzadas ×2, matraz, jeringa) y coincidían exactamente con el orden de los 7 prompts dados
+→ se copiaron a `public/blog/` con el nombre de slug correcto y se sumaron a `SLUGS_WITH_IMAGE`:
+
+- eliminación (reloj), costo por mg (monedas), registro de dosis TRT (pulso), compatibilidad de
+  stacks (flechas cruzadas), reconstitución (matraz), semaglutida (jeringa), comparador (shuffle).
+
+Con esto los 20 artículos del blog ya tienen imagen propia — ninguno cae al ícono+degradado por
+defecto.
+
+Verificado: dimensiones exactas 1424x752 en las 7 · sin marca de agua de Gemini visible · tsc ✓ ·
+npm test (82/82) ✓ · npm run build ✓ · las 7 URLs devuelven 200 y se confirmó una renderizada en el
+navegador (calculadora-de-eliminacion) · staging→main desplegado.
+
 ## ✅ Buscador + filtro por categoría en el blog (2026-07-28)
 
 Con 20 artículos y 9 categorías, el blog ya pasaba el umbral de la propia regla de UX del proyecto
