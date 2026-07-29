@@ -1,5 +1,27 @@
 # ESTADO — PeptiBrain
 
+## ✅ Ajustes a Compatibilidad de stacks: navegación + honestidad del "sin datos" (2026-07-27)
+
+Feedback del dueño tras ver la herramienta desplegada:
+- **No estaba enlazada** en el menú "Herramientas" del header (`ToolsMenu.tsx`) ni en el footer —
+  solo se llegaba por `/herramientas` o los enlaces cruzados de otras calculadoras. Agregada en
+  los tres lugares.
+- El veredicto del resultado pasa de `<p>` a `<h3>`, por el pedido explícito de reforzar
+  h1/h2/h3 en todas las páginas para SEO (recordatorio general, aplicado aquí).
+- **"Sin datos" se sentía como que la app estaba rota** (ej. Semaglutida + TB-500): el aviso de
+  "la mayoría no tiene estudios" solo vivía DENTRO de la tarjeta de resultado, nunca antes. Ahora
+  hay una línea siempre visible bajo los selectores que lo avisa de entrada — mismo principio
+  honesto que ya tenía la herramienta, pero con la expectativa puesta ANTES, no después.
+- Se agregaron 12 pares reales GLP-1 × péptidos de recuperación (Semaglutida/Tirzepatida/
+  Retatrutida/Cagrilintide × BPC-157/TB-500/GHK-Cu) marcados "Precaución" en vez de "Sin datos" —
+  es un stack de recomposición corporal genuinamente común, y el propio perfil de BPC-157 ya
+  decía "sin interacciones graves conocidas con otros péptidos de esta lista", una pista real que
+  no se estaba usando. Sigue sin inventarse ningún dato: la nota es honesta sobre que son
+  mecanismos distintos y que no hay estudio formal de la combinación puntual.
+
+Verificado: tsc ✓ · npm test (74/74) ✓ · npm run build ✓ · verificado visualmente en el navegador
+(menú, footer, tarjeta de resultado con el nuevo texto) · staging→main desplegado.
+
 ## ✅ Nueva herramienta gratis: Compatibilidad de stacks (2026-07-27)
 
 El dueño vio la herramienta de un competidor (peptidosfacil.com) — una matriz de 23×23 (500+
