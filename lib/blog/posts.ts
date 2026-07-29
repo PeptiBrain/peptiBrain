@@ -252,6 +252,7 @@ const SLUGS_WITH_IMAGE = new Set([
   "como-se-usan-los-peptidos",
   "como-almacenar-tus-peptidos",
   "preguntas-frecuentes-sobre-peptidos",
+  "como-registrar-tus-dosis-de-glp1",
 ]);
 
 export function getPostImagePath(slug: string): string | null {
