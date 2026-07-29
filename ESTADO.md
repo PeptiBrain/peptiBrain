@@ -1,5 +1,35 @@
 # ESTADO — PeptiBrain
 
+## ✅ Ajustes de feedback: logo, categorías, tabla GEO, Quiénes somos v2 (2026-07-29)
+
+Feedback directo del dueño tras ver el artículo insignia en vivo:
+
+1. **Logo del blog muy chico**: en `ArticleHero.tsx`, el logo real (`useLogo`) se mezclaba con el
+   fondo verde porque no tenía el mismo badge blanco que los demás íconos — parecía más pequeño sin
+   serlo en píxeles. Ahora usa el mismo `bg-white/95` que los íconos Lucide, con el logo dentro a
+   escala proporcional (antes ocupaba el 100% del badge sin contraste).
+2. **Categorías**: se quitó "Sobre PeptiBrain" (el artículo pasa a "Guía básica") y se agregó
+   "Calculadoras", aplicada a los 6 artículos-guía de herramientas que antes vivían sueltos dentro
+   de "Guía práctica" (reconstitución, semaglutida, comparador, eliminación, costo por mg,
+   compatibilidad de stacks).
+3. **Tabla comparativa GEO** en el artículo "¿Qué es PeptiBrain?": PeptiBrain vs. notas/papel en 7
+   criterios reales (calculadora automática, recordatorio, caducidad de vial, historial, informe
+   médico, compartir en familia, todo en un lugar) — reutiliza `AppComparisonTable` ya construido
+   para el artículo de comparativa de apps. Se ajustó el componente para que oculte la leyenda de
+   "no especificado" cuando ninguna fila la usa (antes aparecía siempre, aunque no hubiera celdas
+   con guion).
+4. **"Quiénes somos" v2**: el dueño notó que duplicaba contenido ya cubierto en el artículo
+   insignia. Se redujo la sección de avatar/antes-después a un párrafo corto que remite al
+   artículo, y se sumó contenido genuinamente distinto: "Nuestros principios" (las 3 reglas: la app
+   no decide dosis, el contenido nunca inventa datos, tus datos son tuyos) y "Seguridad y privacidad
+   de tus datos" (RLS, no venta de datos a terceros) — sin tocar las secciones honestas que ya
+   existían (cómo se escribe el contenido, qué NO es, identidad legal real).
+
+Verificado: tsc ✓ · npm test (82/82 — el fallo preexistente por hora del día ya no aplica pasada la
+medianoche) ✓ · npm run build ✓ · confirmado en navegador: logo con badge correcto, categoría
+"Calculadoras" en los chips, tabla renderizando con 7 filas, Quiénes somos sin duplicación ·
+staging→main desplegado.
+
 ## ✅ Artículo insignia "¿Qué es PeptiBrain?" + Quiénes somos enfocada al cliente (2026-07-29)
 
 El dueño pidió el artículo más amplio del blog hasta ahora (~1000+ palabras), pensado para posicionar
