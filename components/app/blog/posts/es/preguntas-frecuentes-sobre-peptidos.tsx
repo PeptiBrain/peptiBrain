@@ -21,7 +21,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "¿Puedo combinar varios péptidos (stack)?",
-    a: "Sí, y de hecho muchos protocolos combinan péptidos con funciones complementarias (ej. BPC-157 + TB-500 para recuperación). Empieza siempre con uno a la vez para conocer tu respuesta antes de sumar.",
+    a: "Sí, y de hecho muchos protocolos combinan péptidos con funciones complementarias (ej. BPC-157 + TB-500 para recuperación). Empieza siempre con uno a la vez para conocer tu respuesta antes de sumar, y revisa cada combinación puntual antes de mezclarla.",
   },
   {
     q: "¿Se administran solo con inyección?",
@@ -60,6 +60,16 @@ export default function Post() {
         <div key={item.q}>
           <H2>{item.q}</H2>
           <P>{item.a}</P>
+          {item.q === "¿Puedo combinar varios péptidos (stack)?" && (
+            <P>
+              Antes de sumar un péptido nuevo a tu stack, revisa cada combinación puntual en{" "}
+              <Link href="/compatibilidad" className="font-semibold text-primary underline underline-offset-2">
+                Compatibilidad de stacks
+              </Link>
+              : eliges dos compuestos y te decimos si está estudiada, si pide precaución, si conviene
+              evitarla o si simplemente no hay datos — en vez de asumirlo.
+            </P>
+          )}
         </div>
       ))}
 

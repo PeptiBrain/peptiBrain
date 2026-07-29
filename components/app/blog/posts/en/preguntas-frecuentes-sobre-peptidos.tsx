@@ -21,7 +21,7 @@ const FAQ_ITEMS = [
   },
   {
     q: "Can I combine several peptides (a stack)?",
-    a: "Yes — many protocols actually combine peptides with complementary roles (e.g. BPC-157 + TB-500 for recovery). Always start with one at a time so you know your own response before adding more.",
+    a: "Yes — many protocols actually combine peptides with complementary roles (e.g. BPC-157 + TB-500 for recovery). Always start with one at a time so you know your own response before adding more, and check each specific combination before mixing.",
   },
   {
     q: "Are they only given by injection?",
@@ -60,6 +60,16 @@ export default function Post() {
         <div key={item.q}>
           <H2>{item.q}</H2>
           <P>{item.a}</P>
+          {item.q === "Can I combine several peptides (a stack)?" && (
+            <P>
+              Before adding a new peptide to your stack, check that specific combination in{" "}
+              <Link href="/compatibilidad" className="font-semibold text-primary underline underline-offset-2">
+                Stack Compatibility
+              </Link>
+              : pick two compounds and we'll tell you if it's studied, needs caution, is best avoided, or
+              simply has no data — instead of assuming.
+            </P>
+          )}
         </div>
       ))}
 
