@@ -5,9 +5,10 @@ export default function Post() {
   return (
     <>
       <P>
-        Si acabas de empezar con semaglutida, tirzepatida u otro GLP-1, seguro ya escuchaste el
-        consejo: &ldquo;lleva un registro&rdquo;. Pero nadie explica bien qué anotar, cuándo hacerlo, ni por
-        qué importa. Esta es la guía paso a paso que nos hubiera gustado tener el primer día.
+        Si acabas de empezar con Ozempic, Wegovy, Mounjaro, Zepbound (o sus nombres genéricos,
+        semaglutida y tirzepatida) u otro GLP-1, seguro ya escuchaste el consejo: &ldquo;lleva un
+        registro&rdquo;. Pero nadie explica bien qué anotar, cuándo hacerlo, ni por qué importa. Esta es
+        la guía paso a paso que nos hubiera gustado tener el primer día.
       </P>
 
       <H2>¿Por qué llevar un registro, si de todos modos es una sola inyección semanal?</H2>

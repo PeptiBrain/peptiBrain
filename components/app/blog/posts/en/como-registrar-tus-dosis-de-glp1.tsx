@@ -5,9 +5,10 @@ export default function Post() {
   return (
     <>
       <P>
-        If you just started semaglutide, tirzepatide, or another GLP-1, you've probably already heard
-        the advice: &ldquo;keep a log.&rdquo; But nobody really explains what to write down, when to do it, or
-        why it matters. This is the step-by-step guide we wish we'd had on day one.
+        If you just started Ozempic, Wegovy, Mounjaro, Zepbound (or their generic names,
+        semaglutide and tirzepatide) or another GLP-1, you've probably already heard the advice:
+        &ldquo;keep a log.&rdquo; But nobody really explains what to write down, when to do it, or why it
+        matters. This is the step-by-step guide we wish we'd had on day one.
       </P>
 
       <H2>Why track it, if it's just one weekly shot anyway?</H2>

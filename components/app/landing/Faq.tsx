@@ -19,6 +19,11 @@ export function Faq() {
     { q: t("q3"), a: t("a3") },
     { q: t("q4"), a: t("a4") },
     { q: t("q5"), a: t("a5", { premium: `${symbol}9`, family: `${symbol}19` }) },
+    { q: t("q6"), a: t("a6") },
+    { q: t("q7"), a: t("a7") },
+    { q: t("q8"), a: t("a8") },
+    { q: t("q9"), a: t("a9") },
+    { q: t("q10"), a: t("a10") },
   ];
 
   return (

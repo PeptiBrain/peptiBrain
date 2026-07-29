@@ -120,9 +120,12 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     bacWater: "2",
     frequency: "1x por semana",
     categories: ["peso"],
-    tags: ["GLP-1", "Control de peso"],
+    // Nombres comerciales como tags: alguien que busca "Ozempic" al crear su
+    // péptido (onboarding, formulario) escribe la marca, no el nombre genérico
+    // — sin esto, esa búsqueda no encontraba nada.
+    tags: ["GLP-1", "Control de peso", "Ozempic", "Wegovy"],
     description:
-      "Agonista del receptor GLP-1. Reduce el apetito, retrasa el vaciamiento gástrico y mejora la sensibilidad a la insulina.",
+      "Agonista del receptor GLP-1, conocido comercialmente como Ozempic o Wegovy. Reduce el apetito, retrasa el vaciamiento gástrico y mejora la sensibilidad a la insulina.",
     halfLife: "~1 semana",
     halfLifeConfidence: "alto",
     halfLifeHoursEstimate: 168,
@@ -143,9 +146,9 @@ export const PEPTIDE_PROFILES: PeptideProfile[] = [
     bacWater: "2",
     frequency: "1x por semana",
     categories: ["peso"],
-    tags: ["GLP-1", "Control de peso"],
+    tags: ["GLP-1", "Control de peso", "Mounjaro", "Zepbound"],
     description:
-      "Agonista dual GIP/GLP-1. Apoya el control de peso y mejora la sensibilidad a la insulina.",
+      "Agonista dual GIP/GLP-1, conocido comercialmente como Mounjaro o Zepbound. Apoya el control de peso y mejora la sensibilidad a la insulina.",
     halfLife: "~5 días",
     halfLifeConfidence: "alto",
     halfLifeHoursEstimate: 120,

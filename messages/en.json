@@ -151,7 +151,17 @@
     "q4": "Is my data safe?",
     "a4": "Yes, it’s encrypted in transit and it’s only yours. You can export it or delete your account anytime.",
     "q5": "How much does it cost?",
-    "a5": "Free to start. Premium {premium}/mo and Family {family}/mo, with a 7-day free trial."
+    "a5": "Free to start. Premium {premium}/mo and Family {family}/mo, with a 7-day free trial.",
+    "q6": "Does it work with Ozempic, Wegovy, Mounjaro, or Zepbound?",
+    "a6": "Yes. PeptiBrain works with any GLP-1 (Ozempic, Wegovy, Mounjaro, Zepbound, or their generic names semaglutide/tirzepatide) and also with peptides and TRT. You pick the name and route; the app calculates the rest.",
+    "q7": "Does PeptiBrain remind me when to inject?",
+    "a7": "Yes, with a push notification at each dose's scheduled time, plus a separate alert when a vial is about to run out.",
+    "q8": "Can I share my progress with my doctor?",
+    "a8": "Yes. The Premium plan generates a print-ready report with your doses, weight, and side effects organized by date, ready to bring to your appointment.",
+    "q9": "Do I need to install anything from an app store?",
+    "a9": "No. PeptiBrain works right in the browser and installs on your phone as an app (PWA), with no App Store or Google Play involved.",
+    "q10": "Can I use PeptiBrain if I combine several compounds (like a GLP-1 with recovery peptides)?",
+    "a10": "Yes. The free plan allows 1 peptide; Premium and Family have no limit. We also have a free stack compatibility tool to check what's known about a combination before mixing them."
   },
   "FinalCta": {
     "title": "Every entry counts. Every day adds up.",
@@ -1797,5 +1807,18 @@
       }
     ],
     "honestyNote": "Most combinations don't have formal studies — we tell you plainly instead of making up a data point."
+  },
+  "WhatItIs": {
+    "title": "What PeptiBrain is (and isn't)",
+    "yesTitle": "What it is",
+    "item1": "Your GLP-1, peptide, and TRT dose, vial, and wellness log, all in one place.",
+    "item2": "Built so you never lose track of your own protocol, with reminders and a streak.",
+    "item3": "Compatible with Ozempic, Wegovy, Mounjaro, Zepbound, and any peptide or TRT.",
+    "item4": "Your data is yours: encrypted, exportable, and deletable whenever you want.",
+    "noTitle": "What it isn't",
+    "no1": "Not medical advice, and it doesn't replace your doctor.",
+    "no2": "It doesn't suggest doses or interpret your labs — it only logs what you decide.",
+    "no3": "It doesn't sell peptides or tell you where to buy them.",
+    "no4": "It doesn't share your data with anyone without your permission."
   }
 }
