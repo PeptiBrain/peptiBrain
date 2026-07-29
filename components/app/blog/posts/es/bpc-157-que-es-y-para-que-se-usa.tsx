@@ -1,5 +1,5 @@
 import { Link } from "@/i18n/navigation";
-import { H2, P, UL, LI, Callout, Summary } from "@/components/app/blog/ArticleBlocks";
+import { H2, P, UL, LI, Callout, Summary, Sources } from "@/components/app/blog/ArticleBlocks";
 
 export default function Post() {
   return (
@@ -56,6 +56,22 @@ export default function Post() {
         </Link>{" "}
         puedes ver los valores típicos y calcular tu dosis con un clic.
       </P>
+
+      <Sources
+        label="Fuentes"
+        items={[
+          {
+            title: "Tendon, Ligament, and Muscle Injury Therapy Perspectives with BPC 157 — A Review",
+            url: "https://www.mdpi.com/1424-8247/19/2/309",
+            note: "revisión de estudios preclínicos, no ensayos en humanos",
+          },
+          {
+            title: "The promoting effect of pentadecapeptide BPC 157 on tendon healing",
+            url: "https://pubmed.ncbi.nlm.nih.gov/21030672/",
+            note: "estudio en modelo animal",
+          },
+        ]}
+      />
     </>
   );
 }

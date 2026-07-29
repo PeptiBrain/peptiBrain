@@ -1,5 +1,5 @@
 import { Link } from "@/i18n/navigation";
-import { H2, H3, P, UL, LI, Callout, Summary } from "@/components/app/blog/ArticleBlocks";
+import { H2, H3, P, UL, LI, Callout, Summary, Sources } from "@/components/app/blog/ArticleBlocks";
 
 export default function Post() {
   return (
@@ -90,6 +90,20 @@ export default function Post() {
         </Link>{" "}
         lets you save every injection and see your full history in one place.
       </P>
+
+      <Sources
+        label="Sources"
+        items={[
+          {
+            title: "Tirzepatide Once Weekly for the Treatment of Obesity — SURMOUNT-1 (New England Journal of Medicine)",
+            url: "https://www.nejm.org/doi/full/10.1056/NEJMoa2206038",
+          },
+          {
+            title: "Two-year effects of semaglutide in adults with overweight or obesity — STEP 5 trial",
+            url: "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9556320/",
+          },
+        ]}
+      />
     </>
   );
 }

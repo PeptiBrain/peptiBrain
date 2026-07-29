@@ -1,5 +1,5 @@
 import { Link } from "@/i18n/navigation";
-import { H2, P, UL, LI, Callout, Summary } from "@/components/app/blog/ArticleBlocks";
+import { H2, P, UL, LI, Callout, Summary, Sources } from "@/components/app/blog/ArticleBlocks";
 
 export default function Post() {
   return (
@@ -69,6 +69,24 @@ export default function Post() {
         already has the full titration table built in: pick the phase you&apos;re on and it shows the exact units to
         draw, with the syringe drawn out.
       </P>
+
+      <Sources
+        label="Sources"
+        items={[
+          {
+            title: "Efficacy and safety of semaglutide on weight loss (meta-analysis of randomized controlled trials)",
+            url: "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9515581/",
+          },
+          {
+            title: "Two-year effects of semaglutide in adults with overweight or obesity — STEP 5 trial",
+            url: "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9556320/",
+          },
+          {
+            title: "Tirzepatide Once Weekly for the Treatment of Obesity — SURMOUNT-1 (New England Journal of Medicine)",
+            url: "https://www.nejm.org/doi/full/10.1056/NEJMoa2206038",
+          },
+        ]}
+      />
     </>
   );
 }

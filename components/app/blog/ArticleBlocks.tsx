@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Info, Zap } from "lucide-react";
+import { Info, Zap, BookMarked, ExternalLink } from "lucide-react";
 
 // Bloques de contenido reutilizables para el cuerpo de los artículos del blog —
 // evitan repetir las mismas clases de Tailwind en cada uno de los 7 artículos.
@@ -72,5 +72,37 @@ export function Callout({ children }: { children: ReactNode }) {
       <Info className="mt-0.5 size-4.5 shrink-0 text-primary" aria-hidden />
       <p className="text-sm leading-relaxed text-foreground">{children}</p>
     </div>
+  );
+}
+
+export type Source = { title: string; url: string; note?: string };
+
+// Bibliografía real al final del artículo — cada entrada es un estudio o
+// revisión verificable (PubMed/PMC/NEJM/DOI), nunca una cita inventada. Si un
+// artículo no tiene fuentes verificadas para citar, simplemente no lleva esta
+// sección — mejor sin fuentes que con una fabricada.
+export function Sources({ label, items }: { label: string; items: Source[] }) {
+  return (
+    <section className="mt-10">
+      <h2 className="flex items-center gap-2 font-display text-lg font-bold text-foreground">
+        <BookMarked className="size-4.5 text-primary" aria-hidden /> {label}
+      </h2>
+      <ul className="mt-3 space-y-2.5">
+        {items.map((s) => (
+          <li key={s.url} className="text-sm leading-relaxed">
+            <a
+              href={s.url}
+              target="_blank"
+              rel="noopener noreferrer nofollow"
+              className="inline-flex items-start gap-1.5 font-medium text-primary underline underline-offset-2 hover:text-primary/80"
+            >
+              <span>{s.title}</span>
+              <ExternalLink className="mt-0.5 size-3.5 shrink-0" aria-hidden />
+            </a>
+            {s.note && <span className="text-muted-foreground"> — {s.note}</span>}
+          </li>
+        ))}
+      </ul>
+    </section>
   );
 }
