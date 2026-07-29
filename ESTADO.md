@@ -1,5 +1,16 @@
 # ESTADO — PeptiBrain
 
+## ✅ Imagen de portada del artículo de registro de dosis GLP-1 (2026-07-27)
+
+Cerrado el pendiente: el dueño generó la imagen con el prompt de estilo ya dado (mismo look que
+el resto del blog: ícono blanco sobre degradado verde con círculos redondeados en las esquinas),
+misma dimensión exacta (1424x752) que las demás portadas. Copiada a
+`public/blog/como-registrar-tus-dosis-de-glp1.png` y agregado el slug a `SLUGS_WITH_IMAGE` en
+`lib/blog/posts.ts` para activarla — antes caía al ícono de calendario + degradado por defecto.
+
+Verificado: tsc ✓ · npm test (74/74) ✓ · npm run build ✓ · verificado visualmente en el navegador
+(la imagen reemplaza el ícono correctamente) · staging→main desplegado.
+
 ## ✅ 3 mejoras de confianza/SEO inspiradas en Shotsy (2026-07-27)
 
 El dueño compartió capturas de la landing de un competidor (Shotsy) y pidió tomar ideas. De 4
