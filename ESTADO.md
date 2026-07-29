@@ -1,5 +1,34 @@
 # ESTADO — PeptiBrain
 
+## ✅ Calculadora + quiz de TRT, y 2 artículos SEO/GEO nuevos (2026-07-28)
+
+El dueño pidió 2 artículos ("Registra tus dosis de TRT" y "Compatibilidad de stacks") y, tras
+mostrarle una referencia de un competidor (balancemyhormones.co.uk), confirmó vía pregunta directa
+que también quería construir una calculadora de TRT + un quiz de nivel de testosterona como
+herramientas nuevas — inspiradas en la estructura del competidor, sin copiar su copy ni su UI.
+
+**2 herramientas nuevas** (siguiendo el patrón exacto de las otras 7 calculadoras: página +
+componente + `ToolPieces` + wiring en `ToolsMenu`/`Footer`/`herramientas`/`sitemap.ts`):
+- `/calculadora-trt` (`lib/trt-calc.ts`, con tests): dosis semanal (mg) + concentración del vial
+  (mg/mL) + frecuencia → mg/mL/unidades de jeringa por inyección. La testosterona ya viene disuelta
+  en aceite a concentración fija — no hay paso de reconstitución como con los péptidos.
+- `/quiz-trt` (`lib/trt-quiz.ts`, con tests): 8 preguntas sí/no sobre síntomas comunes de
+  testosterona baja → banda baja/media/alta. Deja explícito en la propia pantalla de resultado y en
+  el FAQ que **no diagnostica nada** — solo un análisis de sangre lo confirma. Decisión deliberada:
+  no se copió el "resumen ejecutivo con superlativos" ni ningún dato inventado del competidor.
+
+**2 artículos de blog nuevos** (es/en), aplicando el framework SEO/GEO revisado la sesión anterior:
+- "Cómo registrar tus dosis de TRT" — paralelo al de GLP-1, enlaza a la calculadora nueva.
+- "Compatibilidad de stacks: cómo funciona y cómo sacarle el máximo partido" — explica los 4
+  estados de la herramienta (estudiado/precaución/evitar/sin datos) con una **tabla real** nueva
+  (`CompatComboTable`, no datos en imagen) de 6 combos sacados literalmente de
+  `lib/stack-compatibility.ts` — ningún dato inventado para el artículo.
+
+Verificado: tsc ✓ · npm test (82/82) ✓ · npm run build ✓ · calculadora y quiz probados en
+navegador (resultado correcto: 100mg/200mg-mL → 0.5mL/50u; quiz llega a pantalla de resultado con
+banda y aviso de no-diagnóstico) · ambos artículos verificados visualmente (es) con contenido y
+tabla renderizando correctamente · staging→main desplegado.
+
 ## ✅ Bloque de respuesta directa (GEO) en 12 artículos del blog (2026-07-28)
 
 El dueño compartió un PDF con una conversación previa en Gemini sobre estrategia SEO/GEO
