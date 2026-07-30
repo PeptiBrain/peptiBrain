@@ -1,5 +1,32 @@
 # ESTADO — PeptiBrain
 
+## ✅ Artículo SEO/GEO "Calculadora de dosis de GLP-1" (2026-07-29)
+
+El dueño pidió (como estrategia de adquisición) una calculadora de dosis de GLP-1 + artículo
+SEO/GEO — "si no la tenemos, hay que crearla". Antes de construir nada se investigó si ya
+existía: **sí existía**, con matemática real (no tabla estática) en `/calculadora-semaglutida`
+(`components/app/calculator/GlpDoseCalculator.tsx` + `lib/dose-math.ts`, conversión mg→mL→
+unidades U100 + tabla de titulación completa para semaglutida y tirzepatida), ya enlazada en
+sitemap/menú/footer, con 2 artículos de blog previos. Lo que faltaba: ningún contenido apuntaba
+a la frase de búsqueda genérica **"calculadora de dosis de GLP-1"** — todo estaba enmarcado como
+"semaglutida y tirzepatida" de marca, no como categoría GLP-1.
+
+- **Nuevo artículo** `calculadora-de-dosis-de-glp1` (es/en, categoría "Calculadoras", el más
+  reciente del blog): explica qué es GLP-1 en general (incluye nombres comerciales Ozempic/
+  Wegovy/Mounjaro/Zepbound — dato público, ya usado en otras partes del código), por qué la
+  dosis sube por fases (titulación), la conversión mg→unidades de jeringa, una tabla comparativa
+  (calculadora vs a mano) y un FAQ con schema `FAQPage` — y enlaza directo a la calculadora ya
+  existente en vez de duplicarla (evita fragmentar autoridad de SEO entre dos herramientas
+  iguales). Fuentes reales reutilizadas de artículos previos (SURMOUNT-1, STEP 5) — nada
+  inventado.
+- **No se construyó ninguna calculadora nueva** — habría sido redundante y peor para SEO que
+  reforzar la que ya existe con el contenido que le faltaba.
+
+Verificado: tsc ✓ · npm test (82/82) ✓ · npm run build ✓ · confirmado en navegador (es/en,
+tarjeta en la categoría "Calculadoras", enlace real a `/calculadora-semaglutida` probado con
+clic, tabla comparativa y FAQ renderizando) · preview real de Vercel (staging) verificado antes
+de fusionar · staging→main desplegado, CI en verde.
+
 ## ✅ Logo del blog más grande + IndexNow para Bing/Yandex (2026-07-29)
 
 Dos pedidos cortos del dueño tras ver la sesión anterior en vivo:
