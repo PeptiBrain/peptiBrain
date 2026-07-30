@@ -19,6 +19,8 @@ import {
   Coins,
   Rocket,
   Calculator,
+  Divide,
+  ClipboardList,
   type LucideIcon,
 } from "lucide-react";
 
@@ -37,6 +39,11 @@ export type BlogPost = {
   // true = la portada usa el logo real de PeptiBrain en vez del ícono genérico
   // (solo para el artículo "presentación" de la marca).
   coverIsLogo?: boolean;
+  // Fecha de la última revisión editorial de contenido (no solo de publicación) —
+  // señal de frescura real para Google en contenido de salud (YMYL). Si no se
+  // especifica, se asume igual a publishedAt (nunca se inventa una revisión que
+  // no ocurrió). Actualizar este campo cuando de verdad se revise el artículo.
+  reviewedAt?: string;
 };
 
 // Devuelve el texto en el idioma pedido (con fallback a español si faltara).
@@ -411,6 +418,44 @@ export const BLOG_POSTS: BlogPost[] = [
     icon: Calculator,
     publishedAt: "2026-08-13",
     readingMinutes: 7,
+  },
+  {
+    slug: "como-calcular-la-dosis-de-un-peptido",
+    title: {
+      es: "Cómo calcular la dosis de un péptido: la fórmula paso a paso (para cualquier compuesto)",
+      en: "How to calculate a peptide's dose: the step-by-step formula (for any compound)",
+    },
+    excerpt: {
+      es: "La fórmula de mg a unidades de jeringa explicada con un ejemplo real, y por qué cambia según el tipo de péptido.",
+      en: "The mg-to-syringe-units formula explained with a real example, and why it changes depending on the peptide type.",
+    },
+    category: { es: "Guía práctica", en: "Practical guide" },
+    tags: {
+      es: ["cómo calcular dosis de péptidos", "reconstitución", "unidades de jeringa"],
+      en: ["how to calculate peptide dose", "reconstitution", "syringe units"],
+    },
+    icon: Divide,
+    publishedAt: "2026-08-14",
+    readingMinutes: 6,
+  },
+  {
+    slug: "mejores-herramientas-para-registrar-peptidos",
+    title: {
+      es: "Mejores herramientas para registrar péptidos: notas, Excel o una app hecha para esto",
+      en: "Best tools to track peptides: notes, a spreadsheet, or a purpose-built app",
+    },
+    excerpt: {
+      es: "Comparamos notas sueltas, hoja de cálculo y una app dedicada — con honestidad sobre cuándo cada una se queda corta.",
+      en: "We compare scattered notes, a spreadsheet, and a dedicated app — honestly about when each one falls short.",
+    },
+    category: { es: "Comparativa", en: "Comparison" },
+    tags: {
+      es: ["mejores herramientas para registrar péptidos", "seguimiento", "comparativa"],
+      en: ["best tools to track peptides", "tracking", "comparison"],
+    },
+    icon: ClipboardList,
+    publishedAt: "2026-08-15",
+    readingMinutes: 6,
   },
 ];
 

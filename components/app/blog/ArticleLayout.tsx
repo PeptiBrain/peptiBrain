@@ -40,6 +40,7 @@ export function ArticleLayout({ post, locale, children }: { post: BlogPost; loca
     headline: title,
     description: excerpt,
     datePublished: post.publishedAt,
+    dateModified: post.reviewedAt || post.publishedAt,
     inLanguage: locale,
     author: { "@type": "Organization", name: "PeptiBrain" },
     publisher: { "@type": "Organization", name: "PeptiBrain", logo: `${BASE}/peptibrain-isotipo.svg` },

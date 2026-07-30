@@ -97,6 +97,14 @@ const CONTENT: Record<string, { es: Loader; en: Loader }> = {
     es: () => import("@/components/app/blog/posts/es/calculadora-de-dosis-de-glp1"),
     en: () => import("@/components/app/blog/posts/en/calculadora-de-dosis-de-glp1"),
   },
+  "como-calcular-la-dosis-de-un-peptido": {
+    es: () => import("@/components/app/blog/posts/es/como-calcular-la-dosis-de-un-peptido"),
+    en: () => import("@/components/app/blog/posts/en/como-calcular-la-dosis-de-un-peptido"),
+  },
+  "mejores-herramientas-para-registrar-peptidos": {
+    es: () => import("@/components/app/blog/posts/es/mejores-herramientas-para-registrar-peptidos"),
+    en: () => import("@/components/app/blog/posts/en/mejores-herramientas-para-registrar-peptidos"),
+  },
 };
 
 export function generateStaticParams() {
