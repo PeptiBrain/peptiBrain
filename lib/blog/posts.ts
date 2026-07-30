@@ -487,6 +487,8 @@ const SLUGS_WITH_IMAGE = new Set([
   "calculadora-de-eliminacion-como-usarla",
   "calculadora-de-costo-por-mg-como-usarla",
   "calculadora-de-dosis-de-glp1",
+  "como-calcular-la-dosis-de-un-peptido",
+  "mejores-herramientas-para-registrar-peptidos",
 ]);
 
 export function getPostImagePath(slug: string): string | null {
