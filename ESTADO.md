@@ -1,5 +1,36 @@
 # ESTADO — PeptiBrain
 
+## ✅ 2 artículos SEO/GEO nuevos + dateModified en el blog (2026-07-29)
+
+El dueño pidió una recomendación concreta de contenido y dio luz verde con "haz lo que tú
+consideres". Antes de escribir se investigó si había duplicación con lo ya publicado (mismo
+criterio que con el artículo de GLP-1: nunca escribir sin chequear solapamiento primero):
+
+1. **"Cómo calcular la dosis de un péptido"** (es/en, categoría Guía práctica): hueco real
+   confirmado — todo el contenido de cálculo de dosis existente estaba enfocado 100% en GLP-1.
+   Cubre la fórmula genérica (concentración = mg÷mL, unidades = dosis÷concentración×100) con un
+   ejemplo numérico real, explica por qué cambia según el tipo de péptido (reconstituido en polvo
+   vs. TRT ya disuelto en aceite), y enlaza a `/calculadora` (la herramienta agnóstica de
+   compuesto) en vez de duplicarla — con cruce honesto a las guías específicas de GLP-1 y TRT.
+2. **"Mejores herramientas para registrar péptidos"** (es/en, categoría Comparativa): el
+   artículo existente (`mejores-apps-de-peptidos`) compara apps específicas entre sí; este
+   nuevo compara categorías de herramientas (notas sueltas, hoja de cálculo, app dedicada) —
+   ángulo distinto, con cross-link explícito entre ambos para que no compitan por el mismo
+   posicionamiento.
+
+**Mejora estructural de paso** (de la auditoría general del blog pedida por el dueño): se agregó
+`reviewedAt` opcional al tipo `BlogPost` y `dateModified` al JSON-LD de cada artículo (cae a
+`publishedAt` si no se especifica) — señal de frescura real para Google en contenido de salud
+(YMYL), sin inventar una fecha de revisión que no ocurrió. Quedan pendientes, identificados pero
+no ejecutados aún (para no sumar contenido apurado sin revisar bien): un artículo "TRT 101"
+(hoy solo hay guía de registro de dosis, no explicación básica) y ampliar la cobertura de
+péptidos de recuperación/piel-antiedad (hoy 1 artículo cada uno, están más delgados que GLP-1).
+
+Verificado: tsc ✓ · npm test (82/82) ✓ · npm run build ✓ · confirmado en navegador (es, ambos
+artículos, enlaces cruzados probados incluyendo el link real a `/blog/mejores-apps-de-peptidos`)
+· preview real de Vercel (staging) verificado antes de fusionar · staging→main desplegado, CI en
+verde.
+
 ## ✅ Portada del artículo GLP-1 + orden de categorías del blog (2026-07-29)
 
 1. **Portada real activada**: el dueño generó la imagen del artículo `calculadora-de-dosis-de-glp1`
