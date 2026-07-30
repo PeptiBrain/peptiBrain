@@ -5,7 +5,7 @@ import { Clock, ChevronLeft, ChevronRight } from "lucide-react";
 import { Header } from "@/components/app/Header";
 import { Footer } from "@/components/app/Footer";
 import { Link } from "@/i18n/navigation";
-import { BLOG_POSTS, localized, getPostImagePath } from "@/lib/blog/posts";
+import { BLOG_POSTS, localized, getPostImagePath, orderCategories } from "@/lib/blog/posts";
 import { JsonLd } from "@/components/app/calculator/ToolPieces";
 import { ArticleHero } from "@/components/app/blog/ArticleHero";
 import { BlogGrid } from "@/components/app/blog/BlogGrid";
@@ -109,7 +109,10 @@ export default async function BlogIndexPage({
   const page = parsePage(rawPage, totalPages);
   const start = (page - 1) * POSTS_PER_PAGE;
   const pagePosts = SORTED_POSTS.slice(start, start + POSTS_PER_PAGE);
-  const categories = Array.from(new Set(BLOG_POSTS.map((p) => localized(p.category, safeLocale))));
+  const categories = orderCategories(
+    Array.from(new Set(BLOG_POSTS.map((p) => localized(p.category, safeLocale)))),
+    safeLocale
+  );
 
   const blogLd = {
     "@context": "https://schema.org",

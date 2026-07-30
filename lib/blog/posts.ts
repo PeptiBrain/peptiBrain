@@ -441,8 +441,29 @@ const SLUGS_WITH_IMAGE = new Set([
   "comparador-de-peptidos-como-usarlo",
   "calculadora-de-eliminacion-como-usarla",
   "calculadora-de-costo-por-mg-como-usarla",
+  "calculadora-de-dosis-de-glp1",
 ]);
 
 export function getPostImagePath(slug: string): string | null {
   return SLUGS_WITH_IMAGE.has(slug) ? `/blog/${slug}.png` : null;
+}
+
+// Prioridad manual de los chips de categoría del blog: Calculadoras primero
+// (son las herramientas gratis, el mayor imán de tráfico) y Guía práctica
+// segunda; el resto conserva su orden de aparición.
+const CATEGORY_PRIORITY: Record<"es" | "en", string[]> = {
+  es: ["Calculadoras", "Guía práctica"],
+  en: ["Calculators", "Practical guide"],
+};
+
+export function orderCategories(categories: string[], locale: "es" | "en"): string[] {
+  const priority = CATEGORY_PRIORITY[locale];
+  return [...categories].sort((a, b) => {
+    const ia = priority.indexOf(a);
+    const ib = priority.indexOf(b);
+    if (ia === -1 && ib === -1) return 0;
+    if (ia === -1) return 1;
+    if (ib === -1) return -1;
+    return ia - ib;
+  });
 }
