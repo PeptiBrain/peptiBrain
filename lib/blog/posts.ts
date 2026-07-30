@@ -18,6 +18,7 @@ import {
   Clock,
   Coins,
   Rocket,
+  Calculator,
   type LucideIcon,
 } from "lucide-react";
 
@@ -391,6 +392,25 @@ export const BLOG_POSTS: BlogPost[] = [
     icon: Coins,
     publishedAt: "2026-08-12",
     readingMinutes: 6,
+  },
+  {
+    slug: "calculadora-de-dosis-de-glp1",
+    title: {
+      es: "Calculadora de dosis de GLP-1: de mg a unidades de jeringa, sin hacer cuentas a mano",
+      en: "GLP-1 dose calculator: from mg to syringe units, no manual math",
+    },
+    excerpt: {
+      es: "Cómo convertir tu dosis de semaglutida o tirzepatida a unidades exactas de jeringa, y por qué esa cuenta cambia en cada fase de titulación.",
+      en: "How to convert your semaglutide or tirzepatide dose into exact syringe units, and why that math changes with every titration phase.",
+    },
+    category: { es: "Calculadoras", en: "Calculators" },
+    tags: {
+      es: ["calculadora de dosis de GLP-1", "GLP-1", "semaglutida", "tirzepatida", "Ozempic", "Mounjaro"],
+      en: ["GLP-1 dose calculator", "GLP-1", "semaglutide", "tirzepatide", "Ozempic", "Mounjaro"],
+    },
+    icon: Calculator,
+    publishedAt: "2026-08-13",
+    readingMinutes: 7,
   },
 ];
 

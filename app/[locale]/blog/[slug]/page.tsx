@@ -93,6 +93,10 @@ const CONTENT: Record<string, { es: Loader; en: Loader }> = {
     es: () => import("@/components/app/blog/posts/es/calculadora-de-costo-por-mg-como-usarla"),
     en: () => import("@/components/app/blog/posts/en/calculadora-de-costo-por-mg-como-usarla"),
   },
+  "calculadora-de-dosis-de-glp1": {
+    es: () => import("@/components/app/blog/posts/es/calculadora-de-dosis-de-glp1"),
+    en: () => import("@/components/app/blog/posts/en/calculadora-de-dosis-de-glp1"),
+  },
 };
 
 export function generateStaticParams() {
