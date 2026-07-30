@@ -1,5 +1,20 @@
 # ESTADO — PeptiBrain
 
+## ✅ Portada del artículo GLP-1 + orden de categorías del blog (2026-07-29)
+
+1. **Portada real activada**: el dueño generó la imagen del artículo `calculadora-de-dosis-de-glp1`
+   con el prompt dado (1424x752, mismo estilo de marca) y la subió a `public/blog/` — llegó con
+   doble extensión (`....png.png`), se corrigió el nombre y se agregó el slug a
+   `SLUGS_WITH_IMAGE` en `lib/blog/posts.ts` para activarla.
+2. **Orden de categorías del blog**: pedido explícito de que "Calculadoras" fuera la primera
+   categoría y "Guía práctica" la segunda (las de más tráfico/conversión), en vez del orden de
+   aparición en el array de posts. Nueva función `orderCategories()` en `lib/blog/posts.ts` con
+   una lista de prioridad manual por locale; el resto de categorías conserva su orden original.
+
+Verificado: tsc ✓ · npm test (82/82) ✓ · npm run build ✓ · confirmado en navegador (imagen
+1424x752 renderizando en la tarjeta, chips en el orden pedido) · preview real de Vercel
+(staging) verificado antes de fusionar · staging→main desplegado, CI en verde.
+
 ## ✅ Artículo SEO/GEO "Calculadora de dosis de GLP-1" (2026-07-29)
 
 El dueño pidió (como estrategia de adquisición) una calculadora de dosis de GLP-1 + artículo
