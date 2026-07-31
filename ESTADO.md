@@ -1,5 +1,28 @@
 # ESTADO — PeptiBrain
 
+## ✅ Check-in de hambre/apetito junto al peso (2026-07-30)
+
+El dueño evaluó la sección de GLP-1 (titulación, efectos secundarios, peso, fotos — "bastante
+completo") y recomendó sumar el hambre/apetito, que hoy solo se capturaba como texto libre dentro
+de "efectos secundarios" pese a ser la métrica que la comunidad de GLP-1 sigue día a día.
+
+- **Migración `0047_hunger.sql`**: columna `hunger` (1-5) en `health_logs`, mismo patrón que
+  `mood` (migración 0040). **Requería acción manual del dueño** — se le avisó explícitamente
+  antes de fusionar a producción (el upsert de peso ya mandaba `hunger` en cada guardado; sin la
+  columna, CUALQUIER guardado de peso habría fallado) — confirmó haberla corrido antes de
+  fusionar.
+- Check-in de **1 tap** (escala 1-5 con emoji, mismo patrón visual que el selector de ánimo) 
+  directo en el modal de registrar peso — opcional, se puede destocar con un segundo tap. Se
+  muestra junto al peso en el historial cuando está presente.
+- Queda en el **plan gratis** (es parte del registro de peso, que ya es gratis) — decisión
+  deliberada: gatearlo detrás de Premium le restaría valor justo a la métrica diaria más seguida.
+
+Verificado: tsc ✓ · npm test (100/100) ✓ · npm run build ✓ · staging→main desplegado, CI en
+verde. **No se pudo verificar visualmente** — está detrás de login (`/app/salud`) y no hay cuenta
+de prueba disponible en este entorno; el patrón replicado (selector de ánimo) ya está en
+producción y probado, así que el riesgo visual es bajo, pero queda pendiente confirmar con una
+captura real la próxima vez que el dueño entre a la app.
+
 ## ✅ Recordatorio de "toca análisis" — solo fecha, nunca el valor (2026-07-30)
 
 El dueño evaluó la sección de laboratorio (marcadores TRT: testosterona total/libre, estradiol,
