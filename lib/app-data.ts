@@ -69,6 +69,7 @@ export type HealthLog = {
   sideEffect?: string;
   sleepHours?: string;
   mood?: number; // 1-5
+  hunger?: number; // 1-5, check-in rápido junto al peso
   notes?: string;
 };
 
@@ -360,6 +361,7 @@ export async function loadAppData(): Promise<AppData> {
       sideEffect: h.side_effect || undefined,
       sleepHours: h.sleep_hours != null ? String(h.sleep_hours) : undefined,
       mood: h.mood != null ? Number(h.mood) : undefined,
+      hunger: h.hunger != null ? Number(h.hunger) : undefined,
       notes: h.notes || undefined,
     })),
     meals: (meals || []).map((m) => ({
@@ -926,6 +928,7 @@ export async function addHealthLog(
       sleep_hours:
         log.sleepHours ?? existing?.sleepHours ? Number(log.sleepHours ?? existing?.sleepHours) : null,
       mood: log.mood ?? existing?.mood ?? null,
+      hunger: log.hunger ?? existing?.hunger ?? null,
       notes: log.notes ?? existing?.notes ?? null,
     },
     { onConflict: "user_id,log_date" }
@@ -966,7 +969,8 @@ export type HealthField =
   | "exerciseMin"
   | "sideEffect"
   | "sleepHours"
-  | "mood";
+  | "mood"
+  | "hunger";
 
 const HEALTH_COLUMN: Record<HealthField, string> = {
   weightKg: "weight_kg",
@@ -976,6 +980,7 @@ const HEALTH_COLUMN: Record<HealthField, string> = {
   sideEffect: "side_effect",
   sleepHours: "sleep_hours",
   mood: "mood",
+  hunger: "hunger",
 };
 
 export async function clearHealthField(
@@ -1413,6 +1418,7 @@ export async function loadSharedOwnerData(ownerId: string): Promise<SharedOwnerD
       sideEffect: h.side_effect || undefined,
       sleepHours: h.sleep_hours != null ? String(h.sleep_hours) : undefined,
       mood: h.mood != null ? Number(h.mood) : undefined,
+      hunger: h.hunger != null ? Number(h.hunger) : undefined,
       notes: h.notes || undefined,
     })),
     meals: (meals || []).map((m) => ({

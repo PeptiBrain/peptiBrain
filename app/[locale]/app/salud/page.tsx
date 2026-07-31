@@ -37,6 +37,10 @@ import { ModalShell } from "@/components/app/shell/ModalShell";
 type Tab = "peso" | "ejercicio" | "comidas" | "fotos" | "labs" | "hidratacion" | "efectos" | "sueno" | "animo";
 
 const MOOD_EMOJI = ["😞", "😕", "😐", "🙂", "😄"] as const;
+// Escala de hambre/apetito: 1 = sin hambre, 5 = mucha hambre. Junto al peso porque
+// es la métrica que la comunidad de GLP-1 sigue día a día — antes solo se podía
+// anotar como texto libre dentro de "efectos secundarios".
+const HUNGER_EMOJI = ["😌", "🙂", "😐", "😖", "🥱"] as const;
 
 export default function SaludPage() {
   const t = useTranslations("Salud");
@@ -266,6 +270,11 @@ export default function SaludPage() {
                   <Scale className="size-3.5 text-muted-foreground" aria-hidden /> {log.weightKg} kg
                   {log.bodyFatPct && (
                     <span className="text-muted-foreground">· {t("bodyFatInline", { pct: log.bodyFatPct })}</span>
+                  )}
+                  {log.hunger && (
+                    <span className="text-muted-foreground" title={t(`hungerLabel_${log.hunger}` as never)}>
+                      · <span aria-hidden>{HUNGER_EMOJI[log.hunger - 1]}</span>
+                    </span>
                   )}
                 </span>
                 {log.notes && <p className="mt-1 text-xs text-muted-foreground">{log.notes}</p>}
@@ -781,6 +790,7 @@ function WeightModal({
   const [date, setDate] = useState(todayIso());
   const [weightKg, setWeightKg] = useState("");
   const [bodyFatPct, setBodyFatPct] = useState("");
+  const [hunger, setHunger] = useState<number | null>(null);
   const [notes, setNotes] = useState("");
   const save = useSaveAction(
     () =>
@@ -788,6 +798,7 @@ function WeightModal({
         date,
         weightKg: weightKg.trim(),
         bodyFatPct: bodyFatPct.trim() || undefined,
+        hunger: hunger ?? undefined,
         notes: notes.trim() || undefined,
       }),
     "salud/WeightModal"
@@ -800,6 +811,7 @@ function WeightModal({
       setDate(todayIso());
       setWeightKg("");
       setBodyFatPct("");
+      setHunger(null);
       setNotes("");
       save.reset();
     }
@@ -848,6 +860,24 @@ function WeightModal({
             placeholder="18.5"
             className="h-11 w-full rounded-lg border border-input bg-background px-3 text-base text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
           />
+        </div>
+        <div>
+          <label className="mb-1.5 block text-sm font-medium text-foreground">{t("hungerLabel")}</label>
+          <div className="grid grid-cols-5 gap-2">
+            {HUNGER_EMOJI.map((emoji, i) => (
+              <button
+                key={i}
+                type="button"
+                onClick={() => setHunger(hunger === i + 1 ? null : i + 1)}
+                aria-label={t(`hungerLabel_${i + 1}` as never)}
+                className={`flex h-14 items-center justify-center rounded-lg border text-2xl ${
+                  hunger === i + 1 ? "border-primary bg-accent" : "border-border bg-background"
+                }`}
+              >
+                {emoji}
+              </button>
+            ))}
+          </div>
         </div>
         <div>
           <label className="mb-1.5 block text-sm font-medium text-foreground">{t("notesLabel")}</label>
