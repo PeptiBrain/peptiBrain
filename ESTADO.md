@@ -1,5 +1,29 @@
 # ESTADO — PeptiBrain
 
+## ✅ Recordatorio de "toca análisis" — solo fecha, nunca el valor (2026-07-30)
+
+El dueño evaluó la sección de laboratorio (marcadores TRT: testosterona total/libre, estradiol,
+hematocrito, PSA) y recomendó explícitamente extender el patrón de "nunca perder el hilo" —ya
+aplicado a las dosis— también a los análisis. Confirmó ejecutar la recomendación.
+
+- **`lib/lab-reminder.ts`** (con 8 tests): dado el historial de `lab_results` (tabla ya
+  existente, una fila por marcador+fecha), calcula cuál es el marcador **más atrasado** entre los
+  que el usuario ya venía registrando — nunca sugiere marcadores nuevos. Umbral: ~4 meses
+  (120 días) sin registro. Nunca compara valores ni dice si algo está bien o mal — línea D2.
+- Conectado al cron diario ya existente (`app/api/cron/daily/route.ts`, corre 1x/día, sin tocar
+  Vercel/CI): si el usuario tiene `reminders_enabled` y no recibió ya un aviso de este tipo hoy,
+  le llega un push — "Hace 4 meses que no registras hematocrito. Solo un recordatorio de fecha —
+  no evalúa el valor." Máximo un aviso por usuario por día (el más atrasado de todos sus
+  marcadores), igual de discreto que el recordatorio de dosis.
+- Dedupe vía `notifications.type = 'lab_reminder'` (sin migración nueva — la columna `type` ya
+  era texto libre).
+
+Verificado: tsc ✓ · npm test (100/100, 8 nuevos) ✓ · npm run build ✓ (el build local tardó
+inusualmente por carga de otros procesos en la máquina en el momento, pero terminó limpio con
+todas las rutas listadas, incluida `/api/cron/daily`) · staging→main desplegado, CI de Vercel en
+verde. No se pudo probar el disparo real en producción (depende de datos de usuarios reales) —
+la lógica de cálculo, que es la parte con más riesgo, sí quedó cubierta con tests.
+
 ## ✅ Recordatorio de "hora habitual" — aviso si no registraste hoy (2026-07-30)
 
 Construido: el dueño confirmó ("hazlo") la idea de retención anotada antes en esta misma sesión.
