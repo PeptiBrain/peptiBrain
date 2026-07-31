@@ -1,18 +1,33 @@
 # ESTADO — PeptiBrain
 
-## 💡 Idea anotada (sin construir): recordatorio de horario habitual + aviso si no registraste (2026-07-30)
+## ✅ Recordatorio de "hora habitual" — aviso si no registraste hoy (2026-07-30)
 
-El dueño identificó un patrón de retención simple visto en otra app, y pidió dejarlo solo anotado
-— NO construirlo hasta que lo pida explícitamente:
+Construido: el dueño confirmó ("hazlo") la idea de retención anotada antes en esta misma sesión.
 
-- Detectar la hora en la que el usuario suele aplicar su dosis (a partir del historial ya
-  registrado, sin que tenga que configurarlo a mano).
-- Si llega esa hora y todavía no registró la dosis de hoy, mandarle una notificación push — mismo
-  mecanismo de `sendPush` que ya usa el cron diario para "se te acaba el vial" y el re-enganche.
-- Encaja en el loop de retención (trigger→acción→recompensa) del archivo `24-GAMIFICACION.md` del
-  sistema — cuando se retome retención en serio, revisar ahí primero.
+El recordatorio de dosis que ya existía (`/api/cron/dose-reminders`) solo dispara si el usuario
+AGENDÓ una dosis a futuro (tiene una fila en `doses` con `scheduled_at` próximo). Para quien
+registra sin agendar (la mayoría del uso ad-hoc), no había ningún aviso — ese era el hueco real
+que se cubrió:
 
-**No ejecutar sin pedido explícito del dueño.**
+- **`lib/usual-dose-time.ts`** (con tests, `tests/usual-dose-time.test.ts`, 10 casos): calcula la
+  hora habitual de un usuario para un péptido a partir de su historial de dosis ya cumplidas, con
+  **media circular** (no aritmética) para que horarios cerca de medianoche promedien bien, y una
+  medida de "consistencia" (0 a 1) — si el historial es demasiado disperso (persona sin horario
+  fijo), no se considera un hábito y no se avisa. Mínimo 3 dosis registradas antes de intentar
+  inferir un patrón.
+- **`sendUsualTimeNudges()`** en `app/api/cron/dose-reminders/route.ts` (mismo cron que ya corre
+  cada ~15 min): por cada usuario+péptido con un hábito detectado, si ya pasaron 30-90 minutos de
+  su hora habitual y no registró nada hoy para ese péptido, le llega un push — "¿Ya te aplicaste
+  tu dosis hoy?". Máximo **un aviso de este tipo por usuario por día** (aunque tenga varios
+  péptidos), para no ser invasivo. Respeta `reminders_enabled` y Modo viaje, igual que el
+  recordatorio existente.
+- Se guarda en `notifications` con `type: "usual_time_nudge"` — es lo que se usa para no repetir
+  el aviso el mismo día (no se agregó ninguna columna nueva a la base de datos).
+
+Verificado: tsc ✓ · npm test (92/92, 10 nuevos) ✓ · npm run build ✓. No se pudo probar el cron en
+vivo (depende de datos reales de Supabase + suscripciones push), pero la lógica de cálculo —la
+parte con más riesgo de error— quedó cubierta con tests exhaustivos, incluyendo el caso de cruce
+de medianoche.
 
 ## ✅ 2 artículos SEO/GEO nuevos + dateModified en el blog (2026-07-29)
 
