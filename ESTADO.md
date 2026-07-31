@@ -1,5 +1,19 @@
 # ESTADO — PeptiBrain
 
+## 💡 Idea anotada (sin construir): recordatorio de horario habitual + aviso si no registraste (2026-07-30)
+
+El dueño identificó un patrón de retención simple visto en otra app, y pidió dejarlo solo anotado
+— NO construirlo hasta que lo pida explícitamente:
+
+- Detectar la hora en la que el usuario suele aplicar su dosis (a partir del historial ya
+  registrado, sin que tenga que configurarlo a mano).
+- Si llega esa hora y todavía no registró la dosis de hoy, mandarle una notificación push — mismo
+  mecanismo de `sendPush` que ya usa el cron diario para "se te acaba el vial" y el re-enganche.
+- Encaja en el loop de retención (trigger→acción→recompensa) del archivo `24-GAMIFICACION.md` del
+  sistema — cuando se retome retención en serio, revisar ahí primero.
+
+**No ejecutar sin pedido explícito del dueño.**
+
 ## ✅ 2 artículos SEO/GEO nuevos + dateModified en el blog (2026-07-29)
 
 El dueño pidió una recomendación concreta de contenido y dio luz verde con "haz lo que tú
