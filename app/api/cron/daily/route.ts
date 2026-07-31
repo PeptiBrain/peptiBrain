@@ -4,6 +4,7 @@ import { sendPush } from "@/lib/push";
 import { emailShell, emailButton, escapeHtml } from "@/lib/email-template";
 import { pingIndexNow } from "@/lib/indexnow";
 import { BLOG_POSTS } from "@/lib/blog/posts";
+import { daysSince, mostOverdueMarker, monthsElapsed, labMarkerLabel } from "@/lib/lab-reminder";
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +12,9 @@ export const dynamic = "force-dynamic";
 // vía vercel.json, protegidas por CRON_SECRET):
 //   - "Se te acaba el vial": avisa cuando a un vial le quedan ~3 dosis o menos.
 //   - Re-enganche: a quien lleva 3+ días sin registrar nada, un empujón suave.
-// Ambas guardadas por un timestamp para no repetir el aviso cada día.
+//   - "Toca análisis": avisa si pasaron ~4 meses sin registrar un marcador de
+//     laboratorio que el usuario ya venía siguiendo (solo la fecha, nunca el valor).
+// Todas guardadas por un timestamp/registro para no repetir el aviso cada día.
 
 const LOW_STOCK_THRESHOLD = 3; // dosis restantes estimadas
 const WINBACK_INACTIVE_DAYS = 3;
@@ -191,5 +194,68 @@ export async function GET(req: Request) {
   ]);
   const indexNowResult = await pingIndexNow(indexNowUrls);
 
-  return NextResponse.json({ ok: true, lowStockNotified, winbackSent, indexNowUrls: indexNowUrls.length, indexNowResult });
+  // ---------- 4) "Toca análisis": aviso si pasó mucho tiempo sin registrar un marcador ----------
+  // Solo marcadores que el usuario YA venía siguiendo — nunca sugiere marcadores
+  // nuevos ni evalúa si el valor está bien o mal (línea D2: organiza, no diagnostica).
+  const today = now.toISOString().slice(0, 10);
+  const todayStart = `${today}T00:00:00.000Z`;
+
+  const [{ data: labResults }, { data: labRemindedToday }] = await Promise.all([
+    admin.from("lab_results").select("user_id, marker, log_date"),
+    admin.from("notifications").select("user_id").eq("type", "lab_reminder").gte("created_at", todayStart),
+  ]);
+
+  let labReminderSent = 0;
+
+  if (labResults && labResults.length > 0) {
+    // Última fecha registrada por usuario+marcador (log_date ya viene ordenable como string ISO yyyy-mm-dd).
+    const lastLogByKey = new Map<string, string>();
+    for (const r of labResults) {
+      const key = `${r.user_id}::${r.marker}`;
+      const prev = lastLogByKey.get(key);
+      if (!prev || r.log_date > prev) lastLogByKey.set(key, r.log_date);
+    }
+
+    const markersByUser = new Map<string, { marker: string; lastLogDate: string; daysSinceLast: number }[]>();
+    for (const [key, lastLogDate] of lastLogByKey) {
+      const [userId, marker] = key.split("::");
+      const list = markersByUser.get(userId) || [];
+      list.push({ marker, lastLogDate, daysSinceLast: daysSince(lastLogDate, now) });
+      markersByUser.set(userId, list);
+    }
+
+    const alreadyRemindedToday = new Set((labRemindedToday || []).map((n) => n.user_id));
+    const labUserIds = [...markersByUser.keys()];
+    const subsForLabUsers = subsByUserMap((subs || []).filter((s) => markersByUser.has(s.user_id)));
+
+    for (const userId of labUserIds) {
+      if (!remindersOn.has(userId)) continue;
+      if (alreadyRemindedToday.has(userId)) continue;
+
+      const overdue = mostOverdueMarker(markersByUser.get(userId)!);
+      if (!overdue) continue;
+
+      const label = labMarkerLabel(overdue.marker);
+      const months = monthsElapsed(overdue.daysSinceLast);
+      const title = "Toca actualizar tus análisis";
+      const body = `Hace ${months} meses que no registras ${label}. Solo un recordatorio de fecha — no evalúa el valor.`;
+
+      await admin.from("notifications").insert({ user_id: userId, type: "lab_reminder", title, body, link: "/app/salud" });
+
+      for (const sub of subsForLabUsers.get(userId) || []) {
+        const res = await sendPush(sub, { title, body, url: "/app/salud" });
+        if (res.expired) await admin.from("push_subscriptions").delete().eq("endpoint", sub.endpoint);
+        else if (res.ok) labReminderSent++;
+      }
+    }
+  }
+
+  return NextResponse.json({
+    ok: true,
+    lowStockNotified,
+    winbackSent,
+    indexNowUrls: indexNowUrls.length,
+    indexNowResult,
+    labReminderSent,
+  });
 }
