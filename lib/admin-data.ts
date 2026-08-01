@@ -63,6 +63,21 @@ export type FunnelStep = {
   dropFromPrev: number;
 };
 
+export type ChannelFunnel = {
+  source: string;
+  signups: number;
+  /** % que completó el onboarding. */
+  activationPct: number;
+  /** % que registró algo (dosis/vial/comida/salud) en los últimos 30 días. */
+  usagePct: number;
+  /** % que hoy tiene un plan pagado (premium/family/de por vida). */
+  paidPct: number;
+  /** % de los que alguna vez pagaron y hoy están cancelados. null = nadie pagó todavía. */
+  cancelledPct: number | null;
+  /** Retención D30 de este canal — null si aún no hay suficiente antigüedad. */
+  retentionD30: number | null;
+};
+
 export type AdminOverview = {
   totalUsers: number;
   usersByPlan: Record<string, number>;
@@ -93,6 +108,10 @@ export type AdminOverview = {
   conversionPct: number; // registrados → pagadores
   currencySymbol: string;
   utmSources: { source: string; count: number }[];
+  /** Embudo completo por canal de origen (utm_source): no solo cuántos se
+   *  registraron, sino cuántos de ESOS se activan, usan, pagan, cancelan y
+   *  retienen. Sin esto, un canal puede parecer bueno solo por traer volumen. */
+  channelFunnels: ChannelFunnel[];
   platforms: { platform: string; count: number }[];
   countries: { country: string; flag: string; count: number }[];
   users: AdminUser[];
@@ -389,9 +408,9 @@ export async function loadAdminOverview(): Promise<AdminOverview> {
     list.push(d.created_at);
     activityByUser.set(d.user_id, list);
   }
-  function retentionAt(days: number): number | null {
+  function retentionAt(days: number, forProfiles: typeof profiles = profiles): number | null {
     const cutoff = daysAgoIso(days);
-    const eligible = profiles.filter((p) => p.created_at <= cutoff);
+    const eligible = forProfiles.filter((p) => p.created_at <= cutoff);
     if (eligible.length === 0) return null;
     const thresholdMs = days * 24 * 60 * 60 * 1000 * 0.85; // ~85% del periodo, margen de zona horaria
     let returned = 0;
@@ -461,18 +480,19 @@ export async function loadAdminOverview(): Promise<AdminOverview> {
 
   // Un usuario está "activo" en un periodo si registró CUALQUIER cosa (dosis, vial,
   // salud, comida) dentro de él. Salud usa log_date (solo fecha); el resto, created_at.
-  function activeSince(cutoffIso: string): number {
+  function activeUserIdsSince(cutoffIso: string): Set<string> {
     const cutoffDay = cutoffIso.slice(0, 10);
     const active = new Set<string>();
     for (const d of doseRows) if (d.user_id && d.created_at >= cutoffIso) active.add(d.user_id);
     for (const v of vialRows) if (v.user_id && v.created_at >= cutoffIso) active.add(v.user_id);
     for (const m of mealRows) if (m.user_id && m.created_at >= cutoffIso) active.add(m.user_id);
     for (const h of healthRows) if (h.user_id && h.log_date >= cutoffDay) active.add(h.user_id);
-    return active.size;
+    return active;
   }
-  const activeToday = activeSince(`${todayIso()}T00:00:00.000Z`);
-  const activeThisWeek = activeSince(since7d);
-  const activeThisMonth = activeSince(since30d);
+  const activeUserIds30d = activeUserIdsSince(since30d);
+  const activeToday = activeUserIdsSince(`${todayIso()}T00:00:00.000Z`).size;
+  const activeThisWeek = activeUserIdsSince(since7d).size;
+  const activeThisMonth = activeUserIds30d.size;
 
   const totalDoses = doseRows.length;
   const dosesApplied = doseRows.filter((d) => d.done).length;
@@ -551,6 +571,37 @@ export async function loadAdminOverview(): Promise<AdminOverview> {
     .map(([source, count]) => ({ source, count }))
     .sort((a, b) => b.count - a.count);
 
+  // --- Embudo por canal: no solo cuántos trae cada uno, sino qué tan buenos
+  // son esos usuarios (activación, uso, pago, cancelación, retención) — un
+  // canal puede traer mucho volumen curioso y otro, menos gente pero que paga.
+  const profilesBySource = new Map<string, typeof profiles>();
+  for (const p of profiles) {
+    const src = (p.utm_source && String(p.utm_source).trim()) || "directo";
+    const list = profilesBySource.get(src) || [];
+    list.push(p);
+    profilesBySource.set(src, list);
+  }
+  const channelFunnels: ChannelFunnel[] = [...profilesBySource.entries()]
+    .map(([source, group]) => {
+      const signups = group.length;
+      const activated = group.filter((p) => p.onboarding_completed_at).length;
+      const usedIn30d = group.filter((p) => activeUserIds30d.has(p.id)).length;
+      const paid = group.filter((p) => p.plan !== "free").length;
+      const everPaidOrCancelled = group.filter((p) => p.plan !== "free" || p.plan_status === "canceled");
+      const cancelled = group.filter((p) => p.plan_status === "canceled").length;
+      return {
+        source,
+        signups,
+        activationPct: signups > 0 ? Math.round((activated / signups) * 100) : 0,
+        usagePct: signups > 0 ? Math.round((usedIn30d / signups) * 100) : 0,
+        paidPct: signups > 0 ? Math.round((paid / signups) * 100) : 0,
+        cancelledPct:
+          everPaidOrCancelled.length > 0 ? Math.round((cancelled / everPaidOrCancelled.length) * 100) : null,
+        retentionD30: retentionAt(30, group),
+      };
+    })
+    .sort((a, b) => b.signups - a.signups);
+
   // --- Dispositivo (iOS / Android / Escritorio) ---
   const platMap = new Map<string, number>();
   for (const p of profiles) {
@@ -598,6 +649,7 @@ export async function loadAdminOverview(): Promise<AdminOverview> {
     conversionPct,
     currencySymbol: "€",
     utmSources,
+    channelFunnels,
     platforms,
     countries,
     users: profiles.map((p) => {

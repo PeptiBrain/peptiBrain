@@ -725,6 +725,73 @@ export function AdminDashboard({ data, alerts }: { data: AdminOverview; alerts: 
                 invertir en un canal, se puede agregar aquí para saber cuál conviene escalar.
               </p>
             </div>
+
+            {/* No basta con saber qué canal trae más registros — hay que saber qué
+                canal trae MEJORES usuarios. Un canal puede traer mucha gente
+                curiosa y otro, menos gente pero que de verdad paga y se queda. */}
+            <div
+              className="mt-4 rounded-2xl p-5"
+              style={{ background: ADMIN.surface, border: `1px solid ${ADMIN.border}` }}
+            >
+              <p className="mb-1 text-sm font-semibold" style={{ color: ADMIN.text }}>
+                Embudo por canal
+              </p>
+              <p className="mb-3 text-xs" style={{ color: ADMIN.textMuted }}>
+                No solo cuántos trae cada canal, sino qué tan buenos son esos usuarios.
+              </p>
+              {data.channelFunnels.length === 0 ? (
+                <p className="text-sm" style={{ color: ADMIN.textMuted }}>
+                  Aún no hay registros.
+                </p>
+              ) : (
+                <div className="-mx-5 overflow-x-auto px-5">
+                  <table className="w-full min-w-[560px] border-separate border-spacing-y-1.5 text-sm">
+                    <thead>
+                      <tr style={{ color: ADMIN.textMuted }}>
+                        <th className="pb-1 text-left text-xs font-medium">Canal</th>
+                        <th className="pb-1 text-right text-xs font-medium">Registros</th>
+                        <th className="pb-1 text-right text-xs font-medium">Activación</th>
+                        <th className="pb-1 text-right text-xs font-medium">Uso 30d</th>
+                        <th className="pb-1 text-right text-xs font-medium">Pagan</th>
+                        <th className="pb-1 text-right text-xs font-medium">Cancelan</th>
+                        <th className="pb-1 text-right text-xs font-medium">Retención 30d</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {data.channelFunnels.map((c) => (
+                        <tr key={c.source}>
+                          <td className="whitespace-nowrap text-sm font-medium capitalize" style={{ color: ADMIN.text }}>
+                            {c.source}
+                          </td>
+                          <td className="text-right text-sm" style={{ color: ADMIN.text }}>
+                            {c.signups}
+                          </td>
+                          <td className="text-right text-sm" style={{ color: ADMIN.textMuted }}>
+                            {c.activationPct}%
+                          </td>
+                          <td className="text-right text-sm" style={{ color: ADMIN.textMuted }}>
+                            {c.usagePct}%
+                          </td>
+                          <td className="text-right text-sm font-semibold" style={{ color: ADMIN.accent }}>
+                            {c.paidPct}%
+                          </td>
+                          <td className="text-right text-sm" style={{ color: ADMIN.textMuted }}>
+                            {c.cancelledPct == null ? "—" : `${c.cancelledPct}%`}
+                          </td>
+                          <td className="text-right text-sm" style={{ color: ADMIN.textMuted }}>
+                            {c.retentionD30 == null ? "—" : `${c.retentionD30}%`}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+              <p className="mt-3 text-xs" style={{ color: ADMIN.textMuted }}>
+                "Pagan" es el número que de verdad importa para decidir dónde invertir — no "Registros". Un canal con
+                pocos registros pero "Pagan" alto vale más que uno con muchos registros curiosos que nunca convierten.
+              </p>
+            </div>
           </Section>
         )}
 
