@@ -1,5 +1,33 @@
 # ESTADO — PeptiBrain
 
+## ✅ Embudo por canal en el panel de admin (2026-07-30)
+
+El dueño compartió un post de Facebook (#tipsvaliosos) sobre medir origen de usuarios: no basta
+con saber qué canal trae más registros, hay que medir por canal registros/activación/uso/pago/
+cancelación/retención — porque un canal puede traer mucha gente curiosa y otro, menos gente pero
+que paga. Pidió tenerlo en su panel de control.
+
+Investigado antes de construir: el panel de admin (`/panel`, pestaña "Adquisición") **ya
+mostraba** el desglose de registros por `utm_source`, pero como lista aislada — sin cruzarlo
+contra el resto del embudo. Ese cruce era el hueco real.
+
+- **`lib/admin-data.ts`**: nuevo `channelFunnels` — por cada canal (`utm_source`, con "directo"
+  cuando no hay etiqueta): registros, % activación (onboarding completado), % uso en 30 días,
+  % que paga hoy, % de cancelación (solo entre los que alguna vez pagaron o cancelaron — no
+  divide por el total de registros, que inflaría la cifra) y retención D30. Todo calculado desde
+  tablas que ya existían (`profiles`, `doses`, `vials`, `meals`, `health_logs`) — sin migración
+  nueva ni tabla de eventos.
+- **No se agregó "prueba Pro"**: la app no tiene periodo de prueba (es free vs. pago directo,
+  sin trial) — inventar esa etapa habría sido un dato falso solo para calzar con el post. El
+  resto de etapas pedidas sí tenían datos reales para calcularse.
+- Nueva tabla en `AdminDashboard.tsx` (pestaña Adquisición, debajo del desglose ya existente),
+  con nota explícita de que "Pagan" es la cifra que de verdad importa para decidir dónde
+  invertir, no "Registros".
+
+Verificado: tsc ✓ · npm test (100/100) ✓ · npm run build ✓ · staging→main desplegado, CI en
+verde. **No se pudo verificar visualmente** — el panel de admin requiere sesión con rol admin y
+no hay credenciales de prueba en este entorno.
+
 ## ✅ Check-in de hambre/apetito junto al peso (2026-07-30)
 
 El dueño evaluó la sección de GLP-1 (titulación, efectos secundarios, peso, fotos — "bastante
