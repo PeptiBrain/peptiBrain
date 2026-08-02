@@ -30,6 +30,38 @@ const ENGLISH_SPEAKING_COUNTRIES = new Set([
   "ZA",
 ]);
 
+// Bots que van a buscar la vista previa de un link (Threads, Facebook, WhatsApp,
+// Twitter/X, LinkedIn, Telegram, Slack, Discord) casi siempre corren desde
+// servidores en EE.UU. — con la detección por país de arriba, terminaban viendo
+// SIEMPRE la versión en inglés (y esa vista previa en inglés es la que se
+// guardaba/mostraba), sin importar el idioma real de la URL que se compartió.
+// A los bots no se les debe redirigir nunca: tienen que ver exactamente el
+// idioma que implica la URL que pidieron, igual que cualquier crawler de SEO.
+const CRAWLER_USER_AGENTS = [
+  "facebookexternalhit",
+  "facebot",
+  "twitterbot",
+  "linkedinbot",
+  "whatsapp",
+  "telegrambot",
+  "slackbot",
+  "discordbot",
+  "threadsbot",
+  "pinterest",
+  "redditbot",
+  "googlebot",
+  "bingbot",
+  "applebot",
+  "slurp",
+  "yandex",
+  "duckduckbot",
+];
+
+function isCrawlerBot(userAgent: string): boolean {
+  const ua = userAgent.toLowerCase();
+  return CRAWLER_USER_AGENTS.some((bot) => ua.includes(bot));
+}
+
 const handleI18nRouting = createMiddleware(routing);
 
 export default async function middleware(request: NextRequest) {
@@ -51,14 +83,25 @@ export default async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  const isBot = isCrawlerBot(request.headers.get("user-agent") || "");
+
   // Si el visitante ya eligió idioma a mano (o next-intl ya lo detectó antes), no lo pisamos.
-  if (!request.cookies.get("NEXT_LOCALE")) {
+  // A los bots nunca se les toca el idioma por país/navegador: deben ver siempre el
+  // idioma exacto que implica la URL que pidieron (bug: Threads/Facebook mostraban
+  // SIEMPRE la vista previa en inglés porque sus servidores pegan desde EE.UU.).
+  if (!isBot && !request.cookies.get("NEXT_LOCALE")) {
     const country = request.headers.get("x-vercel-ip-country");
     if (country) {
       const detected = ENGLISH_SPEAKING_COUNTRIES.has(country) ? "en" : "es";
       // Fuerza la negociación por idioma de next-intl hacia el resultado detectado por país.
       request.headers.set("accept-language", detected);
     }
+  } else if (isBot) {
+    // Sin esto, el propio Accept-Language que manda el bot (a menudo "en-US" por
+    // defecto) seguiría empujando a next-intl a redirigir a /en/... aunque la URL
+    // pedida no tuviera prefijo. Sin cabecera que negociar, next-intl sirve el
+    // idioma por defecto (es) tal cual lo pide la URL, sin redirigir a nadie.
+    request.headers.delete("accept-language");
   }
   const intlResponse = handleI18nRouting(request);
   return updateSession(request, intlResponse);
