@@ -1,5 +1,29 @@
 # ESTADO — PeptiBrain
 
+## ✅ Fix: vistas previas de enlaces (Threads/Facebook/WhatsApp) salían en inglés (2026-08-02)
+
+El dueño compartió una captura de su primer hilo en Threads: compartió la URL en español
+(`/blog/que-son-los-peptidos`, sin prefijo) y la vista previa del link salió en inglés.
+
+Causa real (confirmada, no supuesta): el middleware detecta el país del visitante
+(`x-vercel-ip-country`) para elegir idioma en visitas nuevas — pero los servidores de Meta/
+Threads/WhatsApp/Twitter que van a buscar la vista previa de un link pegan casi siempre desde
+EE.UU., así que **cualquier link compartido, en cualquier idioma, siempre terminaba mostrando la
+vista previa en inglés**, sin importar la URL real compartida.
+
+Fix en `proxy.ts`: se detecta el user-agent de bots conocidos (Facebook, Threads, WhatsApp,
+Twitter/X, LinkedIn, Telegram, Slack, Discord, Google, Bing, etc.) — para ellos nunca se toca el
+idioma por país ni por su propio `Accept-Language`: ven exactamente el idioma que implica la URL
+que pidieron, sin redirección. Los visitantes humanos normales no cambian en nada.
+
+Verificado con `curl` simulando el bot (`User-Agent: facebookexternalhit`, `Accept-Language:
+en-US`) en tres capas: local (dev server), preview real de staging en Vercel, y producción real
+(`peptibrain.com`) — las tres devuelven 200 con el título en español, sin redirect. También se
+confirmó que un visitante humano normal con navegador en inglés SÍ sigue redirigiendo a `/en`
+correctamente (el fix no rompió la detección real para personas).
+
+tsc ✓ · npm test (100/100) ✓ · npm run build ✓ · staging→main desplegado, CI en verde.
+
 ## ✅ Embudo por canal en el panel de admin (2026-07-30)
 
 El dueño compartió un post de Facebook (#tipsvaliosos) sobre medir origen de usuarios: no basta
