@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getLocalizedPath } from "@/i18n/routing";
 import { Suspense } from "react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Shuffle } from "lucide-react";
@@ -17,13 +18,13 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "Compatibilidad" });
-  const canonical = locale === "es" ? `${BASE}${PATH}` : `${BASE}/${locale}${PATH}`;
+  const canonical = locale === "es" ? `${BASE}${PATH}` : `${BASE}/en${getLocalizedPath(PATH, locale)}`;
   return {
     title: t("metaTitle"),
     description: t("metaDescription"),
     alternates: {
       canonical,
-      languages: { es: `${BASE}${PATH}`, en: `${BASE}/en${PATH}` },
+      languages: { es: `${BASE}${PATH}`, en: `${BASE}/en${getLocalizedPath(PATH, "en")}` },
     },
     openGraph: { title: t("metaTitle"), description: t("metaDescription"), url: canonical, type: "website" },
   };

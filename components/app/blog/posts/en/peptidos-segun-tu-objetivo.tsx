@@ -76,7 +76,7 @@ export default function Post() {
       <H2>Once you&apos;ve chosen, the practical part comes next</H2>
       <P>
         Whatever your goal, the next step is the same: calculate the dose correctly and keep a record. Our{" "}
-        <Link href="/protocolos" className="font-semibold text-primary underline underline-offset-2">
+        <Link href="/protocols" className="font-semibold text-primary underline underline-offset-2">
           reference protocols
         </Link>{" "}
         page has typical dose and frequency for each peptide, with direct access to the calculator.

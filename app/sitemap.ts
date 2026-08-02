@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { routing } from "@/i18n/routing";
+import { routing, getLocalizedPath } from "@/i18n/routing";
 import { BLOG_POSTS, getSlugForLocale } from "@/lib/blog/posts";
 
 const BASE_URL = "https://peptibrain.com";
@@ -40,7 +40,7 @@ const PUBLIC_PATHS: Array<{
 
 function localizedPath(path: string, locale: string) {
   if (locale === routing.defaultLocale) return `${BASE_URL}${path || "/"}`;
-  return `${BASE_URL}/${locale}${path}`;
+  return `${BASE_URL}/${locale}${getLocalizedPath(path, locale)}`;
 }
 
 export default function sitemap(): MetadataRoute.Sitemap {

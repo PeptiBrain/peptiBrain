@@ -63,7 +63,7 @@ export default function Post() {
       <H2>How to avoid the calculation mistake</H2>
       <P>
         The simplest way to avoid getting it wrong is to stop doing the math from memory every week. Our{" "}
-        <Link href="/calculadora-semaglutida" className="font-semibold text-primary underline underline-offset-2">
+        <Link href="/semaglutide-calculator" className="font-semibold text-primary underline underline-offset-2">
           semaglutide and tirzepatide calculator
         </Link>{" "}
         already has the full titration table built in: pick the phase you&apos;re on and it shows the exact units to

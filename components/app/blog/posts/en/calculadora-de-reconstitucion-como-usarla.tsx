@@ -8,7 +8,7 @@ export default function Post() {
         Reconstituting a peptide means mixing the freeze-dried powder in the vial with bacteriostatic
         water so it can be injected. Mixing it isn't the hard part — once it's mixed, every single dose
         depends on a calculation you have to get right every time. That's why we built the{" "}
-        <Link href="/calculadora" className="font-semibold text-primary underline underline-offset-2">
+        <Link href="/reconstitution-calculator" className="font-semibold text-primary underline underline-offset-2">
           Reconstitution Calculator
         </Link>
         .

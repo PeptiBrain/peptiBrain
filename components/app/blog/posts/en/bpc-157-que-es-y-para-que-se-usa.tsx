@@ -50,7 +50,7 @@ export default function Post() {
       <P>
         That&apos;s why, for a daily-use peptide like this one, it makes even more sense to keep a record of every
         application — in{" "}
-        <Link href="/protocolos" className="font-semibold text-primary underline underline-offset-2">
+        <Link href="/protocols" className="font-semibold text-primary underline underline-offset-2">
           our reference protocols guide
         </Link>{" "}
         you can see typical values and calculate your dose in one click.

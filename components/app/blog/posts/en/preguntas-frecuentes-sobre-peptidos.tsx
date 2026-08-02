@@ -63,7 +63,7 @@ export default function Post() {
           {item.q === "Can I combine several peptides (a stack)?" && (
             <P>
               Before adding a new peptide to your stack, check that specific combination in{" "}
-              <Link href="/compatibilidad" className="font-semibold text-primary underline underline-offset-2">
+              <Link href="/stack-compatibility" className="font-semibold text-primary underline underline-offset-2">
                 Stack Compatibility
               </Link>
               : pick two compounds and we'll tell you if it's studied, needs caution, is best avoided, or
@@ -85,7 +85,7 @@ export default function Post() {
           basic peptide guide
         </Link>{" "}
         is a good place to begin. And if you already know which one you&apos;re interested in, our{" "}
-        <Link href="/protocolos" className="font-semibold text-primary underline underline-offset-2">
+        <Link href="/protocols" className="font-semibold text-primary underline underline-offset-2">
           reference protocols
         </Link>{" "}
         page has typical dose and frequency, with direct access to the calculator.

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getLocalizedPath } from "@/i18n/routing";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Wrench, Calculator, Syringe, Shuffle, ListChecks, Clock, Coins, ArrowRight, GitCompareArrows, Activity, ClipboardCheck } from "lucide-react";
 import { Header } from "@/components/app/Header";
@@ -28,13 +29,13 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "Herramientas" });
-  const canonical = locale === "es" ? `${BASE}${PATH}` : `${BASE}/${locale}${PATH}`;
+  const canonical = locale === "es" ? `${BASE}${PATH}` : `${BASE}/en${getLocalizedPath(PATH, locale)}`;
   return {
     title: t("metaTitle"),
     description: t("metaDescription"),
     alternates: {
       canonical,
-      languages: { es: `${BASE}${PATH}`, en: `${BASE}/en${PATH}` },
+      languages: { es: `${BASE}${PATH}`, en: `${BASE}/en${getLocalizedPath(PATH, "en")}` },
     },
     openGraph: { title: t("metaTitle"), description: t("metaDescription"), url: canonical, type: "website" },
   };
@@ -52,7 +53,7 @@ export default async function HerramientasPage({ params }: { params: Promise<{ l
     itemListElement: TOOLS.map((tool, i) => ({
       "@type": "ListItem",
       position: i + 1,
-      url: `${BASE}${locale === "es" ? "" : `/${locale}`}${tool.href}`,
+      url: `${BASE}${locale === "es" ? "" : `/${locale}`}${getLocalizedPath(tool.href, locale)}`,
       name: t(`${tool.key}Title`),
     })),
   };
@@ -74,7 +75,7 @@ export default async function HerramientasPage({ params }: { params: Promise<{ l
             {TOOLS.map((tool) => (
               <Link
                 key={tool.href}
-                href={tool.href}
+                href={getLocalizedPath(tool.href, locale)}
                 className="group flex flex-col rounded-2xl border border-border bg-card p-5 transition-colors hover:border-primary/40 hover:bg-muted/40"
               >
                 <div className="flex items-center justify-between">

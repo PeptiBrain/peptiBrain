@@ -68,7 +68,7 @@ export default function Post() {
           goal-based guide
         </Link>
         . And if you already know which one you want to use, our{" "}
-        <Link href="/protocolos" className="font-semibold text-primary underline underline-offset-2">
+        <Link href="/protocols" className="font-semibold text-primary underline underline-offset-2">
           protocols guide
         </Link>{" "}
         has reference doses and frequency for each one.

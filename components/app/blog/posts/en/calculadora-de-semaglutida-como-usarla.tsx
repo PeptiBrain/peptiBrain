@@ -8,7 +8,7 @@ export default function Post() {
         Semaglutide and tirzepatide don't start at the maintenance dose — they're titrated up gradually
         over several weeks. That means the "how many units do I draw" calculation changes every month,
         not just once. So you don't have to redo it by hand at every phase, we built the{" "}
-        <Link href="/calculadora-semaglutida" className="font-semibold text-primary underline underline-offset-2">
+        <Link href="/semaglutide-calculator" className="font-semibold text-primary underline underline-offset-2">
           Semaglutide & Tirzepatide Calculator
         </Link>
         .

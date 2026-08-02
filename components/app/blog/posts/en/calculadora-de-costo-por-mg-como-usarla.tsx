@@ -8,7 +8,7 @@ export default function Post() {
         Comparing peptide prices between suppliers is misleading if you only look at the vial's price —
         a pricier vial with more mg can end up cheaper per dose than a cheap one with little content in
         it. The{" "}
-        <Link href="/calculadora-costo-mg" className="font-semibold text-primary underline underline-offset-2">
+        <Link href="/cost-per-mg-calculator" className="font-semibold text-primary underline underline-offset-2">
           Cost-per-mg Calculator
         </Link>{" "}
         does that math for you.

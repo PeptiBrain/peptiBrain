@@ -97,7 +97,7 @@ export default function Post() {
       <P>
         Pick the compound (semaglutide or tirzepatide), enter your vial's mg and the bacteriostatic water you
         added, and{" "}
-        <Link href="/calculadora-semaglutida" className="font-semibold text-primary underline underline-offset-2">
+        <Link href="/semaglutide-calculator" className="font-semibold text-primary underline underline-offset-2">
           PeptiBrain's GLP-1 calculator
         </Link>{" "}
         shows you the full weekly titration table with the exact units to draw at every phase — with a

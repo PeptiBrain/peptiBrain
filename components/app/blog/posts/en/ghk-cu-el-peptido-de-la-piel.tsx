@@ -47,7 +47,7 @@ export default function Post() {
         The same rules as always apply: calculate the concentration correctly based on the vial&apos;s mg and the
         water added, keep it refrigerated once reconstituted, and don&apos;t lose track of how long the vial has been
         open. Our{" "}
-        <Link href="/calculadora" className="font-semibold text-primary underline underline-offset-2">
+        <Link href="/reconstitution-calculator" className="font-semibold text-primary underline underline-offset-2">
           reconstitution calculator
         </Link>{" "}
         works exactly the same for GHK-Cu as for any other peptide vial.

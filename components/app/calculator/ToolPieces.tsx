@@ -1,6 +1,7 @@
 import { AlertTriangle, ArrowRight, Calculator, ListChecks, Syringe, Shuffle, Clock, Coins, GitCompareArrows, Activity, ClipboardCheck } from "lucide-react";
 import { Link } from "@/i18n/navigation";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, getLocale } from "next-intl/server";
+import { getLocalizedPath } from "@/i18n/routing";
 
 // Aviso legal transversal de todas las herramientas: NO es consejo médico.
 export async function ToolDisclaimer() {
@@ -57,16 +58,17 @@ export async function ToolCrossLinks({
   current: "calc" | "sema" | "protocolos" | "comparador" | "eliminacion" | "costomg" | "compat" | "trt" | "trtQuiz";
 }) {
   const t = await getTranslations("Tools");
+  const locale = await getLocale();
   const links = [
-    { key: "calc" as const, href: "/calculadora", label: t("navCalculator"), icon: Calculator },
-    { key: "sema" as const, href: "/calculadora-semaglutida", label: t("navSemaglutide"), icon: Syringe },
-    { key: "protocolos" as const, href: "/protocolos", label: t("navProtocols"), icon: ListChecks },
-    { key: "comparador" as const, href: "/comparador", label: t("navComparador"), icon: Shuffle },
-    { key: "compat" as const, href: "/compatibilidad", label: t("navCompat"), icon: GitCompareArrows },
-    { key: "eliminacion" as const, href: "/calculadora-eliminacion", label: t("navClearance"), icon: Clock },
-    { key: "costomg" as const, href: "/calculadora-costo-mg", label: t("navCostPerMg"), icon: Coins },
-    { key: "trt" as const, href: "/calculadora-trt", label: t("navTrt"), icon: Activity },
-    { key: "trtQuiz" as const, href: "/quiz-trt", label: t("navTrtQuiz"), icon: ClipboardCheck },
+    { key: "calc" as const, href: getLocalizedPath("/calculadora", locale), label: t("navCalculator"), icon: Calculator },
+    { key: "sema" as const, href: getLocalizedPath("/calculadora-semaglutida", locale), label: t("navSemaglutide"), icon: Syringe },
+    { key: "protocolos" as const, href: getLocalizedPath("/protocolos", locale), label: t("navProtocols"), icon: ListChecks },
+    { key: "comparador" as const, href: getLocalizedPath("/comparador", locale), label: t("navComparador"), icon: Shuffle },
+    { key: "compat" as const, href: getLocalizedPath("/compatibilidad", locale), label: t("navCompat"), icon: GitCompareArrows },
+    { key: "eliminacion" as const, href: getLocalizedPath("/calculadora-eliminacion", locale), label: t("navClearance"), icon: Clock },
+    { key: "costomg" as const, href: getLocalizedPath("/calculadora-costo-mg", locale), label: t("navCostPerMg"), icon: Coins },
+    { key: "trt" as const, href: getLocalizedPath("/calculadora-trt", locale), label: t("navTrt"), icon: Activity },
+    { key: "trtQuiz" as const, href: getLocalizedPath("/quiz-trt", locale), label: t("navTrtQuiz"), icon: ClipboardCheck },
   ].filter((l) => l.key !== current);
 
   return (

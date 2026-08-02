@@ -116,7 +116,7 @@ export default function Post() {
           PeptiBrain
         </Link>
         : log every injection in seconds from your phone, calculate the exact volume with our{" "}
-        <Link href="/calculadora-trt" className="font-semibold text-primary underline underline-offset-2">
+        <Link href="/trt-calculator" className="font-semibold text-primary underline underline-offset-2">
           TRT dose calculator
         </Link>
         , and the app builds your on-time injection streak and a report ready to show at your next

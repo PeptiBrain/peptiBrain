@@ -7,7 +7,7 @@ export default function Post() {
       <P>
         &ldquo;How long does this take to leave my body?&rdquo; is a question that comes down to each
         compound's half-life — a pharmacology fact, not an opinion. The{" "}
-        <Link href="/calculadora-eliminacion" className="font-semibold text-primary underline underline-offset-2">
+        <Link href="/clearance-calculator" className="font-semibold text-primary underline underline-offset-2">
           Clearance Calculator
         </Link>{" "}
         takes that figure and turns it into an estimated time, without guessing anything we can't back

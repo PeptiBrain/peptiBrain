@@ -84,7 +84,7 @@ export default function Post() {
       </P>
       <P>
         You can try our calculators{" "}
-        <Link href="/calculadora" className="font-semibold text-primary underline underline-offset-2">
+        <Link href="/reconstitution-calculator" className="font-semibold text-primary underline underline-offset-2">
           free and with no signup
         </Link>{" "}
         before deciding whether to move to the full app.

@@ -3,9 +3,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "motion/react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { LifeBuoy, Search, ChevronDown, X } from "lucide-react";
 import { Link } from "@/i18n/navigation";
+import { getLocalizedPath } from "@/i18n/routing";
 
 const SUPPORT_EMAIL = "hello@peptibrain.com";
 
@@ -28,6 +29,7 @@ const ARTICLES: { cat: string; q: string; a: string }[] = [
 
 export function HelpCenter({ open, onClose }: { open: boolean; onClose: () => void }) {
   const t = useTranslations("Help");
+  const locale = useLocale();
   const [query, setQuery] = useState("");
   const [openId, setOpenId] = useState<string | null>(null);
 
@@ -198,10 +200,10 @@ export function HelpCenter({ open, onClose }: { open: boolean; onClose: () => vo
                   </a>
                 </p>
                 <div className="flex gap-3 text-xs text-muted-foreground">
-                  <Link href="/terminos" className="hover:text-foreground hover:underline">
+                  <Link href={getLocalizedPath("/terminos", locale)} className="hover:text-foreground hover:underline">
                     {t("terms")}
                   </Link>
-                  <Link href="/privacidad" className="hover:text-foreground hover:underline">
+                  <Link href={getLocalizedPath("/privacidad", locale)} className="hover:text-foreground hover:underline">
                     {t("privacy")}
                   </Link>
                 </div>

@@ -150,13 +150,13 @@ export default function Post() {
       <H3>Free tools (no signup)</H3>
       <UL>
         <LI>
-          <Link href="/comparador" className="font-semibold text-primary underline underline-offset-2">
+          <Link href="/peptide-comparator" className="font-semibold text-primary underline underline-offset-2">
             Peptide comparator
           </Link>{" "}
           side by side.
         </LI>
         <LI>
-          <Link href="/compatibilidad" className="font-semibold text-primary underline underline-offset-2">
+          <Link href="/stack-compatibility" className="font-semibold text-primary underline underline-offset-2">
             Stack compatibility
           </Link>{" "}
           — whether two compounds can be combined.

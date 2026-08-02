@@ -59,7 +59,7 @@ export default function Post() {
       </P>
       <P>
         Doing that math in your head every time is where most mistakes slip in. Our{" "}
-        <Link href="/calculadora" className="font-semibold text-primary underline underline-offset-2">
+        <Link href="/reconstitution-calculator" className="font-semibold text-primary underline underline-offset-2">
           free reconstitution calculator
         </Link>{" "}
         does exactly that conversion instantly, with a syringe drawing so you don&apos;t get it wrong.

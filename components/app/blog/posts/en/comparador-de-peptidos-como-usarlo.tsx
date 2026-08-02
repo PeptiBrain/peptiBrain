@@ -7,7 +7,7 @@ export default function Post() {
       <P>
         When you're deciding between two peptides, looking each one up separately across different
         sources and building the comparison yourself is slow and easy to get wrong. The{" "}
-        <Link href="/comparador" className="font-semibold text-primary underline underline-offset-2">
+        <Link href="/peptide-comparator" className="font-semibold text-primary underline underline-offset-2">
           Peptide Comparator
         </Link>{" "}
         puts both side by side, field by field, on a single screen.

@@ -18,7 +18,7 @@ export default function Post() {
         &ldquo;Can I combine this with that?&rdquo; is one of the questions that comes up the most in
         any peptide community — and the one giant matrix-style tables tend to answer the worst,
         since finding your exact combination is harder than the question itself. That's why we built{" "}
-        <Link href="/compatibilidad" className="font-semibold text-primary underline underline-offset-2">
+        <Link href="/stack-compatibility" className="font-semibold text-primary underline underline-offset-2">
           Stack Compatibility
         </Link>
         : you pick two compounds and get back a single verdict, not 500 cells.
@@ -71,7 +71,7 @@ export default function Post() {
         These are just 6 examples to illustrate the 4 statuses — the tool covers quite a few more
         combinations across recovery/skin, GLP-1, growth peptides (GHRH/GHRP), and nootropics. Try it
         directly with your own combination in{" "}
-        <Link href="/compatibilidad" className="font-semibold text-primary underline underline-offset-2">
+        <Link href="/stack-compatibility" className="font-semibold text-primary underline underline-offset-2">
           the tool
         </Link>
         .

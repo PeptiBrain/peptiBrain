@@ -1,12 +1,14 @@
 import Image from "next/image";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import { getLocalizedPath } from "@/i18n/routing";
 import { ShieldAlert } from "lucide-react";
 
 export function Footer() {
   const t = useTranslations("Footer");
   const tt = useTranslations("Tools");
   const tq = useTranslations("QuienesSomos");
+  const locale = useLocale();
   const year = new Date().getFullYear();
 
   return (
@@ -55,30 +57,30 @@ export function Footer() {
             </div>
 
             <FooterColumn title={t("colProduct")}>
-              <FooterLink href="/herramientas">{tt("navAllTools")}</FooterLink>
-              <FooterLink href="/calculadora">{tt("navCalculator")}</FooterLink>
-              <FooterLink href="/calculadora-semaglutida">{tt("navSemaglutide")}</FooterLink>
-              <FooterLink href="/comparador">{tt("navComparador")}</FooterLink>
-              <FooterLink href="/compatibilidad">{tt("navCompat")}</FooterLink>
-              <FooterLink href="/protocolos">{tt("navProtocols")}</FooterLink>
-              <FooterLink href="/calculadora-eliminacion">{tt("navClearance")}</FooterLink>
-              <FooterLink href="/calculadora-costo-mg">{tt("navCostPerMg")}</FooterLink>
-              <FooterLink href="/calculadora-trt">{tt("navTrt")}</FooterLink>
-              <FooterLink href="/quiz-trt">{tt("navTrtQuiz")}</FooterLink>
+              <FooterLink href={getLocalizedPath("/herramientas", locale)}>{tt("navAllTools")}</FooterLink>
+              <FooterLink href={getLocalizedPath("/calculadora", locale)}>{tt("navCalculator")}</FooterLink>
+              <FooterLink href={getLocalizedPath("/calculadora-semaglutida", locale)}>{tt("navSemaglutide")}</FooterLink>
+              <FooterLink href={getLocalizedPath("/comparador", locale)}>{tt("navComparador")}</FooterLink>
+              <FooterLink href={getLocalizedPath("/compatibilidad", locale)}>{tt("navCompat")}</FooterLink>
+              <FooterLink href={getLocalizedPath("/protocolos", locale)}>{tt("navProtocols")}</FooterLink>
+              <FooterLink href={getLocalizedPath("/calculadora-eliminacion", locale)}>{tt("navClearance")}</FooterLink>
+              <FooterLink href={getLocalizedPath("/calculadora-costo-mg", locale)}>{tt("navCostPerMg")}</FooterLink>
+              <FooterLink href={getLocalizedPath("/calculadora-trt", locale)}>{tt("navTrt")}</FooterLink>
+              <FooterLink href={getLocalizedPath("/quiz-trt", locale)}>{tt("navTrtQuiz")}</FooterLink>
             </FooterColumn>
 
             <FooterColumn title={t("colCommunity")}>
               <FooterLink href="/blog">Blog</FooterLink>
               <FooterLink href="/ideas">{tt("navIdeas")}</FooterLink>
-              <FooterLink href="/quienes-somos">{tq("title")}</FooterLink>
+              <FooterLink href={getLocalizedPath("/quienes-somos", locale)}>{tq("title")}</FooterLink>
             </FooterColumn>
 
             <FooterColumn title={t("colLegal")}>
-              <FooterLink href="/terminos">{t("terms")}</FooterLink>
-              <FooterLink href="/privacidad">{t("privacy")}</FooterLink>
+              <FooterLink href={getLocalizedPath("/terminos", locale)}>{t("terms")}</FooterLink>
+              <FooterLink href={getLocalizedPath("/privacidad", locale)}>{t("privacy")}</FooterLink>
               <FooterLink href="/cookies">{t("cookies")}</FooterLink>
-              <FooterLink href="/reembolsos">{t("refunds")}</FooterLink>
-              <FooterLink href="/aviso-legal">{t("legalEntity")}</FooterLink>
+              <FooterLink href={getLocalizedPath("/reembolsos", locale)}>{t("refunds")}</FooterLink>
+              <FooterLink href={getLocalizedPath("/aviso-legal", locale)}>{t("legalEntity")}</FooterLink>
             </FooterColumn>
           </div>
 

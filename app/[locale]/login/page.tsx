@@ -2,9 +2,10 @@
 
 import { Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { Link } from "@/i18n/navigation";
+import { getLocalizedPath } from "@/i18n/routing";
 import Image from "next/image";
 import { motion } from "motion/react";
 import { User, Mail, Phone, Lock, Eye, EyeOff, Check, ShieldCheck, Smartphone } from "lucide-react";
@@ -35,6 +36,7 @@ export default function LoginPage() {
 
 function LoginPageContent() {
   const t = useTranslations("Login");
+  const locale = useLocale();
   const router = useRouter();
   const searchParams = useSearchParams();
   const cameFromEmailConfirmation = searchParams.has("code");
@@ -396,11 +398,11 @@ function LoginPageContent() {
               />
               <span>
                 {t("acceptPrefix")}{" "}
-                <Link href="/terminos" className="text-primary underline-offset-2 hover:underline">
+                <Link href={getLocalizedPath("/terminos", locale)} className="text-primary underline-offset-2 hover:underline">
                   {t("termsLink")}
                 </Link>{" "}
                 {t("and")}{" "}
-                <Link href="/privacidad" className="text-primary underline-offset-2 hover:underline">
+                <Link href={getLocalizedPath("/privacidad", locale)} className="text-primary underline-offset-2 hover:underline">
                   {t("privacyLink")}
                 </Link>
                 . {t("understandPrefix")}{" "}
@@ -493,11 +495,11 @@ function LoginPageContent() {
           </span>
         </p>
         <p className="flex items-center gap-2">
-          <Link href="/terminos" className="hover:text-foreground hover:underline">
+          <Link href={getLocalizedPath("/terminos", locale)} className="hover:text-foreground hover:underline">
             {t("termsLink")}
           </Link>
           <span aria-hidden>·</span>
-          <Link href="/privacidad" className="hover:text-foreground hover:underline">
+          <Link href={getLocalizedPath("/privacidad", locale)} className="hover:text-foreground hover:underline">
             {t("privacyLink")}
           </Link>
         </p>

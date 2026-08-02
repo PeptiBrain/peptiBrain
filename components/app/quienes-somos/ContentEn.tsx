@@ -135,7 +135,7 @@ export default function ContentEn() {
       <P>If you&apos;re still looking around before deciding, here&apos;s what&apos;s most useful next:</P>
       <div className="mt-4 grid gap-3 sm:grid-cols-2">
         <Link
-          href="/herramientas"
+          href="/tools"
           className="flex items-center gap-3 rounded-xl border border-border bg-card p-4 transition-colors hover:border-primary/40 hover:bg-accent/40"
         >
           <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-accent text-accent-foreground">
@@ -144,7 +144,7 @@ export default function ContentEn() {
           <span className="text-sm font-semibold text-foreground">Try the free calculators, no signup</span>
         </Link>
         <Link
-          href="/protocolos"
+          href="/protocols"
           className="flex items-center gap-3 rounded-xl border border-border bg-card p-4 transition-colors hover:border-primary/40 hover:bg-accent/40"
         >
           <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-accent text-accent-foreground">

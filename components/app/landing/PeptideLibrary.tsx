@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import {
   Flame,
   Dumbbell,
@@ -21,6 +21,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
+import { getLocalizedPath } from "@/i18n/routing";
 import { Reveal } from "@/components/app/Reveal";
 import { ModalShell } from "@/components/app/shell/ModalShell";
 import { PEPTIDE_PROFILES, type PeptideProfile, type PeptideCategoryId } from "@/lib/peptide-profiles";
@@ -59,6 +60,7 @@ const CATEGORY_ICONS: Record<PeptideCategoryId, LucideIcon> = {
 export function PeptideLibrary() {
   const t = useTranslations("PeptideLibrary");
   const tc = useTranslations("PeptideCategories");
+  const locale = useLocale();
   const scrollRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
   const [quickView, setQuickView] = useState<PeptideProfile | null>(null);
@@ -96,7 +98,7 @@ export function PeptideLibrary() {
               </h2>
             </div>
             <Link
-              href="/protocolos"
+              href={getLocalizedPath("/protocolos", locale)}
               className="flex shrink-0 items-center gap-1 text-sm font-semibold text-primary hover:underline"
             >
               {t("seeAll")} <ArrowRight className="size-4" aria-hidden />
@@ -253,7 +255,7 @@ export function PeptideLibrary() {
               {t("modalCta")}
             </Link>
             <Link
-              href="/protocolos"
+              href={getLocalizedPath("/protocolos", locale)}
               className="flex h-11 items-center justify-center rounded-lg border border-border text-sm font-semibold text-foreground hover:bg-muted"
             >
               {t("modalFullProtocol")}

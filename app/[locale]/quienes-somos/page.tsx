@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getLocalizedPath } from "@/i18n/routing";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ChevronRight, Users } from "lucide-react";
 import { Header } from "@/components/app/Header";
@@ -18,13 +19,13 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "QuienesSomos" });
-  const canonical = locale === "es" ? `${BASE}${PATH}` : `${BASE}/${locale}${PATH}`;
+  const canonical = locale === "es" ? `${BASE}${PATH}` : `${BASE}/en${getLocalizedPath(PATH, locale)}`;
   return {
     title: t("metaTitle"),
     description: t("metaDescription"),
     alternates: {
       canonical,
-      languages: { es: `${BASE}${PATH}`, en: `${BASE}/en${PATH}` },
+      languages: { es: `${BASE}${PATH}`, en: `${BASE}/en${getLocalizedPath(PATH, "en")}` },
     },
   };
 }

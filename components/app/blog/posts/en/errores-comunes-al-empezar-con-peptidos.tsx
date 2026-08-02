@@ -59,7 +59,7 @@ export default function Post() {
       <H2>How to avoid them, in practice</H2>
       <P>
         Always use a{" "}
-        <Link href="/calculadora" className="font-semibold text-primary underline underline-offset-2">
+        <Link href="/reconstitution-calculator" className="font-semibold text-primary underline underline-offset-2">
           reconstitution calculator
         </Link>{" "}
         instead of calculating by hand, write down the date you open each vial, and keep a record of every dose

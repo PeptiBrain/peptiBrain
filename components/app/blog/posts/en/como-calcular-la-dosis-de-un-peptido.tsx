@@ -101,7 +101,7 @@ export default function Post() {
       <H2>Use the free calculator</H2>
       <P>
         Instead of redoing this math by hand every time,{" "}
-        <Link href="/calculadora" className="font-semibold text-primary underline underline-offset-2">
+        <Link href="/reconstitution-calculator" className="font-semibold text-primary underline underline-offset-2">
           PeptiBrain's reconstitution calculator
         </Link>{" "}
         does the full conversion for any peptide — enter the vial mg, the water you added, and your dose, and
@@ -111,7 +111,7 @@ export default function Post() {
           GLP-1 dose calculator
         </Link>
         ; if it's TRT, the{" "}
-        <Link href="/calculadora-trt" className="font-semibold text-primary underline underline-offset-2">
+        <Link href="/trt-calculator" className="font-semibold text-primary underline underline-offset-2">
           TRT calculator
         </Link>
         .

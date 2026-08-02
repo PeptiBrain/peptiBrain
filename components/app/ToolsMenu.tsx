@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { ChevronDown, Calculator, Syringe, Shuffle, ListChecks, Clock, Coins, Wrench, GitCompareArrows, Activity, ClipboardCheck } from "lucide-react";
 import { Link } from "@/i18n/navigation";
+import { getLocalizedPath } from "@/i18n/routing";
 
 const TOOLS = [
   { href: "/calculadora", labelKey: "navCalculator" as const, icon: Calculator },
@@ -21,6 +22,7 @@ const TOOLS = [
 // "Gratis" para dar acceso directo a las 4 herramientas públicas gratuitas.
 export function ToolsMenu({ triggerLabel }: { triggerLabel: string }) {
   const t = useTranslations("Tools");
+  const locale = useLocale();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -59,7 +61,7 @@ export function ToolsMenu({ triggerLabel }: { triggerLabel: string }) {
           {TOOLS.map((tool) => (
             <Link
               key={tool.href}
-              href={tool.href}
+              href={getLocalizedPath(tool.href, locale)}
               role="menuitem"
               onClick={() => setOpen(false)}
               className="flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-muted"
@@ -69,7 +71,7 @@ export function ToolsMenu({ triggerLabel }: { triggerLabel: string }) {
             </Link>
           ))}
           <Link
-            href="/herramientas"
+            href={getLocalizedPath("/herramientas", locale)}
             role="menuitem"
             onClick={() => setOpen(false)}
             className="mt-1 flex items-center gap-2.5 rounded-lg border-t border-border px-3 py-2.5 pt-3.5 text-sm font-semibold text-primary hover:bg-muted"
