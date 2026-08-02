@@ -23,7 +23,7 @@ export default function Post() {
       </UL>
       <P>
         If you&apos;re going down this path, read our guide on{" "}
-        <Link href="/blog/semaglutida-como-funciona-y-como-se-calcula-la-dosis" className="font-semibold text-primary underline underline-offset-2">
+        <Link href="/blog/semaglutide-how-it-works-and-dose-calculation" className="font-semibold text-primary underline underline-offset-2">
           semaglutide and how the dose is calculated
         </Link>
         .
@@ -36,7 +36,7 @@ export default function Post() {
       </UL>
       <P>
         We go deeper into the first one in{" "}
-        <Link href="/blog/bpc-157-que-es-y-para-que-se-usa" className="font-semibold text-primary underline underline-offset-2">
+        <Link href="/blog/bpc-157-what-it-is-and-what-its-used-for" className="font-semibold text-primary underline underline-offset-2">
           this article on BPC-157
         </Link>
         .
@@ -62,7 +62,7 @@ export default function Post() {
       </UL>
       <P>
         We dedicate a full article to it:{" "}
-        <Link href="/blog/ghk-cu-el-peptido-de-la-piel" className="font-semibold text-primary underline underline-offset-2">
+        <Link href="/blog/ghk-cu-the-skin-peptide" className="font-semibold text-primary underline underline-offset-2">
           GHK-Cu and the skin
         </Link>
         .

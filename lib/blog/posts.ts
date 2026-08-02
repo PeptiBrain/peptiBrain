@@ -28,7 +28,13 @@ type LocalizedText = { es: string; en: string };
 type LocalizedTags = { es: string[]; en: string[] };
 
 export type BlogPost = {
+  // slug: identificador ESTABLE del post (clave del mapa CONTENT en [slug]/page.tsx,
+  // de SLUGS_WITH_IMAGE y de la URL en español). Nunca cambia aunque cambie slugEn.
   slug: string;
+  // URL en inglés (/en/blog/<slugEn>) — antes no existía y la URL en inglés
+  // reusaba el slug en español, algo que ni los lectores en inglés ni Google
+  // esperan. Si falta, getSlugForLocale() cae al slug en español.
+  slugEn?: string;
   title: LocalizedText;
   excerpt: LocalizedText;
   category: LocalizedText;
@@ -62,6 +68,7 @@ export function localizedTags(tags: LocalizedTags, locale: string): string[] {
 export const BLOG_POSTS: BlogPost[] = [
   {
     slug: "que-es-peptibrain",
+    slugEn: "what-is-peptibrain",
     title: {
       es: "¿Qué es PeptiBrain? La guía completa: para quién es, qué resuelve y todo lo que incluye",
       en: "What is PeptiBrain? The complete guide: who it's for, what it solves, and everything it includes",
@@ -82,6 +89,7 @@ export const BLOG_POSTS: BlogPost[] = [
   },
   {
     slug: "que-son-los-peptidos",
+    slugEn: "what-are-peptides",
     title: {
       es: "¿Qué son los péptidos? Guía básica para empezar",
       en: "What are peptides? A basic guide to get started",
@@ -98,6 +106,7 @@ export const BLOG_POSTS: BlogPost[] = [
   },
   {
     slug: "como-reconstituir-un-peptido",
+    slugEn: "how-to-reconstitute-a-peptide",
     title: {
       es: "Cómo reconstituir un péptido paso a paso (agua bacteriostática)",
       en: "How to reconstitute a peptide step by step (bacteriostatic water)",
@@ -114,6 +123,7 @@ export const BLOG_POSTS: BlogPost[] = [
   },
   {
     slug: "semaglutida-como-funciona-y-como-se-calcula-la-dosis",
+    slugEn: "semaglutide-how-it-works-and-dose-calculation",
     title: {
       es: "Semaglutida: cómo funciona y cómo se calcula la dosis",
       en: "Semaglutide: how it works and how the dose is calculated",
@@ -130,6 +140,7 @@ export const BLOG_POSTS: BlogPost[] = [
   },
   {
     slug: "bpc-157-que-es-y-para-que-se-usa",
+    slugEn: "bpc-157-what-it-is-and-what-its-used-for",
     title: {
       es: "BPC-157: qué es y para qué se investiga en recuperación",
       en: "BPC-157: what it is and what it's researched for in recovery",
@@ -146,6 +157,7 @@ export const BLOG_POSTS: BlogPost[] = [
   },
   {
     slug: "ghk-cu-el-peptido-de-la-piel",
+    slugEn: "ghk-cu-the-skin-peptide",
     title: {
       es: "GHK-Cu: el péptido de cobre y la piel — qué dice la ciencia",
       en: "GHK-Cu: the copper peptide and the skin — what the science says",
@@ -162,6 +174,7 @@ export const BLOG_POSTS: BlogPost[] = [
   },
   {
     slug: "errores-comunes-al-empezar-con-peptidos",
+    slugEn: "common-mistakes-starting-with-peptides",
     title: {
       es: "7 errores comunes al empezar con péptidos (y cómo evitarlos)",
       en: "7 common mistakes when starting with peptides (and how to avoid them)",
@@ -178,6 +191,7 @@ export const BLOG_POSTS: BlogPost[] = [
   },
   {
     slug: "mejores-apps-de-peptidos",
+    slugEn: "best-peptide-apps",
     title: {
       es: "Las mejores apps de péptidos en 2026 (comparativa)",
       en: "The best peptide apps in 2026 (comparison)",
@@ -194,6 +208,7 @@ export const BLOG_POSTS: BlogPost[] = [
   },
   {
     slug: "peptidos-populares",
+    slugEn: "popular-peptides",
     title: {
       es: "Péptidos populares: los más mencionados y qué se investiga de cada uno",
       en: "Popular peptides: the most mentioned ones and what's researched about each",
@@ -210,6 +225,7 @@ export const BLOG_POSTS: BlogPost[] = [
   },
   {
     slug: "peptidos-segun-tu-objetivo",
+    slugEn: "peptides-by-goal",
     title: {
       es: "Péptidos según tu objetivo: peso, recuperación, músculo, antiedad y piel",
       en: "Peptides by goal: weight, recovery, muscle, anti-aging and skin",
@@ -226,6 +242,7 @@ export const BLOG_POSTS: BlogPost[] = [
   },
   {
     slug: "como-se-usan-los-peptidos",
+    slugEn: "how-peptides-are-used",
     title: {
       es: "Cómo se usan los péptidos: vía, horario y rotación de zonas",
       en: "How peptides are used: route, timing and site rotation",
@@ -242,6 +259,7 @@ export const BLOG_POSTS: BlogPost[] = [
   },
   {
     slug: "como-almacenar-tus-peptidos",
+    slugEn: "how-to-store-your-peptides",
     title: {
       es: "Cómo almacenar tus péptidos: temperatura, luz y vida útil",
       en: "How to store your peptides: temperature, light and shelf life",
@@ -258,6 +276,7 @@ export const BLOG_POSTS: BlogPost[] = [
   },
   {
     slug: "preguntas-frecuentes-sobre-peptidos",
+    slugEn: "peptides-faq",
     title: {
       es: "FAQ: péptidos sin rodeos",
       en: "FAQ: peptides, no beating around the bush",
@@ -274,6 +293,7 @@ export const BLOG_POSTS: BlogPost[] = [
   },
   {
     slug: "como-registrar-tus-dosis-de-glp1",
+    slugEn: "how-to-track-your-glp1-doses",
     title: {
       es: "Cómo registrar tus dosis de GLP-1 correctamente: guía paso a paso",
       en: "How to track your GLP-1 doses correctly: a step-by-step guide",
@@ -290,6 +310,7 @@ export const BLOG_POSTS: BlogPost[] = [
   },
   {
     slug: "como-registrar-tus-dosis-de-trt",
+    slugEn: "how-to-track-your-trt-doses",
     title: {
       es: "Cómo registrar tus dosis de TRT correctamente: guía paso a paso",
       en: "How to track your TRT doses correctly: a step-by-step guide",
@@ -306,6 +327,7 @@ export const BLOG_POSTS: BlogPost[] = [
   },
   {
     slug: "compatibilidad-de-stacks-como-usarla",
+    slugEn: "stack-compatibility-calculator",
     title: {
       es: "Compatibilidad de stacks: cómo funciona la herramienta y cómo sacarle el máximo partido",
       en: "Stack compatibility: how the tool works and how to get the most out of it",
@@ -322,6 +344,7 @@ export const BLOG_POSTS: BlogPost[] = [
   },
   {
     slug: "calculadora-de-reconstitucion-como-usarla",
+    slugEn: "reconstitution-calculator",
     title: {
       es: "Calculadora de reconstitución: cómo funciona y cómo sacarle el máximo partido",
       en: "Reconstitution calculator: how it works and how to get the most out of it",
@@ -338,6 +361,7 @@ export const BLOG_POSTS: BlogPost[] = [
   },
   {
     slug: "calculadora-de-semaglutida-como-usarla",
+    slugEn: "semaglutide-tirzepatide-calculator",
     title: {
       es: "Calculadora de semaglutida y tirzepatida: cómo funciona y cómo sacarle el máximo partido",
       en: "Semaglutide & tirzepatide calculator: how it works and how to get the most out of it",
@@ -354,6 +378,7 @@ export const BLOG_POSTS: BlogPost[] = [
   },
   {
     slug: "comparador-de-peptidos-como-usarlo",
+    slugEn: "peptide-comparator",
     title: {
       es: "Comparador de péptidos: cómo funciona y cómo sacarle el máximo partido",
       en: "Peptide comparator: how it works and how to get the most out of it",
@@ -370,6 +395,7 @@ export const BLOG_POSTS: BlogPost[] = [
   },
   {
     slug: "calculadora-de-eliminacion-como-usarla",
+    slugEn: "clearance-calculator",
     title: {
       es: "Calculadora de eliminación: cómo funciona y cómo sacarle el máximo partido",
       en: "Clearance calculator: how it works and how to get the most out of it",
@@ -386,6 +412,7 @@ export const BLOG_POSTS: BlogPost[] = [
   },
   {
     slug: "calculadora-de-costo-por-mg-como-usarla",
+    slugEn: "cost-per-mg-calculator",
     title: {
       es: "Calculadora de costo por mg: cómo funciona y cómo sacarle el máximo partido",
       en: "Cost-per-mg calculator: how it works and how to get the most out of it",
@@ -402,6 +429,7 @@ export const BLOG_POSTS: BlogPost[] = [
   },
   {
     slug: "calculadora-de-dosis-de-glp1",
+    slugEn: "glp1-dose-calculator",
     title: {
       es: "Calculadora de dosis de GLP-1: de mg a unidades de jeringa, sin hacer cuentas a mano",
       en: "GLP-1 dose calculator: from mg to syringe units, no manual math",
@@ -421,6 +449,7 @@ export const BLOG_POSTS: BlogPost[] = [
   },
   {
     slug: "como-calcular-la-dosis-de-un-peptido",
+    slugEn: "how-to-calculate-a-peptide-dose",
     title: {
       es: "Cómo calcular la dosis de un péptido: la fórmula paso a paso (para cualquier compuesto)",
       en: "How to calculate a peptide's dose: the step-by-step formula (for any compound)",
@@ -440,6 +469,7 @@ export const BLOG_POSTS: BlogPost[] = [
   },
   {
     slug: "mejores-herramientas-para-registrar-peptidos",
+    slugEn: "best-tools-to-track-peptides",
     title: {
       es: "Mejores herramientas para registrar péptidos: notas, Excel o una app hecha para esto",
       en: "Best tools to track peptides: notes, a spreadsheet, or a purpose-built app",
@@ -459,8 +489,17 @@ export const BLOG_POSTS: BlogPost[] = [
   },
 ];
 
-export function getBlogPost(slug: string): BlogPost | undefined {
-  return BLOG_POSTS.find((p) => p.slug === slug);
+// El slug que va en la URL para ese idioma — inglés usa slugEn si existe,
+// si no cae al slug en español (posts viejos que aún no tienen su versión en inglés).
+export function getSlugForLocale(post: BlogPost, locale: string): string {
+  return locale === "en" ? post.slugEn || post.slug : post.slug;
+}
+
+// `slugParam` es lo que vino en la URL — puede ser el slug español (clave estable)
+// o el slugEn (URL real en inglés). Busca por cualquiera de los dos para que
+// cualquier locale encuentre el post con la URL de SU propio idioma.
+export function getBlogPost(slugParam: string): BlogPost | undefined {
+  return BLOG_POSTS.find((p) => p.slug === slugParam || p.slugEn === slugParam);
 }
 
 // Slugs que ya tienen una imagen de portada real en public/blog/<slug>.png

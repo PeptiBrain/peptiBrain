@@ -81,7 +81,7 @@ export default function Post() {
       <H2>What&apos;s next?</H2>
       <P>
         If you&apos;re still not sure where to start, our{" "}
-        <Link href="/blog/que-son-los-peptidos" className="font-semibold text-primary underline underline-offset-2">
+        <Link href="/blog/what-are-peptides" className="font-semibold text-primary underline underline-offset-2">
           basic peptide guide
         </Link>{" "}
         is a good place to begin. And if you already know which one you&apos;re interested in, our{" "}

@@ -5,7 +5,7 @@ import { Clock, ChevronLeft, ChevronRight } from "lucide-react";
 import { Header } from "@/components/app/Header";
 import { Footer } from "@/components/app/Footer";
 import { Link } from "@/i18n/navigation";
-import { BLOG_POSTS, localized, getPostImagePath, orderCategories } from "@/lib/blog/posts";
+import { BLOG_POSTS, localized, getPostImagePath, getSlugForLocale, orderCategories } from "@/lib/blog/posts";
 import { JsonLd } from "@/components/app/calculator/ToolPieces";
 import { ArticleHero } from "@/components/app/blog/ArticleHero";
 import { BlogGrid } from "@/components/app/blog/BlogGrid";
@@ -114,21 +114,21 @@ export default async function BlogIndexPage({
     safeLocale
   );
 
+  const localePrefix = safeLocale === "en" ? "/en" : "";
+
   const blogLd = {
     "@context": "https://schema.org",
     "@type": "Blog",
     name: s.title,
-    url: `${BASE}/blog`,
+    url: `${BASE}${localePrefix}/blog`,
     inLanguage: safeLocale,
     blogPost: SORTED_POSTS.map((p) => ({
       "@type": "BlogPosting",
       headline: localized(p.title, safeLocale),
-      url: `${BASE}/blog/${p.slug}`,
+      url: `${BASE}${localePrefix}/blog/${getSlugForLocale(p, safeLocale)}`,
       datePublished: p.publishedAt,
     })),
   };
-
-  const localePrefix = safeLocale === "en" ? "/en" : "";
   const breadcrumbLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -180,7 +180,7 @@ export default async function BlogIndexPage({
               return (
                 <Link
                   key={post.slug}
-                  href={`/blog/${post.slug}`}
+                  href={`/blog/${getSlugForLocale(post, safeLocale)}`}
                   className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card transition-colors hover:border-primary/40"
                 >
                   <div className="p-3 pb-0">

@@ -3,7 +3,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { sendPush } from "@/lib/push";
 import { emailShell, emailButton, escapeHtml } from "@/lib/email-template";
 import { pingIndexNow } from "@/lib/indexnow";
-import { BLOG_POSTS } from "@/lib/blog/posts";
+import { BLOG_POSTS, getSlugForLocale } from "@/lib/blog/posts";
 import { daysSince, mostOverdueMarker, monthsElapsed, labMarkerLabel } from "@/lib/lab-reminder";
 
 export const dynamic = "force-dynamic";
@@ -190,7 +190,7 @@ export async function GET(req: Request) {
   const recentPosts = BLOG_POSTS.filter((p) => new Date(`${p.publishedAt}T00:00:00Z`).getTime() >= recentCutoff);
   const indexNowUrls = recentPosts.flatMap((p) => [
     `https://peptibrain.com/blog/${p.slug}`,
-    `https://peptibrain.com/en/blog/${p.slug}`,
+    `https://peptibrain.com/en/blog/${getSlugForLocale(p, "en")}`,
   ]);
   const indexNowResult = await pingIndexNow(indexNowUrls);
 

@@ -2,7 +2,7 @@ import { ArrowRight, Clock } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { Reveal } from "@/components/app/Reveal";
 import { ArticleHero } from "@/components/app/blog/ArticleHero";
-import { getBlogPost, localized, getPostImagePath } from "@/lib/blog/posts";
+import { getBlogPost, localized, getPostImagePath, getSlugForLocale } from "@/lib/blog/posts";
 
 // Las 3 guías más potentes del blog (mayor pilar de demanda + comparativa que
 // posiciona PeptiBrain para SEO/GEO). Blog bilingüe: se renderiza en ambos idiomas.
@@ -54,7 +54,7 @@ export function BlogHighlights({ locale }: { locale: string }) {
             return (
               <Reveal key={post.slug} delay={i * 0.07}>
                 <Link
-                  href={`/blog/${post.slug}`}
+                  href={`/blog/${getSlugForLocale(post, safeLocale)}`}
                   className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card transition-colors hover:border-primary/40"
                 >
                   <div className="p-3 pb-0">

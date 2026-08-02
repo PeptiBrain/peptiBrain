@@ -153,7 +153,7 @@ export default function ContentEn() {
           <span className="text-sm font-semibold text-foreground">Browse the peptide library and protocols</span>
         </Link>
         <Link
-          href="/blog/peptidos-populares"
+          href="/blog/popular-peptides"
           className="flex items-center gap-3 rounded-xl border border-border bg-card p-4 transition-colors hover:border-primary/40 hover:bg-accent/40"
         >
           <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-accent text-accent-foreground">
@@ -162,7 +162,7 @@ export default function ContentEn() {
           <span className="text-sm font-semibold text-foreground">The most-searched peptides right now</span>
         </Link>
         <Link
-          href="/blog/que-es-peptibrain"
+          href="/blog/what-is-peptibrain"
           className="flex items-center gap-3 rounded-xl border border-border bg-card p-4 transition-colors hover:border-primary/40 hover:bg-accent/40"
         >
           <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-accent text-accent-foreground">

@@ -7,7 +7,7 @@ import { ArticleHero } from "@/components/app/blog/ArticleHero";
 import { BlogCtaBanner } from "@/components/app/blog/BlogCtaBanner";
 import { NewsletterSignup } from "@/components/app/blog/NewsletterSignup";
 import { ToolDisclaimer, ToolCrossLinks, JsonLd } from "@/components/app/calculator/ToolPieces";
-import { BLOG_POSTS, localized, localizedTags, getPostImagePath, type BlogPost } from "@/lib/blog/posts";
+import { BLOG_POSTS, localized, localizedTags, getPostImagePath, getSlugForLocale, type BlogPost } from "@/lib/blog/posts";
 
 const BASE = "https://peptibrain.com";
 
@@ -44,7 +44,7 @@ export function ArticleLayout({ post, locale, children }: { post: BlogPost; loca
     inLanguage: locale,
     author: { "@type": "Organization", name: "PeptiBrain" },
     publisher: { "@type": "Organization", name: "PeptiBrain", logo: `${BASE}/peptibrain-isotipo.svg` },
-    mainEntityOfPage: `${BASE}${locale === "en" ? "/en" : ""}/blog/${post.slug}`,
+    mainEntityOfPage: `${BASE}${locale === "en" ? "/en" : ""}/blog/${getSlugForLocale(post, locale)}`,
   };
 
   const localePrefix = locale === "en" ? "/en" : "";
@@ -54,7 +54,12 @@ export function ArticleLayout({ post, locale, children }: { post: BlogPost; loca
     itemListElement: [
       { "@type": "ListItem", position: 1, name: locale === "en" ? "Home" : "Inicio", item: `${BASE}${localePrefix}` },
       { "@type": "ListItem", position: 2, name: "Blog", item: `${BASE}${localePrefix}/blog` },
-      { "@type": "ListItem", position: 3, name: title, item: `${BASE}${localePrefix}/blog/${post.slug}` },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: title,
+        item: `${BASE}${localePrefix}/blog/${getSlugForLocale(post, locale)}`,
+      },
     ],
   };
 
@@ -130,7 +135,7 @@ export function ArticleLayout({ post, locale, children }: { post: BlogPost; loca
                 {related.map((p) => (
                   <Link
                     key={p.slug}
-                    href={`/blog/${p.slug}`}
+                    href={`/blog/${getSlugForLocale(p, locale)}`}
                     className="group flex items-center gap-3 rounded-xl border border-border bg-card p-4 transition-colors hover:border-primary/40 hover:bg-accent/40"
                   >
                     <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-accent text-accent-foreground">

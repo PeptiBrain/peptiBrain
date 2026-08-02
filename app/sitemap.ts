@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { routing } from "@/i18n/routing";
-import { BLOG_POSTS } from "@/lib/blog/posts";
+import { BLOG_POSTS, getSlugForLocale } from "@/lib/blog/posts";
 
 const BASE_URL = "https://peptibrain.com";
 
@@ -53,19 +53,23 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   }));
 
-  // El blog ya es bilingüe (es/en) — cada artículo con sus alternates de idioma
-  // y su fecha real de publicación (publishedAt), no una fecha inventada.
-  const blogPages = BLOG_POSTS.map((p) => ({
-    url: `${BASE_URL}/blog/${p.slug}`,
-    lastModified: new Date(`${p.publishedAt}T00:00:00Z`),
-    priority: 0.7,
-    changeFrequency: "monthly" as const,
-    alternates: {
-      languages: Object.fromEntries(
-        routing.locales.map((locale) => [locale, localizedPath(`/blog/${p.slug}`, locale)])
-      ),
-    },
-  }));
+  // El blog ya es bilingüe (es/en), con su propio slug por idioma (antes el
+  // inglés reusaba el slug en español) — cada URL real es su propia entrada,
+  // con alternates apuntando a la URL real de cada idioma, y la fecha real de
+  // publicación (publishedAt), no una fecha inventada.
+  const blogPages = BLOG_POSTS.flatMap((p) => {
+    const lastModified = new Date(`${p.publishedAt}T00:00:00Z`);
+    const languages = Object.fromEntries(
+      routing.locales.map((locale) => [locale, localizedPath(`/blog/${getSlugForLocale(p, locale)}`, locale)])
+    );
+    return routing.locales.map((locale) => ({
+      url: localizedPath(`/blog/${getSlugForLocale(p, locale)}`, locale),
+      lastModified,
+      priority: 0.7,
+      changeFrequency: "monthly" as const,
+      alternates: { languages },
+    }));
+  });
 
   return [...publicPages, ...blogPages];
 }

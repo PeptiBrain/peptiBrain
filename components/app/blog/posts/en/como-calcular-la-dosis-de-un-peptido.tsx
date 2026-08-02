@@ -91,7 +91,7 @@ export default function Post() {
         Not every compound is calculated the same way. Peptides that come as powder (BPC-157, GHK-Cu, GLP-1
         like semaglutide or tirzepatide) need reconstitution before this calculation — if you don't yet know
         how to mix the vial with water, we have a{" "}
-        <Link href="/blog/como-reconstituir-un-peptido" className="font-semibold text-primary underline underline-offset-2">
+        <Link href="/blog/how-to-reconstitute-a-peptide" className="font-semibold text-primary underline underline-offset-2">
           step-by-step reconstitution guide
         </Link>
         . Testosterone (TRT), on the other hand, already comes dissolved in oil at a fixed concentration —
@@ -107,7 +107,7 @@ export default function Post() {
         does the full conversion for any peptide — enter the vial mg, the water you added, and your dose, and
         it shows you the exact units with a syringe drawing. If your protocol is specifically GLP-1
         (semaglutide or tirzepatide) with its titration table, use the{" "}
-        <Link href="/blog/calculadora-de-dosis-de-glp1" className="font-semibold text-primary underline underline-offset-2">
+        <Link href="/blog/glp1-dose-calculator" className="font-semibold text-primary underline underline-offset-2">
           GLP-1 dose calculator
         </Link>
         ; if it's TRT, the{" "}

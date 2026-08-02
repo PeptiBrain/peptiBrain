@@ -4,7 +4,7 @@ import { useMemo, useState, type ReactNode } from "react";
 import { useSearchParams } from "next/navigation";
 import { Search, X, Clock } from "lucide-react";
 import { Link } from "@/i18n/navigation";
-import { BLOG_POSTS, localized, getPostImagePath } from "@/lib/blog/posts";
+import { BLOG_POSTS, localized, getPostImagePath, getSlugForLocale } from "@/lib/blog/posts";
 import { ArticleHero } from "@/components/app/blog/ArticleHero";
 
 // Envuelve la grilla+paginación ya renderizada por el servidor (children,
@@ -110,7 +110,7 @@ export function BlogGrid({
             return (
               <Link
                 key={post.slug}
-                href={`/blog/${post.slug}`}
+                href={`/blog/${getSlugForLocale(post, locale)}`}
                 className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-card transition-colors hover:border-primary/40"
               >
                 <div className="p-3 pb-0">

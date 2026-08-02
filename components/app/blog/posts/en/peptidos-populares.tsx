@@ -64,7 +64,7 @@ export default function Post() {
       <P>
         If you&apos;d rather see them organized by your specific goal (weight loss, recovery, muscle, anti-aging, or
         skin), we have a{" "}
-        <Link href="/blog/peptidos-segun-tu-objetivo" className="font-semibold text-primary underline underline-offset-2">
+        <Link href="/blog/peptides-by-goal" className="font-semibold text-primary underline underline-offset-2">
           goal-based guide
         </Link>
         . And if you already know which one you want to use, our{" "}

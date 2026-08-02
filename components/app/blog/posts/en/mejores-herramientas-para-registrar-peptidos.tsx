@@ -117,7 +117,7 @@ export default function Post() {
 
       <P>
         If you've already decided you want an app built specifically for peptides, we have a{" "}
-        <Link href="/blog/mejores-apps-de-peptidos" className="font-semibold text-primary underline underline-offset-2">
+        <Link href="/blog/best-peptide-apps" className="font-semibold text-primary underline underline-offset-2">
           comparison between the most-used ones
         </Link>
         , including where{" "}

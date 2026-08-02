@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
 import { ArticleLayout } from "@/components/app/blog/ArticleLayout";
-import { BLOG_POSTS, getBlogPost, localized } from "@/lib/blog/posts";
+import { BLOG_POSTS, getBlogPost, getSlugForLocale, localized } from "@/lib/blog/posts";
 
 const BASE = "https://peptibrain.com";
 type Loader = () => Promise<{ default: React.ComponentType }>;
@@ -107,8 +107,9 @@ const CONTENT: Record<string, { es: Loader; en: Loader }> = {
   },
 };
 
-export function generateStaticParams() {
-  return BLOG_POSTS.map((p) => ({ slug: p.slug }));
+export function generateStaticParams({ params }: { params: { locale: string } }) {
+  const locale = params.locale === "en" ? "en" : "es";
+  return BLOG_POSTS.map((p) => ({ slug: getSlugForLocale(p, locale) }));
 }
 
 export async function generateMetadata({
@@ -121,12 +122,13 @@ export async function generateMetadata({
   if (!post) return {};
   const title = localized(post.title, locale);
   const description = localized(post.excerpt, locale);
-  const path = `/blog/${slug}`;
-  const url = locale === "en" ? `${BASE}/en${path}` : `${BASE}${path}`;
+  const esPath = `/blog/${getSlugForLocale(post, "es")}`;
+  const enPath = `/blog/${getSlugForLocale(post, "en")}`;
+  const url = locale === "en" ? `${BASE}/en${enPath}` : `${BASE}${esPath}`;
   return {
     title: `${title} | Blog de PeptiBrain`,
     description,
-    alternates: { canonical: url, languages: { es: `${BASE}${path}`, en: `${BASE}/en${path}` } },
+    alternates: { canonical: url, languages: { es: `${BASE}${esPath}`, en: `${BASE}/en${enPath}` } },
     openGraph: { title, description, url, type: "article" },
   };
 }
@@ -137,7 +139,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ local
   setRequestLocale(safeLocale);
 
   const post = getBlogPost(slug);
-  const entry = CONTENT[slug];
+  const entry = post && CONTENT[post.slug];
   if (!post || !entry) notFound();
 
   const { default: Content } = await entry[safeLocale]();
