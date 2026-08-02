@@ -1,5 +1,40 @@
 # ESTADO — PeptiBrain
 
+## ✅ URLs en inglés reales para las 16 páginas de marketing, sin redirección (2026-08-02)
+
+Mismo bug que el del blog (URL en inglés reusando el segmento en español, ej.
+`/en/calculadora-semaglutida`), pero esta vez en el resto del sitio: herramientas, las 8
+calculadoras, protocolos, quiz TRT, quiénes somos, y las páginas legales/descargar. El dueño pidió
+arreglarlo igual que el blog, pero esta vez **sin ninguna redirección** — crear las URLs nuevas
+directamente.
+
+- `getLocalizedPath()` nuevo en `i18n/routing.ts`: mapa manual de 16 rutas ES→EN (ej.
+  `/calculadora-semaglutida` → `/semaglutide-calculator`). Se descartó a propósito el `pathnames`
+  nativo de next-intl — activarlo rompía la tipificación de 141 usos en 81 archivos, incluidas
+  rutas internas autenticadas (`/app/peptidos`, pagos, onboarding) sin relación con SEO. Demasiado
+  riesgo para una app en producción por una mejora cosmética en ~15 páginas públicas.
+- 16 carpetas nuevas en `app/[locale]/` (`semaglutide-calculator/`, `tools/`, `about-us/`,
+  `terms/`, `refunds/`, etc.) que reexportan la página original en español sin duplicar lógica —
+  mismo patrón "carpeta espejo" ya usado en el blog.
+- Enlaces internos traducidos en: Header, Footer, menú de herramientas, enlaces cruzados entre
+  calculadoras (`ToolCrossLinks`), página `/herramientas`, centro de ayuda, login, sitemap.
+- **Decisión NO confirmada explícitamente con el dueño**: las URLs viejas en inglés (ej.
+  `/en/calculadora-semaglutida`) se dejaron **sin redirigir y sin romper** — siguen respondiendo
+  200 con el mismo contenido, solo que la app ya no enlaza a ellas. Se eligió esto para no perder
+  nada ya indexado o compartido, dado que se pidió explícitamente "nada de redireccionamiento". Si
+  el dueño prefiere que esas URLs viejas dejen de existir (404) o si prefiere redirección después
+  de todo, avisar y ajustar.
+
+Verificado: tsc ✓ · npm test (100/100) ✓ · npm run build ✓ · las 16 URLs nuevas responden 200 con
+título correcto en inglés (local, preview de staging y producción, verificado con curl) · la URL
+en español no cambió · barrido completo confirmando cero enlaces internos apuntando todavía al
+segmento en español dentro de contenido en inglés · staging→main desplegado, CI en verde en ambas.
+
+⚠️ Nota aparte (no de esta tarea): este archivo lleva más de 1900 líneas y las secciones del final
+(secuencia maestra, decisiones técnicas, "Sesión 2") describen una fase del proyecto ("logo y
+paleta") muy anterior a la realidad actual (app en producción). Vale la pena reescribirlas en la
+próxima sesión de mantenimiento — hoy solo se agregó esta entrada nueva arriba, sin tocar el resto.
+
 ## ✅ Fix: vistas previas de enlaces (Threads/Facebook/WhatsApp) salían en inglés (2026-08-02)
 
 El dueño compartió una captura de su primer hilo en Threads: compartió la URL en español
