@@ -1,5 +1,44 @@
 # ESTADO — PeptiBrain
 
+## ✅ Aviso de "primer registro" + auditoría de idioma del sitio (2026-08-02)
+
+Dos pedidos del dueño en la misma sesión.
+
+**1) Auditoría de idioma real del sitio** (blog en español, blog en inglés, textos de la interfaz
+`messages/es.json`/`en.json`) buscando errores de ortografía y gramática — lanzada con 3 agentes en
+paralelo, uno por frente. Resultado: 3 correcciones reales, aplicadas ya:
+- `errores-comunes-al-empezar-con-peptidos.tsx` (ES): "vials" (anglicismo) → "viales".
+- 5 artículos en ES usaban comillas rectas `"..."` en vez de las tipográficas (`&ldquo;...&rdquo;`)
+  que usa el resto del blog — unificado.
+- `bpc-157-que-es-y-para-que-se-usa.tsx` (EN): el artículo se contradecía a sí mismo sobre las
+  unidades (decía que el vial viene en mcg, dos párrafos después de decir que viene en mg) —
+  corregido para que ambas frases digan lo mismo (vial en mg, dosis individual en mcg).
+- Los textos de interfaz (1520 claves en cada idioma) no tenían errores: sin ortografía rota, sin
+  idiomas mezclados, sin variables de interpolación desincronizadas entre es/en, sin claves
+  faltantes en ningún archivo.
+- De paso se confirmó que el cambio automático de idioma (por país real del visitante, arreglado
+  antes en esta misma sesión para el bug de Threads) sigue funcionando sin romperse.
+
+**2) Aviso de "primer registro"**: mensaje corto y positivo ("¡Tu primer registro! 🎉"), no
+bloqueante, que se cierra solo a los 4 segundos — se dispara la primera vez que la persona registra
+CUALQUIER cosa (péptido, vial, dosis, salud, comida, foto de progreso o análisis), sin importar cuál
+sea. Dos orígenes posibles, cubiertos ambos:
+- **Onboarding** (el caso más común — ahí se siembra el primer péptido/vial/dosis): `BuildingScreen`
+  deja una marca en localStorage al terminar (el aviso vive en el layout de `/app`, que todavía no
+  está montado en ese punto) — se consume en cuanto la persona llega a Inicio.
+- **En vivo, desde cualquier pantalla de la app**: `useAppData()` detecta la transición de 0 a 1
+  registros totales cada vez que se llama `setData()` tras guardar algo — sin tener que tocar cada
+  pantalla que crea un péptido/vial/dosis/etc. una por una.
+- Se posicionó arriba de la pantalla (no abajo, donde vive el aviso de "dosis registrada" que ya
+  existía) para que nunca se solapen visualmente si coinciden.
+
+Verificado: tsc ✓ · npm test (106/106) ✓ · npm run build ✓ · confirmado en navegador que los 2
+textos corregidos del blog ya salen bien en local y en producción · staging→main desplegado, CI en
+verde en ambas. **No se pudo verificar visualmente el aviso de primer registro** — requiere una
+cuenta nueva pasando por el onboarding real y no hay credenciales de prueba en este entorno; la
+lógica queda razonada arriba pero conviene confirmarlo la próxima vez que el dueño registre una
+cuenta de prueba.
+
 ## ✅ Pop-up de encuesta de satisfacción (5 emojis) + panel de admin (2026-08-02)
 
 Pedido explícito del dueño: pop-up dentro de la app con 5 emojis (rojo→verde) preguntando "¿Qué
