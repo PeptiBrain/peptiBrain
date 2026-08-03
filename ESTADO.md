@@ -1,5 +1,38 @@
 # ESTADO — PeptiBrain
 
+## ✅ Primer/último contacto separados + "¿Cómo nos conociste?" (2026-08-02)
+
+Continuación directa de la sección de adquisición del manual de atribución escrito para el dueño:
+las dos brechas que el manual señalaba como "lo que sí te falta" se cerraron en esta sesión.
+
+- **`lib/utm.ts`**: antes `captureUtm()` guardaba un solo valor (de facto el primer contacto, por
+  un guard que nunca lo sobrescribía). Ahora guarda **primer contacto** (`peptibrain_utm_source`,
+  igual que antes, nunca se pisa) y **último contacto** (`peptibrain_utm_source_last`, se actualiza
+  cada vez que hay una señal real de canal — explícita por parámetro o por referrer — nunca se
+  pisa con "sin señal" de una visita directa). Nueva función `getLastUtm()`.
+- **Migración `0049_attribution_last_touch.sql`**: columnas `profiles.utm_source_last` y
+  `profiles.how_found`. **Requiere acción manual del dueño** — sin correrla, el registro sigue
+  funcionando igual (el `update` a `profiles` solo manda esas columnas si tienen valor), pero esos
+  dos datos nuevos no se guardan hasta que exista la columna.
+- **Campo "¿Cómo nos conociste?" en el registro** (`app/[locale]/login/page.tsx`): select opcional
+  con 6 opciones cerradas (Instagram, TikTok, YouTube, Google, recomendación, otro) entre WhatsApp y
+  contraseña. Cierra el hueco que ningún UTM puede cubrir: alguien ve un video en TikTok/Instagram y
+  busca la app días después sin hacer clic en nada — ese origen real no deja ningún rastro técnico.
+- **Panel de admin**: nueva tarjeta "Cómo dicen que nos conocieron (auto-reportado)" en Adquisición
+  — pensada para cruzarla contra el desglose por UTM de arriba: si un canal aparece mucho más alto
+  ahí que en el UTM, ese canal vale más de lo que hoy se le atribuye.
+
+Verificado: tsc ✓ · npm test (106/106) ✓ · npm run build ✓ · confirmado en navegador que el campo
+nuevo se ve bien en el formulario de registro y las 6 opciones aparecen correctas (screenshot +
+árbol de accesibilidad) · staging→main desplegado, CI en verde en ambas. **No se pudo probar el
+guardado real de extremo a extremo** (requiere completar un registro real contra Supabase, y la
+migración aún no estaba corrida en el momento de la verificación) — la próxima vez que el dueño
+registre una cuenta de prueba conviene confirmar en el panel de admin que aparecen datos en las
+dos tarjetas nuevas.
+
+⚠️ **Pendiente del dueño**: correr la migración `0049_attribution_last_touch.sql` en Supabase
+(Dashboard → SQL Editor → pegar el contenido del archivo → Run).
+
 ## ✅ Botón flotante de ayuda en toda la app (2026-08-02)
 
 Pedido del dueño: un botón flotante de ayuda visible en todas las pantallas que abra un panel con
