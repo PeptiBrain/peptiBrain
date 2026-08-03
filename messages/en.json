@@ -623,6 +623,17 @@
     "body_365": "A whole year. Pepti is speechless — just applauding.",
     "cta": "Keep it up"
   },
+  "SatisfactionSurvey": {
+    "title": "How happy are you using PeptiBrain?",
+    "close": "Close",
+    "level_1": "Very unhappy",
+    "level_2": "Unhappy",
+    "level_3": "Neutral",
+    "level_4": "Happy",
+    "level_5": "Very happy",
+    "thanksTitle": "Thanks for your feedback!",
+    "thanksBody": "It helps us keep improving PeptiBrain for you."
+  },
   "ShareProtocol": {
     "title": "Your protocol card",
     "close": "Close",

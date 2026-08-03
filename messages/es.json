@@ -623,6 +623,17 @@
     "body_365": "Un año entero. Pepti no tiene palabras — solo aplausos.",
     "cta": "Seguir así"
   },
+  "SatisfactionSurvey": {
+    "title": "¿Qué tan feliz estás usando PeptiBrain?",
+    "close": "Cerrar",
+    "level_1": "Muy insatisfecho",
+    "level_2": "Insatisfecho",
+    "level_3": "Neutral",
+    "level_4": "Satisfecho",
+    "level_5": "Muy satisfecho",
+    "thanksTitle": "¡Gracias por tu respuesta!",
+    "thanksBody": "Nos ayuda a seguir mejorando PeptiBrain para ti."
+  },
   "ShareProtocol": {
     "title": "Tu tarjeta de protocolo",
     "close": "Cerrar",

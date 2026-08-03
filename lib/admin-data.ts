@@ -93,6 +93,11 @@ export type AdminOverview = {
   affiliateSales: { name: string; sales: number; reversed: number; netSales: number; lastSaleAt: string | null }[];
   /** Motivos de cancelación de los últimos 30 días (encuesta de un clic al cancelar). */
   cancellationReasons: { reason: string; count: number }[];
+  /** Encuesta de satisfacción (pop-up 1-5, ver 0048_satisfaction_survey.sql). */
+  satisfactionAvg: number | null;
+  satisfactionResponses: number;
+  satisfactionByLevel: { level: number; count: number }[];
+  satisfactionByMonth: { month: string; label: string; avg: number; count: number }[];
   assistantMessagesToday: number;
   assistantGlobalLimit: number;
   assistantPaused: boolean;
@@ -197,6 +202,7 @@ export async function loadAdminOverview(): Promise<AdminOverview> {
     { data: allMeals },
     { data: assistantUsers },
     { data: cancellationFeedback },
+    { data: satisfactionRows },
   ] = await Promise.all([
     admin
       .from("profiles")
@@ -231,6 +237,7 @@ export async function loadAdminOverview(): Promise<AdminOverview> {
       .from("cancellation_feedback")
       .select("reason, created_at")
       .gte("created_at", daysAgoIso(30)),
+    admin.from("satisfaction_responses").select("level, created_at").order("created_at", { ascending: true }),
   ]);
 
   const profiles = allProfiles || [];
@@ -296,6 +303,34 @@ export async function loadAdminOverview(): Promise<AdminOverview> {
   const cancellationReasons = Array.from(reasonTally.entries())
     .map(([reason, count]) => ({ reason, count }))
     .sort((a, b) => b.count - a.count);
+
+  // ── Encuesta de satisfacción (pop-up 1-5) ──────────────────────────────────
+  const satRows = satisfactionRows || [];
+  const satisfactionResponses = satRows.length;
+  const satisfactionAvg = satisfactionResponses
+    ? Math.round((satRows.reduce((sum, r) => sum + r.level, 0) / satisfactionResponses) * 10) / 10
+    : null;
+  const levelTally = new Map<number, number>();
+  for (const r of satRows) levelTally.set(r.level, (levelTally.get(r.level) || 0) + 1);
+  const satisfactionByLevel = [1, 2, 3, 4, 5].map((level) => ({ level, count: levelTally.get(level) || 0 }));
+  const MONTH_LABELS = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
+  const monthTally = new Map<string, { sum: number; count: number }>();
+  for (const r of satRows) {
+    const month = r.created_at.slice(0, 7); // "YYYY-MM"
+    const cur = monthTally.get(month) || { sum: 0, count: 0 };
+    cur.sum += r.level;
+    cur.count += 1;
+    monthTally.set(month, cur);
+  }
+  const satisfactionByMonth = Array.from(monthTally.entries())
+    .sort(([a], [b]) => a.localeCompare(b))
+    .slice(-6)
+    .map(([month, v]) => ({
+      month,
+      label: MONTH_LABELS[Number(month.slice(5, 7)) - 1] || month,
+      avg: Math.round((v.sum / v.count) * 10) / 10,
+      count: v.count,
+    }));
 
   const ASSISTANT_GLOBAL_LIMIT = Number(process.env.ASSISTANT_GLOBAL_DAILY_LIMIT) || 500;
   const assistantMessagesToday = globalUsage?.message_count || 0;
@@ -635,6 +670,10 @@ export async function loadAdminOverview(): Promise<AdminOverview> {
     webhookEventsToday,
     affiliateSales,
     cancellationReasons,
+    satisfactionAvg,
+    satisfactionResponses,
+    satisfactionByLevel,
+    satisfactionByMonth,
     assistantMessagesToday,
     assistantGlobalLimit: ASSISTANT_GLOBAL_LIMIT,
     assistantPaused: assistantMessagesToday >= ASSISTANT_GLOBAL_LIMIT,

@@ -10,6 +10,8 @@ import { NextDosesWidget } from "@/components/app/shell/NextDosesWidget";
 import { NotificationBell } from "@/components/app/shell/NotificationBell";
 import { DoseCelebrationToast } from "@/components/app/shell/DoseCelebrationToast";
 import { MilestoneModal } from "@/components/app/shell/MilestoneModal";
+import { SatisfactionSurveyModal } from "@/components/app/shell/SatisfactionSurveyModal";
+import { isSatisfactionSurveyEligible } from "@/lib/satisfaction-survey";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
@@ -21,16 +23,21 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   let plan: "free" | "premium" | "family" = "free";
   let remindersEnabled = false;
   let trips: { startDate: string; endDate: string }[] = [];
+  let satisfactionSurveyEligible = false;
   if (user) {
     const { data: profile } = await supabase
       .from("profiles")
-      .select("name, email, plan, reminders_enabled")
+      .select("name, email, plan, reminders_enabled, created_at, last_satisfaction_survey_shown_at")
       .eq("id", user.id)
       .single();
     name = profile?.name ?? "";
     email = profile?.email ?? user.email ?? "";
     plan = (profile?.plan as "free" | "premium" | "family") ?? "free";
     remindersEnabled = profile?.reminders_enabled ?? false;
+    satisfactionSurveyEligible = isSatisfactionSurveyEligible(
+      profile?.created_at ?? null,
+      profile?.last_satisfaction_survey_shown_at ?? null
+    );
 
     // El servidor no sabe la zona horaria del usuario — comparar "hoy" (UTC)
     // contra start_date/end_date apagaba el badge de Modo viaje varias horas
@@ -78,6 +85,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         <NextDosesWidget />
         <DoseCelebrationToast />
         <MilestoneModal />
+        <SatisfactionSurveyModal eligible={satisfactionSurveyEligible} />
       </div>
     </div>
   );

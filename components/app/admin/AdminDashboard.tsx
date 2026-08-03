@@ -11,7 +11,7 @@ import { IntegrationsPanel } from "@/components/app/admin/IntegrationsPanel";
 import { HotmartSalesCard } from "@/components/app/admin/HotmartSalesCard";
 import { AssistantQuestionsCard } from "@/components/app/admin/AssistantQuestionsCard";
 
-type Tab = "all" | "finance" | "activity" | "users" | "retention" | "health" | "acq" | "integrations";
+type Tab = "all" | "finance" | "activity" | "users" | "retention" | "health" | "acq" | "satisfaction" | "integrations";
 
 const TABS: { key: Tab; label: string }[] = [
   { key: "all", label: "Todo" },
@@ -21,6 +21,7 @@ const TABS: { key: Tab; label: string }[] = [
   { key: "retention", label: "Retención" },
   { key: "health", label: "Salud" },
   { key: "acq", label: "Adquisición" },
+  { key: "satisfaction", label: "Satisfacción" },
   { key: "integrations", label: "Integraciones" },
 ];
 
@@ -48,6 +49,7 @@ export function AdminDashboard({ data, alerts }: { data: AdminOverview; alerts: 
   const showRetention = tab === "all" || tab === "retention";
   const showHealth = tab === "all" || tab === "health";
   const showAcq = tab === "all" || tab === "acq";
+  const showSatisfaction = tab === "all" || tab === "satisfaction";
   const showIntegrations = tab === "all" || tab === "integrations";
 
   return (
@@ -505,6 +507,76 @@ export function AdminDashboard({ data, alerts }: { data: AdminOverview; alerts: 
                   ]}
                 />
               </div>
+            </div>
+          </Section>
+        )}
+
+        {/* SATISFACCIÓN — pop-up de 5 emojis dentro de la app */}
+        {showSatisfaction && (
+          <Section
+            title="Satisfacción de tus usuarios"
+            note="Pop-up de 1 a 5 (muy triste a muy feliz) dentro de la app, máximo 1 vez al mes por usuario."
+            delay={0.3}
+          >
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <BolaCard
+                label="Promedio"
+                value={data.satisfactionAvg == null ? "—" : `${data.satisfactionAvg} / 5`}
+                sub={`${data.satisfactionResponses} respuesta${data.satisfactionResponses === 1 ? "" : "s"}`}
+                accent
+              />
+              <div className="rounded-2xl p-5" style={{ background: ADMIN.surface, border: `1px solid ${ADMIN.border}` }}>
+                <p className="mb-3 text-xs font-semibold uppercase tracking-wide" style={{ color: ADMIN.textMuted }}>
+                  Evolución mensual (promedio)
+                </p>
+                {data.satisfactionByMonth.length === 0 ? (
+                  <p className="text-sm" style={{ color: ADMIN.textMuted }}>
+                    Aún no hay suficientes respuestas.
+                  </p>
+                ) : (
+                  <AdminBarChart data={data.satisfactionByMonth.map((m) => ({ label: m.label, count: m.avg }))} />
+                )}
+              </div>
+            </div>
+
+            <div className="mt-4 rounded-2xl p-5" style={{ background: ADMIN.surface, border: `1px solid ${ADMIN.border}` }}>
+              <p className="mb-3 text-xs font-semibold uppercase tracking-wide" style={{ color: ADMIN.textMuted }}>
+                Respuestas por nivel
+              </p>
+              {data.satisfactionResponses === 0 ? (
+                <p className="text-sm" style={{ color: ADMIN.textMuted }}>
+                  Nadie respondió la encuesta todavía.
+                </p>
+              ) : (
+                <ul className="space-y-2.5">
+                  {(() => {
+                    const LEVEL_LABELS: Record<number, string> = {
+                      1: "😞 Muy insatisfecho",
+                      2: "🙁 Insatisfecho",
+                      3: "😐 Neutral",
+                      4: "🙂 Satisfecho",
+                      5: "😄 Muy satisfecho",
+                    };
+                    const max = Math.max(...data.satisfactionByLevel.map((l) => l.count), 1);
+                    return data.satisfactionByLevel.map((l) => (
+                      <li key={l.level}>
+                        <div className="mb-1 flex items-center justify-between text-sm">
+                          <span style={{ color: ADMIN.text }}>{LEVEL_LABELS[l.level]}</span>
+                          <span className="font-semibold" style={{ color: ADMIN.text }}>
+                            {l.count}
+                          </span>
+                        </div>
+                        <div className="h-1.5 overflow-hidden rounded-full" style={{ background: ADMIN.border }}>
+                          <div
+                            className="h-full rounded-full"
+                            style={{ width: `${(l.count / max) * 100}%`, background: ADMIN.accent }}
+                          />
+                        </div>
+                      </li>
+                    ));
+                  })()}
+                </ul>
+              )}
             </div>
           </Section>
         )}
