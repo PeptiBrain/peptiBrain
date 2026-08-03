@@ -1,5 +1,28 @@
 # ESTADO — PeptiBrain
 
+## ✅ Botón flotante de ayuda en toda la app (2026-08-02)
+
+Pedido del dueño: un botón flotante de ayuda visible en todas las pantallas que abra un panel con
+preguntas frecuentes, fácil de cerrar y sin estorbar al resto de la app.
+
+Antes de construir se comprobó qué había: el **centro de ayuda ya existía completo**
+(`components/app/shell/HelpCenter.tsx` — 13 artículos por categoría, buscador, enlace a soporte y a
+los legales), pero solo se abría desde el menú de perfil: dos clics y escondido. Lo que faltaba era
+únicamente el acceso, no el contenido — así que se construyó solo eso, sin duplicar nada.
+
+- **`components/app/shell/HelpFab.tsx`** (nuevo): botón flotante que monta el `HelpCenter` existente.
+  Se coloca en la esquina inferior **izquierda** a propósito — la inferior derecha ya la ocupa
+  `NextDosesWidget` (`bottom-6 right-4`) y se habrían solapado.
+- Montado en `app/[locale]/app/layout.tsx` junto al resto de widgets globales, dentro del bloque
+  `print:hidden` (no debe salir en el informe médico impreso).
+- El panel ya traía cierre por X, por Escape y por clic fuera, más foco atrapado — no hizo falta
+  tocarlo.
+
+Verificado: tsc ✓ · npm test (106/106) ✓ · npm run build ✓ · staging→main desplegado, CI en verde.
+**No se pudo verificar visualmente** — todo `/app` está detrás de login y no hay credenciales de
+prueba en este entorno. Queda pendiente que el dueño confirme la posición del botón la próxima vez
+que entre (es el único riesgo real: que estorbe algo en alguna pantalla concreta).
+
 ## ✅ Aviso de "primer registro" + auditoría de idioma del sitio (2026-08-02)
 
 Dos pedidos del dueño en la misma sesión.
