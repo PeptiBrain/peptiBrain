@@ -1,5 +1,43 @@
 # ESTADO — PeptiBrain
 
+## ✅ Auditoría de retención: validar el número mágico + recompensa variable (2026-08-03)
+
+El dueño compartió una reflexión sobre retención ("no importa cuántos se registran, importa cuántos
+vuelven — ¿esto hace que la persona quiera volver mañana?") y pidió una auditoría de la app con esa
+misma pregunta, función por función.
+
+**Resultado de la auditoría** (sin tocar código, solo análisis): PeptiBrain ya tenía construido casi
+todo el manual de retención — racha+freeze, 3 recordatorios por cron (dosis a la hora exacta, vial
+bajo, winback a los 3 días), nudge de "hora habitual", recordatorio de análisis atrasados, resumen
+semanal dominical, resumen nocturno, hitos de racha con celebración reforzada, visibilidad social en
+Familia. Se identificaron 3 huecos reales; el dueño pidió construir el #1 y el #3 (no el #2, "el día
+2 sin cobertura", que queda pendiente si lo pide más adelante):
+
+1. **Validar el "número mágico"** (hipótesis ya anotada en `ESTADO.md` en una sesión anterior — "3
+   dosis en los primeros 3 días predicen retención" — pero nunca comprobada con datos reales): nueva
+   tarjeta en el panel de admin (pestaña Retención) que cruza quién hizo esas 3 dosis contra la
+   retención D30 real de ese grupo vs. el resto, con aviso explícito de "muestra chica, no
+   concluyas todavía" si hay menos de 20 personas por grupo — para no fingir una certeza que los
+   datos aún no dan.
+2. **Recompensa variable**: el propio documento interno de gamificación del proyecto
+   (`docs/sistema/24-GAMIFICACION.md`) señala la recompensa variable como el mecanismo real de
+   hábito, y hoy todo (confeti, mensaje del toast) era fijo y predecible. Se agregó un momento
+   "extra" ocasional (~15% de las veces, `SPOTLIGHT_CHANCE` en `lib/celebrate.ts`) al registrar una
+   dosis: confeti más grande + una de 3 frases más festivas, sobre una base de 4 frases normales que
+   también rotan (antes siempre era el mismo texto "¡Dosis registrada!"). Deliberadamente NO se
+   sortea nada de valor real (ni PB ni racha) — solo el tono del aviso — para no caer en el patrón
+   que el propio proyecto ya descartó a propósito (monedas/cofres/loot boxes).
+
+Verificado: tsc ✓ · npm test (106/106) ✓ · npm run build ✓ · dev server sin errores en consola ·
+staging→main desplegado, CI en verde en ambas. **No se pudo verificar visualmente el momento
+"extra" ni la tarjeta del número mágico** — ambos requieren datos reales de uso (registrar dosis
+varias veces para ver el spotlight; cuentas con ≥30 días de antigüedad para el panel) y no hay
+credenciales de prueba en este entorno.
+
+⚠️ Pendiente si el dueño lo pide más adelante: el hueco #2 de la auditoría — no hay ningún aviso
+proactivo entre el registro y el día 3 de inactividad completa (el nudge de "hora habitual" necesita
+≥3 dosis históricas para activarse, así que un usuario nuevo todavía no lo tiene).
+
 ## ✅ Primer/último contacto separados + "¿Cómo nos conociste?" (2026-08-02)
 
 Continuación directa de la sección de adquisición del manual de atribución escrito para el dueño:
