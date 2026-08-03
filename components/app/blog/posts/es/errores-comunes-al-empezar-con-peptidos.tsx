@@ -18,7 +18,7 @@ export default function Post() {
       <OL>
         <OLItem n={1}>
           <strong>Calcular la dosis a ojo.</strong> Pasar de miligramos a unidades de jeringa de cabeza es donde
-          se cuela la mayoría de los fallos, sobre todo con vials distintos que tienen distinta concentración.
+          se cuela la mayoría de los fallos, sobre todo con viales distintos que tienen distinta concentración.
         </OLItem>
         <OLItem n={2}>
           <strong>Cambiar la cantidad de agua cada vez.</strong> Si un día usas 2 mL y otro 3 mL para el mismo

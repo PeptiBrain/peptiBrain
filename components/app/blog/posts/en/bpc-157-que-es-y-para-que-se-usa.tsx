@@ -43,8 +43,9 @@ export default function Post() {
 
       <H2>What usually confuses beginners</H2>
       <P>
-        Two things cause most of the confusion: first, the unit — BPC-157 vials usually come in mcg, not mg, and
-        mixing up the two multiplies the error by a thousand. Second, the frequency — being a daily dose (not
+        Two things cause most of the confusion: first, the unit — the vial is usually labeled in mg, but the
+        actual dose is measured in mcg, and mixing up the two multiplies the error by a thousand. Second, the
+        frequency — being a daily dose (not
         weekly, like GLP-1s), it&apos;s easy to lose track of whether you already applied it today without a record.
       </P>
       <P>

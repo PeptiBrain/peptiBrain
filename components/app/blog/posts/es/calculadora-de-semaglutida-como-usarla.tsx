@@ -6,8 +6,8 @@ export default function Post() {
     <>
       <P>
         La semaglutida y la tirzepatida no se empiezan en la dosis de mantenimiento — se suben poco a
-        poco durante varias semanas (titulación). Eso significa que la cuenta de "cuántas unidades
-        cargo" cambia cada mes, no solo una vez. Para no tener que rehacerla a mano en cada fase,
+        poco durante varias semanas (titulación). Eso significa que la cuenta de &ldquo;cuántas unidades
+        cargo&rdquo; cambia cada mes, no solo una vez. Para no tener que rehacerla a mano en cada fase,
         construimos la{" "}
         <Link href="/calculadora-semaglutida" className="font-semibold text-primary underline underline-offset-2">
           Calculadora de semaglutida y tirzepatida

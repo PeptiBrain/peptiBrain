@@ -53,9 +53,9 @@ export default function Post() {
       <H2>Cómo registrar tu primera dosis, paso a paso</H2>
       <OL>
         <OLItem n={1}>
-          <strong>Anótalo en el momento, no después.</strong> "Lo escribo más tarde" es donde se pierde
-          el dato la mayoría de las veces — la memoria rellena huecos con la hora que "debería haber
-          sido", no la real.
+          <strong>Anótalo en el momento, no después.</strong> &ldquo;Lo escribo más tarde&rdquo; es donde se pierde
+          el dato la mayoría de las veces — la memoria rellena huecos con la hora que &ldquo;debería haber
+          sido&rdquo;, no la real.
         </OLItem>
         <OLItem n={2}>
           <strong>Calcula el volumen antes de cargar la jeringa.</strong> Con la dosis en mg y la
@@ -67,7 +67,7 @@ export default function Post() {
           olvidar si tocaba glúteo derecho o izquierdo esta semana.
         </OLItem>
         <OLItem n={4}>
-          <strong>Registra tus síntomas aunque sean sutiles.</strong> Un "más cansado que de costumbre"
+          <strong>Registra tus síntomas aunque sean sutiles.</strong> Un &ldquo;más cansado que de costumbre&rdquo;
           de hoy contra el mismo dato de hace tres semanas es justo lo que le sirve a tu médico para
           decidir si el intervalo o la dosis necesitan un ajuste.
         </OLItem>
@@ -84,7 +84,7 @@ export default function Post() {
       </Callout>
 
       <H2>Qué mirar una vez que ya tienes semanas de datos</H2>
-      <H3>La consistencia del intervalo, no solo si "más o menos" te inyectaste</H3>
+      <H3>La consistencia del intervalo, no solo si &ldquo;más o menos&rdquo; te inyectaste</H3>
       <P>
         Un intervalo que varía mucho semana a semana (a veces cada 5 días, a veces cada 9) genera más
         altibajos en tus niveles que uno más constante. El registro es la única forma honesta de ver
@@ -132,16 +132,16 @@ export default function Post() {
           siguiera siendo la misma de antes.
         </LI>
         <LI>
-          Dejar que el intervalo entre inyecciones se estire "un par de días" sin registrarlo, hasta
+          Dejar que el intervalo entre inyecciones se estire &ldquo;un par de días&rdquo; sin registrarlo, hasta
           que ya no es un par de días sino una semana entera de diferencia acumulada.
         </LI>
         <LI>
-          No anotar la zona de inyección porque "es solo una vez a la semana" — hasta que un mismo
+          No anotar la zona de inyección porque &ldquo;es solo una vez a la semana&rdquo; — hasta que un mismo
           punto empieza a resentirse.
         </LI>
         <LI>
           Confiar en la memoria para el control médico en vez de llevar algo escrito, y llegar sin
-          poder responder "¿cuánto tiempo pasó exactamente desde tu última dosis?" — un dato que
+          poder responder &ldquo;¿cuánto tiempo pasó exactamente desde tu última dosis?&rdquo; — un dato que
           cambia cómo se interpreta el análisis de sangre.
         </LI>
       </UL>

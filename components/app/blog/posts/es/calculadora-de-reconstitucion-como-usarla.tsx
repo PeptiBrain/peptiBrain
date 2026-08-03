@@ -67,7 +67,7 @@ export default function Post() {
       <UL>
         <LI>
           <strong>Usa siempre la misma cantidad de agua para el mismo vial.</strong> Si reconstituyes
-          hoy con 2 mL y la próxima vez con 3 mL "porque ya no me acordaba", la concentración cambia y
+          hoy con 2 mL y la próxima vez con 3 mL &ldquo;porque ya no me acordaba&rdquo;, la concentración cambia y
           las unidades que cargabas antes ya no sirven para la misma dosis.
         </LI>
         <LI>

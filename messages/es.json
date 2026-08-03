@@ -615,6 +615,10 @@
     "adherence": "{pct}% de adherencia",
     "weight": "{delta} kg"
   },
+  "FirstRecordToast": {
+    "title": "¡Tu primer registro! 🎉",
+    "body": "Así empieza — PeptiBrain va a llevar la cuenta por ti a partir de ahora."
+  },
   "Milestones": {
     "title": "🔥 ¡{days} días de racha!",
     "body_7": "Una semana entera sin fallar. Pepti está orgullosa de ti.",

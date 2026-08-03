@@ -50,6 +50,38 @@ export async function celebrate() {
   }, 200);
 }
 
+// Primer registro de CUALQUIER tipo (péptido, vial, dosis, salud, comida, foto de
+// progreso o análisis) — un aviso corto y positivo que se cierra solo, sin bloquear
+// la app (a diferencia del modal de hitos de racha). Se dispara una sola vez desde
+// useAppData() cuando detecta la transición de 0 a 1 registros totales.
+export const FIRST_RECORD_CELEBRATION_EVENT = "peptibrain:first-record-celebration";
+
+export function celebrateFirstRecord() {
+  celebrate();
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent(FIRST_RECORD_CELEBRATION_EVENT));
+  }
+}
+
+// El caso más común de "primer registro" ocurre durante el onboarding (se
+// siembra péptido/vial/dosis antes de que exista ninguna pantalla de /app
+// montada) — el evento de arriba se perdería porque nadie lo escucha todavía.
+// BuildingScreen deja esta marca al terminar; el toast la consume en cuanto
+// se monta en Inicio, en vez de depender de un evento en tiempo real.
+const FIRST_RECORD_PENDING_KEY = "peptibrain_first_record_pending";
+
+export function markFirstRecordPending() {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(FIRST_RECORD_PENDING_KEY, "1");
+}
+
+export function consumePendingFirstRecord(): boolean {
+  if (typeof window === "undefined") return false;
+  const pending = window.localStorage.getItem(FIRST_RECORD_PENDING_KEY) === "1";
+  if (pending) window.localStorage.removeItem(FIRST_RECORD_PENDING_KEY);
+  return pending;
+}
+
 // Hito de racha (7/30/100/365 días): confeti más intenso que el de una dosis
 // normal (3 ráfagas en vez de 2) + el modal de Pepti que escucha este evento.
 export const MILESTONE_CELEBRATION_EVENT = "peptibrain:milestone-celebration";

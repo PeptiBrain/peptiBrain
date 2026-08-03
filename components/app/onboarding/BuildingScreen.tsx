@@ -5,7 +5,7 @@ import { motion } from "motion/react";
 import { useTranslations } from "next-intl";
 import { Check } from "lucide-react";
 import { track } from "@/lib/mixpanel";
-import { celebrate } from "@/lib/celebrate";
+import { celebrate, markFirstRecordPending } from "@/lib/celebrate";
 import { Mascot } from "@/components/app/shell/Mascot";
 
 export function BuildingScreen({
@@ -40,6 +40,10 @@ export function BuildingScreen({
       );
     });
     track("onboarding_completed", { peptide: peptideName || undefined });
+    // El aviso de "primer registro" vive en el layout de /app, que todavía no
+    // está montado aquí — se deja marcado para que se muestre en cuanto la
+    // persona llegue a Inicio, en vez de perder el evento.
+    markFirstRecordPending();
     timers.push(
       setTimeout(() => {
         celebrate();

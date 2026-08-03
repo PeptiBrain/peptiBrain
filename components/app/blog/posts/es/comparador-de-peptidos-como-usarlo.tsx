@@ -82,7 +82,7 @@ export default function Post() {
           conclusiones.
         </LI>
         <LI>
-          <strong>Revisa "se combina / evita" contra tu propio protocolo</strong>, no solo contra el
+          <strong>Revisa &ldquo;se combina / evita&rdquo; contra tu propio protocolo</strong>, no solo contra el
           otro péptido de la comparación. Si ya usas un tercer compuesto, esa combinación no aparece
           aquí — para eso está la herramienta de compatibilidad.
         </LI>

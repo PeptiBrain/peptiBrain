@@ -2,6 +2,22 @@
 
 import useSWR, { useSWRConfig } from "swr";
 import { loadAppData, type AppData } from "@/lib/app-data";
+import { celebrateFirstRecord } from "@/lib/celebrate";
+
+// Cuenta los "registros" reales del usuario (no config de cuenta como
+// viajes/proveedores/familia) — sirve para detectar su primer registro jamás
+// sin tener que tocar cada pantalla que crea un péptido/vial/dosis/etc.
+function countRecords(d: AppData): number {
+  return (
+    d.peptides.length +
+    d.vials.length +
+    d.doses.length +
+    d.healthLogs.length +
+    d.meals.length +
+    d.progressPhotos.length +
+    d.labResults.length
+  );
+}
 
 // Antes cada pantalla (Inicio, Péptidos, Salud, Estadísticas, Familia, Cuenta,
 // Informe, y el widget del header) llamaba loadAppData() por su cuenta al
@@ -24,6 +40,9 @@ export function useAppData() {
   // necesitan cambiar nada — solo que ahora ese cambio es instantáneo en
   // TODAS las pantallas abiertas, no solo en la que lo disparó.
   function setData(next: AppData) {
+    if (data && countRecords(data) === 0 && countRecords(next) > 0) {
+      celebrateFirstRecord();
+    }
     globalMutate(APP_DATA_KEY, next, { revalidate: false });
   }
 

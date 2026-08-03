@@ -53,9 +53,9 @@ export default function Post() {
       <H2>Cómo registrar tu primera dosis, paso a paso</H2>
       <OL>
         <OLItem n={1}>
-          <strong>Anótalo en el momento, no después.</strong> "Lo escribo más tarde" es donde se pierde
-          el dato la mayoría de las veces — la memoria rellena huecos con la hora que "debería haber
-          sido", no la real.
+          <strong>Anótalo en el momento, no después.</strong> &ldquo;Lo escribo más tarde&rdquo; es donde se pierde
+          el dato la mayoría de las veces — la memoria rellena huecos con la hora que &ldquo;debería haber
+          sido&rdquo;, no la real.
         </OLItem>
         <OLItem n={2}>
           <strong>Usa siempre las mismas unidades.</strong> Si tu vial está en mg pero tú piensas en
@@ -67,8 +67,8 @@ export default function Post() {
           no comparar cualquier día contra cualquier otro.
         </OLItem>
         <OLItem n={4}>
-          <strong>Anota los efectos secundarios aunque sean leves.</strong> Un "náusea leve" de hoy
-          contra un "náusea fuerte" de hace tres semanas es justo el dato que le sirve a tu médico
+          <strong>Anota los efectos secundarios aunque sean leves.</strong> Un &ldquo;náusea leve&rdquo; de hoy
+          contra un &ldquo;náusea fuerte&rdquo; de hace tres semanas es justo el dato que le sirve a tu médico
           para decidir si frenar la subida de dosis.
         </OLItem>
         <OLItem n={5}>
@@ -130,12 +130,12 @@ export default function Post() {
           ruidosa de lo que realmente es.
         </LI>
         <LI>
-          No anotar la zona de inyección porque "total, es solo una vez a la semana" — hasta que la
+          No anotar la zona de inyección porque &ldquo;total, es solo una vez a la semana&rdquo; — hasta que la
           piel empieza a resentirlo.
         </LI>
         <LI>
           Confiar en la memoria para la cita médica en vez de llevar algo escrito, y llegar sin poder
-          responder "¿cuándo empezó la náusea, exactamente?".
+          responder &ldquo;¿cuándo empezó la náusea, exactamente?&rdquo;.
         </LI>
       </UL>
     </>
