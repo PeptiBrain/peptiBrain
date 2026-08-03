@@ -10,6 +10,7 @@ import { NextDosesWidget } from "@/components/app/shell/NextDosesWidget";
 import { NotificationBell } from "@/components/app/shell/NotificationBell";
 import { DoseCelebrationToast } from "@/components/app/shell/DoseCelebrationToast";
 import { FirstRecordToast } from "@/components/app/shell/FirstRecordToast";
+import { HelpFab } from "@/components/app/shell/HelpFab";
 import { MilestoneModal } from "@/components/app/shell/MilestoneModal";
 import { SatisfactionSurveyModal } from "@/components/app/shell/SatisfactionSurveyModal";
 import { isSatisfactionSurveyEligible } from "@/lib/satisfaction-survey";
@@ -88,6 +89,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         <FirstRecordToast />
         <MilestoneModal />
         <SatisfactionSurveyModal eligible={satisfactionSurveyEligible} />
+        <HelpFab />
       </div>
     </div>
   );

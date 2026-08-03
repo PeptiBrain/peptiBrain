@@ -429,6 +429,7 @@
     "title": "Help center",
     "subtitle": "Search your question or browse the FAQ.",
     "close": "Close",
+    "openAria": "Open help",
     "searchPlaceholder": "Search help (e.g. vial, family, cancel)",
     "noResults": "We couldn't find anything. Write to us and we'll help.",
     "stillStuck": "Still stuck? Email us at",
