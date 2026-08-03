@@ -798,6 +798,45 @@ export function AdminDashboard({ data, alerts }: { data: AdminOverview; alerts: 
               </p>
             </div>
 
+            {/* Auto-reportado en el registro ("¿Cómo nos conociste?") — cubre el
+                tráfico que ningún UTM/referrer puede atribuir técnicamente (alguien
+                ve un video y busca la app días después sin hacer clic en nada). Si
+                este número es mucho más alto que un canal en la tabla de arriba,
+                ese canal vale más de lo que el UTM está midiendo. */}
+            <div className="mt-4 rounded-2xl p-5" style={{ background: ADMIN.surface, border: `1px solid ${ADMIN.border}` }}>
+              <p className="mb-1 text-sm font-semibold" style={{ color: ADMIN.text }}>
+                Cómo dicen que nos conocieron (auto-reportado)
+              </p>
+              <p className="mb-3 text-xs" style={{ color: ADMIN.textMuted }}>
+                Respuesta opcional en el registro — cruza esto contra la tabla de arriba: si aquí un canal aparece
+                mucho más alto que en el UTM, ese canal está trayendo más de lo que se le atribuye.
+              </p>
+              {data.howFoundSources.length === 0 ? (
+                <p className="text-sm" style={{ color: ADMIN.textMuted }}>
+                  Nadie respondió todavía.
+                </p>
+              ) : (
+                <ul className="space-y-2.5">
+                  {data.howFoundSources.map((h) => {
+                    const pct = data.howFoundResponses ? Math.round((h.count / data.howFoundResponses) * 100) : 0;
+                    return (
+                      <li key={h.source} className="flex items-center gap-3">
+                        <span className="w-24 shrink-0 truncate text-sm font-medium capitalize" style={{ color: ADMIN.text }}>
+                          {h.source}
+                        </span>
+                        <div className="h-2 flex-1 overflow-hidden rounded-full" style={{ background: ADMIN.border }}>
+                          <div className="h-full rounded-full" style={{ width: `${pct}%`, background: ADMIN.positive }} />
+                        </div>
+                        <span className="w-14 shrink-0 text-right text-xs" style={{ color: ADMIN.textMuted }}>
+                          {h.count} · {pct}%
+                        </span>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </div>
+
             {/* No basta con saber qué canal trae más registros — hay que saber qué
                 canal trae MEJORES usuarios. Un canal puede traer mucha gente
                 curiosa y otro, menos gente pero que de verdad paga y se queda. */}

@@ -113,6 +113,13 @@ export type AdminOverview = {
   conversionPct: number; // registrados → pagadores
   currencySymbol: string;
   utmSources: { source: string; count: number }[];
+  /** Última campaña que trajo el registro (útil si el usuario tocó varios
+   *  canales antes de registrarse) — utmSources arriba es el PRIMER contacto. */
+  utmSourcesLast: { source: string; count: number }[];
+  /** "¿Cómo nos conociste?" auto-reportado en el registro (opcional) — cubre
+   *  el tráfico que ningún UTM/referrer puede atribuir técnicamente. */
+  howFoundSources: { source: string; count: number }[];
+  howFoundResponses: number;
   /** Embudo completo por canal de origen (utm_source): no solo cuántos se
    *  registraron, sino cuántos de ESOS se activan, usan, pagan, cancelan y
    *  retienen. Sin esto, un canal puede parecer bueno solo por traer volumen. */
@@ -207,7 +214,7 @@ export async function loadAdminOverview(): Promise<AdminOverview> {
     admin
       .from("profiles")
       .select(
-        "id, name, email, plan, plan_status, created_at, updated_at, is_lifetime, utm_source, phone, phone_code, platform, onboarding_completed_at"
+        "id, name, email, plan, plan_status, created_at, updated_at, is_lifetime, utm_source, utm_source_last, how_found, phone, phone_code, platform, onboarding_completed_at"
       )
       .order("created_at", { ascending: false }),
     admin
@@ -606,6 +613,30 @@ export async function loadAdminOverview(): Promise<AdminOverview> {
     .map(([source, count]) => ({ source, count }))
     .sort((a, b) => b.count - a.count);
 
+  // --- Último contacto (qué campaña cerró, no solo quién descubrió) ---
+  const utmLastMap = new Map<string, number>();
+  for (const p of profiles) {
+    const src = (p.utm_source_last && String(p.utm_source_last).trim()) || (p.utm_source && String(p.utm_source).trim()) || "directo";
+    utmLastMap.set(src, (utmLastMap.get(src) || 0) + 1);
+  }
+  const utmSourcesLast = [...utmLastMap.entries()]
+    .map(([source, count]) => ({ source, count }))
+    .sort((a, b) => b.count - a.count);
+
+  // --- "¿Cómo nos conociste?" auto-reportado — cubre el tráfico oscuro que
+  // ningún UTM/referrer puede capturar (alguien ve un video y busca la app
+  // días después sin hacer clic en nada). Solo cuenta quien SÍ respondió.
+  const howFoundMap = new Map<string, number>();
+  for (const p of profiles) {
+    if (!p.how_found) continue;
+    const src = String(p.how_found).trim();
+    howFoundMap.set(src, (howFoundMap.get(src) || 0) + 1);
+  }
+  const howFoundSources = [...howFoundMap.entries()]
+    .map(([source, count]) => ({ source, count }))
+    .sort((a, b) => b.count - a.count);
+  const howFoundResponses = howFoundSources.reduce((sum, s) => sum + s.count, 0);
+
   // --- Embudo por canal: no solo cuántos trae cada uno, sino qué tan buenos
   // son esos usuarios (activación, uso, pago, cancelación, retención) — un
   // canal puede traer mucho volumen curioso y otro, menos gente pero que paga.
@@ -688,6 +719,9 @@ export async function loadAdminOverview(): Promise<AdminOverview> {
     conversionPct,
     currencySymbol: "€",
     utmSources,
+    utmSourcesLast,
+    howFoundSources,
+    howFoundResponses,
     channelFunnels,
     platforms,
     countries,

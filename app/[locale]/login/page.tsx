@@ -8,12 +8,17 @@ import { Link } from "@/i18n/navigation";
 import { getLocalizedPath } from "@/i18n/routing";
 import Image from "next/image";
 import { motion } from "motion/react";
-import { User, Mail, Phone, Lock, Eye, EyeOff, Check, ShieldCheck, Smartphone } from "lucide-react";
+import { User, Mail, Phone, Lock, Eye, EyeOff, Check, ShieldCheck, Smartphone, Compass } from "lucide-react";
 import { saveOnboarding } from "@/lib/onboarding";
 import { Turnstile } from "@/components/app/Turnstile";
 import { createClient } from "@/lib/supabase/client";
 import { track, identifyUser } from "@/lib/mixpanel";
-import { getUtm, detectPlatform } from "@/lib/utm";
+import { getUtm, getLastUtm, detectPlatform } from "@/lib/utm";
+
+// Lista cerrada a propósito (ver 04-PARAMETROS del manual de atribución): un
+// campo libre produce "tiktok", "TikTok", "Tik Tok", "tik-tok" como 4 canales
+// distintos en el panel de admin.
+const HOW_FOUND_OPTIONS = ["instagram", "tiktok", "youtube", "google", "recomendacion", "otro"] as const;
 
 const COUNTRIES = [
   { flag: "🇪🇸", code: "+34", name: "España" },
@@ -48,6 +53,7 @@ function LoginPageContent() {
   const [email, setEmail] = useState("");
   const [phoneCode, setPhoneCode] = useState("+34");
   const [phone, setPhone] = useState("");
+  const [howFound, setHowFound] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -102,6 +108,7 @@ function LoginPageContent() {
     }
     if (data.user) {
       const utmSource = getUtm();
+      const utmSourceLast = getLastUtm();
       await supabase
         .from("profiles")
         .update({
@@ -109,10 +116,12 @@ function LoginPageContent() {
           phone,
           platform: detectPlatform(),
           ...(utmSource ? { utm_source: utmSource } : {}),
+          ...(utmSourceLast ? { utm_source_last: utmSourceLast } : {}),
+          ...(howFound ? { how_found: howFound } : {}),
         })
         .eq("id", data.user.id);
       identifyUser(data.user.id, { email, name, plan: "free" });
-      track("sign_up_completed", { method: "email", utm_source: utmSource || "directo" });
+      track("sign_up_completed", { method: "email", utm_source: utmSource || "directo", how_found: howFound || undefined });
     }
     saveOnboarding({ name, email, phoneCode, phone });
     setLoading(false);
@@ -351,6 +360,22 @@ function LoginPageContent() {
                 />
               </div>
               {phoneValid && <ValidHint>{t("phoneValid")}</ValidHint>}
+            </Field>
+
+            <Field label={t("howFoundLabel")} htmlFor="how-found" icon={Compass}>
+              <select
+                id="how-found"
+                value={howFound}
+                onChange={(e) => setHowFound(e.target.value)}
+                className={`${inputClass} pr-7`}
+              >
+                <option value="">{t("howFoundPlaceholder")}</option>
+                {HOW_FOUND_OPTIONS.map((opt) => (
+                  <option key={opt} value={opt}>
+                    {t(`howFound_${opt}` as never)}
+                  </option>
+                ))}
+              </select>
             </Field>
 
             <Field label={t("passwordLabel")} htmlFor="password" icon={Lock}>
