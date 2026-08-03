@@ -133,6 +133,17 @@ export type AdminOverview = {
   retentionD1: number | null;
   retentionD7: number | null;
   retentionD30: number | null;
+  /** Comprueba con datos reales la hipótesis del "número mágico" (3 dosis en
+   *  los primeros 3 días → mejor retención D30) — null si nadie tiene aún 30
+   *  días de antigüedad para poder medirlo. */
+  magicNumberValidation: {
+    eligible: number;
+    hitCount: number;
+    missCount: number;
+    retentionD30IfHit: number | null;
+    retentionD30IfMiss: number | null;
+    enoughSample: boolean;
+  } | null;
   // Ganancia real
   hotmartFeeEstimate: number;
   /** Embudo de activación calculado desde las tablas reales (no desde eventos). */
@@ -467,6 +478,41 @@ export async function loadAdminOverview(): Promise<AdminOverview> {
   const retentionD7 = retentionAt(7);
   const retentionD30 = retentionAt(30);
 
+  // --- Validación del "número mágico" (hipótesis en ESTADO.md, nunca antes
+  // comprobada con datos reales): ¿de verdad quien registra 3 dosis en sus
+  // primeros 3 días retiene más a los 30 días que quien no llega a esa marca?
+  // Solo se puede evaluar sobre cuentas con antigüedad suficiente para medir
+  // D30 (mismo criterio que retentionAt(30)).
+  const MAGIC_NUMBER_DOSES = 3;
+  const MAGIC_NUMBER_WINDOW_DAYS = 3;
+  const magicEligible = profiles.filter((p) => p.created_at <= daysAgoIso(30));
+  const magicHitGroup: typeof profiles = [];
+  const magicMissGroup: typeof profiles = [];
+  for (const p of magicEligible) {
+    const signupMs = new Date(p.created_at).getTime();
+    const windowEndMs = signupMs + MAGIC_NUMBER_WINDOW_DAYS * 24 * 60 * 60 * 1000;
+    const activity = activityByUser.get(p.id) || [];
+    const dosesInWindow = activity.filter((a) => {
+      const t = new Date(a).getTime();
+      return t >= signupMs && t <= windowEndMs;
+    }).length;
+    (dosesInWindow >= MAGIC_NUMBER_DOSES ? magicHitGroup : magicMissGroup).push(p);
+  }
+  // Con muestras chicas la diferencia entre grupos es ruido, no señal —
+  // mejor decirlo explícitamente que fingir una conclusión que no hay.
+  const MAGIC_NUMBER_MIN_SAMPLE = 20;
+  const magicNumberValidation =
+    magicEligible.length === 0
+      ? null
+      : {
+          eligible: magicEligible.length,
+          hitCount: magicHitGroup.length,
+          missCount: magicMissGroup.length,
+          retentionD30IfHit: retentionAt(30, magicHitGroup),
+          retentionD30IfMiss: retentionAt(30, magicMissGroup),
+          enoughSample: magicHitGroup.length >= MAGIC_NUMBER_MIN_SAMPLE && magicMissGroup.length >= MAGIC_NUMBER_MIN_SAMPLE,
+        };
+
   // --- Altas por día (últimos 30 días), para el gráfico de barras ---
   const dayBuckets = new Map<string, number>();
   for (let i = 29; i >= 0; i--) {
@@ -748,6 +794,7 @@ export async function loadAdminOverview(): Promise<AdminOverview> {
     retentionD1,
     retentionD7,
     retentionD30,
+    magicNumberValidation,
     hotmartFeeEstimate,
     activationFunnel,
     funnelBottleneck,

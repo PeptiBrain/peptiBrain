@@ -12,22 +12,35 @@ export type DoseCelebration = {
   totalDoses: number;
   adherencePct: number | null;
   weightDeltaKg: number | null;
+  /** Momento "extra" ocasional (ver SPOTLIGHT_CHANCE) — nunca cambia el PB ni
+   *  la racha real, solo el tono del aviso y un poco más de confeti. Es
+   *  cosmético a propósito: 24-GAMIFICACION.md marca como dark pattern
+   *  sortear algo que sí tenga valor real, así que aquí nunca se sortea eso. */
+  spotlight: boolean;
 };
 
+// Probabilidad de que un registro de dosis reciba el momento "extra" — lo
+// bastante baja para que sea una sorpresa real, no una rutina más.
+const SPOTLIGHT_CHANCE = 0.15;
+
 export function celebrateDoseLogged(data: AppData) {
-  celebrate();
+  const spotlight = Math.random() < SPOTLIGHT_CHANCE;
+  celebrate(spotlight ? 2 : 1);
   const stats = computeStats(data, new Date());
   const detail: DoseCelebration = {
     totalDoses: stats.totalDosesDone,
     adherencePct: stats.adherence?.pct ?? null,
     weightDeltaKg: stats.weight?.deltaKg ?? null,
+    spotlight,
   };
   if (typeof window !== "undefined") {
     window.dispatchEvent(new CustomEvent(DOSE_CELEBRATION_EVENT, { detail }));
   }
 }
 
-export async function celebrate() {
+// `intensity` 2 = el momento "extra" ocasional de una dosis (entre el confeti
+// normal y el de un hito de racha). Por defecto 1, igual que siempre.
+export async function celebrate(intensity: 1 | 2 = 1) {
   if (typeof window === "undefined") return;
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
@@ -38,7 +51,7 @@ export async function celebrate() {
 
   const colors = ["#3fae7d", "#6bc79b", "#f4a340"];
   confetti({
-    particleCount: 90,
+    particleCount: 90 * intensity,
     spread: 75,
     startVelocity: 35,
     origin: { y: 0.6 },
@@ -46,7 +59,7 @@ export async function celebrate() {
     zIndex: 9999,
   });
   setTimeout(() => {
-    confetti({ particleCount: 50, spread: 100, origin: { y: 0.5 }, colors, zIndex: 9999 });
+    confetti({ particleCount: 50 * intensity, spread: 100, origin: { y: 0.5 }, colors, zIndex: 9999 });
   }, 200);
 }
 

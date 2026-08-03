@@ -619,7 +619,13 @@
     "scheduledLabel": "Scheduled"
   },
   "DoseToast": {
-    "title": "Dose logged!",
+    "title_0": "Dose logged!",
+    "title_1": "Another one down 💪",
+    "title_2": "Keep it up",
+    "title_3": "Logged",
+    "titleSpotlight_0": "Unstoppable streak! 🔥",
+    "titleSpotlight_1": "You're on fire",
+    "titleSpotlight_2": "Total consistency",
     "doses": "{count, plural, one {# dose} other {# doses}} so far",
     "adherence": "{pct}% adherence",
     "weight": "{delta} kg"

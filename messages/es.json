@@ -619,7 +619,13 @@
     "scheduledLabel": "Programada"
   },
   "DoseToast": {
-    "title": "¡Dosis registrada!",
+    "title_0": "¡Dosis registrada!",
+    "title_1": "Otra al día 💪",
+    "title_2": "Sigue así",
+    "title_3": "Anotado",
+    "titleSpotlight_0": "¡Racha imparable! 🔥",
+    "titleSpotlight_1": "Estás que vuelas",
+    "titleSpotlight_2": "Constancia total",
     "doses": "Llevas {count, plural, one {# dosis} other {# dosis}}",
     "adherence": "{pct}% de adherencia",
     "weight": "{delta} kg"

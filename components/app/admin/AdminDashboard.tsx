@@ -508,6 +508,59 @@ export function AdminDashboard({ data, alerts }: { data: AdminOverview; alerts: 
                 />
               </div>
             </div>
+
+            {/* Validación del "número mágico" (hipótesis anotada en ESTADO.md,
+                nunca antes comprobada con datos reales): ¿quien hace 3 dosis en
+                sus primeros 3 días retiene más a los 30 días que quien no? */}
+            <div className="mt-4 rounded-2xl p-5" style={{ background: ADMIN.surface, border: `1px solid ${ADMIN.border}` }}>
+              <p className="mb-1 text-sm font-semibold" style={{ color: ADMIN.text }}>
+                ¿El "número mágico" es real?
+              </p>
+              <p className="mb-3 text-xs" style={{ color: ADMIN.textMuted }}>
+                Hipótesis: 3 dosis registradas en los primeros 3 días predicen mejor retención a 30 días.
+              </p>
+              {data.magicNumberValidation == null ? (
+                <p className="text-sm" style={{ color: ADMIN.textMuted }}>
+                  Todavía nadie tiene 30 días de antigüedad — no se puede medir aún.
+                </p>
+              ) : (
+                <>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="rounded-xl p-4" style={{ background: ADMIN.surfaceHover }}>
+                      <p className="text-xs" style={{ color: ADMIN.textMuted }}>
+                        Hicieron 3 en 3 días ({data.magicNumberValidation.hitCount})
+                      </p>
+                      <p className="mt-1 font-display text-2xl font-bold" style={{ color: ADMIN.positive }}>
+                        {data.magicNumberValidation.retentionD30IfHit == null
+                          ? "—"
+                          : `${data.magicNumberValidation.retentionD30IfHit}%`}
+                      </p>
+                      <p className="text-xs" style={{ color: ADMIN.textMuted }}>retención D30</p>
+                    </div>
+                    <div className="rounded-xl p-4" style={{ background: ADMIN.surfaceHover }}>
+                      <p className="text-xs" style={{ color: ADMIN.textMuted }}>
+                        No llegaron ({data.magicNumberValidation.missCount})
+                      </p>
+                      <p className="mt-1 font-display text-2xl font-bold" style={{ color: ADMIN.text }}>
+                        {data.magicNumberValidation.retentionD30IfMiss == null
+                          ? "—"
+                          : `${data.magicNumberValidation.retentionD30IfMiss}%`}
+                      </p>
+                      <p className="text-xs" style={{ color: ADMIN.textMuted }}>retención D30</p>
+                    </div>
+                  </div>
+                  {!data.magicNumberValidation.enoughSample && (
+                    <p
+                      className="mt-3 rounded-lg px-3 py-2 text-xs"
+                      style={{ background: ADMIN.bg, color: ADMIN.warning, border: `1px solid ${ADMIN.warning}44` }}
+                    >
+                      Muestra todavía chica (mínimo 20 por grupo) — la diferencia de arriba puede ser ruido, no
+                      una tendencia real. No tomes decisiones grandes con esto todavía.
+                    </p>
+                  )}
+                </>
+              )}
+            </div>
           </Section>
         )}
 
