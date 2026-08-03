@@ -1,5 +1,48 @@
 # ESTADO — PeptiBrain
 
+## ✅ Pop-up de encuesta de satisfacción (5 emojis) + panel de admin (2026-08-02)
+
+Pedido explícito del dueño: pop-up dentro de la app con 5 emojis (rojo→verde) preguntando "¿Qué
+tan feliz estás usando PeptiBrain?", que guarde usuario/fecha/nivel, con reglas de cuándo aparece
+(antigüedad mínima de cuenta, nunca sobre acciones importantes, máximo 1 vez al mes), y verlo en el
+panel de admin (promedio, evolución mensual, conteo por nivel). Explícito: "no cambies ninguna otra
+función de la app, debe funcionar de forma independiente".
+
+- **`lib/satisfaction-survey.ts`** (con 6 tests): regla pura de elegibilidad — cuenta con ≥7 días
+  de antigüedad (`SATISFACTION_SURVEY_MIN_ACCOUNT_DAYS`, ajustable) Y no se le mostró en el último
+  mes. "Mostrado" cuenta aunque la persona la cierre sin responder — si no, reaparecería en cada
+  recarga hasta que contestara.
+- **Migración `0048_satisfaction_survey.sql`**: tabla `satisfaction_responses` (user_id, level 1-5,
+  created_at) con RLS activo y SIN políticas de cliente — mismo patrón que `cancellation_feedback`,
+  solo el servidor (service_role) escribe/lee. Columna nueva
+  `profiles.last_satisfaction_survey_shown_at`. **Requiere acción manual del dueño**: correrla en
+  Supabase antes de que la encuesta guarde nada (si no se corre, la encuesta simplemente no
+  aparece — `isSatisfactionSurveyEligible` depende de columnas que no existirían — no rompe nada
+  más de la app).
+- **`components/app/shell/SatisfactionSurveyModal.tsx`**: pop-up con fondo `bg-card` (blanco/casi-
+  blanco en modo claro, respeta tokens de diseño) y bordes redondeados, 5 emojis grandes en fila
+  con círculo de color rojo→verde detrás de cada uno (excepción deliberada a "tokens para todo
+  color" — el significado de la escala ES el color, mismo criterio que los gráficos del panel de
+  admin). Aparece solo en Inicio (nunca sobre onboarding/paywall/un formulario — esos viven fuera
+  de este layout o se evita por ruta), con 4 segundos de espera tras cargar la pantalla. Al elegir
+  un emoji, guarda la respuesta y muestra un agradecimiento corto antes de cerrarse solo.
+- **Dos rutas de servidor** (`app/api/account/satisfaction-survey/route.ts` y `.../shown/route.ts`):
+  la primera guarda la respuesta (1-5, validada), la segunda marca "se mostró ahora" en cuanto el
+  pop-up aparece (no espera a que respondan) — así el límite de una vez al mes aplica siempre.
+- **Panel de admin**: nueva pestaña "Satisfacción" (`lib/admin-data.ts` + `AdminDashboard.tsx`) con
+  promedio, evolución mensual (barras) y respuestas por nivel (1 a 5) — mismo patrón visual que la
+  sección de motivos de cancelación ya existente.
+
+Verificado: tsc ✓ · npm test (106/106, 6 nuevos) ✓ · npm run build ✓ (rutas nuevas confirmadas en
+el listado de build) · sitio verificado sano en preview de staging y en producción tras el deploy.
+**No se pudo verificar visualmente el pop-up ni la pestaña del panel de admin** — ambos requieren
+sesión real (una cuenta con ≥7 días de antigüedad para el pop-up, rol admin para el panel) y no hay
+credenciales de prueba en este entorno; la lógica de elegibilidad, que es la parte con más riesgo,
+sí quedó cubierta con tests. staging→main desplegado, CI en verde en ambas.
+
+⚠️ **Pendiente del dueño**: correr la migración `0048_satisfaction_survey.sql` en Supabase (Dashboard
+→ SQL Editor → pegar el contenido del archivo → Run) para que la encuesta empiece a funcionar.
+
 ## ✅ URLs en inglés reales para las 16 páginas de marketing, sin redirección (2026-08-02)
 
 Mismo bug que el del blog (URL en inglés reusando el segmento en español, ej.
