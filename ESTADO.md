@@ -1,5 +1,39 @@
 # ESTADO — PeptiBrain
 
+## ⚠️ La carpeta del proyecto se renombró a "#Claude" y rompió el build (2026-08-03)
+
+Nota operativa para la próxima sesión: en algún momento la carpeta `Desktop/Claude/` pasó a
+llamarse `Desktop/#Claude/` (posiblemente por Finder/iCloud, no por nada de este SO). El símbolo
+`#` en la ruta rompe por completo `npm run build` (Turbopack/PostCSS interpreta `#Claude` como un
+fragmento de URL y falla con `ERR_INVALID_ARG_VALUE` / null byte) y también `npx vitest run`
+(`ERR_MODULE_NOT_FOUND`). `npx tsc --noEmit` sí funcionaba bien pese al `#`, lo que hizo más lento
+detectar el problema. El dueño renombró la carpeta de vuelta a `Claude` (sin `#`) y todo volvió a
+funcionar normal. **Si algún día `npm run build` o los tests fallan de la nada sin ningún cambio de
+código que lo explique, lo primero a revisar es si la ruta de la carpeta tiene algún carácter
+especial (`#`, espacios raros, etc.) antes de sospechar del código.**
+
+## ✅ Infografías de zonas de inyección en "Cómo se usan los péptidos" (2026-08-03)
+
+El dueño generó 3 infografías (con Gemini/similar) sobre por dónde, cada cuánto y cómo rotar la
+zona de inyección, y pidió subirlas al artículo correspondiente del blog: imágenes 1 y 2 al
+artículo en español, imagen 3 al artículo en inglés.
+
+- Nuevo bloque **`ArticleImage`** en `components/app/blog/ArticleBlocks.tsx` — primera vez que un
+  artículo del blog lleva una imagen intercalada en el cuerpo (hasta ahora solo existía la portada,
+  vía `ArticleHero`). Usa `next/image` con `width`/`height` reales para evitar salto de layout.
+- Las 3 imágenes se guardaron en `public/blog/como-se-usan-los-peptidos-zonas-{cuadrada,es,en}.png`
+  e insertadas justo después de la sección "Zonas habituales y por qué rotarlas" en
+  `components/app/blog/posts/{es,en}/como-se-usan-los-peptidos.tsx` — en español van las dos
+  (la de foto + la cuadrada simple), en inglés solo la de foto traducida.
+- Las imágenes originales las tenía el dueño guardadas en
+  `# Diseños/# threads/{Español,Inglés}/3.png` (mismo número en ambos idiomas) y una suelta en el
+  escritorio (`Por donde se inyecta IG.png`) — quedan ahí también, esto solo copió una versión a
+  `public/blog/` para servirlas.
+
+Verificado: tsc ✓ · npm test (106/106) ✓ · npm run build ✓ · confirmado que las dos imágenes en
+español y la imagen en inglés cargan con 200 en producción, en la posición correcta del artículo ·
+staging→main desplegado, CI en verde en ambas.
+
 ## ✅ Auditoría de retención: validar el número mágico + recompensa variable (2026-08-03)
 
 El dueño compartió una reflexión sobre retención ("no importa cuántos se registran, importa cuántos
