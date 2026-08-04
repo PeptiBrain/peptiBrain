@@ -1,5 +1,5 @@
 import { Link } from "@/i18n/navigation";
-import { H2, P, OL, OLItem, Callout, Summary } from "@/components/app/blog/ArticleBlocks";
+import { H2, P, OL, OLItem, Callout, Summary, ArticleImage } from "@/components/app/blog/ArticleBlocks";
 
 export default function Post() {
   return (
@@ -32,6 +32,13 @@ export default function Post() {
         lipohypertrophy), and makes that area absorb worse with each new application. Alternating between 3-4
         different spots, a couple of centimeters apart, is common practice.
       </P>
+
+      <ArticleImage
+        src="/blog/como-se-usan-los-peptidos-zonas-en.png"
+        alt="Map of subcutaneous injection sites: abdomen, thighs, glutes, and the back of the arm"
+        width={1024}
+        height={1536}
+      />
 
       <H2>The 4 basic steps of an application</H2>
       <OL>

@@ -1,5 +1,5 @@
 import { Link } from "@/i18n/navigation";
-import { H2, P, OL, OLItem, Callout, Summary } from "@/components/app/blog/ArticleBlocks";
+import { H2, P, OL, OLItem, Callout, Summary, ArticleImage } from "@/components/app/blog/ArticleBlocks";
 
 export default function Post() {
   return (
@@ -32,6 +32,20 @@ export default function Post() {
         (lo que se conoce como lipohipertrofia) y hace que esa zona absorba peor con cada nueva aplicación.
         Alternar entre 3-4 puntos distintos, separados un par de centímetros entre sí, es la práctica habitual.
       </P>
+
+      <ArticleImage
+        src="/blog/como-se-usan-los-peptidos-zonas-es.png"
+        alt="Mapa de las zonas de inyección subcutánea: abdomen, muslos, glúteos y zona tricipital"
+        width={1024}
+        height={1536}
+      />
+
+      <ArticleImage
+        src="/blog/como-se-usan-los-peptidos-zonas-cuadrada.png"
+        alt="Resumen visual de por dónde, cada cuánto y cómo rotar la zona de inyección"
+        width={1254}
+        height={1254}
+      />
 
       <H2>Los 4 pasos básicos de una aplicación</H2>
       <OL>

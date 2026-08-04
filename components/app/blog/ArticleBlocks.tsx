@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import NextImage from "next/image";
 import { Info, Zap, BookMarked, ExternalLink } from "lucide-react";
 
 // Bloques de contenido reutilizables para el cuerpo de los artículos del blog —
@@ -40,6 +41,37 @@ export function OLItem({ n, children }: { n: number; children: ReactNode }) {
       </span>
       <span className="pt-0.5 text-base leading-relaxed text-muted-foreground">{children}</span>
     </li>
+  );
+}
+
+// Imagen dentro del cuerpo del artículo (infografía, diagrama) — distinta de
+// la portada (ArticleHero): esta va intercalada entre párrafos, con su propio
+// pie opcional. `width`/`height` reales evitan el salto de layout (CLS).
+export function ArticleImage({
+  src,
+  alt,
+  width,
+  height,
+  caption,
+}: {
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+  caption?: string;
+}) {
+  return (
+    <figure className="mt-6">
+      <NextImage
+        src={src}
+        alt={alt}
+        width={width}
+        height={height}
+        sizes="(max-width: 640px) 100vw, 640px"
+        className="mx-auto h-auto w-full max-w-lg rounded-2xl border border-border"
+      />
+      {caption && <figcaption className="mt-2 text-center text-xs text-muted-foreground">{caption}</figcaption>}
+    </figure>
   );
 }
 
