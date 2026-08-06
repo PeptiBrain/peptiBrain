@@ -1,5 +1,5 @@
 import { Link } from "@/i18n/navigation";
-import { H2, H3, P, Callout, Summary } from "@/components/app/blog/ArticleBlocks";
+import { H2, H3, P, Callout, Summary, ArticleImage } from "@/components/app/blog/ArticleBlocks";
 
 export default function Post() {
   return (
@@ -13,6 +13,13 @@ export default function Post() {
         This is a rundown of the most mentioned peptides grouped by category — weight loss, recovery, muscle,
         longevity, and skin — covering what&apos;s researched about each, without dosing or usage recommendations.
       </Summary>
+
+      <ArticleImage
+        src="/blog/peptidos-populares-tabla-en.png"
+        alt="Comparison table of popular peptides: cycle length, dosage frequency, and key benefits"
+        width={1024}
+        height={1536}
+      />
 
       <H2>Weight loss</H2>
       <H3>Semaglutide</H3>

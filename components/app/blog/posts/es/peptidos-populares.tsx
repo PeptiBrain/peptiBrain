@@ -1,5 +1,5 @@
 import { Link } from "@/i18n/navigation";
-import { H2, H3, P, Callout, Summary } from "@/components/app/blog/ArticleBlocks";
+import { H2, H3, P, Callout, Summary, ArticleImage } from "@/components/app/blog/ArticleBlocks";
 
 export default function Post() {
   return (
@@ -13,6 +13,13 @@ export default function Post() {
         Repasamos los péptidos más mencionados agrupados por categoría — pérdida de peso, recuperación, músculo,
         longevidad y piel — con qué se investiga de cada uno, sin entrar en dosis ni recomendaciones de uso.
       </Summary>
+
+      <ArticleImage
+        src="/blog/peptidos-populares-tabla-es.png"
+        alt="Tabla comparativa de péptidos populares: duración de ciclo, frecuencia de dosis y beneficios principales"
+        width={1024}
+        height={1536}
+      />
 
       <H2>Pérdida de peso</H2>
       <H3>Semaglutida</H3>
